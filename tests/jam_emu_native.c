@@ -16,6 +16,63 @@ static void tap_emu(uint32_t role)
 }
 static void blocks(unsigned n) { while (n--) jam_emu_render(); }
 
+static void test_snap_lights(void)
+{
+    unsigned i;
+    track_t *t = &trk[2];
+    jam_emu_panic(); jam_emu_render();
+    assert(jam_new_dusty());
+    song.sel = 2;
+    t->p[P_ROOT] = 3; t->p[P_SCALE] = 1; /* D# major. */
+    t->p[P_QUANT] = 1; t->p[P_CHORD] = 0;
+    go_home(); blocks(400);
+
+    jam_emu_key(10, 1); /* D#4 is already in the scale. */
+    CHECK(kb_nt[10][0] == 63 && jam_emu_value(14, 0) == 1,
+          "SNAP D# plays one unchanged note");
+    for (i = 0; i < 10; i++) {
+        jam_emu_render(); jam_emu_frame();
+        assert(jam_emu_leds()[24] == 255 && jam_emu_leds()[25] == 0);
+    }
+    CHECK(1, "SNAP D# lights only D#, through the note-hit flash and sustained voice");
+    jam_emu_key(10, 0); blocks(400);
+    CHECK(!jam_emu_value(14, 0) && jam_emu_leds()[24] == 0 && jam_emu_leds()[25] == 0,
+          "SNAP note and lights release cleanly");
+
+    jam_emu_key(11, 1); jam_emu_render(); jam_emu_frame(); /* E4 -> D#4. */
+    CHECK(kb_nt[11][0] == 63 && jam_emu_value(14, 0) == 1 &&
+          jam_emu_leds()[24] == 255 && jam_emu_leds()[25] == 255,
+          "SNAP E lights the pressed E and sounding D# for one note");
+    jam_emu_key(11, 0); blocks(400);
+
+    /* A note entirely between UI frames must still flash its actual pitch. */
+    trk_note_on(t, 63, 100); trk_note_off(t, 63);
+    jam_emu_frame(); jam_emu_frame();
+    CHECK(!fm1_in.notes && jam_emu_leds()[24] == 255 && jam_emu_leds()[25] == 0,
+          "short sequencer notes flash D# without the unpressed E alias");
+    for (i = 0; i < 8; i++) jam_emu_frame();
+    CHECK(jam_emu_leds()[24] == 0 && jam_emu_leds()[25] == 0,
+          "short-note lights expire after their display window");
+
+    t->p[P_TRANS] = 2;
+    jam_emu_key(10, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_nt[10][0] == 65 && jam_emu_leds()[24] == 255 &&
+          jam_emu_leds()[26] == 255 && jam_emu_leds()[25] == 0,
+          "transposed SNAP lights the pressed D# and actual sounding F");
+    jam_emu_key(10, 0); blocks(400);
+    t->p[P_TRANS] = 0; song.octave = 1;
+    jam_emu_key(10, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_nt[10][0] == 75 && jam_emu_leds()[24] == 255 && jam_emu_leds()[25] == 0,
+          "SNAP lights follow the selected octave without aliases");
+    jam_emu_key(10, 0); blocks(400);
+
+    song.octave = 0; t->p[P_ROOT] = 4; /* E major: lowest F3 snaps below the keyboard. */
+    jam_emu_key(0, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_nt[0][0] == 52 && jam_emu_leds()[14] == 255 && !keys_sounding(t),
+          "SNAP notes outside the visible register do not wrap to another octave");
+    jam_emu_key(0, 0); jam_emu_panic(); jam_emu_render();
+}
+
 int main(int argc, char **argv)
 {
     uint32_t i, nonblack = 0, before, k;
@@ -102,6 +159,7 @@ int main(int argc, char **argv)
     CHECK(str_eq(ui.msg, "BROWSER: NO STORAGE"), "the held SAVE gesture cannot replace the storage warning with SAVED");
     jam_emu_release();
     CHECK(jam_emu_value(18, 0) == 0, "all real LCD transfers stay within 240 by 240");
+    test_snap_lights();
     printf("jam-emu: %u checks passed\n", checks);
     return 0;
 }

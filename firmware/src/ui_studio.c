@@ -295,6 +295,21 @@ static uint16_t lvl_col(uint32_t lvl)                   /* a hit's colour by its
 static uint16_t pad_lit[DRUM_LANES];                   /* pads and key LEDs: frames left lit */
 static uint8_t key_lit[27];                             /* menu NOTES, a synth track: frames its key stays lit */
 static uint8_t key_lit_trk = 0xFF;                      /* (the track key_lit is for) */
+
+static uint32_t key_light_note(const track_t *t, uint32_t k)
+{
+#if JAMBOX_PROTO
+    /* SNAP shows the sounding pitch, not every input that would snap to it.
+     * The selected octave sets the visible register; transposition moves the
+     * sounding light within it. Pressed keys are lit separately by keys_lit. */
+    if (kb_scaled(t) && t->p[P_QUANT] == 1 && !t->p[P_CHORD]) {
+        int32_t note = 53 + (int32_t)k + 12 * song.octave;
+        return note >= 0 && note < 128 ? (uint32_t)note : KB_SILENT;
+    }
+#endif
+    return kb_map(t, k);
+}
+
 static void pads_tick(void)                             /* once a frame: the hits since the last one */
 {
     uint32_t i, hits, n[NPART][4], k, w;
@@ -322,7 +337,7 @@ static void pads_tick(void)                             /* once a frame: the hit
             key_lit[k]--;
     if (song.sel < NPART && (n[song.sel][0] | n[song.sel][1] | n[song.sel][2] | n[song.sel][3]))
         for (k = 0; k < 27u; k++) {
-            uint32_t note = kb_map(TSEL, k);
+            uint32_t note = key_light_note(TSEL, k);
             if (note < 128u && (n[song.sel][note >> 5] >> (note & 31u)) & 1u)
                 key_lit[k] = 6;
         }

@@ -212,6 +212,44 @@ try {
   assert.deepEqual((await state(page)).events, beforePause.events, 'pause/resume preserves the captured notes');
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'desktop emulator fits the viewport');
 
+  // SNAP lights the played key and sounding pitch, without lighting every
+  // neighboring key that could quantize to that pitch. Use a fresh session.
+  const snap = await browser.newPage({ viewport: { width: 1280, height: 1060 } });
+  await start(snap, address);
+  await turn(snap, 0);
+  await snap.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
+  await tap(snap, 1);
+  await snap.waitForFunction(() => !globalThis.jamEmu.state.home && globalThis.jamEmu.state.layer === 0);
+  for (let i = 0; i < 3; i++) await turn(snap, 3); // C -> D# root.
+  await turn(snap, 4, 'ArrowDown'); // Minor -> major; Lead retains SNAP.
+  await idle(snap);
+  await tap(snap, 6);
+  await snap.waitForFunction(() => globalThis.jamEmu.state.home);
+  await snap.evaluate(() => {
+    globalThis.snapLedSamples = [];
+    const receive = globalThis.jamEmu.node.port.onmessage;
+    globalThis.jamEmu.node.port.onmessage = event => {
+      const current = event.data.state;
+      if (current?.keys === (1 << 10) && current.held === 1 && current.leds[24] === 255)
+        globalThis.snapLedSamples.push(current.leds[25]);
+      receive(event);
+    };
+  });
+  await pointerDown(snap, snap.locator('button[data-key="10"]')); // D#4.
+  await snap.waitForFunction(() => globalThis.jamEmu.state.keys === (1 << 10) && globalThis.jamEmu.state.held === 1 && globalThis.jamEmu.state.leds[24] === 255);
+  await snap.waitForTimeout(180); // Includes the six-frame note-hit flash.
+  const dSharpSamples = await snap.evaluate(() => globalThis.snapLedSamples);
+  assert(dSharpSamples.length > 1, 'observe both initial and sustained sounding-note LEDs');
+  assert(dSharpSamples.every(level => level === 0), 'D#4 never lights unpressed E4, including its note-hit flash');
+  await snap.mouse.up();
+  await snap.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held && globalThis.jamEmu.state.leds[24] !== 255 && globalThis.jamEmu.state.leds[25] !== 255);
+  await pointerDown(snap, snap.locator('button[data-key="11"]')); // E4 snaps down to D#4.
+  await snap.waitForFunction(() => globalThis.jamEmu.state.keys === (1 << 11) && globalThis.jamEmu.state.held === 1 && globalThis.jamEmu.state.leds[24] === 255 && globalThis.jamEmu.state.leds[25] === 255);
+  await snap.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
+  await snap.mouse.up();
+  await snap.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held && globalThis.jamEmu.state.leds[24] !== 255 && globalThis.jamEmu.state.leds[25] !== 255);
+  await snap.close();
+
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   await start(mobile, address);
   await button(mobile, 10).tap();

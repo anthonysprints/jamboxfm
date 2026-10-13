@@ -51,7 +51,8 @@ static int play_led(void)
 /* the keys' lights: what the layer held does, else the keys down and the drum hits */
 /* what sounds on track t, as keys: the drum hits (each lights its key a few frames) or, on a synth
  * track, the voices still held, mapped back through the keyboard (octave, scale, chords; by
- * @renebohne, PR #11). Shown at once with menu NOTES on, on every screen and layer (keys_notes_dim) */
+ * @renebohne, PR #11). JamBox SNAP shows actual pitches in the current octave.
+ * Shown at once with menu NOTES on, on every screen and layer (keys_notes_dim) */
 static uint32_t keys_sounding(const track_t *t)
 {
     uint32_t i, m = 0;
@@ -66,7 +67,7 @@ static uint32_t keys_sounding(const track_t *t)
         if (v->active && v->gate && v->stage <= 2) {
             uint32_t k, note = v->note;
             for (k = 0; k < 27u; k++)
-                if (kb_map(t, k) == note)
+                if (key_light_note(t, k) == note)
                     m |= 1u << k;
         }
     }
