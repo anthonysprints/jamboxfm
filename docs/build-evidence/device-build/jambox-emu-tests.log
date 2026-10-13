@@ -1,0 +1,51 @@
+tables: /workspace/jamboxfm/build/jam-emu-gen/felucca_tables.h
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/jam-emu-gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/jam-emu-gen/felucca_fm6.h
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+JamBox panel emulator built: /workspace/jamboxfm/build/jam-emu
+build/jambox-emulator.html: 7,039,038 bytes; SHA256 511dd7a090f420ac06e2234976aaed12b9b109ea86136a5f9eececc4446fabbb
+build/jambox-source.zip: 4,507,940 bytes; SHA256 1f40dc6305539ff842b29e8e5c055b780bb126b4ba05156a2c5f413060efaba2
+build/jambox-web.zip: 9,986,758 bytes; SHA256 c574d22d45309c399c8093c5296a5c948dd05a4dca2863a4da4e9c2a4aceaee6
+Static publish root: build/jambox-web (21 files)
+fixed audio ABI
+real JamBox Home starts on chords
+boot LCD snapshot exists before audio starts
+LCD exports opaque rendered RGBA pixels
+SELECT chooses role through physical UI
+K1 reaches the real sound macro
+one physical key expands the startup chord
+key-up releases the original chord
+held FX owns its key before the keyboard can play it
+logical button LEDs follow the firmware matrix
+release clears keys, buttons and the held layer
+SEL plus F dispatches its scale action before another physical event
+releasing SEL before its key preserves the scale action and releases ownership
+releasing the key before SEL performs the same complete handoff
+ENV opens the real deep page
+HOME returns to the real overview
+PLAY starts the shared sequencer
+shared C audio renders a bounded audible starter groove
+audio sample time advances the physical UI
+master volume reaches the DSP level
+panic stops and releases physical controls
+physical REC arms the real stopped recorder
+physical keys record actual chord notes into the sequence
+hardware calibration has a nonblocking browser handler
+storage never reports a pretend save
+the held SAVE gesture cannot replace the storage warning with SAVED
+all real LCD transfers stay within 240 by 240
+SNAP D# plays one unchanged note
+SNAP D# lights only D#, through the note-hit flash and sustained voice
+SNAP note and lights release cleanly
+SNAP E lights the pressed E and sounding D# for one note
+short sequencer notes flash D# without the unpressed E alias
+short-note lights expire after their display window
+transposed SNAP lights the pressed D# and actual sounding F
+SNAP lights follow the selected octave without aliases
+SNAP notes outside the visible register do not wrap to another octave
+jam-emu: 36 checks passed
+JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, release/blur panic, pause/resume, desktop/mobile, standalone document with all further network blocked passed
+JamBox emulator package, native controls, and real browser tests passed.

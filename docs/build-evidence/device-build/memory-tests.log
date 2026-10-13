@@ -1,0 +1,17 @@
+test_binary_must_match_elf_load_bytes (__main__.DeviceReportTests.test_binary_must_match_elf_load_bytes) ... ok
+test_each_reserve_one_byte_short_fails (__main__.DeviceReportTests.test_each_reserve_one_byte_short_fails) ... ok
+test_exact_reserves_and_empty_ramtext_are_valid (__main__.DeviceReportTests.test_exact_reserves_and_empty_ramtext_are_valid) ... ok
+test_loader_budget_is_combined_span_not_independent_sections (__main__.DeviceReportTests.test_loader_budget_is_combined_span_not_independent_sections) ... ok
+test_lz4_rejects_zero_offset_and_truncated_literals (__main__.DeviceReportTests.test_lz4_rejects_zero_offset_and_truncated_literals) ... ok
+test_named_undefined_and_runtime_helpers_are_detected (__main__.DeviceReportTests.test_named_undefined_and_runtime_helpers_are_detected) ... ok
+test_ota_header_body_and_size_corruptions_fail (__main__.DeviceReportTests.test_ota_header_body_and_size_corruptions_fail) ... ok
+test_ota_rejects_extra_zero_length_block_even_with_valid_crcs (__main__.DeviceReportTests.test_ota_rejects_extra_zero_length_block_even_with_valid_crcs) ... ok
+test_ota_written_by_existing_builder_round_trips (__main__.DeviceReportTests.test_ota_written_by_existing_builder_round_trips) ... ok
+test_rechecks_fields_after_valid_crc (__main__.DeviceReportTests.test_rechecks_fields_after_valid_crc) ... ok
+test_stack_reservations_must_match_linker (__main__.DeviceReportTests.test_stack_reservations_must_match_linker) ... ok
+test_wrong_region_and_unknown_allocated_section_fail (__main__.DeviceReportTests.test_wrong_region_and_unknown_allocated_section_fail) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.036s
+
+OK

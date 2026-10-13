@@ -1,0 +1,11 @@
+
+/workspace/jamboxfm/build/loader/loader.elf:	file format ELF32-pi32v2
+
+Sections:
+Idx Name          Size      Address          Type
+  0               00000000 0000000000000000
+  1 .text         00001fcc 0000000001c0a800 TEXT DATA
+  2 .bss          00002bd0 0000000001c0c7d0 BSS
+  3 .shstrtab     00000026 0000000000000000
+  4 .symtab       00000490 0000000000000000
+  5 .strtab       000002ef 0000000000000000

@@ -44,7 +44,7 @@ def main():
     if not sdk_ok:
         print("Prepare SDK: python3 tools/cloud/prepare_sdk.py (or --source /path/to/pinned/ChoralRootFM1)", file=sys.stderr)
     if missing_tools:
-        print("Prepare compiler: python3 tools/cloud/prepare_toolchain.py; requires verified HTTPS access to pkgman.jieliapp.com", file=sys.stderr)
+        print("Prepare compiler: bash tools/cloud/setup.sh --device, or import the pinned owner download with prepare_toolchain.py --archive (see docs/CLOUD_SETUP.md)", file=sys.stderr)
     if problems:
         return 1
     print("Device build prerequisites present; no firmware build or hardware validation was performed")

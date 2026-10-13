@@ -1,0 +1,98 @@
+{
+  "baseline": {
+    "function_start": "0x200cfec",
+    "metrics": {
+      "insns": 228,
+      "loop": 91,
+      "div": 0,
+      "call": 3,
+      "cost": 268
+    },
+    "spans": [
+      {
+        "head_offset": "0x7c",
+        "tail_offset": "0xa8",
+        "instructions_in_span": 18,
+        "back_edge": "if (r1 != 3) goto -48 <fm1_alnk0_irq+0x7C : 200d068 >"
+      },
+      {
+        "head_offset": "0x80",
+        "tail_offset": "0x9e",
+        "instructions_in_span": 13,
+        "back_edge": "if (--r3 != 0) goto -34 <fm1_alnk0_irq+0x80 : 200d06c >"
+      },
+      {
+        "head_offset": "0xc8",
+        "tail_offset": "0x140",
+        "instructions_in_span": 42,
+        "back_edge": "if (r4 != 3) goto -124 <fm1_alnk0_irq+0xC8 : 200d0b4 >"
+      },
+      {
+        "head_offset": "0xe4",
+        "tail_offset": "0x136",
+        "instructions_in_span": 30,
+        "back_edge": "if (r1 != 8) goto -86 <fm1_alnk0_irq+0xE4 : 200d0d0 >"
+      },
+      {
+        "head_offset": "0x1bc",
+        "tail_offset": "0x21a",
+        "instructions_in_span": 31,
+        "back_edge": "if (r6 < 256) goto -98 <fm1_alnk0_irq+0x1BC : 200d1a8 >"
+      },
+      {
+        "head_offset": "0x1dc",
+        "tail_offset": "0x210",
+        "instructions_in_span": 16,
+        "back_edge": "if (r0 != 128) goto -56 <fm1_alnk0_irq+0x1DC : 200d1c8 >"
+      }
+    ]
+  },
+  "jambox": {
+    "function_start": "0x200d79c",
+    "metrics": {
+      "insns": 225,
+      "loop": 88,
+      "div": 0,
+      "call": 3,
+      "cost": 256
+    },
+    "spans": [
+      {
+        "head_offset": "0x8c",
+        "tail_offset": "0xb8",
+        "instructions_in_span": 18,
+        "back_edge": "if (r1 != 3) goto -48 <fm1_alnk0_irq+0x8C : 200d828 >"
+      },
+      {
+        "head_offset": "0x90",
+        "tail_offset": "0xae",
+        "instructions_in_span": 13,
+        "back_edge": "if (--r3 != 0) goto -34 <fm1_alnk0_irq+0x90 : 200d82c >"
+      },
+      {
+        "head_offset": "0xdc",
+        "tail_offset": "0x156",
+        "instructions_in_span": 42,
+        "back_edge": "if (r4 != 3) goto -126 <fm1_alnk0_irq+0xDC : 200d878 >"
+      },
+      {
+        "head_offset": "0xf8",
+        "tail_offset": "0x14c",
+        "instructions_in_span": 30,
+        "back_edge": "if (r1 != 8) goto -88 <fm1_alnk0_irq+0xF8 : 200d894 >"
+      },
+      {
+        "head_offset": "0x1cc",
+        "tail_offset": "0x21a",
+        "instructions_in_span": 28,
+        "back_edge": "if (r6 < 256) goto -82 <fm1_alnk0_irq+0x1CC : 200d968 >"
+      },
+      {
+        "head_offset": "0x1ec",
+        "tail_offset": "0x210",
+        "instructions_in_span": 13,
+        "back_edge": "if (r0 != 32) goto -40 <fm1_alnk0_irq+0x1EC : 200d988 >"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "source_url": "https://api.github.com/repos/isod89/sloop-fm1/commits?path=tests/target_budget.txt&per_page=10",
+  "retrieved_on": "2026-10-13",
+  "returned_commit_count": 2,
+  "commits": [
+    {
+      "sha": "8d3823f7057102a0e64513701b640e79668c9212",
+      "date": "2026-10-07T16:27:26Z",
+      "message": "SLOOP 2.4: FM6 (6-op FM, DX7 SysEx import), your own drum kits (USR4, USR3+4), new web editor, CHORD+ with strum and voice leading, per-track filter, visualiser, parameter locks, micro timing, fills, quick chain, sequencer to MIDI out, long steps, dotted delays, complete guide (GUIDE.md), fixes"
+    },
+    {
+      "sha": "a3f9fd04c85f99f74db6b881fb9ef91d38f70e95",
+      "date": "2026-10-04T15:08:49Z",
+      "message": "SLOOP 2.0"
+    }
+  ],
+  "scope": "Read-only GitHub path history. No old source versions or old compiler archives were fetched or built."
+}

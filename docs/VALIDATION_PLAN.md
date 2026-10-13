@@ -1,6 +1,6 @@
 # JamBoxFM build and validation plan
 
-Status: implementation gates, with completed research checks identified separately. No JamBox device build or hardware flash has been performed.
+Status: implementation gates, with completed checks identified separately. The first JamBox diagnostic target build passes; no physical device has been flashed or tested.
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
@@ -23,7 +23,7 @@ Prepare dependencies outside the checkout:
 - Pinned AC79 SDK subset in its expected paths, with Apache notices and the three fail-closed SHA-256 checks in the evidence document.
 - Pinned Emscripten and host Clang for the native/WASM comparison; Node for existing web tests.
 
-At the research stage, JieLi tools, Emscripten and host Clang were absent from the inspected PATH. The implementation stage has since installed the pinned browser/native toolchain and verified the SDK; the JieLi download remains blocked. See [CLOUD_SETUP.md](CLOUD_SETUP.md) for the current environment.
+The pinned browser/native tools, SDK and owner-supplied JieLi 20260730.1 compiler are installed. See [CLOUD_SETUP.md](CLOUD_SETUP.md) for setup, archive provenance and the download-network limitation on a fresh machine.
 
 Required download destinations may include `pkgman.jieliapp.com` and redirected artifact hosts, plus the chosen Emscripten distribution. Resolve the actual downloads from official sources and record their identities for repeatable setup.
 
@@ -32,13 +32,13 @@ From the imported, initially unchanged baseline:
 ```sh
 export JIELI_TOOLCHAIN=/workspace/toolchains/jieli/toolchain
 export AC79_SDK=/workspace/deps/ac79-sdk
-./build.sh
+bash build.sh
 sh tests/run_tests.sh
 python3 tools/build_preview.py
 CC=clang sh tests/run_preview_tests.sh
 ```
 
-The unchanged browser build and preview tests have now passed; their evidence is in [BUILD_STATUS.md](BUILD_STATUS.md). The device build and full upstream runner remain future gates. The full runner depends on a generated `.fwsc`; do not label an incomplete subset as that full suite. Investigate failures without rewriting golden sound or CPU baselines merely to obtain a pass.
+The unchanged browser build and preview tests passed; their evidence is in [BUILD_STATUS.md](BUILD_STATUS.md). The first baseline/JamBox target builds and the full inherited runner's actual outcome are recorded in [device evidence](build-evidence/device-build/README.md). The full runner depends on a generated `.fwsc`; do not label an incomplete subset as that full suite. Investigate failures without rewriting golden sound or CPU baselines merely to obtain a pass.
 
 Retain: source SHA, compiler/SDK/asset identities, build flags, ELF/disassembly, app and loader sizes, all RAM-region sizes, `.fwsc` hash, browser JS/WASM hashes and test results. A runtime build on the same compiler/version should be reproducible; investigate differing artifacts before claiming determinism.
 

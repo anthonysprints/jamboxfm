@@ -1,0 +1,7 @@
+{
+  "start_utc": "2026-10-13T20:58:14.506177+00:00",
+  "end_utc": "2026-10-13T20:58:21.724094+00:00",
+  "returncode": 0,
+  "command": ". tools/cloud/activate.sh && bash tools/cloud/build_device.sh",
+  "cwd": "/workspace/scratch/fm1-device-build/clean-source"
+}

@@ -22,6 +22,7 @@ emcc --version
 "$CC" --version
 "$CHROMIUM_PATH" --version
 if [[ ${1:-} == --device ]]; then
-    python3 tools/cloud/prepare_toolchain.py
+    # Pin the owner-supplied 20260730.1 archive used for the first target builds.
+    python3 tools/cloud/prepare_toolchain.py --expected-sha256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd
     python3 tools/cloud/check_device.py
 fi

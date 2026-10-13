@@ -1,7 +1,7 @@
 # JamBoxFM: first physical FM-1 build
 
 Research and plan: October 13, 2026. Starting source: `5b24d1e82efa785bb79a820b7eba2c9df8bb26ec`.
-Status: plan, not an installable release. No JamBox device binary or physical flash has been validated.
+Status: milestone 1 target builds now pass; [build evidence and test outcomes](build-evidence/device-build/README.md). The current output is diagnostic, not an installable release. No physical device has been flashed or tested.
 
 ## Decision
 
@@ -23,7 +23,7 @@ Dinghy's code is GPL-3.0-only, matching our existing code licensing. Preserve fi
 
 ## Findings that change the order of work
 
-1. **The compiler is still the first build blocker.** The SDK's three required binary hashes pass our preflight. The four required JieLi executables are missing. The official HTTPS download returned a proxy CONNECT 403 during the readiness check. Both new repositories point to the same vendor toolchain; neither supplies a verified alternative compiler distribution.
+1. **The compiler blocker is resolved in this instance.** The owner uploaded the 20260730.1 archive from the documented vendor download. Its recorded hash and explicit owner-supplied provenance are in [the build evidence](build-evidence/device-build/README.md). All SDK binary hashes pass and both target builds compile. Fresh online acquisition still depends on access to the vendor redirect host; no alternative compiler distribution was substituted.
 2. **The present RAM-session wrapper is only a compile target.** `tools/cloud/build_device.sh` selects `JAMBOX_PROTO=1`, `FELUCCA_FLASH=0`, `FELUCCA_OTA=0`. The guard in `firmware/src/felucca.c` enforces that combination. With OTA off, `main.c` omits `recovery_main()` and falls back to ROM UBOOT after repeated boot failures. ROM entry is not a normal Web MIDI installer.
 3. **Turning both flags on is not the solution.** The existing `persist_boot()` also loads inherited settings/projects/banks and can mark retained projects for a later write. SAVE, autosave, editor restore, sample writes and pre-reset saving need an explicit policy before flash becomes available.
 4. **Dinghy demonstrates the useful separation.** Its updater can write its staging area independently of the optional app-settings save. We should preserve that distinction in our existing platform. Do not copy Dinghy's settings sector at `0xFC000`: Sloop already uses that sector for settings/calibration.
@@ -36,6 +36,8 @@ Owner: development environment / agent. No connected FM-1 required.
 ### Resolve and record the compiler
 
 Preferred path: apply the environment's required access to `pkgman.jieliapp.com`, then download the official Linux x86-64 pi32v2 toolchain over verified HTTPS. If the response redirects, record the actual destination and add only the required access. Retain the resolved URL, archive SHA-256 and `clang --version` through our existing preparation script. A locally recorded checksum pins the downloaded bytes; it is not an independent vendor signature.
+
+The completed path used `prepare_toolchain.py --archive` for the owner's upload, with an explicit SHA-256 check. See [cloud setup](CLOUD_SETUP.md) for the exact command and provenance. The reusable installer now pins those bytes and verifies an existing extraction before reuse.
 
 If this environment cannot reach the vendor, use a **manual GitHub Actions artifact build** on an explicitly selected Linux x86-64 runner. This is a proposed fallback, not an existing or tested workflow. It should use the same preparation/check scripts, pinned action revisions, minimum repository permissions and a compiler cache keyed by the recorded archive hash. Cache hits must still verify that hash. It must build and upload artifacts only; it must not flash a device, publish a release or deploy an installer automatically. Test vendor access on that runner before promising this route works. Windows/WSL or Linux on a local computer remains a further fallback, not a requirement for the owner to learn firmware development.
 
@@ -59,7 +61,7 @@ Build the unchanged Sloop commit in its existing research checkout after checkin
 cd /workspace/scratch/fm1-research/sloop
 . /workspace/jamboxfm/tools/cloud/activate.sh
 git rev-parse HEAD   # must be 8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e
-./build.sh
+bash build.sh
 sh tests/run_tests.sh
 
 cd /workspace/jamboxfm
@@ -67,7 +69,7 @@ bash tools/cloud/build_device.sh
 sh tests/run_jam_emu_tests.sh
 ```
 
-These are planned target-build commands, not completed results. A successful current `build_device.sh` output is a diagnostic build with OTA disabled, not the installation candidate. Do not distribute it as a release. An unchanged Dinghy target build is an optional small diagnostic if we need to distinguish a compiler/platform failure from an instrument-size failure; installing Dinghy on the owner's FM-1 is not required.
+The target-build commands now pass; the evidence record lists the full test outcome and clean-source comparison. A successful current `build_device.sh` output is a diagnostic build with OTA disabled, not the installation candidate. Do not distribute it as a release. An unchanged Dinghy target build remains an optional diagnostic if a future compiler/platform failure needs isolation; installing Dinghy on the owner's FM-1 is not required.
 
 Record the source SHA, compiler/SDK hashes, flags, generated-asset inputs, app and loader ELF files, disassembly, section sizes, `.fwsc` checksum and test logs. Add explicit checks for all linker regions, loader BSS/stack separation and unsupported arithmetic helpers; a desktop syntax check cannot establish these. Keep the existing device memory map and pool margin:
 
@@ -183,4 +185,4 @@ Detailed repository audits: [Dinghy](research/dinghy-device.md) and [FM-1-RE](re
 - FM-1-RE [scope and recovery limits](https://github.com/AL-255/FM-1-RE/blob/ec832f281ca165a7d5e0722985f3acb1465046d5/README.md), [V15 reflash record](https://github.com/AL-255/FM-1-RE/blob/ec832f281ca165a7d5e0722985f3acb1465046d5/docs/io/12-v15-reflash-proof.md), [protocol tests](https://github.com/AL-255/FM-1-RE/blob/ec832f281ca165a7d5e0722985f3acb1465046d5/tools/tests/test_fm1_ota.py), [historical experiment](https://github.com/AL-255/FM-1-RE/tree/628fcaf8945f7353ed86ea4fe2c723ddd704c8a5).
 - Local starting implementation: [prototype flags and OTA wiring](../firmware/src/felucca.c), [boot/rescue selection](../firmware/src/main.c), [inherited persistence](../firmware/src/project.c), [loader write/cleanup paths](../firmware/loader/ldr_core.c), [build checks](../tools/build.py), [device wrapper](../tools/cloud/build_device.sh), [compiler setup](../tools/cloud/prepare_toolchain.py).
 
-Research in this pass reads actual source at the pinned commits. Upstream claims of successful hardware tests remain attributed to those projects. Read-only preflight confirms the missing local compiler; it does not compile firmware. No device was connected, flashed or recovered during this planning task.
+Research reads actual source at the pinned commits. Upstream claims of successful hardware tests remain attributed to those projects. The subsequent target builds and memory checks have their own evidence record; they do not establish physical-device behavior. No device was connected, flashed or recovered.

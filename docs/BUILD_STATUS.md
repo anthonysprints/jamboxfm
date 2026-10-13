@@ -1,6 +1,6 @@
 # First JamBox software prototype
 
-October 13, 2026. The source now contains the first Dusty palette, physical Home screen and shared C browser instrument. The target FM-1 compiler download remains blocked, so this is a tested software prototype, not a hardware-validated firmware release.
+October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. The owner-supplied compiler now builds the first JamBox FM-1 diagnostic target. This remains a software prototype, with no physical-device test or firmware release.
 
 The follow-up [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. It separates temporary musical sessions from the flash support needed for firmware updates and early USB rescue. The current OTA-disabled prototype wrapper remains a diagnostic compile target, not an owner-device installation candidate.
 
@@ -40,16 +40,18 @@ The prototype device C composition passed a host syntax check with freestanding 
 
 The UI sanitizer investigation found no address failures but did report inherited signed-shift undefined behavior in `drum_synth.c` and `fx.c`. It is not a sanitizer-clean result. Existing host compiler warnings are retained in the logs. No golden DSP baselines or assertions were weakened to pass.
 
-The complete inherited runner requires a device `.fwsc`; it has not run. Current validation commands are in [CLOUD_SETUP.md](CLOUD_SETUP.md). Retained evidence is under [build-evidence/](build-evidence/).
+The device build follow-up now produces `.fwsc` files for the unchanged Sloop baseline and JamBox diagnostic target. Its full inherited runner outcome, memory gates and clean-source comparison are recorded in [device build evidence](build-evidence/device-build/README.md). Current validation commands are in [CLOUD_SETUP.md](CLOUD_SETUP.md).
+
+That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative to the published Sloop 2.6 machine code: the rebuilt IRQ is byte-identical to the shipped one. Separately, the PWA launch-path workaround ran 14/15 assertions successfully; Chromium 154 reports `in-incognito` for the unchanged test's installability check. Both failures remain visible. JamBox's own native/emulator browser regression passed, and no baseline or assertion was relaxed.
 
 ## Remaining implementation boundaries
 
 The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and supported installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
-Target code size, all memory regions, total audio interrupt timing, USB/TRS behavior, saved-data migration and recovery still need device builds and hardware testing. The owner's installed Sloop version has not been identified.
+The diagnostic target occupies 533,012 of 581,564 available app bytes. Ordinary RAM uses 70,520 of 98,304 bytes; the large-buffer pool uses 324,580 of 344,064. These figures are for OTA/storage disabled and will change when those capabilities are added. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or recovery. Those remain future gates. The owner's installed Sloop version has not been identified.
 
 ## Environment
 
 Cloud setup, setup replay, pinned SDK download into a fresh destination, and local serving of HTML/JavaScript/WASM passed. Python, browser/native compilers, SDK and Playwright dependencies are installed outside the checkout. Reusable installation and startup instructions have been saved to the environment draft.
 
-The official vendor endpoint `pkgman.jieliapp.com` returned proxy HTTP 403 before the compiler archive could be downloaded. The required hostname addition is saved in environment settings; it must be applied to runtime access before the device build can proceed. No compiler version or checksum has been invented. Saving this draft does not publish the environment.
+The official vendor endpoint became reachable, but its `jl-update.oss-cn-shenzhen.aliyuncs.com` archive redirect remained blocked by proxy CONNECT 403. The owner's uploaded archive resolved that prerequisite locally. Its SHA-256, Clang version and acquisition method are recorded honestly; future setup reuses the verified cache or requires the same bytes. Network additions and reusable instructions are saved in the environment draft. Saving that draft does not publish the environment.

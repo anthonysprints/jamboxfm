@@ -1,0 +1,1384 @@
+== flash storage (A/B, torn writes)
+empty flash loads nothing                      ok
+save A                                         ok
+load returns A                                 ok
+save B                                         ok
+load returns B (newer seq)                     ok
+torn save keeps B                              ok
+header not written keeps B                     ok
+save A again                                   ok
+load returns A                                 ok
+both copies corrupt -> nothing                 ok
+other objects untouched                        ok
+settings save/load                             ok
+CRC-32 is zlib's (check value 0xCBF43926)      ok
+newer copy rotten -> the older one loads       ok
+save over the rotten copy                      ok
+... loads the new data                         ok
+both headers broken -> nothing                 ok
+data stays in the Felucca regions (autosave too) ok
+every object copy has its own sector           ok
+2.5: save in two parts                         ok
+2.5: ... loads as one object                   ok
+2.5: ... a 2.4 load takes its part only        ok
+2.5: ... a torn save keeps the last one        ok
+2.5: ... too big for a sector: refused         ok
+2.6 erase: a project saved                     ok
+2.6 erase: the empty object written            ok
+2.6 erase: loads 0 bytes (an empty slot)       ok
+2.6 erase: saved again                         ok
+storage test passed
+== application USB recovery and boot-loop guard
+recovery: boot failures, manual key, timer wrap, polled USB during OTA, retry, flash refusal and ROM fallback passed
+== song order, timing, repeats and missing scenes
+arranger: order, repeats, stop, loop, tempo change, fractional timing, invalid scenes, erased section PASS
+== song: four simultaneous tracks, scene transition and stop
+song live: B on the bar (176416), SONG REC -> A 2 bars, B 3 bars PASS
+song audio: 3 synth parts + drums, section at 176416, stop at 352800, no held sequencer notes PASS
+== song screen: commands, load (OCT+ twice), display bounds
+song UI: independent plan/scene save, overwrite confirmation, stopped-only changes, missing scene, bounds PASS
+== drum lanes, kit audio, metronome, record arm, free take
+drums: 16 lanes a step (levels, ratchets), the key / GM maps, every kit distinct, bounded audio and finite tails, metronome (OFF/REC/ON, accent), record: first note starts the loop, at once while playing, latency-compensated steps, free takes set the loop and tempo, arm follows the track PASS
+== sequencer 2.0: no drift, ratchets, roll, erase / undo, ghost / hard, chords, mute / solo, nudge, locks
+seq2: 2.6: IN = CH 12: notes on other channels play nothing                    ok
+seq2: 2.6: IN = CH 12: a note on channel 12 plays the selected track (3)       ok
+seq2: 2.6: its note-off ends it on track 3, where it started                   ok
+seq2: 2.6: a CC on channel 12 sets the selected track; on channel 1 it is ignored ok
+seq2: 2.6: IN changed while a note is held: it is released (no hanging note)   ok
+seq2: #191: the latched arp plays its keys (C4 E4)                             ok
+seq2: #191: TRN +2 after the keys: the latched arp follows (D4 F#4)            ok
+seq2: #191: QNT WHITE, SCALE MIN after the keys: C4 Eb4                        ok
+seq2: #191: ROOT D after the keys: D4 F4                                       ok
+seq2: #191: CHORD+ 7th added after OCT+: in the key's octave (60 63 67 70, not 82) ok
+  drum DLY: echo rms off 81605, 64 737425, 127 2181470, 127 + filter 2121269
+seq2: 2.5: GLO > DRUMS > DLY: the drums echo in the tempo delay (more with more DLY, through the FILTER too); 0: none ok
+seq2: track FILTER: LP -50 darkens a part (HF / 2), HP +50 thins it (level / 2) ok
+seq2: track FILTER: back to 0, it opens and is bypassed again                  ok
+seq2: track FILTER on the drum track: LP darkens the hats                      ok
+seq2: track FILTER on the drum track: open again, bypassed                     ok
+seq2: track FILTER: a step can lock it                                         ok
+seq2: USB AUDIO FULL: the USB level stays up when MASTER is low, no clipping   ok
+seq2: 2.4: nudge +16 fires a quarter step late, -16 a quarter step early (within a block) ok
+seq2: 2.4: 16 nudged steps (two crossing) over 8 bars: every step once, in order, none doubled ok
+seq2: 2.4: lock_set takes P_E0 and P_DIST, refuses P_SLEN and P_AMODE (not lockable) ok
+seq2: 2.4: lock_set bounds the step and the parameter                          ok
+seq2: 2.4: a lock on P_E0 / P_DIST at step 3: set for that step, the base back at step 4 ok
+seq2: 2.4: a knob turned during the locked step: kept as the new base          ok
+seq2: 2.4: STOP during the locked step: the base (4) is back                   ok
+seq2: 2.4: a lock's value is clamped (WAVE 99 -> 4); lock_del clears a step's locks ok
+seq2: 2.4: steps_clear frees every lock and nudge                              ok
+seq2: 2.4: step_fill / step_fill_set: 2 bits a step, the index bounded         ok
+seq2: 2.4: no fill: the kick and the NO FILL hat play, the FILL ONLY snare (x4) is silent ok
+seq2: 2.4: fill held: the snare plays with its 4 ratchet hits, the NO FILL hat is silent ok
+seq2: 2.4: fill let go: back to normal                                         ok
+seq2: 2.4: a synth FILL ONLY step: one note a bar without the fill, two with it ok
+seq2: 2.4: FILL NEXT BAR: the whole next bar is a fill (the snare plays, the hat not)... ok
+seq2: 2.4: ... and only that bar                                               ok
+seq2: 2.4: FILL NEXT BAR pressed again before the bar: cancelled               ok
+seq2: 2.4: STOP clears the held and the armed fill                             ok
+seq2: 2.4: section_bars: A 1 bar, B 2 bars (32 x 1/16), C 3 bars (3 x 1BAR); an empty slot 1 ok
+seq2: 2.4: chain A B: A on the next bar, B a bar later, A two bars after that, round again (bar exact) ok
+seq2: 2.4: the chain state follows: entry 2 (B), 2 bars                        ok
+seq2: 2.4: a single section tap cancels the chain: A, and it stays             ok
+seq2: 2.4: STOP: no chain, no request                                          ok
+seq2: REC mode FREE, empty project: the first note starts a free take          ok
+seq2: REC mode TEMPO, empty project: the first note starts the loop at 100 BPM, recording ok
+seq2: REC START COUNT: a note only sounds, nothing starts                      ok
+seq2: REC START COUNT: PLAY -> one bar of clicks, not playing yet              ok
+seq2: REC START COUNT: 4 clicks (one bar of 4/4)                               ok
+seq2: REC START COUNT: after the bar the loop starts and records               ok
+seq2: REC START COUNT: REC during the count-in cancels it                      ok
+seq2: REC START COUNT: PLAY again during the count-in: back to armed           ok
+seq2: MIDI clock: stopped, BPM follows the master (120)                        ok
+seq2: MIDI clock: START, 2 bars at 120 -> beat 8 exactly                       ok
+seq2: MIDI clock: the master at 100 -> 2 more bars, BPM 100                    ok
+seq2: MIDI clock: SYNC USB ignores the TRS jack                                ok
+seq2: MIDI clock: STOP                                                         ok
+seq2: MIDI clock: no pulse for 0.5 s -> the internal tempo plays               ok
+seq2: 2.4: count-in running before the master starts                           ok
+seq2: 2.4: a MIDI START during the count-in starts and records at once         ok
+seq2: 2.4: SWING on the 8T grid does nothing (triplets stay even)              ok
+seq2: 2.4: DIV 1/8 -> 1/4 in the first beat: the step on beat 2 plays          ok
+seq2: 2.4: DIV 2BAR: one step every 8 beats (3 hits in 16 beats)               ok
+seq2: 2.4: DIV 1/2: one step every 2 beats (5 hits in 8 beats)                 ok
+seq2: 2.4: delay TIME 1/8D = 3/4 beat, 1/16D = 3/8 beat                        ok
+seq2: 2.6: delay TIME 1/4D = 1.5 beats, after 1/16D (older projects keep their value) ok
+seq2: 2.4: div_units: 1BAR = 4 beats, 2BAR = 8, 1/16 = a quarter beat          ok
+seq2: 2.4: MIDI = KEYS: the sequencer sends nothing to MIDI OUT                ok
+seq2: 2.4: MIDI = SEQ: the steps go out on their track's channel (drums on 10) ok
+seq2: 2.4: MIDI = SEQ: every note sent on was ended (STOP ends the rest)       ok
+seq2: 2.4: IN = NOTES: a MIDI note plays                                       ok
+seq2: 2.4: IN = CLOCK: a MIDI note-on is ignored                               ok
+seq2: 2.4: IN = CLOCK: the note-off still ends the note held before            ok
+seq2: 2.4: IN = CLOCK: the clock still runs SLOOP (START, one bar)             ok
+seq2: 2.5: CC 7 10 74 72 73 75 5 91 93 94 on ch 1 set track 1 (64 = the middle of PAN / FILTER) ok
+seq2: 2.5: CC 0 / 127: the ends of the range                                   ok
+seq2: 2.5: CC71 = the engine's RES; an engine without one, and unmapped CCs, change nothing ok
+seq2: 2.6: CC 64 (sustain) on ch 2: track 2's pedal down (no parameter changed) ok
+seq2: 2.5: a CC on ch 4-16 sets the selected track                             ok
+seq2: 2.5: the drum channel: 7 / 91 / 94 = DRUMS LVL / REV / DLY, 10 PAN, 74 FILTER; 73 ignored ok
+seq2: 2.5: IN = CLOCK: CCs ignored                                             ok
+seq2: 2.6: GLO > MIDI: ch 2, 11, 8 play tracks 1, 2, 3; ch 1 (nobody's): the selected track ok
+seq2: 2.6: a CC follows the track's channel too                                ok
+seq2: 2.6: their note-offs end them                                            ok
+seq2: 2.6: OTHER = OFF: a channel no track has plays nothing (notes and CCs)   ok
+seq2: 2.6: MIDI out: a track's keys on its own channel (track 2 on 11)         ok
+seq2: 2.6: sustain down: a note let go keeps sounding                          ok
+seq2: 2.6: sustain up: the waiting note ends, the one still held by its key stays ok
+seq2: 2.6: (and ends with its key)                                             ok
+seq2: 2.6: pedal up after another track was selected: the first one's note ends ok
+seq2: 2.6:   and its later notes end with their keys (no pedal stuck)          ok
+seq2: 2.6: the wheel let go after another track was selected: the first one back too ok
+seq2: 2.6: a project / NEW (every track released): the bends back to the middle ok
+seq2: 2.6: OTHER = OFF: a note-off on an ignored channel does not end the selected track's note ok
+seq2: 2.6: a note played again under the pedal: no key left counted by the arp ok
+seq2: 2.6: MIDI Program Change: queued for the track its channel plays (ch 2: track 2, ch 10: drums); OTHER = OFF / IN = CLOCK: none ok
+seq2: 2.6: GLO > MIDI CH2 changed with a note held on it: the note does not stay stuck ok
+seq2: 2.6: GLO > MIDI CH1 = OFF: track 1 sends nothing to MIDI OUT either      ok
+seq2: 2.6: CH1 changed with a sequencer note on: its note-off on the channel it went out on (5) ok
+seq2: overload: the releasing voice goes first, faded (stage 4)                ok
+seq2: overload: the upper notes thin out, the bass and the MONO lead stay      ok
+seq2: 64 bars at 87..174 BPM: every kick in the block of its downbeat click    ok
+seq2: DIV 1/4 -> 1/32 and 40 -> 240 BPM mid-step: one step a block, no burst   ok
+seq2: SWING 75 %, LEN 3 against LEN 16: in phase after 15 bars (no drift)      ok
+seq2: LEN 32 -> 16 while playing: in phase with a 16-step track                ok
+seq2: drums: a hat x4 plays 4 even hits in its step, the next step plays       ok
+seq2: synth: a note x3 starts 3 times in its step                              ok
+seq2: roll 1/32 held 8 steps: ~16 hits                                         ok
+seq2: roll 1/32 recorded: one hit a step, ratchet x2                           ok
+seq2: EDIT + hat while playing steps 4..7: those hats gone, the rest and the kicks kept ok
+seq2: undo: the erased hats are back                                           ok
+seq2: EDIT + hat while stopped: every hat gone                                 ok
+seq2: OCT- / OCT+ held on the drums: a ghost snare and a hard kick recorded    ok
+seq2: ... and played at 42 / 127                                               ok
+seq2: chord 9TH on C4 in C minor: C Eb Bb D                                    ok
+seq2: chord TRIAD on D4 in C minor: D F Ab                                     ok
+seq2: chord mode: the black keys are silent                                    ok
+seq2: drum track muted: no hits                                                ok
+seq2: track 1 soloed: the drums silent (faded out)                             ok
+seq2: solo off: the drums back                                                 ok
+seq2: CHORD+: C4, no modifier: C E G                                           ok
+seq2: CHORD+: F# held: the third flips, C Eb G                                 ok
+seq2: CHORD+: ... and back the other way on a minor chord: D F# A              ok
+seq2: CHORD+: G#: the 7th, C E G B                                             ok
+seq2: CHORD+: A#: sus4, C F G                                                  ok
+seq2: CHORD+: C#: the 9th, C E G D                                             ok
+seq2: CHORD+: G# + C#: 7th and 9th, four notes (the 5th gives way)             ok
+seq2: CHORD+: D#: an inversion, E G C                                          ok
+seq2: CHORD+: modifiers combine (F# + G#: C Eb G B)                            ok
+seq2: CHORD+: the black keys F# G# A# C# D# (both octaves), white keys none    ok
+seq2: CHORD+ keys: F#3 held, C4: C Eb G sound                                  ok
+seq2: CHORD+ keys: F#3 let go with C4 held: C E G (the chord changes under the finger) ok
+seq2: CHORD+ keys: G#3 pressed with C4 held: the 7th joins                     ok
+seq2: CHORD+ keys: all let go: nothing held                                    ok
+seq2: CHORD+: a modifier key plays no note of its own                          ok
+seq2: STRUM 20: the lowest note at once                                        ok
+seq2: STRUM 20: the next one 20 ms later                                       ok
+seq2: STRUM 20: the third 20 ms after that                                     ok
+seq2: STRUM -20 (up): the highest note first                                   ok
+seq2: STRUM: a key let go before its notes start: they never start (no hanging note) ok
+seq2: VLEAD: C E G then F: C F A (the nearest inversion)                       ok
+seq2: VLEAD: ... then G: B D G (or D G B), no jump up                          ok
+seq2: STRUM on a chord step: the low note first, the others after              ok
+seq2: STRUM on a chord step: all three within 30 ms                            ok
+seq2: STOP: no strummed note left waiting                                      ok
+seq2: all checks ok
+== synthesised drum kits: every kit x sound bounded, audible, finite, levels, cost
+drum kits: 32 synthesised x 16 sounds bounded, audible, finite; levels near the sampled kit PASS
+== user drum kits (KIT USR1..USR3): a user slot's sounds on the drum lanes
+userkit: USR1 read by smp_user_scan: 4 zones; USR2 empty                        ok
+userkit: KIT: USR1..USR4, USR3+4 after the synthesised kits (the old kit numbers kept) ok
+userkit: USR4: 0xE7000..0xFAFFF, after the FM6 bank, before the settings; the store may write it, not past it ok
+userkit: USR1, KICK: its zone (slot 0, zone 0)                                  ok
+userkit: ... at its own pitch (root = the lane's note)                          ok
+userkit: ... and it sounds                                                      ok
+userkit: SNARE: zone 1                                                          ok
+userkit: a lane without a sound (SNARE 2): silent                               ok
+userkit: GM 35 (KICK 2 lane): silent, not the kick                              ok
+userkit: the click's wood block (76): not a lane                                ok
+userkit: OPEN HAT: zone 3                                                       ok
+userkit: the closed hat chokes the open one                                     ok
+userkit: PEDAL lane without a sound: silent                                     ok
+userkit: USR2 (an empty slot): silent                                           ok
+userkit: USR3 and USR4 read: 2 zones each (USR4 from its own place)             ok
+userkit: USR3+4: KICK from USR3                                                 ok
+userkit: USR3+4: SNARE from USR4, and it sounds                                 ok
+userkit: USR3+4: the closed hat (USR3) chokes the open one (USR4)               ok
+userkit: USR3+4: a lane in neither slot (CRASH): silent                         ok
+userkit: USR4 alone: no KICK there                                              ok
+userkit: USR4 alone: its SNARE                                                  ok
+userkit: the drum steps play the user kit                                       ok
+userkit: 808 (a synthesised kit) as before                                      ok
+userkit: ACOUSTIC (the GM sample set) as before                                 ok
+userkit: the click with KIT USR3+4 and an empty USR2: heard                     ok
+userkit: the click with the drum track muted: heard                             ok
+userkit: the click at GLO > DRUMS > LVL 0: silent (its level)                   ok
+userkit: KIT USR1..USR4, USR3+4 PASS
+== SYN1..SYN4 drum kits and the editor's DRUM SYNTH commands (v10)
+dsyn: the kit list ends with SYN1..SYN4, after USR3+4 (older projects keep their kit) ok
+dsyn: never stored: SYN1..4 = 808, 909, TRAP, TECHNO                                 ok
+dsyn: SYN1 (808) plays the 16 sounds bit for bit as the 808 kit                      ok
+dsyn: an edit (the kick's decay) is heard on that sound only                         ok
+dsyn: ... undone: bit for bit again                                                  ok
+dsyn: KIT = SYN3 plays its own sounds (RAM); the factory kits theirs                 ok
+dsyn: DSYN_LIST: 32 factory kits, 4 of yours, stored; the names                      ok
+dsyn: DSYN_GET SYN2: name, crush, the kit it came from, its 16 sounds                ok
+dsyn: DSYN_GET of no kit: rc 1                                                       ok
+dsyn: DSYN_PUT a sound of 0xFF bytes: written, every value in range, not stored      ok
+dsyn: DSYN_PUT the name, the crush, its source                                       ok
+dsyn: DSYN_PUT 17: SYN4 = a copy of a factory kit                                    ok
+dsyn: DSYN_PUT: no such kit / part, a short sound: rc 1                              ok
+dsyn: DSYN_STORE without flash: rc 4                                                 ok
+dsyn: DSYN_PLAY: the hat of SYN2 plays on the next audio block                       ok
+dsyn: DSYN_PLAY of no lane: rc 1, nothing queued                                     ok
+dsyn: 2000 random kits (any byte the editor could send): bounded, finite             ok
+  kick, curvature at the block edges / inside: at most 1.20 (ARCADE)
+dsyn: the kicks of the synthesised kits: no step at the block edges (no whistle at 1.4 / 2.8 kHz) ok
+dsyn: all checks ok
+== the screen font at 1 bit a pixel: every glyph, the same pixels as 2.5
+font: every character 32..255: the Terminus Bold pixels of its capital (ter-u16b.bdf) ok
+font: lower case shows as capitals, in the same place                        ok
+font: FONT_S: every glyph, 4 colours, 6 places (clipped)                     ok
+font: FONT_L (2x): every glyph, 4 colours, 6 places (clipped): S's bitmaps at 2x ok
+font: advance and bitmap widths unchanged (the layout)                       ok
+font: the 4-bit format (anti-aliased fonts) still draws the same pixels      ok
+font: the Terminus bitmaps at 1 bit a pixel: 5376 bytes (21504 at 4 bits)    ok
+font test passed
+== punch-in FX: 27 effects (11 on the black keys), bounded, dry after release, FX-held keys
+kills: low 60 Hz 0.003, high 9 kHz 0.003, mid 900 Hz 0.017 (1 kHz through KILL LOW 1.00)
+oct up: 440 Hz / 220 Hz power 7506.5, level 0.96
+auto-pan: 4 eighths of a beat hard left, 4 hard right (of 16)
+fade out: 0.252 at a beat, 0.0003 at two
+rewind: sound for 0.36 s, then silence
+freeze: held 1.04 then 1.03 of the dry level (right 0.99), 0.0007 2 s after release
+freeze held 30 s: the reverb's mean -325, -319, -315 (10 s each)
+quick switch KILL LOW -> MONO -> KILL MID over silence: peak 0
+black keys: KILL LOW / MID / HIGH, REWIND, OCT UP, FLANGER, AUTO-PAN, FREEZE, LOOP 8T, MONO, FADE OUT do what they say PASS
+punch-in FX: 27 effects change the mix while held, bounded, exact dry mix after release; FX-held keys pick effects, play and record nothing PASS
+== after Felucca 1.4 / 1.5: INSERT, filter TYPE, ENV SYNC, LFO 2, drum mutes, MIDI LEARN
+fx251: INSERT at MIX 0: the part bit for bit as with TYPE OFF                                   ok
+  SOFT : rms 2923, mean |diff| 2517, peak 5132
+fx251: each INSERT type (SOFT .. CHOR) changes the part, bounded, heard                         ok
+fx251: TYPE OFF: the INSERT stops after its fade                                                ok
+  HARD : rms 2270, mean |diff| 2927, peak 4809
+fx251: HARD                                                                                     ok
+fx251:   (fade out)                                                                             ok
+  FOLD : rms 1264, mean |diff| 4612, peak 4246
+fx251: FOLD                                                                                     ok
+fx251:   (fade out)                                                                             ok
+  FUZZ : rms 1678, mean |diff| 3304, peak 4565
+fx251: FUZZ                                                                                     ok
+fx251:   (fade out)                                                                             ok
+  CRUSH: rms 5284, mean |diff| 459, peak 9211
+fx251: CRUSH                                                                                    ok
+fx251:   (fade out)                                                                             ok
+  PHASR: rms 4417, mean |diff| 2940, peak 14838
+fx251: PHASR                                                                                    ok
+fx251:   (fade out)                                                                             ok
+  FLANG: rms 5349, mean |diff| 3372, peak 14038
+fx251: FLANG                                                                                    ok
+fx251:   (fade out)                                                                             ok
+  CHOR : rms 3317, mean |diff| 3689, peak 8077
+fx251: CHOR                                                                                     ok
+fx251:   (fade out)                                                                             ok
+  drums: rms dry 2069, FUZZ 1732
+fx251: the drum track's INSERT (FUZZ): the kick changed, left / right / sends through it        ok
+  LP: 55 Hz -0.1 dB, 660 Hz -5.5 dB, 3.3 kHz -27.7 dB
+  BP: 55 Hz -22.2 dB, 660 Hz -6.0 dB, 3.3 kHz -13.8 dB
+  HP: 55 Hz -44.6 dB, 660 Hz -6.7 dB, 3.3 kHz -0.4 dB
+fx251: ANALOG filter TYPE: LP keeps the lows (3.3 kHz 20 dB down), HP the highs (55 Hz 30 dB down) ok
+fx251: ANALOG filter TYPE BP: the middle over both ends                                         ok
+fx251:   (LP below its cutoff: as the open filter, within 1.5 dB)                               ok
+  ENV SYNC ATK 1/4: 690 blocks at 120 BPM (689), 1379 at 60 (1378)
+fx251: ENV SYNC: value 72 is 1/4                                                                ok
+fx251: ENV SYNC: the attack lasts a quarter note at 120 BPM and at 60                           ok
+fx251: LFO 2 SYNC 1/4: four cycles in two seconds at 120 BPM, whatever RATE                     ok
+fx251: LFO 2 TRIG FREE: a new phrase leaves the phase where it is                               ok
+fx251: LFO TRIG NOTE (as before): a new phrase restarts it                                      ok
+fx251: LFO 2 POL UNI: the LFO stays 0..+1                                                       ok
+  kick hits: 18, muted 0 (the snare meanwhile: 16)
+fx251: the drum track's live mute: the sequencer skips the muted sound (ratchets too), the others play ok
+fx251: MIDI LEARN: CC 20 on any channel sets track 2's DST (the learned one)                    ok
+fx251: MIDI LEARN: a learned CC 74 sets its parameter, not the standard map's FILTER            ok
+fx251: while learning: the CC goes to the UI (ml_heard), nothing is set                         ok
+fx251: MIDI LEARN: mod wheel, sustain, bank select, the channel modes never learned             ok
+fx251: MIDI LEARN: an entry's code -> its parameter (an unknown one: none)                      ok
+fx251: TEXTURE OFF (or LEVEL 0): the mix bit for bit as without                                 ok
+  TEXTURE VINYL : rms 575 (-35.1 dBFS), mean -9, peak 6810
+  TEXTURE TAPE  : rms 1010 (-30.2 dBFS), mean -1, peak 3475
+  TEXTURE RAIN  : rms 957 (-30.7 dBFS), mean -4, peak 8752
+  TEXTURE WIND  : rms 1168 (-29.0 dBFS), mean -4, peak 4606
+  TEXTURE RADIO : rms 1188 (-28.8 dBFS), mean -0, peak 4227
+  TEXTURE ROOM  : rms 991 (-30.4 dBFS), mean -10, peak 3287
+fx251: TEXTURE: VINYL TAPE RAIN WIND RADIO ROOM heard (LEVEL 64: -40 .. -22 dBFS rms), bounded, no offset ok
+  TEXTURE WHEN ALWAYS (stopped): rms 3700
+fx251: TEXTURE WHEN PLAY: nothing while stopped; ALWAYS: plays                                  ok
+  TEXTURE MOVE 127: a quarter second's rms 489 .. 2859
+fx251: TEXTURE MOVE: the level breathes over RATE (x2 and more at MOVE 127)                     ok
+  TEXTURE TONE -50 / 0 / +50: 8 kHz -45.2 / 0 / -1.6 dB, 150 Hz -4.7 / 0 / -18.2 dB
+fx251: TEXTURE TONE: left closes the highs, right the lows                                      ok
+  TEXTURE USR1 looped: rms 4878 after 1.4 s; USR2 (empty) 4
+fx251: TEXTURE USR1: a user slot's sample looped; an empty slot silent                          ok
+  bend: period 400.91, full up at BEND 2 357.23 (x1.122), at 12 200.49 (x2.000)
+fx251: MIDI pitch bend: full up = BEND semitones (2: a tone, 12: an octave)                     ok
+  a preset over held notes: the switch's worst sample step 0.6 x the note's own
+fx251: a preset loaded over held notes: they fade out with their own sound (no click: WHEEL, PHASE, FM6..) ok
+  low-pass engaged under a note: track FILTER 87, master FILT 84 (the note's own 477)
+fx251: track FILTER / master FILT engaging their low-pass: no click                             ok
+  limiter: peak out 17998 (LIM_T 18000), before the jump 496, gain at the end 32768
+fx251: master limiter: below LIM_T exact (one block late); a 5.5x jump never above LIM_T; back to 1 after ok
+  limiter, held bass 2x LIM_T: gain 16214..16215 over 400 blocks
+fx251: master limiter: a held loud bass keeps its gain (within 0.01 %: the hold), samples at full precision ok
+  THROW: tail rms dry 52, REV THROW 1003, ECHO THROW 2416; the glide back 0 0
+fx251: REV / ECHO THROW: the sends full while held (a tail rings), back after; nothing changed  ok
+fx251: all checks ok
+== live UI: pages, layers (punch, steps, erase, roll, key, mix), holds, drums, REC, fuzz
+ui: GLO > SYSTEM: KNOB 1 sets MIDI = SEQ                                       ok
+ui: GLO > SYSTEM: the first column reads OUT SEQ (MIDI OUT)                    ok
+ui: GLO > SYSTEM: KNOB 3 sets IN = CLOCK                                       ok
+ui: IN = CLOCK kept in the settings word (bit 15)                              ok
+ui: IN read back from the settings word                                        ok
+ui: 2.6: IN = CH 12 (CH 1..16 after CLOCK), kept in the settings word (bits 21-25), read back ok
+ui: 2.6: a settings word from 2.5 (no channel bits): IN = NOTES                ok
+ui: synth track, no layer: no landmarks (a piano)                              ok
+ui: SEQ tapped: the SEQ pages                                                  ok
+ui: FX tapped: the FX pages                                                    ok
+ui: FX held: the punch layer shows                                             ok
+ui: FX held: keys 1, 5, 9, 13 lit dim (the rows of the grid)                   ok
+ui: FX + the 3rd white key: punch effect 3                                     ok
+ui: key up: the mix comes back                                                 ok
+ui: FX + the black key A#4: FREEZE (2.6: 11 black-key effects)                 ok
+ui: its key lights                                                             ok
+ui: black key up: the mix comes back                                           ok
+ui: FX + KNOB 2: DUST                                                          ok
+ui: FX + KNOB 1: the filter (low-pass)                                         ok
+ui: FX + KNOB 4: the selected track's FILTER (high-pass)                       ok
+ui: FX used then let go: no FX page                                            ok
+ui: FX held + HOME: locked open, FX let go                                     ok
+ui: FX + HOME: no FX page, no HOME jump                                        ok
+ui: locked FX + the 3rd white key: punch effect 3 (no hands on FX)             ok
+ui: locked FX, key up: the mix comes back                                      ok
+ui: locked FX + KNOB 2: DUST                                                   ok
+ui: locked: PLAY plays and keeps the lock                                      ok
+ui: locked, ENV pressed: unlocked, and only that (no ENV page)                 ok
+ui: locked, HOME tapped: unlocked                                              ok
+ui: locked, FX tapped: unlocked, no FX page                                    ok
+ui: locked SEQ, FX held: unlocked, the FX layer                                ok
+ui: and FX let go: back to playing                                             ok
+ui: locked, HOME held: the menu, unlocked                                      ok
+ui: a drum key played: the SEQ layer's sound (snare)                           ok
+ui: SEQ + white keys 1, 5, 9: snare steps                                      ok
+ui: step 5 held + KNOB 2 / 3: hard, x3                                         ok
+ui: step 1 again: off                                                          ok
+ui: SEQ used then let go: no page change                                       ok
+ui: EDIT + OCT-: undo (the SEQ hold's steps gone)                              ok
+ui: EDIT + OCT+: redo (back, as left)                                          ok
+ui: EDIT + snare (stopped): every snare erased                                 ok
+ui: EDIT + KNOB 2: length x2                                                   ok
+ui: EDIT + OCT-: the length back to 16                                         ok
+ui: ARP + KNOB 1: the roll rate (1/32)                                         ok
+ui: ARP + a key: it rolls                                                      ok
+ui: key up: the roll ends                                                      ok
+ui: SEL + D: every part in D                                                   ok
+ui: SEL + KNOB 1: chords (7TH) on the track                                    ok
+ui: GLO + key 1: track 1 muted                                                 ok
+ui: GLO + key 6: track 2 soloed                                                ok
+ui: GLO + the last key, tapped at ~0.6 s: ~100 BPM                             ok
+ui: again: unmuted, no solo                                                    ok
+ui: GLO + key 9 held: FILL (the key lit)                                       ok
+ui: key 9 let go: the fill ends                                                ok
+ui: GLO + key 10: FILL NEXT BAR armed (the key lit)                            ok
+ui: GLO + key 10 again: cancelled                                              ok
+ui: key 9 without GLO: no fill                                                 ok
+ui: the lock parameter starts as ENV > FLT                                     ok
+ui: a sound knob turned (FX > DIST): the lock parameter                        ok
+ui: a pattern knob (DIV) is not a lock parameter                               ok
+ui: step 5 held + KNOB 1: the note two up (as in 2.3)                          ok
+ui: step 5 held + KNOB 4: nudged -7 (the step kept)                            ok
+ui: step 5 held + PRESETS: a DIST lock at the track's value, moved one up      ok
+ui: PRESETS again: the lock moves, the track's DIST does not                   ok
+ui: PRESETS with a step held browses no sound                                  ok
+ui: the step shows its mark (a nudge or a lock)                                ok
+ui: step held + ALGORITHM: the lock parameter (DIST -> CHO), the track stays selected ok
+ui: ALGORITHM back twice: CHO -> DIST -> GATE (LEN, DIV, SWG skipped)          ok
+ui: PRESETS: a second lock (GATE) on the same step                             ok
+ui: ALGORITHM wraps round through the lockable parameters                      ok
+ui: KNOB 4 bounded at -32                                                      ok
+ui: step held + OCT-: its nudge and locks cleared, the step kept, no page change ok
+ui: step held + OCT+: FILL ONLY (no page change, the step kept)                ok
+ui: OCT+ again: NO FILL                                                        ok
+ui: OCT+ again: normal                                                         ok
+ui: FILL ONLY + a nudge, OCT-: the condition and the nudge reset               ok
+ui: the step edited is kept when let go                                        ok
+ui: a set step held + PRESETS: a lock, the step kept                           ok
+ui: a step cleared: its locks and fill condition go too                        ok
+ui: no step held, SEQ held: ALGORITHM does nothing (no track change)           ok
+ui: SEQ let go: ALGORITHM selects the track again                              ok
+ui: the drum track: step 1 held + KNOB 1: the sound (as in 2.3)                ok
+ui: the drum track: step 1 held + KNOB 4 / PRESETS: nudge +5, a lock, the kit untouched ok
+ui: no step held + OCT-: the page (not a clear)                                ok
+ui: REC tapped (stopped): armed                                                ok
+ui: REC again: cancelled                                                       ok
+ui: REC held: the press undone, the clear ring                                 ok
+ui: REC held to the end: track 1 cleared                                       ok
+ui: EDIT + OCT-: the cleared track back                                        ok
+ui: REC let go before the end: nothing cleared                                 ok
+ui: SAVE held: the song layer                                                  ok
+ui: store over a used A: asks again                                            ok
+ui: again: the loop stored in A                                                ok
+ui: an empty C: stored at once                                                 ok
+ui: stopped: B loaded as the loop                                              ok
+ui: an empty D: not played                                                     ok
+ui: playing: A asked for the next bar                                          ok
+ui: one tap, SAVE let go: no chain (as before)                                 ok
+ui: SAVE held, A then B tapped: A asked for, the chain building                ok
+ui: the sub line reads "chain A B"                                             ok
+ui: B again: "chain A B B"                                                     ok
+ui: SAVE let go: the chain A B B plays (A asked for, 1 bar)                    ok
+ui: SAVE held again: the chain shown                                           ok
+ui: a single tap of B: the chain ends, B asked for                             ok
+ui: SONG REC armed (loop mode)                                                 ok
+ui: SONG REC again: off                                                        ok
+ui: loop / song: song mode                                                     ok
+ui: again: loop mode                                                           ok
+ui: SAVE held and let go: no song page, no save                                ok
+ui: SAVE tapped on TRACKS: the song page                                       ok
+ui: the drum screen                                                            ok
+ui: DRUMS: KNOB 3 adds the kick on step 1                                      ok
+ui: DRUMS: KNOB 4 softer                                                       ok
+ui: DRUMS: KNOB 1 / 2 bounded (16 sounds, 16 steps)                            ok
+ui: REC screen, empty project: KNOB 1 -> MODE tempo                            ok
+ui: REC screen: KNOB 2 -> LENGTH 1, 2, 4 bars                                  ok
+ui: REC screen: KNOB 2 back -> 2 bars                                          ok
+ui: REC screen: KNOB 3 -> START count                                          ok
+ui: REC screen: MODE and START saved with the settings                         ok
+ui: REC screen: the count-in running, the dials wait                           ok
+ui: REC screen, a project with notes: no MODE (always the tempo set)           ok
+ui: REC screen: KNOB 3 / 1 back -> note, free                                  ok
+ui: REC screen, MODE free: no START (the take starts on the first note)        ok
+ui: NOTES off: a sounding synth voice lights no key                            ok
+ui: menu NOTES: its knob (KNOB 3) right: ON                                    ok
+ui: NOTES on: a sounding synth voice lights key 7 (C4)                         ok
+ui: NOTES on: D4 not lit before it plays                                       ok
+ui: NOTES on: a note over before the frame still lights its key (D4)           ok
+ui: NOTES on: ... for about 6 frames, then off                                 ok
+ui: NOTES on, EDIT erase layer: the sounding C4 lit                            ok
+ui: NOTES on, ARP roll layer: the sounding C4 lit                              ok
+ui: NOTES on, SEL key layer: the sounding C4 lit                               ok
+ui: NOTES on, SAVE song layer: the sounding C4 lit                             ok
+ui: NOTES on, FX punch layer: the sounding C4 glows under the tiles            ok
+ui: NOTES on, SEQ steps layer: the sounding C4 glows under the tiles           ok
+ui: NOTES on, GLO mix layer: the sounding C4 glows under the tiles             ok
+ui: NOTES on, SEL: the scale glows                                             ok
+ui: NOTES off, EDIT erase: as before (no note lights)                          ok
+ui: NOTES off, SEL: as before                                                  ok
+ui: NOTES on: the octave moves the lit key                                     ok
+ui: NOTES on: the release turns the key off                                    ok
+ui: NOTES: saved with the light settings                                       ok
+ui: menu USB AUDIO: its knob (KNOB 2) -> FULL, saved with the settings         ok
+ui: menu USB AUDIO: OCT+ toggles back to MASTER                                ok
+ui: menu USB SERIAL: OFF by default (2.3 settings read so)                     ok
+ui: menu USB SERIAL: its knob (KNOB 3) -> ON, saved with the settings          ok
+ui: menu USB SERIAL: read back                                                 ok
+ui: menu USB SERIAL: OCT+ toggles back to OFF                                  ok
+ui: menu NOTES: OCT+ toggles it off                                            ok
+ui: LIGHTS: off by default                                                     ok
+ui: LIGHTS: KNOB 1 right: LOW (a 0.5 us pulse a frame)                         ok
+ui: LIGHTS: MID (1 us)                                                         ok
+ui: LIGHTS: HIGH (2 us, under the 4 us glow), and it stops there               ok
+ui: LIGHTS: KNOB 1 left: dimmer                                                ok
+ui: LIGHTS: OCT+ steps round, the menu stays                                   ok
+ui: LIGHTS: ... back to OFF                                                    ok
+ui: KEYS (KNOB 2): C KEYS (C4, C5), LIGHTS raised to LOW                       ok
+ui: KEYS: WHITE KEYS (16 of 27, F#3 dark)                                      ok
+ui: KEYS: ALL KEYS (every one of the 27 keys), and it stops there              ok
+ui: KEYS: OCT+ from ALL KEYS steps round to OFF                                ok
+ui: KEYS: ALL KEYS kept in the settings word                                   ok
+ui: KEYS: ALL KEYS read back                                                   ok
+ui: KEYS: nothing lit while LIGHTS is OFF                                      ok
+ui: menu: opens on SCREEN (COLOR, ZOOM)                                        ok
+ui: menu: SELECT right: LIGHTS, the cursor on its first row                    ok
+ui: menu LIGHTS: KNOB 2 sets KEYS (row 2), the cursor follows                  ok
+ui: menu LIGHTS: KNOB 3 sets NOTES (row 3)                                     ok
+ui: menu: KNOB 4 on a section of three rows does nothing                       ok
+ui: menu: PRESETS moves the cursor round the section's rows                    ok
+ui: menu: SELECT right: AUDIO (LOWCUT, USB AUDIO, USB SERIAL)                  ok
+ui: menu: SELECT stops at the last section, SYSTEM                             ok
+ui: menu SYSTEM: KNOB 2 is MIDI LEARN CLEAR (2.6), nothing cleared by a turn   ok
+ui: menu SYSTEM: a knob does not open ABOUT, it moves the cursor               ok
+ui: menu SYSTEM: OCT+ on ABOUT opens it                                        ok
+ui: menu: OCT- from ABOUT: back to SYSTEM                                      ok
+ui: menu: OCT- closes                                                          ok
+ui: SELECT on HOME (TRACKS): the tempo                                         ok
+ui: SELECT: LFO opens its first page                                           ok
+ui: SELECT on LFO: next page LFO 2 (2.6), the tempo untouched                  ok
+ui: SELECT: then LFO DEST                                                      ok
+ui: SELECT: stops at the last page of the family                               ok
+ui: SELECT left: the page before                                               ok
+ui: SELECT left: LFO                                                           ok
+ui: SELECT on FX: next page, the track FILTER                                  ok
+ui: FILTER page: its one value drawn large (LP50 %)                            ok
+ui: FILTER page: the graph strip shows it                                      ok
+ui: SELECT on FX: on to the last page, REV/CHO                                 ok
+ui: SELECT on EDIT: back to the first page                                     ok
+ui: SELECT on EDIT: up to VOICE 2                                              ok
+ui: SELECT on SEQ: STEP <-> PATTERN, not into the SONG screen                  ok
+ui: the button still opens its family                                          ok
+ui: ... and a second tap still steps the page                                  ok
+ui: SELECT with a layer held (GLO): the tempo                                  ok
+ui: back on HOME: SELECT is the tempo again                                    ok
+ui: #39: KNOB 1 turned as FX lets go: the LFO page under it is untouched       ok
+ui: #39: ... and for a moment after (the knob still turning)                   ok
+ui: #39: then KNOB 1 is the page's again                                       ok
+ui: #102: PLAY pressed in the FX layer plays, KNOB 2 is DUST only              ok
+ui: grid: white key 3 sets step 3 of the sound (heard), the cursor on it       ok
+ui: grid: its key lit                                                          ok
+ui: grid: the key again clears it                                              ok
+ui: grid: the black keys pick the page of steps (17-32)                        ok
+ui: grid: ... and the white keys are its steps (step 17)                       ok
+ui: grid: a page past LENGTH is not picked                                     ok
+ui: grid: KNOB 1 picks the sound and plays it                                  ok
+ui: grid: KNOB 2 onto a step plays what it holds                               ok
+ui: DRUMS: SELECT right: kit                                                   ok
+ui: kit: the keys play the pads again, no step set                             ok
+ui: DRUMS: SELECT left: grid                                                   ok
+ui: SEQ layer, drum track: KNOB 1 picks the sound and plays it                 ok
+ui: SEQ layer: KNOB 2 DIV goes on to 1/2, 1BAR, 2BAR                           ok
+ui: STEP on the drum track: not a page for the drums (DRUM TRACK shown, no piano roll of the drum steps) ok
+ui: STEP page, chord mode TRIAD: C4 writes the chord C E G (not only C)        ok
+ui: STEP page, CHORD+: F# held, C4 writes C minor (C Eb G)                     ok
+ui: STEP page, no chord mode: one note                                         ok
+ui: visualiser: closed on the TRACKS screen                                    ok
+ui: visualiser: HOME on HOME opens it                                          ok
+ui: visualiser  1 OSCILLOSCOPE draws (1848 px lit)                             ok
+ui: visualiser  2 SPECTRUM     draws (12695 px lit)                            ok
+ui: visualiser  3 SPECTROGRAM  draws (24771 px lit)                            ok
+ui: visualiser  4 LISSAJOUS    draws (1058 px lit)                             ok
+ui: visualiser  5 VU METERS    draws (25373 px lit)                            ok
+ui: visualiser  6 CIRCLE       draws (6398 px lit)                             ok
+ui: visualiser  7 TAPE         draws (10216 px lit)                            ok
+ui: visualiser  8 LCD          draws (13790 px lit)                            ok
+ui: visualiser  9 BOUNCE       draws (4063 px lit)                             ok
+ui: visualiser 10 ORBIT        draws (4838 px lit)                             ok
+ui: visualiser 11 WIRES        draws (2381 px lit)                             ok
+ui: visualiser 12 SLOOP        draws (24109 px lit)                            ok
+ui: visualiser: MASTER at 0: no sound, the picture as at full volume           ok
+ui: visualiser: SELECT goes round (12 -> 1)                                    ok
+ui: visualiser: SELECT left: SLOOP (12), kept in the settings word             ok
+ui: visualiser: the style read back                                            ok
+ui: visualiser: KNOB 2 (the hidden TRACKS screen) edits nothing, SELECT is not the tempo ok
+ui: visualiser: a layer held shows its screen                                  ok
+ui: visualiser: ... and it comes back                                          ok
+ui: visualiser: HOME again closes it                                           ok
+ui: visualiser: a page button closes it and opens its page                     ok
+ui: SEQ: step 5 held + KNOB 2: its velocity one up (VEL)                       ok
+ui: SEQ: the STEP page first                                                   ok
+ui: STEP page, KNOB 3 on a note: LEN 1 -> 3 (two TIEs after it)                ok
+ui: KNOB 3 back: LEN 2 (its last TIE a REST)                                   ok
+ui: LEN shorter over a TIE holding a note: a REST, the note kept (as TIME)     ok
+ui: EDIT + OCT-: the LEN turns on that step undone at once (the steps as before the first) ok
+ui: STEP page: two MIDI notes held (CH 1): step 9 the chord                    ok
+ui:   and the SEQ layer's pen: that chord                                      ok
+ui:   one let go: still on step 9                                              ok
+ui:   both let go: on to step 10                                               ok
+ui:   a MIDI note tapped (on and off in one frame): step 10, on to step 11; the pen that note ok
+ui:   a key and a MIDI note together: one step; the MIDI note still held: no move ok
+ui:   let go: on                                                               ok
+ui:   a note on CH 2 (track 2's): nothing written, "MIDI PLAYS TRACK 2"        ok
+ui:   off the STEP page: nothing written, the queue read                       ok
+ui: REC on track 1, a MIDI note on CH 2: "MIDI PLAYS TRACK 2" (not recorded)   ok
+ui:   said once a take (an external sequencer on track 2 does not flash it)    ok
+ui:   a new take, a note on CH 1 (track 1's) first: no message, even with CH 2 after ok
+ui: MIDI Program Change 0: track 2 takes the first sound of the PRESETS list (T2 PROG 0) ok
+ui: MIDI Program Change on the drum channel: kit 2                             ok
+ui: MIDI Program Change past the list: ignored (no wrap)                       ok
+ui: FX + OCT-: REV THROW while held, FX + OCT+: ECHO THROW                     ok
+ui:   let go: no THROW, the octave untouched                                   ok
+ui: SEQ: two steps held + KNOB 2: both one up                                  ok
+ui: EDIT + a black key (drum track): MUTE mode                                 ok
+ui: MUTE mode + the kick's key: the kick muted, its steps kept                 ok
+ui: the kick's key again: unmuted                                              ok
+ui: EDIT let go: out of MUTE mode, the mute stays                              ok
+ui: the drum track: the INSERT page in FX                                      ok
+ui: EDIT > FILTER, then a track that is not ANALOG: the page before (EDIT 2), not FILTER ok
+ui:   and SELECT turns pages there, not the tempo                              ok
+ui: EDIT: the FILTER page (TYPE) with ANALOG only                              ok
+ui: GLO + F#3: MIDI LEARN on                                                   ok
+ui: LEARN: a knob turned picks its parameter (DIST)                            ok
+ui: LEARN: a CC sent: CC 74 = track 1 DIST                                     ok
+ui: GLO + F#3 again: LEARN off                                                 ok
+ui: CC 74 (any channel): track 1's DIST to its top                             ok
+ui: menu SYSTEM > MIDI LEARN CLEAR, OCT+: nothing learned any more             ok
+ui: GLO > MIDI: the page, KNOB 2 sets track 2's channel (11)                   ok
+ui: GLO > MIDI: CH1 CH2 CH3 CH4 (the drums); MIDI 2: IN OTHER OUT BEND; CH4 0 reads OFF ok
+ui: GLO > MIDI: CH2 turned onto track 3's channel: on to 4, "CH 3 = TRACK 3"   ok
+ui:   turned back: over 3 again, to 2                                          ok
+ui:   the drums turned down onto 3, 2, 1 (all taken): OFF                      ok
+ui: GLO > MIDI with IN = CH 5: says the channels are set aside                 ok
+ui: GLO > TEXTURE, TEXTURE 2: the pages; KNOB 1 the source (VINYL)             ok
+ui: SAVE > PROJECT: KNOB 2 free for ERASE (no parameter)                       ok
+ui: PROJECT, KNOB 2 left: nothing                                              ok
+ui: PROJECT, KNOB 2 one detent: AGAIN: ERASE, nothing erased                   ok
+ui: PROJECT, KNOB 2 again: the slot erased                                     ok
+ui:   the arm runs out (~1.5 s): a detent after it arms again                  ok
+ui: pages, layers (punch, steps, erase, roll, key, mix), layer lock, song layer, REC hold, drums, REC, 20000-frame fuzz PASS
+== no divide by zero (UBSan): UI fuzz, sequencer, projects, a minute of live use
+no divide by zero
+== soak: 10 minutes of random live use (bounded, no hanging voices, idle after stop)
+soak: 10 min, 20758 events, peak 17994, max block 1060.8 us, mean 2.66 us; tail 0
+soak: free takes 112, closed into a loop 14
+soak: random live use, bounded output, no hanging voices, idle after stop PASS
+== stress (2.4): FONT_L = FONT_S at 2x, hard random use of every 2.4 addition, clean stop
+font: 96 characters, 153600 pixels compared, 0 different
+font: 20000 random strings drawn on and off random canvases ok
+end: everything let go and stopped: all voices free after 2.0 s (at most 30)
+fuzz: 40000 frames (10.7 min), peak 17994, tail 0, visualiser styles seen 12/12, chords 5523, strum changes 806
+fuzz: audio playing in 59 % of blocks, sounding in 77 %; up to 11 strummed notes waiting at once; visualiser on 10 % of frames, menu 9 %
+fuzz: host time per audio block (887370 blocks): mean 5.40 us, 99.9 % under 96 us, 99.99 % under 256 us
+stress: font, fuzz with every 2.4 addition, clean stop PASS
+== stress under ASan + UBSan (no access out of bounds)
+font: 96 characters, 153600 pixels compared, 0 different
+font: 20000 random strings drawn on and off random canvases ok
+end: everything let go and stopped: all voices free after 2.0 s (at most 30)
+fuzz: 15000 frames (4.0 min), peak 17994, tail 0, visualiser styles seen 11/12, chords 2120, strum changes 319
+fuzz: audio playing in 54 % of blocks, sounding in 61 %; up to 11 strummed notes waiting at once; visualiser on 6 % of frames, menu 10 %
+fuzz: host time per audio block (337370 blocks): mean 12.12 us, 99.9 % under 205 us, 99.99 % under 1056 us
+stress: font, fuzz with every 2.4 addition, clean stop PASS
+== user presets (UP_PUT parser, bank round trip, versions)
+UP_PUT frame < 640 bytes                       ok
+UP_PUT parses                                  ok
+UP_PUT values (negative v14 too)               ok
+pattern: rest drops flags, tie has no note     ok
+UP_PUT short frame -> args                     ok
+UP_PUT slot 32 -> args                         ok
+UP_PUT bad engine -> args                      ok
+UP_PUT empty name -> args                      ok
+UP_PUT 13-char name -> args                    ok
+UP_PUT 12-char name ok                         ok
+name shown upper case                          ok
+bank fits one object                           ok
+bank save                                      ok
+bank load: the record is back                  ok
+other slots empty                              ok
+bank 0 never written -> empty                  ok
+banks in 0xDC000..0xDFFFF                      ok
+bank with another record size -> empty         ok
+record with another version -> empty           ok
+np < P_COUNT: mapped by count                  ok
+old record (np 53): SLICER, CHORD and FILTER defaults, E0..E7 kept ok
+2.3 record (np 58): FILTER, STRUM, VLEAD and the 2.6 ten defaults, CHORD and E0..E7 kept ok
+2.5 record (np 61): the 2.6 parameters (INSERT, FTYPE, ESYNC, LFO 2) default, the rest and E0..E7 kept ok
+SLOOP 1.0 record (np 57): CHORD default, the rest kept ok
+np == P_COUNT: as stored                       ok
+steps -> pattern                               ok
+empty sequencer -> empty pattern               ok
+user preset test passed
+== TRS MIDI parser
+uart: running status, realtime, SysEx, system common ok
+uart: channels 1, 2, 3, 10, 16 -> USB-MIDI packets   ok
+uart ring: nothing landed, nothing read              ok
+uart ring: a burst's last message (note-off) at once ok
+uart ring: byte-by-byte arrival across the wrap      ok
+uart ring: a received FD is skipped, not taken for empty ok
+usb ep1: ring too full -> packet held, nothing dropped ok
+usb ep1: room again -> all 16 events taken           ok
+usb ep1: malformed ignored, clock / start / note-off / PC queued ok
+usb: ota_wire_send packets (CIN 4.. then 5/6/7)      ok
+usb: received frame == the bytes between F0 and F7   ok
+usb: a frame while one is pending is dropped         ok
+usb: a truncated frame is replaced by the next one   ok
+usb: an oversized frame (698 B) is not taken         ok
+usb: soft key -> uboot_req, not a frame              ok
+usb: upgrade key -> ota_req, not a frame             ok
+usb: bytes outside F0..F7 are ignored                ok
+usb: send with a full ring and no host fails at once ok
+usb: send with a full ring times out (200 ms)        ok
+midi parser test passed
+== knobs: one click = one step (slow, fast, pauses, bounce)
+encoder: 10 slow clicks clockwise: +10                              ok
+encoder: 10 slow clicks anticlockwise: -10                          ok
+encoder: 24 fast clicks (2 frames a transition): +24                ok
+encoder: 5 clicks with 50 ms pauses mid-click: +5 (0.9: the knob went dead) ok
+encoder: 5 clicks held half-way 0.2 s: +5 (0.9: counted twice)      ok
+encoder: 5 clicks with contact bounce: +5                           ok
+encoder: half a click and back: nothing                             ok
+encoder: 6 flicks seen as two-state jumps: no wrong direction       ok
+encoder: parked 1 s off the detent, then 4 clicks: 4 steps          ok
+encoder test passed
+== USB audio input: descriptors (with CDC), ring and packets
+-- USB audio input, CDC on
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class misc / IAD (EF 02 01)                               ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz (2.5) ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: audio IF 0-2, CDC IF 3-4                                   ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8325 45:1352 46:48 43:275) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 66..139 (band 80..128)              ok
+1000 packets, 4.9 ms renders: mean 44.117, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+48 kHz:   100 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 82.2 dB (R 81.5) ok
+48 kHz:  1000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 80.1 dB (R 79.7) ok
+48 kHz:  5000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 75.7 dB (R 75.5) ok
+48 kHz: 10000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 73.8 dB (R 73.6) ok
+48 kHz: 12000 Hz: 52245 frames out of 48000, gain -0.02 dB, SNR 78.1 dB (R 77.7) ok
+48 kHz: 16000 Hz: 52245 frames out of 48000, gain -0.95 dB, SNR 55.6 dB (R 55.6) ok
+48 kHz stream, 10 s: sizes 47..49 (47:320 48:9170 49:510), mean 48.0190 ok
+  what the host records: one sine, SNR 81.4 dB, no underrun / overrun (0 / 0) ok
+48 -> 44.1 mid-stream: primed again, every frame in order        ok
+uac: all ok
+== USB audio input: descriptors (without CDC), ring and packets
+-- USB audio input, CDC off
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class 0 (per interface)                                   ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz (2.5) ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: none                                                       ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8325 45:1352 46:48 43:275) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 66..139 (band 80..128)              ok
+1000 packets, 4.9 ms renders: mean 44.117, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+48 kHz:   100 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 82.2 dB (R 81.5) ok
+48 kHz:  1000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 80.1 dB (R 79.7) ok
+48 kHz:  5000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 75.7 dB (R 75.5) ok
+48 kHz: 10000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 73.8 dB (R 73.6) ok
+48 kHz: 12000 Hz: 52245 frames out of 48000, gain -0.02 dB, SNR 78.1 dB (R 77.7) ok
+48 kHz: 16000 Hz: 52245 frames out of 48000, gain -0.95 dB, SNR 55.6 dB (R 55.6) ok
+48 kHz stream, 10 s: sizes 47..49 (47:320 48:9170 49:510), mean 48.0190 ok
+  what the host records: one sine, SNR 81.4 dB, no underrun / overrun (0 / 0) ok
+48 -> 44.1 mid-stream: primed again, every frame in order        ok
+uac: all ok
+== USB audio input: descriptors (CDC built in, menu USB SERIAL OFF), ring and packets
+-- USB audio input, CDC built in, USB SERIAL OFF
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class 0 (per interface)                                   ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz (2.5) ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: none                                                       ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8325 45:1352 46:48 43:275) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 66..139 (band 80..128)              ok
+1000 packets, 4.9 ms renders: mean 44.117, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+48 kHz:   100 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 82.2 dB (R 81.5) ok
+48 kHz:  1000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 80.1 dB (R 79.7) ok
+48 kHz:  5000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 75.7 dB (R 75.5) ok
+48 kHz: 10000 Hz: 52245 frames out of 48000, gain -0.00 dB, SNR 73.8 dB (R 73.6) ok
+48 kHz: 12000 Hz: 52245 frames out of 48000, gain -0.02 dB, SNR 78.1 dB (R 77.7) ok
+48 kHz: 16000 Hz: 52245 frames out of 48000, gain -0.95 dB, SNR 55.6 dB (R 55.6) ok
+48 kHz stream, 10 s: sizes 47..49 (47:320 48:9170 49:510), mean 48.0190 ok
+  what the host records: one sine, SNR 81.4 dB, no underrun / overrun (0 / 0) ok
+48 -> 44.1 mid-stream: primed again, every frame in order        ok
+uac: all ok
+== USB SERIAL OFF: the descriptors of a build without CDC, byte for byte
+same
+== USB audio input: built into the firmware (FELUCCA_UAC set before usb.c)
+== M-UPGRADE entry
+handshake answered                                   ok
+identity frame is FM-1_900                           ok
+recovery identity is distinct from a successful normal boot ok
+  19 requests
+session commits                                      ok
+headers + loader + confirm, no head reads            ok
+staged body == the package's loader                  ok
+LOADER.BIN head CRC                                  ok
+record at 0xE4F00 == RAM record                      ok
+record CRC / type / magic / ota_addr                 ok
+nothing written outside 0xE0000..0xE4FFF             ok
+boot cleanup erases the area                         ok
+second boot: nothing to do                           ok
+host gone -> no commit, area clean                   ok
+no 'success' -> -13, no commit, area clean           ok
+ota test passed
+== update loader: other app -> this build
+  rc 0, 1180 requests, 94 sector erases
+install completes                                        ok
+app area == the new package's flash.bin                  ok
+flash head [0, 0x4000) untouched                         ok
+finish asked (0xF0000000)                                ok
+update record cleared (RAM + flash)                      ok
+no write outside the allowed windows                     ok
+re-run with the same package erases nothing              ok
+foreign key / damaged app head refused, nothing erased   ok
+a byte damaged once: caught by the CRC, fixed by a 2nd pass ok
+a damaged package: refused after 3 passes, the record stays ok
+... also when the damage is in the head                  ok
+no "success" from the host: the record stays             ok
+... and the next session finishes                        ok
+unknown flash chip: nothing written, record dropped      ok
+loader test passed
+== scales: white-key mapping and note lifecycle
+scales: all 16 scales, 12 roots, octave/transpose ranges, bypass, drums and SNAP ok
+scales: silent keys, arp, live recording, MIDI out and held-note changes ok
+== DSP render (ANALOG preset 0)
+== TRACKS: 4-track pattern, live recording (lengths, swing), voice budget, engine switch, cost
+tracks: recording: drums step 4 = 4 lanes (kick snare hat + clap: yes), hits when step 4 played right after: 3 (want 3: the clap is not triggered twice) ok
+tracks: recording: MIDI ch 3 -> lead step 1 = 84 (want 84) ok; keys -> pad step 14 = 2 notes 60 64 ok
+tracks: voices sounding at most 6 (budget 8) ok; given up to another part 0; 0 samples near full scale
+tracks: stealing across parts: 5 voices taken; largest sample step at a take / before it: at most 0.84 x (a hard cut: several x) ok
+tracks: TRS MIDI IN: ch 1..3 -> parts ok, ch 10 -> drums ok, ch 5 -> the selected track ok; note-offs (running status, vel 0) ok
+tracks: TRS MIDI IN: note-off after another track was selected reaches the note's track ok; ch 3 records into armed track 3 ok
+tracks: recording lengths: held 3.3 steps -> NOTE TIE TIE (the 4th step put back) ok; 0.3 step -> one step ok; past the middle of the next -> NOTE TIE ok
+tracks: recording lengths: a chord ties until its last key ok; capped at LEN 4 ok; MONO legato A..B -> A TIE B TIE ok
+tracks: recording with SWING 50 %: nearest swung step, as heard (0.55 into a long step stays, 0.56 into a short one moves on) ok
+tracks: engine switch ANALOG -> DIGITAL (release tail): largest sample step 852 in the 10 ms after, 736 in the 0.1 s before (1.16 x)
+tracks: engine switch ANALOG -> PHASE (chord held): largest sample step 640 in the 10 ms after, 631 in the 0.1 s before (1.01 x)
+tracks: engine switch ANALOG -> LOFI (chord held): largest sample step 364 in the 10 ms after, 588 in the 0.1 s before (0.62 x)
+tracks: engine switch: at most 1.16 x the step before (a hard cut: several x) ok
+tracks: a note during the switch sounds on the new engine (SAMPLE) ok
+tracks: WAVs in build/tracks_demo: tracks_demo.wav (mix), t1_bass.wav, t2_pad.wav, t3_lead.wav, t4_drums.wav, steal.wav, engine_switch.wav
+tracks: one part, 8 notes held + drums (host -O2, ns per sample, heaviest preset per engine): ANALOG SAW BASS 182.7, DIGITAL FM BASS 160.1, PHASE CZ STRING 158.5, LOFI WAVE LEAD 102.8, SAMPLE LOFI KEYS 139.2, VOICE TALKBOX 146.3, TRIO SQR LEAD 182.9, WHEEL ROCK ORGAN 145.9, GRAIN STR CLOUD 130.0, FM6 SOFT PAD 186.1, PHYS THUMB PNO 208.3, NOISE RADIO 178.0
+tracks: worst single part: PHYS THUMB PNO 208.3 ns
+tracks: DIGITAL + PHASE + VOICE + drums, 3 + 3 + 2 notes: 188.0 ns (0.90 x the worst single part), 8 voices
+tracks: the same, 8 + 8 + 4 notes asked for (budget keeps 8): 197.5 ns (0.95 x)
+tracks: two VOICE parts, 4 + 4 voices (the heaviest 8 the budget allows): 221.1 ns (1.06 x); no notes (drums, buses, 3 idle parts): 58.4 ns
+tracks: all checks ok
+== project formats (FUN4 / FUN3 / FUN2 / FUN1 -> FUN5), capture / apply, autosave
+layout: P_CHORD, P_TFLT, P_STRUM, P_VLEAD, then the ten of 2.6 just before P_E0 (63), P_COUNT = format 5's + 10 ok
+format 6 fits one flash object (3816 of 3840 bytes); 4 slots fit .noinit (with panel, settings, dbg, bootguard) ok
+format 6: the 2.6 parameters fit a byte each (0..255)              ok
+FUN3 -> FUN6: converted, valid format 6 slot                       ok
+FUN3 -> FUN6: globals (swing 50 -> 40: the MPC scale), the new ones default ok
+FUN3 -> FUN6: parameters (P_E0.. moved), steps, drum notes -> lanes, no lock, no fill ok
+FUN2 image is 2552 bytes (as stored)                               ok
+FUN2 -> FUN6: converted, valid format 6 slot                       ok
+FUN2 -> FUN6: globals and selected track                           ok
+FUN2 -> FUN6: every parameter mapped, SLICER OFF, CHORD OFF (4 tracks) ok
+FUN2 -> FUN6: engine bytes kept (WHEEL 7, ANALOG 0, TRIO 6), drum 0 ok
+FUN4 image is 3112 bytes (as stored)                               ok
+FUN4 -> FUN6: as stored (levels, ratchets, lanes, engine 8; P_E0.. moved, FILTER off), zero nudges, locks free, no fill condition ok
+FUN4 with a bad checksum: refused                                  ok
+FUN5 -> FUN6: by id, the 2.6 parameters default, nudges and conditions kept, a lock on E2 moved with it ok
+FUN5 with a bad checksum: refused                                  ok
+FUN6 -> FUN6: as stored (levels, ratchets, lanes, nudges, locks, fill conditions, INSERT, SYNC, engine 8) ok
+FUN2 with a bad checksum: refused                                  ok
+FUN2 with a wrong length: refused                                  ok
+FUN6 size with a FUN3 magic: refused                               ok
+FUN6 size with a FUN5 magic: refused                               ok
+FUN3 with a bad checksum: refused                                  ok
+FUN1 -> FUN6: track 1 mapped, tracks 2..4 defaults                 ok
+the working project: capture -> apply round trip (levels, lanes, DUST, drum DLY, nudges, locks, fill conditions, the 2.6 parameters) ok
+2.5 drum DLY: kept in the byte after sel, a 2.4 project: 0, a section sets it, 200 -> 127 ok
+2.6 TEXTURE: kept in a project (SRC LEVEL TONE MOVE RATE WHEN DUCK), a section sets it, an older one: OFF; the drum channel not taken from a project ok
+format 6: the byte parameters and TEXTURE's packed fields hold every value of their range ok
+apply: INSERT 200 -> the last type, a lock on LEN / step 64 / param 200 is freed, LEVEL 999 -> 127, condition 3 -> normal ok
+2.6 SAVE > PROJECT > ERASE: an object of no bytes is no project (an empty slot, older SLOOP too) ok
+project format test passed
+== SLICER: no clicks, timing, sync with the sequencer, STUT, cost, demos
+slicer: no clicks: GATE pattern 1, 1/16, 120 BPM, 100 %: largest step 349 (sine 314, 1.1 x) ok
+slicer:   closed steps silent (rms 0.79)                                           ok
+slicer: no clicks: GATE pattern 12, 1/32, 240 BPM, 100 %: largest step 350 (sine 314, 1.1 x) ok
+slicer:   closed steps silent (rms 0.84)                                           ok
+slicer: no clicks: GATE pattern 2, 32T, 240 BPM, swing 50 %: largest step 349 (sine 314, 1.1 x) ok
+slicer:   closed steps silent (rms 0.59)                                           ok
+slicer: no clicks: GATE pattern 5, 8T, 90 BPM, 60 %: largest step 348 (sine 314, 1.1 x) ok
+slicer: no clicks: STUT pattern 7, 1/16, 120 BPM, 100 %: largest step 392 (sine 314, 1.2 x) ok
+slicer: no clicks: STUT pattern 3, 32T, 200 BPM, 70 %, swing 30 %: largest step 314 (sine 314, 1.0 x) ok
+slicer: no clicks: STUT pattern 9, 1/8, 40 BPM (loop shorter than the step): largest step 402 (sine 314, 1.3 x) ok
+slicer: no clicks: STUT pattern 13, 16T, 133 BPM: largest step 358 (sine 314, 1.1 x) ok
+slicer: no clicks: mode / pattern / depth / rate turned while it runs: 422 (1.3 x) ok
+slicer: timing: GATE at 97 BPM, swing 20 + 10 %: 64 steps open / closed as the pattern says ok
+slicer: timing: every ramp ends / starts on the swung step boundary (sample exact) ok
+slicer: sync: 4 tracks, 131 BPM, swing per track: the sequencer's step at 16538 blocks x 4 ok
+slicer: OFF: the signal is not touched                                             ok
+slicer: STUT: the repeat steps play the live step (24 of 24 checked)               ok
+slicer: cost: no instruction counter on this host
+slicer: demos in build/slicer_demo (song_dry / song_slicers, pad, acid, drums: dry and sliced)
+slicer test passed
+== FM6: algorithms, envelopes, retrigger, DC, clipping, macros, patch formats, voices, the bank, demos
+fm6: algorithms: the classic carrier counts of all 32 (operators on the output bus)             ok
+fm6: algorithms: each of the 32 sounds with every operator at full level                        ok
+fm6: algorithms: more carriers, more level (1 .. 6)                                             ok
+fm6: envelope: attack -> L1, decay -> L2 -> L3, held while the key is down, then the release (in order) ok
+fm6: envelope: the voice ends after the release (engine done), not while the key is held        ok
+fm6: envelope: attack rate 60 slower than 80 slower than 99; 99 within a block or two           ok
+fm6: envelope: attack to L1 in 78 / 8 / 1 blocks (rates 60 / 80 / 99), L1 reached at block 77
+fm6: envelope: a decayed note ends while its key is held (L3 0), its voice free                 ok
+fm6: retrigger: a note from silence renders the same samples twice                              ok
+fm6: retrigger: the same key again while it sounds: no step larger than the tone's own          ok
+fm6: factory patches C1..C7, velocity 30 / 127: peak 22850 (VOICE_FS 24000), |mean| at most 5.7
+fm6: no clipping: every factory patch, C1..C7, velocity 30 and 127: a voice below 2 x VOICE_FS  ok
+fm6: no DC: |mean| below 1 % of VOICE_FS                                                        ok
+fm6: MLVL -40 / 0 / +40: centroid 131 / 146 / 793 Hz
+fm6: MLVL: + brighter, - darker                                                                 ok
+fm6: MRAT 0 / +3: centroid 146 / 203 Hz
+fm6: MRAT: + raises the modulators' ratios (brighter)                                           ok
+fm6: MEG 0 / +50: centroid at 0.5 s 132 / 179 Hz
+fm6: MEG: + the modulators decay slower (brighter later)                                        ok
+fm6: VMOD 0 / +5: centroid ratio vel 127 / 40 1.13 / 1.45
+fm6: VMOD: + velocity moves the brightness more                                                 ok
+fm6: FB 0 / +6 (OP6 alone): centroid 131 / 11044 Hz
+fm6: FB: + more feedback (brighter)                                                             ok
+fm6: ALG: 1..32 replaces the patch's algorithm, PAT (0) keeps it                                ok
+fm6: DTUN 0 / 127 (3 carriers): level swing over 50 ms windows 1.012 / 18.403
+fm6: DTUN: the carriers apart: they beat                                                        ok
+fm6: PTCH F5 loads the fifth factory patch (main loop)                                          ok
+fm6: PTCH B4 of an empty bank: the init voice                                                   ok
+fm6: AMS 1, AMD  0: centroid  475 Hz (AMS 0:  529 Hz)
+fm6: AMS 2, AMD  0: centroid  475 Hz (AMS 0:  529 Hz)
+fm6: AMS 3, AMD  0: centroid  475 Hz (AMS 0:  529 Hz)
+fm6: AMS 1, AMD 99: centroid  446 Hz (AMS 0:  529 Hz)
+fm6: AMS 2, AMD 99: centroid  418 Hz (AMS 0:  529 Hz)
+fm6: AMS 3, AMD 99: centroid  286 Hz (AMS 0:  529 Hz)
+fm6: AMS 1..3, AMD 0: at most 13.3 % from the AMS 0 voice
+fm6: AMS 1..3 (AMD 0 and 99): tonal, the centroid near the AMS 0 one (not noise)                ok
+fm6: AMS 1..3, AMD 0: the voice within 25 % of the AMS 0 one; every voice below 2 x VOICE_FS    ok
+fm6: pack(unpack(x)) == x: the factory patches and the init voice (generator and C agree)       ok
+fm6: any 128 bytes unpack into range (2000 random records)                                      ok
+fm6: a 32-voice bank SysEx: checksum, its 32 records back as they were                          ok
+fm6: a single-voice SysEx (155 bytes): back to the same packed record                           ok
+fm6: voices: 8 keys in POLY: 6 voices (the engine's cap)                                        ok
+fm6: voices: all free some seconds after the release (the operator envelopes end them)          ok
+fm6: cost: no instruction counter on this host (proc_pid_rusage); not measured
+fm6: bank: an erased flash: no bank, every slot empty, B-slots play the init voice              ok
+fm6: bank: store into B4 (slot 3): ok, found, the record back as sent                           ok
+fm6: bank: slot 27 is bad (rc 1), nothing written                                               ok
+fm6: bank: PTCH B4 loads the stored patch (main loop)                                           ok
+fm6: bank: a store into the slot a part plays: the part hears the new patch                     ok
+fm6: bank: found again after a power cycle (the same copy, the same slots)                      ok
+fm6: bank: the sector's tail after the payload stays erased (0xE5000 / 0xE6000)                 ok
+fm6: bank: erase B4: empty again, the init voice (fm6_poll)                                     ok
+fm6: bank: both headers broken -> no bank, every slot empty                                     ok
+fm6: bank: a store then starts a fresh bank                                                     ok
+fm6: bank: 4 sector erases for 4 writes
+fm6: demos in build/fm6_demo: the 8 presets, each playing a short phrase
+fm6_test: all checks ok
+== regression: golden renders, health, voices, CPU budget
+regress: voices: budget of 8 across 3 parts: 3 POLY parts, random notes: at most 8 voices active (budget 8), VOICE part at most 4 (cap 4), 665 voices taken, 0 still fading after their KILL_BLOCKS, all free 1.22 s after the note-offs ok
+regress: voices: a stolen voice fades: 5 takes; largest sample step at a take 774 vs 1028 before it (0.75 x, limit 1.50 x) ok
+regress: voices: MONO keeps its note: MONO part held its note through 868 voices taken from the others: lost in 0 blocks ok
+regress: voices: LEGATO keeps its note: LEGATO part held its note through 868 voices taken from the others: lost in 0 blocks ok
+regress: voices: UNISON keeps its note: UNISON part held its note through 875 voices taken from the others: lost in 0 blocks ok
+regress: voices: VOICE engine cap: VOICE engine, 8 keys: at most 4 voices in POLY, 4 in UNISON (cap 4); freed after release ok
+regress: routing: no hanging notes: 14135 random MIDI / key events on ch 1-3, 10, 5, 16 and the keys, track selection changing, 3 rounds: no gate left on, every voice free ok
+regress: CPU OVER BUDGET  cpu/ANALOG/00_808_BOOM: 3117 over the idle mix (time), baseline 1348 (+131 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/ANALOG/02_SUB_BASS: 1898 over the idle mix (time), baseline 1372 (+38 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/ANALOG/03_808_SLIDE: 1811 over the idle mix (time), baseline 1340 (+35 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/DIGITAL/02_WURLI: 2202 over the idle mix (time), baseline 1219 (+81 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/DIGITAL/12_FM_BASS: 1834 over the idle mix (time), baseline 1107 (+66 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU note  cpu/SAMPLE/01_UP_BASS: 4 (time), baseline 554 (-99 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/02_VIBES: -1 (time), baseline 594 (-100 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/03_HORN_STAB: -5 (time), baseline 252 (-102 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/04_STRING_STB: 65 (time), baseline 223 (-71 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/06_SCRATCH: 2 (time), baseline 210 (-99 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/07_GM_KIT: 11 (time), baseline 236 (-95 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/10_DEEP_BASS: 1 (time), baseline 1125 (-100 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU OVER BUDGET  cpu/VOICE/05_ROBOT: 2152 over the idle mix (time), baseline 967 (+123 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/TRIO/00_FAT_BASS: 2787 over the idle mix (time), baseline 1511 (+84 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/TRIO/02_MIN7_STAB: 2628 over the idle mix (time), baseline 1475 (+78 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/TRIO/04_DUB_CHORD: 2591 over the idle mix (time), baseline 1476 (+76 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU note  cpu/FM6/05_WOOD_BARS: 47 (time), baseline 284 (-83 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU OVER BUDGET  cpu/PHYS/07_SITAR: 1078 over the idle mix (time), baseline 798 (+35 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU OVER BUDGET  cpu/mix/3parts_phys_noise_drums: 5244 (time), baseline 3263 (+61 %, limit +35 %) -- timed: a note, not a failure
+regress: CPU: no instruction counter on this host: timed (best of three seconds, limit +35 %; CPU_VALGRIND=1 counts them exactly under callgrind)
+regress: CPU, one part with 8 notes held (VOICE 4), heaviest preset per engine (per mille / ns per sample):
+regress:   ANALOG   808 BOOM         3666 /1000   215.0 ns
+regress:   DIGITAL  WURLI            2752 /1000   161.4 ns
+regress:   PHASE    CZ STRING        2169 /1000   127.2 ns
+regress:   LOFI     WAVE LEAD        1329 /1000    77.9 ns
+regress:   SAMPLE   LOFI KEYS        1904 /1000   111.6 ns
+regress:   VOICE    ROBOT            2701 /1000   158.4 ns
+regress:   TRIO     FAT BASS         3336 /1000   195.6 ns
+regress:   WHEEL    ROCK ORGAN       2069 /1000   121.3 ns
+regress:   GRAIN    LOFI CLOUD       1566 /1000    91.9 ns
+regress:   FM6      BRASS SECT       2716 /1000   159.3 ns
+regress:   PHYS     BOWED MTL        3086 /1000   181.0 ns
+regress:   NOISE    RADIO            2618 /1000   153.5 ns
+regress:   idle                       549 /1000    32.2 ns
+regress:   idle_drums                1000 /1000    58.6 ns
+regress:   3parts_full_drums         3175 /1000   186.2 ns
+regress: 182 golden renders (0 changed, 0 gone), 0 health failures, 0 voice / routing checks failed, 0 CPU entries over budget (19 notes), 0 crashes; 4.2 s
+== regression: target cost of the render loops
+target: analog_render     650 instructions,  470 in loops, 20 divides,  0 calls there: cost   630 (budget 638) ok
+target: digital_render    482 instructions,  333 in loops, 0 divides,  0 calls there: cost   333 (budget 333) ok
+target: phase_render      198 instructions,   79 in loops, 0 divides,  2 calls there: cost    79 (budget 79) ok
+target: lofi_render       318 instructions,  128 in loops, 0 divides,  0 calls there: cost   128 (budget 128) ok
+target: sample_render     174 instructions,   91 in loops, 0 divides,  1 calls there: cost   130 (budget 126) ok
+target: formant_render    614 instructions,  298 in loops, 2 divides,  0 calls there: cost   314 (budget 314) ok
+target: trio_render       625 instructions,  301 in loops, 5 divides,  2 calls there: cost   341 (budget 341) ok
+target: trio_pass         257 instructions,  151 in loops, 3 divides,  0 calls there: cost   175 (budget 175) ok
+target: drawbar_render    287 instructions,  180 in loops, 0 divides,  0 calls there: cost   267 (budget 267) ok
+target: drawbar_block     202 instructions,  102 in loops, 0 divides,  0 calls there: cost   102 (budget 102) ok
+target: grain_render      736 instructions,  286 in loops, 2 divides,  1 calls there: cost  1748 (budget 1734) ok
+target: grain_block       262 instructions,  132 in loops, 0 divides,  1 calls there: cost   132 (budget 138) ok
+target: slicer_track      308 instructions,  266 in loops, 5 divides,  0 calls there: cost   828 (budget 825) ok
+target: drums_mix        1018 instructions,  951 in loops, 3 divides,  1 calls there: cost  6711 (budget 6153) ok
+target: fm6_op_run        104 instructions,   72 in loops, 0 divides,  0 calls there: cost    72 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm6_op_fb          48 instructions,   26 in loops, 0 divides,  0 calls there: cost    26 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm6_render        509 instructions,  294 in loops, 0 divides,  6 calls there: cost   363 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm1_alnk0_irq     228 instructions,   91 in loops, 0 divides,  3 calls there: cost   268 (budget 174) OVER BUDGET (+54 %, limit +10 %)
+== installer CLI (fm1_install.py) against a simulated FM-1
+pack7 / unpack7 round trip                                       ok
+response: header, address, data, checksum                        ok
+product_of / logical_image (synthetic)                           ok
+install: running -> loader -> Felucca (11 reads)                 ok
+install: an FM-1 under CLIPPER (port 'Clipper') -> found, SLOOP installed ok
+install: device already in update mode -> finishes the write     ok
+install: answer no -> nothing sent but the handshake             ok
+--info: identity of the connected FM-1                           ok
+--info: device in update mode                                    ok
+no FM-1 port -> exit 3, lists the MIDI inputs                    ok
+--port that matches nothing -> exit 3                            ok
+--port picks a port the default match skips                      ok
+unplugged in step 1 -> exit 4 'lost', nothing written            ok
+unplugged during the write -> exit 4 at once                     ok
+loader stops answering -> exit 4 after the idle time             ok
+read past the package -> exit 4                                  ok
+another identity after the restart -> exit 6                     ok
+another model -> exit 6, nothing sent                            ok
+another firmware's update loader -> exit 6, nothing sent         ok
+no loader after step 1 -> exit 5                                 ok
+package without the loader marker -> exit 2, no MIDI             ok
+... installs with --force                                        ok
+damaged package (a file's CRC) -> exit 2, no MIDI                ok
+not a package -> exit 2                                          ok
+missing file -> exit 2                                           ok
+logical_image / product_of == fm1pkg.js (felucca.fwsc, FM-1_900) ok
+felucca.fwsc carries the Felucca loader marker                   ok
+install tests passed
+== the offline editor (one file, nothing next to it); the offline site (sw.js, manifest)
+site: the editor links the offline file (download)                           ok
+site: the installer page links it too                                        ok
+site: offline: the icon font inlined                                         ok
+site: offline: no download link to itself                                    ok
+site: offline: the installer and the font licence online                     ok
+site: offline: no other file next to it (no relative src / href)             ok
+site: offline: no url() to a file                                            ok
+site: offline: no app, no service worker (a file has no site)                ok
+site: /tmp/tmpnpp84lb9/site: webapp/installer (32887 B), webapp/editor, firmware/sloop-9.9.fwsc (4096 B, FM-1_900)
+site: sw.js: stamped with the version                                        ok
+site: sw.js keeps the installer, the editor, its font, the firmware          ok
+site: sw.js: every file it keeps is in the site                              ok
+site: manifest: standalone, starts at the editor, icons 192 and 512 (+ maskable) ok
+site: editor: links the manifest, registers ../sw.js, an install button      ok
+site: installer: links the manifest, registers ../sw.js, an install button   ok
+site: /tmp/tmpnpp84lb9/site2: webapp/installer (32887 B), webapp/editor, firmware/sloop-9.9.fwsc (4096 B, FM-1_900)
+site: /tmp/tmpnpp84lb9/site2: webapp/installer (32887 B), webapp/editor, firmware/sloop-9.9.fwsc (4096 B, FM-1_900)
+site: sw.js: the same site, the same stamp; a file changed, a new one        ok
+site: offline editor and offline site test passed
+== web pages: editor protocol, samples, packages, update protocol
+drum kit: file names sorted onto the lanes                       ok
+drum kit: a taken lane gives way (KICK -> KICK 2), unknown names the first free pad, a drop its pad ok
+drum kit: +12 st plays it twice as fast (half the length), -6 dB half the level ok
+drum kit: LENGTH cuts it, with a 4 ms fade (no click)            ok
+drum kit: one zone per pad, lo = hi = root = the lane's note (drums.c LANE_NOTE: KICK 36, SNARE 38, OPEN HAT 46) ok
+drum kit: FIT shortens the longest pads to fill the slot, no more ok
+drum kit: USR3+4 takes a 13.3 s kit no slot could, every pad whole in one of the two ok
+drum kit: ... FIT for the pair fills both slots (no more than they hold) ok
+drum kit: ... a sound longer than a slot is cut to one slot      ok
+levels: half the amplitude is 6 dB quieter (6.02 dB)             ok
+levels: as the ear hears it, a 40 Hz tone counts less than 3 kHz at the same peak (9.3 dB) ok
+levels: a 10 ms click counts over 100 ms, as heard (-10.0 dB)    ok
+levels: MATCH LEVELS: kick -2, snare -2, hat 0 dB: heard within 0.40 dB, the quietest untouched ok
+levels: never more than 24 dB down (a near-silent sound does not mute the rest) ok
+levels: a file's Gain (-6 dB: half), 0 dB as it came             ok
+levels: the drum kit pad sends what was matched (kitPad, its Gain) ok
+drum kit: a kit ZIP reads back (zipRead)                         ok
+drum kit: ... deflated ZIP entries too                           ok
+editor: INFO                                                     ok
+editor: DESC for every parameter                                 ok
+editor: SLICER parameters 45..48 (mock == params.c)              ok
+editor: a factory preset turns the SLICER off                    ok
+editor: all 16 scale names exposed                               ok
+editor: new scale selection is not clamped to the old range      ok
+editor: DUMP                                                     ok
+editor: SET clamps to the range                                  ok
+editor: STEP_SET                                                 ok
+editor: PROJECT save                                             ok
+editor: sample upload (CRC checked by the mock)                  ok
+editor: no reply -> timeout after the retries                    ok
+librarian: parameter keys unique (label#n, E0..E7)               ok
+librarian: UP_LIST, 32 slots in 2 frames                         ok
+librarian: capture = DUMP + first 16 steps                       ok
+librarian: UP_PUT -> UP_GET round trip                           ok
+librarian: UP_PUT to a slot past the bank -> rc 1                ok
+librarian: device names (ASCII, 1..12)                           ok
+librarian: UP_STORE keeps the current sound                      ok
+librarian: UP_LOAD applies the sound, the sequencer stays empty (LIVE) ok
+librarian: UP_ERASE, UP_LOAD of an empty slot -> rc 1            ok
+librarian: audition = G_ENGSEL + SETs of the sound; no pattern, mix, LEN or key; no flash write ok
+librarian: audition keeps the sequencer as it is                 ok
+librarian: pattern ties / rests normalised like the firmware     ok
+librarian: UP_STORE with no name -> automatic name               ok
+library file: versioned, with P_COUNT, labels and engines        ok
+library file: write -> read round trip                           ok
+library file: other ids / engine order mapped by label and name  ok
+library file: a 2.5 one (61 parameters) read by 2.6: E1..E8 at 63..70, the new ones unset ok
+library file: a patch for an unknown engine is skipped           ok
+library file: bank export keeps slot numbers                     ok
+library file: reads the old "Save to file" format                ok
+library file: a "Save to file" of another version is read by count (the engine's 8 in their place, 61 <-> 71) ok
+library file: unknown format -> error                            ok
+live: WATCH on                                                   ok
+live: CHANGED while DUMP waits -> push handler, reply still matched ok
+live: RELOAD and STEP_CHANGED routed                             ok
+live: RELOAD after an editor PRESET too, nothing after its STEP_SET ok
+live: PING keeps WATCH on                                        ok
+live: WATCH ends by itself without requests                      ok
+live: drag SETs coalesce (2 frames for 40 values, latest kept)   ok
+live: no timeouts                                                ok
+live: older firmware -> WATCH unanswered (fall back to polling), no bank ok
+tracks: INFO NTRK, TRACK lists 4 (track 4 = drums, engine NENGINES) ok
+tracks: TRACK selects; DUMP / SET act on it, TRACK_DUMP reads any track ok
+tracks: TRACK_STEP set / get on another track                    ok
+tracks: TRACK_MIX level / mute (drums: G_DRLVL)                  ok
+tracks: drum track selected -> DUMP engine NENGINES, UP_STORE / UP_LOAD rc 1 ok
+tracks: WATCH on                                                 ok
+tracks: RELOAD / STEP_CHANGED carry the selected track           ok
+tracks: PROJECT save / load keeps every track and the selection  ok
+tracks: older firmware parses (no tracks)                        ok
+SetGate: DIV set on the drum track, then the same DIV on track 1: sent, both set ok
+SetGate: clear() forgets every control (another track / sound / FM-1) ok
+SetGate: pending: the same value skipped, a new value sent (queued) ok
+SetGate: the last value wins                                     ok
+SetGate: answered: the same value sent again (a knob may have moved it on the FM-1) ok
+mixer: read = TRACK + pan of every track (TRACK_DUMP)            ok
+mixer: TRACK_MIX level / mute round trip (drums: G_DRLVL, clamped) ok
+mixer: WATCH on                                                  ok
+mixer: pan of any track via SET (other track selected for a moment, then back; no push) ok
+mixer: device-side level (CHANGED push) and REC arm read back    ok
+mixer: drum level on the device pushes G_DRLVL                   ok
+mixer: the mock drum track holds a GM pattern (KICK CHH ...)     ok
+mixer: GM drum names parse (unique, 35..81)                      ok
+v4: WATCH 1 answers 1 as before (no TRACK_CHANGED pushes)        ok
+v4: WATCH 3 -> 3 (TRACK_PARAM / TRACK_CHANGED known)             ok
+v4: TRACK_PARAM get / set on other tracks (clamped as SET, selection kept, no push) ok
+v4: TRACK_PARAM of track 5: no reply                             ok
+v4: TRACK_CHANGED pushes for the other tracks, CHANGED for the selected one ok
+v4: v3 firmware -> WATCH 1, no TRACK_PARAM (pan by select / restore) ok
+v5..v10: INFO ends with the protocol version (10: SYN kits); 45 globals (2.5: drum DLY; 2.6: GLO > MIDI, TEXTURE, BEND) ok
+v5..v10: command numbers and INFO == editor.c / editor_dsyn.c    ok
+v5: CHORD, DUST, DUCK, FILT, ROLL, NEW (mock == params.c)        ok
+v5: SWING 0..100 (2.5), FILT LP / OFF / HP, PCT of the range     ok
+v5: STEP_SET / STEP_GET level and ratchet bytes (8 bits each), none for an old step ok
+v5: DRUM_STEP round trip (16 lanes, levels, ratchets)            ok
+v5: the drum track through TRACK_STEP: lanes <-> GM notes        ok
+v5: the 16 lanes (kick .. cowbell), 4 levels                     ok
+v5: lane notes == drums.c LANE_NOTE                              ok
+v5: the drum track's KIT (46 kits, == drums.c)                   ok
+v5: TRACK reports the soloed tracks                              ok
+v5: no unmatched replies                                         ok
+v5: older firmware -> proto 0, no DRUM_STEP (the editor keeps GM notes) ok
+v7: INFO ends with 10 (v10 includes v7)                          ok
+v7: the lockable parameters (editor == seq.c p_lockable; LEN, ARP, VOICE, CHORD are not) ok
+v7: MICRO_GET: 64 nudges, all 0                                  ok
+v7: MICRO_SET (sent + 64: -8 -> 56, 31 -> 95, -32 -> 32), clamped to -32..31 ok
+v7: LOCK_SET makes and clamps a lock (DIST 500 -> 127), refuses LEN (rc 2) and step 70 (rc 1); LOCK_GET lists them ok
+v7: LOCK_SET again moves the lock; without a value it deletes it ok
+v7: the 25th lock is refused (rc 3, 24 a track)                  ok
+v7: other tracks untouched; a nudge on the device -> STEP_CHANGED of its step ok
+v7: no unmatched replies                                         ok
+v7: a device without the commands: no reply (the editor hides the step detail) ok
+v8: INFO ends with 10 (v10 includes v8)                          ok
+v8: FC codes and the 2-bit layout == core.h / seq.c step_fill    ok
+v8: FILL_GET: 16 bytes, every step normal                        ok
+v8: FILL_SET sets a step (3 -> normal); FILL_GET returns the bytes as stored (0x80 through pack7) ok
+v8: fillSet / fillGet on the client; pack7 keeps the top bits of 16 bytes (3 groups) ok
+v8: other tracks untouched; a condition set on the device -> STEP_CHANGED of its step ok
+v8: no unmatched replies                                         ok
+v8: a v7 device: INFO 7, locks yes, no reply to FILL_GET (the editor hides the condition) ok
+v9: the editor's init and factory patches == felucca_fm6.h       ok
+v9: FM6 pack / unpack round trip (50 voices, sanitized)          ok
+v9: single-voice SysEx: 163 bytes, read back the same            ok
+v9: 32-voice bank SysEx: 4104 bytes, 32 voices with their names  ok
+v9: a bank with a wrong checksum is read but flagged             ok
+v9: a bank cut short: its whole voices, flagged                  ok
+v9: a bank and a voice in one file: 33 voices                    ok
+v9: a message with no end: the next one still read               ok
+v9: raw data, two 4096-byte banks: 64 voices                     ok
+v9: 4-operator voices: none read, said so                        ok
+v9: another maker's SysEx: its ID                                ok
+v9: not SysEx at all: said so                                    ok
+v9: INFO ends with 10 (v10 includes v9), FM6 is engine 9         ok
+v9: FM6_LIST: 8 factory patches, 27 bank slots                   ok
+v9: FM6_PUT to track 2, FM6_GET reads it back                    ok
+v9: stored in bank slot B5, listed by name                       ok
+v9: bank writes refused while the song plays (rc 3)              ok
+v9: FM6_ERASE empties the slot (GET rc 2), a bad index is rc 1   ok
+v9: a v8 device says 8 and does not answer FM6_LIST (the editor hides the FM6 panel) ok
+backup: INFO protocol v6 or later                                ok
+backup: the object ids == editor.c ED_BK_IDS (35: USR4, 9: SYN kits, 10: MIDI LEARN) ok
+backup: LIST + GET: 14 objects (project in C, sample in USR2, B empty, the FM6 bank, the SYN kits, USR4) ok
+backup: restore -> the same bytes again (presets, projects, samples, settings) ok
+backup: a damaged file is refused before anything is written     ok
+backup: firmware without it says protocol 5 (the editor hides backup) ok
+roll: a note length in steps (1/4 at 1/16 = 4, 1BAR = 1, at least 1, triplets) ok
+roll: place a note, a chord on its first step, a second note     ok
+roll: a fifth note, or the same note twice: nothing changes      ok
+roll: a note inside a held chord ends it; owner()                ok
+roll: a long note stops before the next chord                    ok
+roll: drag a length: longer (ties, up to the next chord or the end), shorter (rests) ok
+roll: remove a chord's note; the last one leaves rests (ties too) ok
+midi: a track's steps -> notes (ties as lengths; velocity, level, accent as the device plays them) ok
+midi: write -> read: the same notes, tempo, name, channel        ok
+midi: read back onto the grid: the same chords and lengths, a clean report ok
+midi: a format 1 file from Python (480 ppq): 4 notes a step (loudest), merged, moved, cut short, past the end ok
+midi: a non-MIDI file is refused; a cut one reads what is there  ok
+midi: the drum track: lanes as GM notes and back, levels ghost..hard kept (drums.c LANE_OF_GM) ok
+midi: LANE_OF_GM == drums.c                                      ok
+song: the settings' song order (PER3, arr_defaults)              ok
+song: rows (a section n times) <-> entries                       ok
+song: encode keeps the rest of the settings                      ok
+song: valid == arranger.h arr_valid (1..16 entries, A..D, 1..64 bars) ok
+song: PER3, persist_t has the arrangement, 16 steps; a new order refused while playing (project.c) ok
+song: mock: read, send (rc 0), a bad one (rc 2), a new one while playing (rc 3) ok
+editor: the LEN control (1..64), the grid and roll redrawn when LEN changes ok
+dsyn: the 22 fields in dsnd_t's order (drum_synth.c)             ok
+dsyn: the lanes' notes == DS_LANE_NOTE                           ok
+dsyn: backup object 9 == dsu_bank_t (1464 bytes, DSU1)           ok
+dsyn: the mock's 32 kits == build/gen/felucca_drumkits.h         ok
+dsyn: decode / encode: all 512 factory sounds unchanged; out-of-range values into the firmware's ranges ok
+dsyn: the units (Hz, ms, cutoff, dB) as tools/gen_tables.py      ok
+dsyn: a kit file and the backup object, there and back; a wrong file refused ok
+dsyn: LIST (32 + 4, stored), GET SYN1 = the 808, GET a factory kit ok
+dsyn: PUT a sound, the name and crush, a factory copy; PLAY hears the edit; LIST: not stored ok
+dsyn: STORE while playing: rc 3; stopped: stored; PLAY of no lane: rc 1 ok
+dsyn: a backup holds the SYN kits (object 9); a restore puts them back ok
+midi learn: a backup holds the learned CCs and GLO > MIDI (object 10, only when not the default); a restore puts them back ok
+backup: a 2.6 one without object 10 resets MIDI LEARN and GLO > MIDI to the defaults (they were then) ok
+backup: the project format of an object, what a device reads (INFO), the firmware compared ok
+backup: 2.6 projects into a 2.5 FM-1: refused (bkNewer), nothing written ok
+dsyn: a v9 device says 9 (the page says it needs 2.5), no object 9 ok
+dsyn: a 2.5 backup restores into a v9 device (object 9 skipped)  ok
+midi learn: a 2.6 backup with learned CCs restores into an older device (object 10 skipped) ok
+cart: the bank object == fm6_bank_t (3472 bytes, FM6B, 27 slots); a bad one is refused ok
+cart: while the song plays: rc 3, the bank unchanged             ok
+cart: 3 voices -> B1-B3 in one write (B2 replaced, B5 kept, B4 still empty) ok
+cart: the first 27 of a 32-voice cartridge fill B1-B27; 32 at once refused ok
+cart: a backup holds the filled bank (object 8)                  ok
+cart: preset slots: the first free ones, or from a slot; null when they do not fit ok
+cart: a preset = FM6, the voice's name, PTCH = its B slot, the rest as given ok
+cart: user presets CART 1-3 in the free slots (FM6, PTCH B1-B3), the others kept; refused while the song plays ok
+cart: a device before v9: 'old' (the page says it needs 2.4)     ok
+editor: 10 tabs, one panel each (sound sequencer tracks song library samples kits drumsynth projects settings) ok
+editor: last tab in localStorage (try/catch) and in the URL hash ok
+editor: every string in ja and en (407 used)                     ok
+editor: page script compiles                                     ok
+editor: the track colours of the device (ui_studio.c TE_COL), colours only as tokens ok
+editor: ... the same four as the firmware's TE_COL               ok
+editor: the device's Terminus font inlined (tools/gen_webfont.py) ok
+editor: every icon name is in GLYPH (37 used)                    ok
+editor: fukiai.ttf and FUKIAI-LICENSE.txt next to editor.html    ok
+editor: icons hidden until the font has loaded                   ok
+samples: editor == sampleio.py (4 WAV formats, 7737 B)           ok
+chop: hits found (8 of 8, each within 3 ms of its attack)        ok
+chop: low sensitivity keeps the hard hits only                   ok
+chop: a TAP 35 ms late / 30 ms early lands on its hit; away from hits it stays ok
+chop: grid (16 beats at 90 BPM) and equal parts                  ok
+chop: chops end at the next marker or the max length             ok
+chop: one key each from C4, levels kept (a ghost stays quiet), faded in ok
+chop: one chop over the whole keyboard                           ok
+chop: slot header (8 zones, one key each)                        ok
+chop: WAV writer round trip                                      ok
+chop: ZIP of the WAVs (Python reads it)                          ok
+chop: options (left out, own length over the max, never past the next marker) ok
+chop: left-out chops: the kept ones on consecutive keys, files keep their numbers ok
+chop: 40 chops: the first 16 kept go to the slot; mode 1 the selected ok
+chop: 20 s recording, 10 chops kept: they fit                    ok
+chop: Fit to slot: 16 x 0.5 s cut to 0.461 s each, the slot builds ok
+chop: fit keeps short chops whole, cuts the long ones            ok
+fm1pkg.js logicalImage                                           ok
+fm1pkg.js productOf                                              ok
+fm1ota.js: install: running firmware -> loader -> Felucca (11 reads) ok
+fm1ota.js: recovery mode -> loader -> normal firmware            ok
+fm1ota.js: boot into recovery is not reported as successful installation ok
+fm1ota.js: unplugged during the write -> stops at once           ok
+fm1ota.js: unplugged in step 1 -> error code 'lost'              ok
+fm1ota.js: no device -> error code 'notfound'                    ok
+fm1ota.js: an FM-1 under CLIPPER (port 'Clipper') -> found and installed ok
+fm1ota.js: a port of other gear is left alone; 'not found' lists it (MIDI: Arturia KeyStep Pro) ok
+fm1ota.js: FM1_PORT takes the FM-1's names (SLOOP, CLIPPER, the loader, the stock firmware), not other gear ok
+fm1ota.js: another firmware's loader is never resumed ('foreign') ok
+fm1ota.js: return to official: its own loader resumed, V15 checked when back ok
+fm1ota.js: return to official: another firmware coming back is not 'done' ok
+fm1pkg.js: only the exact official V15 is accepted (SHA-256)     ok
+web tests passed
+== the site without internet in Chromium (skipped without Playwright)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+browserType.launch: Executable doesn't exist at /home/agent/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+    at /workspace/scratch/fm1-research/sloop/tests/pwa_test.mjs:42:68
+    at async file:///workspace/scratch/fm1-research/sloop/tests/pwa_test.mjs:42:17 {
+  log: [],
+  name: 'Error'
+}
+
+Node.js v24.19.0
+HOST TESTS FAILED

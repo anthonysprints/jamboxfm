@@ -1,0 +1,17 @@
+pwa external launcher: {"playwright":"/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.js","version":"1.62.1","node":"v24.19.0","options":{"headless":true,"executablePath":"/usr/bin/chromium"}}
+pwa: the editor loads without a script error                                ok
+pwa: the editor: its Install the app button, hidden until Chrome offers to install ok
+pwa: the installer loads without a script error                             ok
+pwa: online: the installer registers sw.js, it is active                    ok
+pwa: the installer page is controlled by it                                 ok
+pwa: kept: the installer, the editor, its font, the firmware                ok
+pwa: Chrome can install it (no installability error): in-incognito          FAIL
+pwa: offline: the installer loads its firmware from the copy (SLOOP 2.6)    ok
+pwa: offline: the editor loads                                              ok
+pwa: offline: with its icon font                                            ok
+pwa: offline: index.html and a query find the same copy                     ok
+pwa: offline: what is not kept is not invented                              ok
+pwa: online: the page as published now, not the old copy                    ok
+pwa: offline after that: the copy is the newest one seen                    ok
+pwa: a new site: its sw.js replaces the copy (sloop-site-2.6-af84c6c82001-next) ok
+pwa: FAILED (1)

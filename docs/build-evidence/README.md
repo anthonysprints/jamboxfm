@@ -2,7 +2,7 @@
 
 Executed October 13, 2026 in the Debian 13 amd64 cloud environment. The source baseline is Sloop `8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e`; original import hashes are in [the import manifest](../upstream/import-manifest.json).
 
-The later FM-1-style web emulator has its own [test, package and source-rebuild record](emulator/README.md). The results below identify the original four-part browser workbench.
+The later FM-1-style web emulator has its own [test, package and source-rebuild record](emulator/README.md). The subsequent [physical-target build record](device-build/README.md) supersedes the compiler-absent observation below. The results below identify the original four-part browser workbench.
 
 | Check | Result | Log |
 | --- | --- | --- |

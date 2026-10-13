@@ -1,0 +1,26 @@
+Requirement already satisfied: Pillow==12.3.0 in /workspace/deps/jambox-python/lib/python3.12/site-packages (from -r tools/cloud/python-requirements.txt (line 1)) (12.3.0)
+Requirement already satisfied: fonttools==4.61.1 in /workspace/deps/jambox-python/lib/python3.12/site-packages (from -r tools/cloud/python-requirements.txt (line 2)) (4.61.1)
+Ready: source /workspace/toolchains/debian-browser/env.sh
+AC79_SDK=/workspace/deps/ac79-sdk: five pinned files verified, including license and provenance
+
+added 1 package in 441ms
+Python assets ready: 12.3.0 4.61.1
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.69 ()
+Copyright (C) 2014 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Debian clang version 19.1.7 (3+b1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /workspace/toolchains/debian-browser/root/usr/lib/llvm-19/bin
+Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)
+JIELI_TOOLCHAIN=/workspace/toolchains/jieli/toolchain
+clang version 4.0.1 () ()
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin
+archive SHA256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd
+SDK: three pinned binary hashes verified (/workspace/deps/ac79-sdk)
+Compiler: four required executables present (/workspace/toolchains/jieli/toolchain); compilation has not been tested by this check
+Device build prerequisites present; no firmware build or hardware validation was performed

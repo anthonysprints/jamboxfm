@@ -1,0 +1,15 @@
+{
+  "source_repository": "https://github.com/Quixotic7/ChoralRootFM1",
+  "source_commit": "aa5875af20e3046ee161f988c5d91d3ae66d0c74",
+  "source_path": "tools/sdk",
+  "original_vendor_repository": "https://gitee.com/Jieli-Tech/fw-AC79_AIoT_SDK",
+  "original_vendor_tag": "AC79NN_SDK_V1.2.1_2023-12-13",
+  "license": "Apache-2.0",
+  "files_sha256": {
+    "cpu/wl82/tools/uboot.boot": "4e3b4c220dc96641cb5a723f41e68ce41d5261ae9434bb33fbd7f2c59976ded4",
+    "cpu/wl82/tools/cfg_tool.bin": "276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b",
+    "cpu/wl82/tools/cfg/eq_cfg_hw.bin": "41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d",
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "README.md": "5ed97c2f6605c3d81456db58804543df1c6c30082ffb4007c7052d99f6ac2ceb"
+  }
+}

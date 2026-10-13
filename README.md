@@ -20,7 +20,7 @@ For repeatable public updates, use the [GitHub Pages publishing instructions](do
 
 `sh tests/run_jam_tests.sh` still builds the four-part workbench in `build/jam-preview/` and runs the palette, Home and native/WASM audio contracts. See [cloud setup](docs/CLOUD_SETUP.md) for all commands and device prerequisites.
 
-The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. Physical FM-1 compilation is blocked by vendor compiler download access; hardware timing and flashing have not been tested.
+The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. The first FM-1 diagnostic build compiles and fits the device's memory limits; update/rescue support, hardware timing and flashing remain untested. See [device build evidence](docs/build-evidence/device-build/README.md).
 
 ## Design and provenance
 

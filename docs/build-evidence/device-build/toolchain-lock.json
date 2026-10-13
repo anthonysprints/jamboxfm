@@ -1,0 +1,11 @@
+{
+  "source_kind": "owner_provided_archive",
+  "supplied_archive_name": "jieli-linux-toolchains-20260730.1.tar.xz",
+  "documented_source_url": "https://pkgman.jieliapp.com/s/linux-toolchain",
+  "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
+  "archive_sha256": "a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd",
+  "archive_size": 26027508,
+  "directory": "jieli-linux-toolchains-20260730.1",
+  "compiler_version": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin",
+  "JIELI_TOOLCHAIN": "/workspace/toolchains/jieli/toolchain"
+}

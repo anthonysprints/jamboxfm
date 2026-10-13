@@ -1,0 +1,18 @@
+test_changed_installed_tool_is_rejected_before_execution (__main__.AcquisitionTests.test_changed_installed_tool_is_rejected_before_execution) ... ok
+test_corrupt_or_unpinned_cache_is_not_adopted (__main__.AcquisitionTests.test_corrupt_or_unpinned_cache_is_not_adopted) ... ok
+test_existing_lock_cannot_be_replaced_by_different_input_or_request (__main__.AcquisitionTests.test_existing_lock_cannot_be_replaced_by_different_input_or_request) ... ok
+test_https_download_enforces_expected_digest_and_preserves_tls_flags (__main__.AcquisitionTests.test_https_download_enforces_expected_digest_and_preserves_tls_flags) ... ok
+test_import_mismatch_rejected_before_extraction_or_lock (__main__.AcquisitionTests.test_import_mismatch_rejected_before_extraction_or_lock) ... ok
+test_installed_release_symlink_is_rejected (__main__.AcquisitionTests.test_installed_release_symlink_is_rejected) ... ok
+test_malformed_first_import_does_not_poison_valid_retry (__main__.AcquisitionTests.test_malformed_first_import_does_not_poison_valid_retry) ... ok
+test_missing_file_and_invalid_expected_digest_are_rejected (__main__.AcquisitionTests.test_missing_file_and_invalid_expected_digest_are_rejected) ... ok
+test_owner_import_records_honest_provenance_and_reuses_pin (__main__.AcquisitionTests.test_owner_import_records_honest_provenance_and_reuses_pin) ... ok
+test_symlinks_must_stay_within_release_after_relocation (__main__.AcquisitionTests.test_symlinks_must_stay_within_release_after_relocation) ... ok
+test_tar_path_escape_is_blocked_without_compiler_execution (__main__.AcquisitionTests.test_tar_path_escape_is_blocked_without_compiler_execution) ... ok
+test_unexpected_installed_data_is_rejected_before_execution (__main__.AcquisitionTests.test_unexpected_installed_data_is_rejected_before_execution) ... ok
+test_unmanaged_release_directory_is_left_untouched (__main__.AcquisitionTests.test_unmanaged_release_directory_is_left_untouched) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.054s
+
+OK

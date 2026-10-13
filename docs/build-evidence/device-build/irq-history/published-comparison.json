@@ -1,0 +1,35 @@
+{
+  "reference_source_commit": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+  "reference_package": "docs/firmware/sloop-2.6.fwsc",
+  "reference_package_sha256": "199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2",
+  "reference_app_slot_sha256": "5015351a3cd291190152242081258185de9c72735467ff11e39148f8ef155dcc",
+  "reference_app_slot_size": 581564,
+  "rebuilt_app_sha256": "7fbcfabd1c470031937b83cbaea49c4f6ffee6ed9b6c58b49fd424877e16e629",
+  "rebuilt_app_size": 573052,
+  "validated_crcs": [
+    "UFW header",
+    "UFW entry list",
+    "flash.bin",
+    "isd entry",
+    "app entry",
+    "app bytes"
+  ],
+  "differences": [
+    {
+      "offset_hex": "0x8a2e2",
+      "published": 49,
+      "rebuilt": 51,
+      "published_context": "b'ON FELUCCA\\x00Oct 11 2026\\x00LEO KUROSH'",
+      "rebuilt_context": "b'ON FELUCCA\\x00Oct 13 2026\\x00LEO KUROSH'"
+    }
+  ],
+  "remaining_published_padding_all_ff": true,
+  "irq": {
+    "address_hex": "0x200cfec",
+    "size": 710,
+    "byte_identical": true,
+    "published_sha256": "dbdc6b5469ab585136d7899d583da4366406e1c3a2d5b0a3cbd4dcebff394c3d",
+    "rebuilt_sha256": "dbdc6b5469ab585136d7899d583da4366406e1c3a2d5b0a3cbd4dcebff394c3d"
+  },
+  "hardware_tested": false
+}

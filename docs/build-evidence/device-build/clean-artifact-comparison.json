@@ -1,0 +1,59 @@
+{
+  "required_artifacts_byte_identical": true,
+  "artifacts": [
+    {
+      "path": "build/felucca.bin",
+      "main_sha256": "c7d33b68f761e92896a4c65965cbb81cec5f0db4467a7cb332493c0fce2f2ba1",
+      "clean_sha256": "c7d33b68f761e92896a4c65965cbb81cec5f0db4467a7cb332493c0fce2f2ba1",
+      "main_size": 533012,
+      "clean_size": 533012,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    },
+    {
+      "path": "build/loader/loader.bin",
+      "main_sha256": "1017ae5d7695cc11ca7ee58caa22d0616c442b9bff51f326fe5539580cbb75dc",
+      "clean_sha256": "1017ae5d7695cc11ca7ee58caa22d0616c442b9bff51f326fe5539580cbb75dc",
+      "main_size": 8140,
+      "clean_size": 8140,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    },
+    {
+      "path": "build/loader/ota.bin",
+      "main_sha256": "ffba642c23c5d6e4ad5a708c4d15d027bdfc6153da34e05e8052c8b4238aa3b5",
+      "clean_sha256": "ffba642c23c5d6e4ad5a708c4d15d027bdfc6153da34e05e8052c8b4238aa3b5",
+      "main_size": 6863,
+      "clean_size": 6863,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    },
+    {
+      "path": "build/felucca.fwsc",
+      "main_sha256": "e30e6e603ab3d367f8a0c97455486807bdbb3af4d6b02e4be35806067ec0b17f",
+      "clean_sha256": "e30e6e603ab3d367f8a0c97455486807bdbb3af4d6b02e4be35806067ec0b17f",
+      "main_size": 610019,
+      "clean_size": 610019,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    },
+    {
+      "path": "build/felucca.elf",
+      "main_sha256": "41f208882e8c58996201a04e9449ca9b850bb1c3e3f44091b499a995ab79dd39",
+      "clean_sha256": "41f208882e8c58996201a04e9449ca9b850bb1c3e3f44091b499a995ab79dd39",
+      "main_size": 567216,
+      "clean_size": 567216,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    },
+    {
+      "path": "build/loader/loader.elf",
+      "main_sha256": "1aa0c0a9170c5ef6e31d5731d7e018219213061f493d5f05d6cdfb0b158fdb1b",
+      "clean_sha256": "1aa0c0a9170c5ef6e31d5731d7e018219213061f493d5f05d6cdfb0b158fdb1b",
+      "main_size": 10596,
+      "clean_size": 10596,
+      "byte_identical": true,
+      "main_unchanged_during_check": true
+    }
+  ]
+}

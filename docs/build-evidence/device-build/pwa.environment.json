@@ -1,0 +1,44 @@
+{
+  "cwd": "/workspace/scratch/fm1-research/sloop",
+  "commit": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+  "command": [
+    "node",
+    "tests/pwa_test.mjs",
+    "build/host/pwa-site"
+  ],
+  "NODE_OPTIONS": "--import=/workspace/scratch/fm1-device-build/baseline/pwa-system-chromium.mjs",
+  "NODE_PATH": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules",
+  "node_version": "v24.19.0",
+  "chromium_path": "/usr/bin/chromium",
+  "chromium_version": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+  "status_before": "",
+  "exit": 1,
+  "status_after": "",
+  "tracked_hashes_unchanged": true,
+  "generated_fixture_restoration_needed": [],
+  "reaped_adopted_children": [
+    {
+      "pid": 47568,
+      "status": 256
+    },
+    {
+      "pid": 47570,
+      "status": 0
+    },
+    {
+      "pid": 47571,
+      "status": 0
+    },
+    {
+      "pid": 47648,
+      "status": 0
+    }
+  ],
+  "all_children_reaped": true,
+  "playwright_path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.js",
+  "playwright_version": "1.62.1",
+  "effective_launch_options": {
+    "headless": true,
+    "executablePath": "/usr/bin/chromium"
+  }
+}
