@@ -1,0 +1,11 @@
+{
+  "action": "unchanged",
+  "branch": "refs/heads/gh-pages",
+  "bytes": 12385040,
+  "commit": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527",
+  "destination": "https://github.com/anthonysprints/jamboxfm.git",
+  "files": 21,
+  "package_sha256": "41dbe62110f2c8fe23bfb42fdb5ea5b3d6a32041f25ed49f92800e68d4fa3f92",
+  "parent": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527",
+  "tree": "94ceceef21d5cda04049d32abdb466010720e53c"
+}

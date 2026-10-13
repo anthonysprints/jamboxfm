@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-10-13T19:32:32.621819+00:00",
+  "base": "https://anthonysprints.github.io/jamboxfm/",
+  "files": [
+    {
+      "url": "https://anthonysprints.github.io/jamboxfm/emu/",
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    }
+  ]
+}

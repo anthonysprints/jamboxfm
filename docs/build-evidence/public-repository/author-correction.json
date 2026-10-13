@@ -1,0 +1,51 @@
+{
+  "account": "anthonysprints",
+  "old_tips": {
+    "main": "59edccd34a44f649897293073bdd0ef1ebd8a3d2",
+    "gh-pages": "30f4aaef7ec50a2f3c965a533ba97b7cabe22ba9"
+  },
+  "new_tips": {
+    "main": "807b1ef2a98825fe503d8bfcd8dbc07db1ea8fa2",
+    "gh-pages": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527"
+  },
+  "commits": [
+    {
+      "old": "d40de1a87ec2f581e653a8ec77356bf5ba88a0f7",
+      "new": "6c81a2e7fcbc53a74b3831c8f68fa2df1c1111dc",
+      "tree": "9d38455db7528674ca140aa384bbd7f67aac3c46",
+      "corrected_identity_headers": 2
+    },
+    {
+      "old": "24c08158a2c9793ad2aab4017f821ced3acc3894",
+      "new": "bc957cf36f77c41f4d9b876589a71220abd47812",
+      "tree": "1c62e55406fc6443a22cf030d08c7e3ddc0ba62c",
+      "corrected_identity_headers": 2
+    },
+    {
+      "old": "59edccd34a44f649897293073bdd0ef1ebd8a3d2",
+      "new": "807b1ef2a98825fe503d8bfcd8dbc07db1ea8fa2",
+      "tree": "a0be6e73b67794d8efa3b2f4fa33352cb9683049",
+      "corrected_identity_headers": 2
+    },
+    {
+      "old": "fad7c64a23e3b353f356ebb8c3969f8b1857ace2",
+      "new": "bb4a3ab5cd6b8712de589ecc965413293a740e41",
+      "tree": "d212ca29d4ce2ddc0d30852651935999d1eb12fa",
+      "corrected_identity_headers": 2
+    },
+    {
+      "old": "98488d0e15d608df627a8e13225d7fbff9cc3995",
+      "new": "889cbc1c22d10ceb133c09e06bb8004672876bb7",
+      "tree": "5275d7bb36bfde07c74cdb5818c84ad81adb4d3b",
+      "corrected_identity_headers": 2
+    },
+    {
+      "old": "30f4aaef7ec50a2f3c965a533ba97b7cabe22ba9",
+      "new": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527",
+      "tree": "94ceceef21d5cda04049d32abdb466010720e53c",
+      "corrected_identity_headers": 2
+    }
+  ],
+  "published_with_explicit_leases": true,
+  "all_trees_messages_dates_preserved": true
+}

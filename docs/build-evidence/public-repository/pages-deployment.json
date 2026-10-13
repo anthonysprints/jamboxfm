@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-10-13T19:36:34.840733+00:00",
+  "repository": "anthonysprints/jamboxfm",
+  "expected_sha": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527",
+  "checks": {
+    "pages": {
+      "status": 200,
+      "result": {
+        "status": "built",
+        "html_url": "https://anthonysprints.github.io/jamboxfm/",
+        "build_type": "legacy",
+        "source": {
+          "branch": "gh-pages",
+          "path": "/"
+        },
+        "https_enforced": true,
+        "public": true
+      }
+    },
+    "actions": {
+      "status": 200,
+      "result": {
+        "total_count": 1,
+        "workflow_runs": [
+          {
+            "id": 38455982345,
+            "name": "pages build and deployment",
+            "head_sha": "795bb3e4f5b7861b0c22d9ca3549d14960fe0527",
+            "status": "completed",
+            "conclusion": "success",
+            "html_url": "https://github.com/anthonysprints/jamboxfm/actions/runs/38455982345",
+            "created_at": "2026-10-13T19:35:01Z",
+            "updated_at": "2026-10-13T19:35:31Z"
+          }
+        ]
+      }
+    }
+  }
+}
