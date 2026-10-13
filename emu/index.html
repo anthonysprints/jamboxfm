@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eee9df">
+  <meta name="description" content="Play the JamBoxFM prototype in your browser, with the FM-1's controls and live screen.">
+  <title>JamBoxFM · The instrument</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="workbench">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="JamBoxFM instrument">jam<span>box</span><sup>FM</sup></a>
+      <p class="edition"><span aria-hidden="true"></span> THE INSTRUMENT <b>01</b></p>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">DUSTY SESSIONS / FM-1</p>
+        <h1 id="page-title">Meet your little band.</h1>
+        <p class="lede">Four parts. Twenty-seven keys. A pocket of your own.</p>
+      </div>
+      <div class="session-tag"><span class="session-mark" aria-hidden="true">D</span><div><span>LOADED SESSION</span><strong>Dusty</strong><small>Bass · chords · lead · drums</small></div></div>
+    </section>
+
+    <section class="instrument-area" aria-label="Playable JamBoxFM instrument">
+      <div class="audio-bar">
+        <div class="audio-actions">
+          <button id="audio-start" class="audio-start" type="button">Start audio <span aria-hidden="true">&gt;</span></button>
+          <button id="panic" class="panic" type="button">All notes off</button>
+        </div>
+        <div class="output-status"><span id="status" role="status" aria-live="polite">Loading the instrument…</span><meter id="meter" min="0" max="1" value="0" aria-label="Audio output level"></meter></div>
+      </div>
+
+      <div class="device" id="device" aria-label="FM-1 control panel">
+        <div class="device-heading"><span>JAMBOX<span class="device-fm">FM</span></span><span class="device-kind">POCKET SESSION MACHINE</span><span class="prototype-mark">PROTOTYPE</span></div>
+        <fieldset id="panel-controls" class="panel-controls" disabled>
+        <div class="panel-top">
+          <div class="utility-controls">
+            <div id="encoders" class="encoders" aria-label="Master, select, presets and algorithm knobs"></div>
+            <div id="octaves" class="octaves" aria-label="Octave buttons"></div>
+          </div>
+          <div class="display-unit">
+            <div class="screen-bezel"><canvas id="screen" width="240" height="240" role="img" aria-label="JamBoxFM live device screen"></canvas></div>
+            <p class="display-caption"><span class="screen-dot" aria-hidden="true"></span> LIVE SCREEN <span>240 × 240</span></p>
+          </div>
+          <div class="performance-controls">
+            <div id="macros" class="macros" aria-label="Four parameter knobs"></div>
+            <div id="buttons" class="buttons" aria-label="Twelve function and transport buttons"></div>
+          </div>
+        </div>
+        <div class="keybed-header"><span>PLAY / HOLD / EXPLORE</span><span>F3 — G5</span></div>
+        <div class="keybed-scroll"><div id="keys" class="keys" aria-label="Twenty-seven note keys"></div></div>
+        </fieldset>
+        <div class="device-footer"><span>FM-1 / JAMBOXFM</span><span class="device-stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>MAKE A LITTLE NOISE.</span></div>
+      </div>
+      <p class="panel-hint">Click or touch a key to play. Drag or scroll a knob. Hold a function button to use its second layer.</p>
+    </section>
+
+    <section class="quick-start" aria-labelledby="quick-title">
+      <div class="quick-heading"><p class="eyebrow">YOUR FIRST MINUTE</p><h2 id="quick-title">Find the pocket.</h2></div>
+      <ol class="steps">
+        <li><span class="step-number">01</span><div><h3>Get it moving</h3><p>Start audio, then press <strong>PLAY</strong> on the instrument. The Dusty session is ready.</p></div></li>
+        <li><span class="step-number">02</span><div><h3>Pick your part</h3><p>Turn <strong>SELECT</strong> for drums, bass, chords or lead. Try the keys. Turn <strong>PRESETS</strong> for another sound.</p></div></li>
+        <li><span class="step-number">03</span><div><h3>Make it yours</h3><p>Shape the sound with <strong>KNOB 1–4</strong>. Tap <strong>FX</strong>, <strong>ENV</strong> or <strong>EDIT</strong> to explore. <strong>HOME</strong> brings you back.</p></div></li>
+      </ol>
+    </section>
+
+    <details class="help">
+      <summary>Playing with your computer keyboard <span aria-hidden="true">+</span></summary>
+      <div class="help-content">
+        <p>The lower keys use <kbd>Z</kbd>–<kbd>/</kbd> with black notes on <kbd>S D F H J L ; '</kbd>. The upper keys use <kbd>Q W E R T Y U I O</kbd>. The printed shortcuts on the panel show each note.</p>
+        <p>The number row controls the twelve buttons. <kbd>[</kbd> and <kbd>]</kbd> shift octaves; <kbd>Space</kbd> presses PLAY; <kbd>Esc</kbd> releases all notes. Focused knobs respond to the arrow keys. Hold a function key to use its second layer.</p>
+      </div>
+    </details>
+    <footer class="page-footer"><span>JAMBOXFM <b>·</b> BROWSER PROTOTYPE</span><p>Changes last for this session. Reload to start fresh.</p><span>Built on Sloop / Felucca <b>·</b> GPL-3.0-only</span></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+<aside aria-label="Source and licenses" style="max-width:70rem;margin:0 auto;padding:0 1rem 2rem;font:12px/1.5 Arial,sans-serif"><a id="source-download" href="../jambox-source.zip" download="jambox-source.zip">Download corresponding source</a> <span aria-hidden="true">·</span> <a href="../LICENSES.html">Licenses and credits</a></aside>
+</body>
+</html>
