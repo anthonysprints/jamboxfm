@@ -1,0 +1,4 @@
+root before=0
+after key-down root=5 pending=0
+after function-first release root=5 (expected5/F)
+after key-first release root=5 (expected5/F)

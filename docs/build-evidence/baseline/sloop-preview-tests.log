@@ -1,0 +1,17 @@
+engine 0: native/WASM match (0)
+engine 1: native/WASM match (0)
+engine 2: native/WASM match (0)
+engine 3: native/WASM match (0)
+engine 4: native/WASM match (0)
+engine 5: native/WASM match (0)
+engine 6: native/WASM match (0)
+engine 7: native/WASM match (0)
+engine 8: native/WASM match (0)
+engine 9: native/WASM match (0)
+engine 10: native/WASM match (0)
+engine 11: native/WASM match (0)
+sequence, live mute/unmute, stop, and uploaded samples: passed
+editor protocol -> audio thread live edits: passed
+audio playhead: independent lengths/divisions, paging, stop/restart, and micro timing passed
+inline edits: add/remove audible notes, independent tracks, and preserved drum lanes passed
+preview audio tests passed

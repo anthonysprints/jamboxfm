@@ -1,0 +1,12 @@
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.69 ()
+Copyright (C) 2014 the Emscripten authors (see AUTHORS.txt)
+This is free and open source software under the MIT license.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Debian clang version 19.1.7 (3+b1)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /workspace/toolchains/debian-browser/root/usr/lib/llvm-19/bin
+wasm-opt version 120
+v24.19.0
+Python 3.12.14

@@ -1,0 +1,1562 @@
+{
+  "repository": "https://github.com/isod89/sloop-fm1",
+  "commit": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+  "import_date": "2026-10-13",
+  "files": [
+    {
+      "upstream_path": ".gitattributes",
+      "import_path": ".gitattributes",
+      "sha256": "5f9b6d5311fefb9da22c9d3c0b84aed621b7573b22ddf49869baa0c060bf68e2"
+    },
+    {
+      "upstream_path": ".gitignore",
+      "import_path": ".gitignore",
+      "sha256": "8e26f98ad2f3acf0837e3cc69092ebdc5531306d58f644769fc2e0d218cbd133"
+    },
+    {
+      "upstream_path": "BUILDING.md",
+      "import_path": "BUILDING.md",
+      "sha256": "5aefb63f7136ecf1bfb147f302b1cac196fa52527d6a653066ac2114aa66d9bb"
+    },
+    {
+      "upstream_path": "DEMARRAGE-RAPIDE-FR.md",
+      "import_path": "DEMARRAGE-RAPIDE-FR.md",
+      "sha256": "766a636c506a82ef9423f98f8c226855da40c14a6d9d740d1d844d840dcbc81b"
+    },
+    {
+      "upstream_path": "GUIDE.md",
+      "import_path": "GUIDE.md",
+      "sha256": "1b153c0861ebc604fb32d71110eacf00112f10316a511ae1afb574a126c11414"
+    },
+    {
+      "upstream_path": "INSTALL-SLOOP.bat",
+      "import_path": "INSTALL-SLOOP.bat",
+      "sha256": "27fdfc3101f22b9268f9bd3a6cded7f46cab03990ce73f73dab1b2859324789e"
+    },
+    {
+      "upstream_path": "LICENSE",
+      "import_path": "LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "upstream_path": "LICENSES/Apache-2.0-msfa.txt",
+      "import_path": "LICENSES/Apache-2.0-msfa.txt",
+      "sha256": "27dd23b62bc11d0806562397a1e782f86fc7dcacd1ba7a1b58d3c78a54795e62"
+    },
+    {
+      "upstream_path": "LICENSING.md",
+      "import_path": "LICENSING.md",
+      "sha256": "ccd7ec8bade6eadf16f8edb63d2759c9e76ee46bbafe9873e26cd49d85af3255"
+    },
+    {
+      "upstream_path": "OPEN-EDITOR.bat",
+      "import_path": "OPEN-EDITOR.bat",
+      "sha256": "1ccd1274ea345476814e4da72e310e046c3dc52519bb488998b45b5ea857ee73"
+    },
+    {
+      "upstream_path": "README.md",
+      "import_path": "docs/upstream/SLOOP_README.md",
+      "sha256": "7455a33f179148b18f08b236803af180f1eabb2505ca9a2336380d87578270e2"
+    },
+    {
+      "upstream_path": "SLOOP.md",
+      "import_path": "SLOOP.md",
+      "sha256": "1662f9b5ba3423cd757b41532cf2064cd145e9c166aa2ebc9e1a491dc2d82926"
+    },
+    {
+      "upstream_path": "assets/fonts/Terminus-LICENSE.txt",
+      "import_path": "assets/fonts/Terminus-LICENSE.txt",
+      "sha256": "10badc64d36b6d6fb1a27fa6e58dfc18475e3bd5412d9f42fca7cae08efcc289"
+    },
+    {
+      "upstream_path": "assets/fonts/ter-u16b.bdf",
+      "import_path": "assets/fonts/ter-u16b.bdf",
+      "sha256": "5275653e1cae7b123c844e52d5232242e054d5a4b0d30906404b78718c2380df"
+    },
+    {
+      "upstream_path": "assets/fonts/ter-u16n.bdf",
+      "import_path": "assets/fonts/ter-u16n.bdf",
+      "sha256": "5197662b22bf9f3e68d4af9f969a7fefa3edae40dd82ae969a147381130fb4ae"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/00_E1.wav",
+      "import_path": "assets/hiphop-pack/BASS/00_E1.wav",
+      "sha256": "ffdf3da0cc8dc0faeb99c582b647d0b1bb96cb97ed95d5b4680e8f20139af396"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/01_As1.wav",
+      "import_path": "assets/hiphop-pack/BASS/01_As1.wav",
+      "sha256": "46a944e5f77961c62a1617aa4eef02b270ecde2a4f5d1caf155e485d0e72a01e"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/02_D2.wav",
+      "import_path": "assets/hiphop-pack/BASS/02_D2.wav",
+      "sha256": "99fb4b0b7cfe13133716bad0c608864e5427eceafee41d88c8f0b6255f34b079"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/03_Fs2.wav",
+      "import_path": "assets/hiphop-pack/BASS/03_Fs2.wav",
+      "sha256": "c5c85f6b280b544684fc0ce1ce0e3eadfad0c0a9b5b2e9be8ad548750539c3c4"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/04_A2.wav",
+      "import_path": "assets/hiphop-pack/BASS/04_A2.wav",
+      "sha256": "d88b679a9aee18c44dcd65dcc23c597cba7a1ee43d84c351825867411275db6c"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/BASS/05_Cs3.wav",
+      "import_path": "assets/hiphop-pack/BASS/05_Cs3.wav",
+      "sha256": "3fa5c108f972984867323340b60e09b9a2e381c112b19d2d7fe7ea2288244272"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/CREDITS.txt",
+      "import_path": "assets/hiphop-pack/CREDITS.txt",
+      "sha256": "4536deb5a142c48954062f1b6007a1ba55848af66b35d007ad508fb574c43b9a"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/EPIANO/00_A2.wav",
+      "import_path": "assets/hiphop-pack/EPIANO/00_A2.wav",
+      "sha256": "61bf4b0653a408aabae44419c724dcecd4ad7e6064057acac375b7be9e2f2d05"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/EPIANO/01_Ds3.wav",
+      "import_path": "assets/hiphop-pack/EPIANO/01_Ds3.wav",
+      "sha256": "e3c6b08075c003c94f7f3213b870efb5dd214797361ccc3e98e60d32f2c7746e"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/EPIANO/02_Cs4.wav",
+      "import_path": "assets/hiphop-pack/EPIANO/02_Cs4.wav",
+      "sha256": "e4308e65caf67c4c657ac13e7cbe45f74676fb12d18276edaa9ebf4644c7c9bf"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/EPIANO/03_B4.wav",
+      "import_path": "assets/hiphop-pack/EPIANO/03_B4.wav",
+      "sha256": "d2352307f68c502d39457de8d1a61498510ba376688d6f1314f631e48166aa44"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/00_F3.wav",
+      "import_path": "assets/hiphop-pack/HORNS/00_F3.wav",
+      "sha256": "11e1047336f86b1db8d525ea8fe7872d88dfffe4135e2735cc9155ce0fc7363e"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/01_A3.wav",
+      "import_path": "assets/hiphop-pack/HORNS/01_A3.wav",
+      "sha256": "68e8cd1b14bf43d95dc1de82b4016679a4fcdc4768a112fd57853b3c5287a4a0"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/02_C4.wav",
+      "import_path": "assets/hiphop-pack/HORNS/02_C4.wav",
+      "sha256": "df5947ed2cbafec91bab73b335bc5a8854e4b56de47c278e53cae77d63695d69"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/03_Ds4.wav",
+      "import_path": "assets/hiphop-pack/HORNS/03_Ds4.wav",
+      "sha256": "aa20203989f43eef377608a68314b63fc66f5f52ff0680a4ba8bb2d0fe1358f0"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/04_G4.wav",
+      "import_path": "assets/hiphop-pack/HORNS/04_G4.wav",
+      "sha256": "04cdab55b6b009ebb9c69a4046b539e26aa4a02d43e1a4beb44ee528f780f982"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/05_As4.wav",
+      "import_path": "assets/hiphop-pack/HORNS/05_As4.wav",
+      "sha256": "38b5d0f78e6409c475a79570d88ab9bafbb5853aa81b4b5b542a11bd974021c0"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/HORNS/06_D5.wav",
+      "import_path": "assets/hiphop-pack/HORNS/06_D5.wav",
+      "sha256": "9eac5634b0c13c87247a2d19cb47dd5f2784d72ec5fe82ac053eea3d2ab337a4"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/SCRATCH/00_vinyl_scratch.wav",
+      "import_path": "assets/hiphop-pack/SCRATCH/00_vinyl_scratch.wav",
+      "sha256": "b334a2ec40c2b02011f01edc452354adaf4ded06e2f2fea52d95a83886b9d7c5"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/SCRATCH/01_vinyl_backspin.wav",
+      "import_path": "assets/hiphop-pack/SCRATCH/01_vinyl_backspin.wav",
+      "sha256": "22fd1465a9ad60144a760de40ffa4083dd83c2ff290dfe1780ccb0a9b09afc85"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/SCRATCH/02_vinyl_rewind.wav",
+      "import_path": "assets/hiphop-pack/SCRATCH/02_vinyl_rewind.wav",
+      "sha256": "66b869585fd682743f9fc6f4fe1131366142c2e889132c326cfb1fcd35afd78c"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/SCRATCH/03_perc_snap.wav",
+      "import_path": "assets/hiphop-pack/SCRATCH/03_perc_snap.wav",
+      "sha256": "87498c96dc6fb32c799f803031cba05f032e5cb98c87c1bb1186c25d19d9cd2f"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/00_G3.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/00_G3.wav",
+      "sha256": "f6d0e5a6e85aca23499dd110cbba4219633a1e77b8203377448cdd702f853951"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/01_B3.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/01_B3.wav",
+      "sha256": "a3656ea8d2372a746bbbd350ce7265f9266de32abdebfdaa963212e1b1e43ec4"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/02_D4.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/02_D4.wav",
+      "sha256": "a8f883fd03e8eab3de06308b3ca9cbf1ed6c728d74e6f117d668ff5453ddb2f3"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/03_Fs4.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/03_Fs4.wav",
+      "sha256": "3b3d525b55c0084701d4a5f86b79b6823e2d930c41e6dbd2b162811c88873178"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/04_A4.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/04_A4.wav",
+      "sha256": "a777f57f047d47c4e37bf4bff1c7baf6c091ea932299ef35892762b451666f7e"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/05_C5.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/05_C5.wav",
+      "sha256": "aa9ac7fce965b70d9b4b5b7f62b5d4279318dad0d21e12739f9c6939baef9fdb"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/STRINGS/06_E5.wav",
+      "import_path": "assets/hiphop-pack/STRINGS/06_E5.wav",
+      "sha256": "f1bfa6897a55e08f4325da521ce2d24c496889432827635c3ce0ee87e3d660e7"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/UPRIGHT/00_F3.wav",
+      "import_path": "assets/hiphop-pack/UPRIGHT/00_F3.wav",
+      "sha256": "5407f5d9af6c2a218df9b2c390844cdabce345c06f21d6f76cab8cdcaf57d60d"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/UPRIGHT/01_B3.wav",
+      "import_path": "assets/hiphop-pack/UPRIGHT/01_B3.wav",
+      "sha256": "fd12b33da358b0526ae7bd3820b37df1bbc8f47c2f54c96251989be43ec05994"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/UPRIGHT/02_F4.wav",
+      "import_path": "assets/hiphop-pack/UPRIGHT/02_F4.wav",
+      "sha256": "693aeb7b9a17f53c5583487c5634fbbe10bfe15527f259c821f99bd174ff07bc"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/UPRIGHT/03_Cs5.wav",
+      "import_path": "assets/hiphop-pack/UPRIGHT/03_Cs5.wav",
+      "sha256": "3f548d84d0b511eabb5b4b7fd8b2334d9c9c975e27c2e0c044003b21cdea30ac"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/VIBES/00_F3.wav",
+      "import_path": "assets/hiphop-pack/VIBES/00_F3.wav",
+      "sha256": "996200f5867e4c800cf036de836505e8842d50f5e9c8cec29b180c442d2eec6e"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/VIBES/01_C4.wav",
+      "import_path": "assets/hiphop-pack/VIBES/01_C4.wav",
+      "sha256": "ed85e2837f036d551126137fcf98fb28f04e2981d8f6e87d7f4bda041757cab3"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/VIBES/02_G4.wav",
+      "import_path": "assets/hiphop-pack/VIBES/02_G4.wav",
+      "sha256": "6fd95a7816cf5927d2c7e0943a9e32cdf1717ca230fd28f2c6bea22b74f587a6"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/VIBES/03_D5.wav",
+      "import_path": "assets/hiphop-pack/VIBES/03_D5.wav",
+      "sha256": "d73cca06c1ac0416834c3cf8e053a8e2bd9788157271074e3a5d552c6a461fde"
+    },
+    {
+      "upstream_path": "assets/hiphop-pack/pack.json",
+      "import_path": "assets/hiphop-pack/pack.json",
+      "sha256": "fc1c50426fde7d403f93f6f677ef358be85d52eadc5b855a7c1288138e85a3dc"
+    },
+    {
+      "upstream_path": "assets/icons.json",
+      "import_path": "assets/icons.json",
+      "sha256": "1165194730f97e22e9c1f11d9585d52cba3080b6ee8464ddba5ae3a79fb61d7f"
+    },
+    {
+      "upstream_path": "assets/icons.png",
+      "import_path": "assets/icons.png",
+      "sha256": "ec703d9bacef2d88656a7a439f6a6e2ab904cd7f245a004c77586d979defb944"
+    },
+    {
+      "upstream_path": "assets/logo/sloop-icon.png",
+      "import_path": "assets/logo/sloop-icon.png",
+      "sha256": "cefcbed99518d61ce11ba1f6c1f1a8f1ab0637562e802acd56ccbb35f28b5c1f"
+    },
+    {
+      "upstream_path": "assets/logo/sloop-icon.svg",
+      "import_path": "assets/logo/sloop-icon.svg",
+      "sha256": "3b736b14365bbe19e789d8a7c68df597f60df2e272c122772d4f5b6402487b1a"
+    },
+    {
+      "upstream_path": "assets/logo/sloop-logo.png",
+      "import_path": "assets/logo/sloop-logo.png",
+      "sha256": "9d8e0a38739b10b67c9190fb31361e2b560741e4a53a8b1cc11f9aa6945dade1"
+    },
+    {
+      "upstream_path": "assets/logo/sloop-logo.svg",
+      "import_path": "assets/logo/sloop-logo.svg",
+      "sha256": "7f3345598806649799946d051e81e4b9618389dcdd4275b783833c0fc0cfbc6b"
+    },
+    {
+      "upstream_path": "assets/logo/sloop-splash.png",
+      "import_path": "assets/logo/sloop-splash.png",
+      "sha256": "645ce2b0ba0b865e6a13329317f4f1105ab79542fc1b778e0217e2c1aba3f9de"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/ATTRIBUTION.txt",
+      "import_path": "assets/samples-cc0/ATTRIBUTION.txt",
+      "sha256": "81461e108313ef6fbda38fefc3851685d68db4b5397647536a4f6c9f58031118"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/BASS/00_E1_m52.wav",
+      "import_path": "assets/samples-cc0/BASS/00_E1_m52.wav",
+      "sha256": "f0c8eb8b038551a20921df7e73c33819381a05293200bdda281524d26577c08f"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/BASS/01_B1_m59.wav",
+      "import_path": "assets/samples-cc0/BASS/01_B1_m59.wav",
+      "sha256": "34c5ddd0e366de685d063092bf036c210d5c98b92ec5b49fde683d3354858a09"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/BASS/02_Fs2_m66.wav",
+      "import_path": "assets/samples-cc0/BASS/02_Fs2_m66.wav",
+      "sha256": "fabba020333ff9497566bca9458abe9e092166e506cb2e69e24d5e43cbdd28ef"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/BASS/03_Cs3_m73.wav",
+      "import_path": "assets/samples-cc0/BASS/03_Cs3_m73.wav",
+      "sha256": "30c056dbd57c6cf9a0eb08a3785a2ef73ef7ace55a0701fbb60d04f3af3a82a5"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/CREDITS.txt",
+      "import_path": "assets/samples-cc0/CREDITS.txt",
+      "sha256": "8d54ace4773911b596a2a9421af1e4fcec5cd0ca3396ac3511c2c839f582e2bf"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/FLUTE/00_LDFlute_susvib_C4_v1_1.wav",
+      "import_path": "assets/samples-cc0/FLUTE/00_LDFlute_susvib_C4_v1_1.wav",
+      "sha256": "37fd620f41b3ef8eb96bd0b1d2d4660266e61b4720b8f00d16b1be7886673568"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/FLUTE/01_LDFlute_susvib_C5_v1_1.wav",
+      "import_path": "assets/samples-cc0/FLUTE/01_LDFlute_susvib_C5_v1_1.wav",
+      "sha256": "f80ea0857ba925e1d491499a3742c31d45cee45371041ecb9bd64b2167343d59"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/FLUTE/02_LDFlute_susvib_C6_v1_1.wav",
+      "import_path": "assets/samples-cc0/FLUTE/02_LDFlute_susvib_C6_v1_1.wav",
+      "sha256": "8b8a1b59010358607edf2daaa68e4916206c9e1f341be32d1e70ca85d35bb729"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/HORNS/00_G3_m55.wav",
+      "import_path": "assets/samples-cc0/HORNS/00_G3_m55.wav",
+      "sha256": "e9548b0987bb5387cb4f30de639a46d0248a20d7b51afc87ca5d513f96cf9745"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/HORNS/01_D4_m62.wav",
+      "import_path": "assets/samples-cc0/HORNS/01_D4_m62.wav",
+      "sha256": "dd596c63da9f3bfd82d83ac66356305877a09b6e4d45c5500362257335f07944"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/HORNS/02_A4_m69.wav",
+      "import_path": "assets/samples-cc0/HORNS/02_A4_m69.wav",
+      "sha256": "34171fca7be39d4612ebaa8ca99b0c81fc8443ec250c5b25c8013a072699f01b"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/HORNS/03_E5_m76.wav",
+      "import_path": "assets/samples-cc0/HORNS/03_E5_m76.wav",
+      "sha256": "092f102f9ba3ccb9547f8ed24fcbbf46949b82f0d4c98aca1bb46b57239bc825"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/00_Tamb1_Hit_v2_rr1_Mid.wav",
+      "import_path": "assets/samples-cc0/KIT/00_Tamb1_Hit_v2_rr1_Mid.wav",
+      "sha256": "885ebf1d70f8e888f576682e4e4112b92b69649162f392c83b3379c91a09cf41"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/01_Mid_ShakerDouble_Down_rr1.wav",
+      "import_path": "assets/samples-cc0/KIT/01_Mid_ShakerDouble_Down_rr1.wav",
+      "sha256": "0df7c271e1dba4de7304f7df81886390dd9ae698bfdd6df570026af4f2223574"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/02_Conga_HitN_v2_rr1_Sum.wav",
+      "import_path": "assets/samples-cc0/KIT/02_Conga_HitN_v2_rr1_Sum.wav",
+      "sha256": "13d322c0e7a830cdbcbdc5a6e05566dfe3f5a073b7b82a3262d3f6fc10f96764"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/03_Claves1_Hit_v2_rr1_Mid.wav",
+      "import_path": "assets/samples-cc0/KIT/03_Claves1_Hit_v2_rr1_Mid.wav",
+      "sha256": "bcabe27330761309eb4b4f6207e6e3b4be59815df86449ac05bfb9b81f19efc9"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/04_wood_click_mp.wav",
+      "import_path": "assets/samples-cc0/KIT/04_wood_click_mp.wav",
+      "sha256": "00b76f9fe96c118f29dfc69866c12ec11f2e1264f6cb9c0b36912c2210b015fe"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/10_kick_BDrumNew_hit_v5.wav",
+      "import_path": "assets/samples-cc0/KIT/10_kick_BDrumNew_hit_v5.wav",
+      "sha256": "30899ee9abb74d3de160a5a386e365af7ac4f0e10d67288498bf4e009e0996e2"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/11_snare_Snare2_HitSN_v7.wav",
+      "import_path": "assets/samples-cc0/KIT/11_snare_Snare2_HitSN_v7.wav",
+      "sha256": "8cdcf5d377f9111d083222b12964fb7c342db4ce3ea0b2d9a53d38df0053c438"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/12_rim_sidestick.wav",
+      "import_path": "assets/samples-cc0/KIT/12_rim_sidestick.wav",
+      "sha256": "c0b40782bdcdb88dfbccf1b5678dc4e727d4711321a7e6071a04459c131f5576"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/13_clap_Clap_rr1.wav",
+      "import_path": "assets/samples-cc0/KIT/13_clap_Clap_rr1.wav",
+      "sha256": "28e686093a684a511a0800a5517a1ecc64c565384910b19dee9aabc16f639c51"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/14_hihat_HitC_v3.wav",
+      "import_path": "assets/samples-cc0/KIT/14_hihat_HitC_v3.wav",
+      "sha256": "b0ae1d1382d09efa59f0db3e918161a3b2e5876e4bc93877ced672022717309e"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/15_ohat_HitO.wav",
+      "import_path": "assets/samples-cc0/KIT/15_ohat_HitO.wav",
+      "sha256": "84653794da15a74f19c4e89e632c39bfe4b204914e6b8ff68c6d7100838088a3"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/16_tomlo_TomL_HitS_v4.wav",
+      "import_path": "assets/samples-cc0/KIT/16_tomlo_TomL_HitS_v4.wav",
+      "sha256": "9abacf78a1c981c17bc099a27cf9dafd11cd65e43d41ab1e910443911add93ca"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/17_tomhi_TomH_HitS_v4.wav",
+      "import_path": "assets/samples-cc0/KIT/17_tomhi_TomH_HitS_v4.wav",
+      "sha256": "86f343debdc08c0d55f3e6049a4e0cf38fd278ca9b3dc481208f9343bfeb73e6"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/18_crash_susCymb2_hit_f1.wav",
+      "import_path": "assets/samples-cc0/KIT/18_crash_susCymb2_hit_f1.wav",
+      "sha256": "4de6cbead96c52d09bcac8eef65464d9691a181852272549b66c149b77f8c6b7"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/19_ride_susCymb2_stick_mf1.wav",
+      "import_path": "assets/samples-cc0/KIT/19_ride_susCymb2_stick_mf1.wav",
+      "sha256": "0439c99230db9e0333ced23054a684f76be8e1fdce5cff265cee73fd85ffb1a7"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/KIT/20_cowbell_Cowbell1_Normal_v3.wav",
+      "import_path": "assets/samples-cc0/KIT/20_cowbell_Cowbell1_Normal_v3.wav",
+      "sha256": "8d329ba772b0d6be4f11166585a7e2d98472fd13611a3eaee2830ebeebadb3e7"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/PIANO/00_C3_m48.wav",
+      "import_path": "assets/samples-cc0/PIANO/00_C3_m48.wav",
+      "sha256": "6ff54a939dafc21ab2b2ab61254a759f19a5339f6688afaa151d66534edc0e83"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/PIANO/01_Gs3_m56.wav",
+      "import_path": "assets/samples-cc0/PIANO/01_Gs3_m56.wav",
+      "sha256": "2dd456e9f18524d3c8de35e31a0bc75b9747f2935387e3bdefc2dfe691fedb05"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/PIANO/02_E4_m64.wav",
+      "import_path": "assets/samples-cc0/PIANO/02_E4_m64.wav",
+      "sha256": "2fe14ee86f68c55859d63cb5a0798caf40b9f48324f7549d3633949b90c38645"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/PIANO/03_C5_m72.wav",
+      "import_path": "assets/samples-cc0/PIANO/03_C5_m72.wav",
+      "sha256": "0fe703351fb7f137852c63bd2e584002f8387bf63d76adf26b0a3be41db3c688"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/SCRCH/00_vinyl_scratch_m57.wav",
+      "import_path": "assets/samples-cc0/SCRCH/00_vinyl_scratch_m57.wav",
+      "sha256": "b334a2ec40c2b02011f01edc452354adaf4ded06e2f2fea52d95a83886b9d7c5"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/SCRCH/01_vinyl_backspin_m65.wav",
+      "import_path": "assets/samples-cc0/SCRCH/01_vinyl_backspin_m65.wav",
+      "sha256": "4cf743d65a730511c00ace97ff0973c4024abb8a6a4ee6d1cf9777a2a1dbdb6c"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/SCRCH/02_vinyl_rewind_m72.wav",
+      "import_path": "assets/samples-cc0/SCRCH/02_vinyl_rewind_m72.wav",
+      "sha256": "997f50f8f7026c30f10cea12c31788c7c448523eaa912d08c13ae738881da14a"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/STRGS/00_G3_m55.wav",
+      "import_path": "assets/samples-cc0/STRGS/00_G3_m55.wav",
+      "sha256": "ce4b154381540b3649fedf785887b575690b8c0fb1ea4efccccfa6e8ffe094b0"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/STRGS/01_E4_m64.wav",
+      "import_path": "assets/samples-cc0/STRGS/01_E4_m64.wav",
+      "sha256": "c5e8b721775acd151f297ea217405b228039ac566829cdeaf920c58d60c68a8b"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/STRGS/02_Cs5_m73.wav",
+      "import_path": "assets/samples-cc0/STRGS/02_Cs5_m73.wav",
+      "sha256": "fec934f346d3f010ea385949a01db53686f7c7e69425d646ae54284348ef7c89"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/VIBES/00_F3_m53.wav",
+      "import_path": "assets/samples-cc0/VIBES/00_F3_m53.wav",
+      "sha256": "69042386a65b343f7372b2daa9ae8d6bdcfc7a37de3c28a56fa006fab06ffaef"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/VIBES/01_D4_m62.wav",
+      "import_path": "assets/samples-cc0/VIBES/01_D4_m62.wav",
+      "sha256": "6364def55b970cea52b20f45d15fd4c460c58f7b6d948319e2248c8215f5b014"
+    },
+    {
+      "upstream_path": "assets/samples-cc0/VIBES/02_B4_m71.wav",
+      "import_path": "assets/samples-cc0/VIBES/02_B4_m71.wav",
+      "sha256": "f75edb9f3654e43a81fdce81ab46625b76cac21a0016ea186222125fc66ba263"
+    },
+    {
+      "upstream_path": "assets/screens/editor-backup.png",
+      "import_path": "assets/screens/editor-backup.png",
+      "sha256": "874e5fdedbc34fbdac4d3aedaa278739d436e6c41b58b875ba564e6d3bf85f80"
+    },
+    {
+      "upstream_path": "assets/screens/editor-cartridge.png",
+      "import_path": "assets/screens/editor-cartridge.png",
+      "sha256": "6ef13c9df4b9c2b207ed42496119ea9e3cc58cffe0d4589b9ecc6f8236a24b8a"
+    },
+    {
+      "upstream_path": "assets/screens/editor-chop.png",
+      "import_path": "assets/screens/editor-chop.png",
+      "sha256": "f449040dc5a385cf62000b7fef7afb98e6768e6999c2e07eaebba00a23fdaa6f"
+    },
+    {
+      "upstream_path": "assets/screens/editor-drums.png",
+      "import_path": "assets/screens/editor-drums.png",
+      "sha256": "11cec10966abda30ccd24803bf28077f00d46225e4a2ed25df199cb96838a7e1"
+    },
+    {
+      "upstream_path": "assets/screens/editor-drumsynth.png",
+      "import_path": "assets/screens/editor-drumsynth.png",
+      "sha256": "1ce0c838e8325f1cefd5071e4bfdd3b50c18f8e58a033b1534ed7aa3158b2424"
+    },
+    {
+      "upstream_path": "assets/screens/editor-midi-texture.png",
+      "import_path": "assets/screens/editor-midi-texture.png",
+      "sha256": "cd7126e504596df0592b0775c5ba3872571da7e31146c909988310c9448e7756"
+    },
+    {
+      "upstream_path": "assets/screens/editor-pianoroll.png",
+      "import_path": "assets/screens/editor-pianoroll.png",
+      "sha256": "842ef0c1597a94fde6aa8d3a652e875e8ff38a14349b821aa03760fb0ffc93b6"
+    },
+    {
+      "upstream_path": "assets/screens/editor-sound.png",
+      "import_path": "assets/screens/editor-sound.png",
+      "sha256": "cff6e7e27528e178ca15317f4765a7f30a7b2356adbe6edf275f66b1d670ab56"
+    },
+    {
+      "upstream_path": "assets/screens/layer-punch-on.png",
+      "import_path": "assets/screens/layer-punch-on.png",
+      "sha256": "e7f482fcfeb63be5d2c89299e694cc636959536407d97723d1527d7b9f0919fe"
+    },
+    {
+      "upstream_path": "assets/screens/layer-steps.png",
+      "import_path": "assets/screens/layer-steps.png",
+      "sha256": "fc9085a728e8c2035f7e827f0e83eff50c8aa3d71d56b20cc26790fc05d3caf2"
+    },
+    {
+      "upstream_path": "assets/screens/live-grid.png",
+      "import_path": "assets/screens/live-grid.png",
+      "sha256": "13cbb4e14f0d4759ee4ee277561412d8c31221d2eb5fde105724e954e17cf461"
+    },
+    {
+      "upstream_path": "assets/screens/live-tracks.png",
+      "import_path": "assets/screens/live-tracks.png",
+      "sha256": "94227ed2a419c5cb043bcb857da6212f06872914f697402ca52a2b5515b804a8"
+    },
+    {
+      "upstream_path": "assets/screens/screens.png",
+      "import_path": "assets/screens/screens.png",
+      "sha256": "626922ab74fa1f00f9605d2f89b0f59d4cca98470872d4a6bce7d987c723c62b"
+    },
+    {
+      "upstream_path": "assets/screens/sloop-2.3-screens.png",
+      "import_path": "assets/screens/sloop-2.3-screens.png",
+      "sha256": "bc20d37ee59258a6a7a4a0c7b22179c0f4d23d00ed16cacc241a59c11c1ccb6c"
+    },
+    {
+      "upstream_path": "assets/screens/sloop-2.5-screens.png",
+      "import_path": "assets/screens/sloop-2.5-screens.png",
+      "sha256": "00dc2fe8a61fb40edbda4125a52772d03086c1a341ec7cada1b45f1b27d81d98"
+    },
+    {
+      "upstream_path": "assets/screens/sloop-2.6-screens.png",
+      "import_path": "assets/screens/sloop-2.6-screens.png",
+      "sha256": "b3bab8c15969188c9a7843e2ee5de86dff776ca1cbbee13d3b193b3910abeb94"
+    },
+    {
+      "upstream_path": "assets/screens/sloop-screens.png",
+      "import_path": "assets/screens/sloop-screens.png",
+      "sha256": "81e36127748d60a2c47ad389c56a452ba0d90838b11cc27cbb6ca257f19bef24"
+    },
+    {
+      "upstream_path": "build-sloop.ps1",
+      "import_path": "build-sloop.ps1",
+      "sha256": "32e6396675a1ca656f828596a09cd7627b31adb4d1cd56a76ffada79f036713a"
+    },
+    {
+      "upstream_path": "build.sh",
+      "import_path": "build.sh",
+      "sha256": "abd7d97f65e2fb63a33d485263770127dadaa374cdb81ff8963ef660ebec2c5b"
+    },
+    {
+      "upstream_path": "docs/.nojekyll",
+      "import_path": "docs/.nojekyll",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "upstream_path": "docs/firmware/sloop-2.6.fwsc",
+      "import_path": "docs/firmware/sloop-2.6.fwsc",
+      "sha256": "199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2"
+    },
+    {
+      "upstream_path": "docs/index.html",
+      "import_path": "docs/index.html",
+      "sha256": "0c4e531bc38f7f2efb11572dd3d6ae1687a9a4d88edf7457bce1cc2c4b4e261a"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/FUKIAI-LICENSE.txt",
+      "import_path": "docs/webapp/editor/FUKIAI-LICENSE.txt",
+      "sha256": "242ea3b0915e1f58cbf14ecafd4eee2733565a44e3b2629036d965168a2b0b19"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/fukiai.ttf",
+      "import_path": "docs/webapp/editor/fukiai.ttf",
+      "sha256": "6111a741524c2f3935442830f67e9c220b234f0f7718bd2e9dd3587867d30e01"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/index.html",
+      "import_path": "docs/webapp/editor/index.html",
+      "sha256": "1cd64f27a58ec6d4792d5427ac8ec2e71a0a8b296d440f0f645da6de8f871f51"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/preview-worklet.js",
+      "import_path": "docs/webapp/editor/preview-worklet.js",
+      "sha256": "a9c7f661c0786aa29e06fc9c2946adb40ecf2a5bb418e98b56d7d503f6d8ff4d"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/preview.js",
+      "import_path": "docs/webapp/editor/preview.js",
+      "sha256": "2a7b656f238ec9f5720f5a7615a5bfa7c24fb9e3c9da400a4f3690c5c80d894b"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/sloop-editor.html",
+      "import_path": "docs/webapp/editor/sloop-editor.html",
+      "sha256": "8a10ec26c589d1e07915593d12c8f767f8c8c707fbd150d594b9cc5b0650245e"
+    },
+    {
+      "upstream_path": "docs/webapp/editor/sloop-preview.wasm",
+      "import_path": "docs/webapp/editor/sloop-preview.wasm",
+      "sha256": "55e2b480ebc689664918f331cbb74b94c78f10b006a06c8e5807c9975ff69ffe"
+    },
+    {
+      "upstream_path": "docs/webapp/icon-192.png",
+      "import_path": "docs/webapp/icon-192.png",
+      "sha256": "cdf289da29524ca25bf4f4c8d89e0e200419c4d1e37c42f859839875aa7ce7aa"
+    },
+    {
+      "upstream_path": "docs/webapp/icon-512.png",
+      "import_path": "docs/webapp/icon-512.png",
+      "sha256": "d8636b2091a6a5f9d99dba2c24af9e2e7d8ece8824496a473a4fd139f94a32fa"
+    },
+    {
+      "upstream_path": "docs/webapp/icon-maskable-512.png",
+      "import_path": "docs/webapp/icon-maskable-512.png",
+      "sha256": "1ccc8be077901cea72ff614ef9fcafd4a0829740c92f374ca5b3a70ff51780b5"
+    },
+    {
+      "upstream_path": "docs/webapp/installer/index.html",
+      "import_path": "docs/webapp/installer/index.html",
+      "sha256": "c598e0fad9439716208f02a33ee3d28a0ecbc99f9d6dae85e32eb953cc254aaa"
+    },
+    {
+      "upstream_path": "docs/webapp/sloop.webmanifest",
+      "import_path": "docs/webapp/sloop.webmanifest",
+      "sha256": "ed17d8c239fde20691d13eaac5dd94d6a7131a7e5ca83067e03c4d72fc5792bc"
+    },
+    {
+      "upstream_path": "docs/webapp/sw.js",
+      "import_path": "docs/webapp/sw.js",
+      "sha256": "c32346a6ed5f9f1431dc9d59c72a3a6721fce966475dfa81e395e9c121c5442d"
+    },
+    {
+      "upstream_path": "firmware/app.ld",
+      "import_path": "firmware/app.ld",
+      "sha256": "6a9f41205e482fbdf2d24dc418416e45a3a8e1781d3e594279d751335af8942a"
+    },
+    {
+      "upstream_path": "firmware/crt0.S",
+      "import_path": "firmware/crt0.S",
+      "sha256": "2212471c4a70e94022ba24ef65a4b208fadd5f7e33f80745c5f5e8b9f4aa840c"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_adc.h",
+      "import_path": "firmware/hal/fm1_adc.h",
+      "sha256": "1917870bd802de9134d33335efbcf886b296705dff06688925fd7325589c0c1a"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_audio.h",
+      "import_path": "firmware/hal/fm1_audio.h",
+      "sha256": "22351440699748546e932098e3016c618d6137dd0ae34557e08a107641d4e62e"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_cc.h",
+      "import_path": "firmware/hal/fm1_cc.h",
+      "sha256": "46c533a0926ba9298ae36705f857ed609a61b95511ba7f0d1800857b4760dd73"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_flash.h",
+      "import_path": "firmware/hal/fm1_flash.h",
+      "sha256": "ff2c7dacafc775c810f2cb1ffae38b96ced8c515355cae8487b8f4e56af81d4f"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_gpio.h",
+      "import_path": "firmware/hal/fm1_gpio.h",
+      "sha256": "5e3937e32a3b4b9b9ae622c5b42c8819ec8a16f2d76dbddec91654703c77a216"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_guard.h",
+      "import_path": "firmware/hal/fm1_guard.h",
+      "sha256": "dda2ebdd3024aab7700f8ef00cc55de23c0b369be1d889741d2058eb5c33ce74"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_input.h",
+      "import_path": "firmware/hal/fm1_input.h",
+      "sha256": "7579aa8e061e4b23a86aee693f1d6004dc552b888457ea507f1ba3d941465241"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_irq.h",
+      "import_path": "firmware/hal/fm1_irq.h",
+      "sha256": "9966b15bdd1c2595204147979acb0c497ca6500198dfdf5c98b6432b9aa56f88"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_isr.S",
+      "import_path": "firmware/hal/fm1_isr.S",
+      "sha256": "5e45c960577354184efa3bf984a1c14bffb0c5967cbdb643e1f4c9cc196105c5"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_lcd_hw.h",
+      "import_path": "firmware/hal/fm1_lcd_hw.h",
+      "sha256": "4fc3318a703fd55200153442acac4eb33ef56ff8e2eb82ba18ed0a3b9e655c1e"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_sys.h",
+      "import_path": "firmware/hal/fm1_sys.h",
+      "sha256": "5d56781274406b0a1bf816c66d86c0b0b23b49757cc6f5644df566127827a9a7"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_time.h",
+      "import_path": "firmware/hal/fm1_time.h",
+      "sha256": "e83c725eae2ec5a163771ca2b8f1c0779354456f2e20a32febc7b6755758a97d"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_timer.h",
+      "import_path": "firmware/hal/fm1_timer.h",
+      "sha256": "1ec236ce4a75a5b94b9c16999dcdf7d71e4e0c5e0d2f14dbfb87bbaf025e1004"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_uart.h",
+      "import_path": "firmware/hal/fm1_uart.h",
+      "sha256": "482da9e67231a7b42bff63362dec60aa8f43ca6e8d4962df57f8be6f9ea5d8c9"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_usb.h",
+      "import_path": "firmware/hal/fm1_usb.h",
+      "sha256": "667289a678a027221343b6496b61870222eb80394a696d7dd896dbc2ffe303d4"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_vec.S",
+      "import_path": "firmware/hal/fm1_vec.S",
+      "sha256": "8f9e787871332f522157d561dc3cfe8906ed0abf160139ed5819cfdeab66f01a"
+    },
+    {
+      "upstream_path": "firmware/hal/fm1_xip.h",
+      "import_path": "firmware/hal/fm1_xip.h",
+      "sha256": "dcba6ddb9cd2403e1d97c4db49d836110ef2805d2369db7ed323e3fbe26c56ed"
+    },
+    {
+      "upstream_path": "firmware/host/preview.c",
+      "import_path": "firmware/host/preview.c",
+      "sha256": "592e9c34eafe20e35305e0382f4be36e17711bdcdc9929f44c3ad06b168e9e53"
+    },
+    {
+      "upstream_path": "firmware/loader/crt0_ldr.S",
+      "import_path": "firmware/loader/crt0_ldr.S",
+      "sha256": "bd4149b97520d1dcc271f730c5a046b0dbf97909e48e968e0ba18304ffc37841"
+    },
+    {
+      "upstream_path": "firmware/loader/ldr_core.c",
+      "import_path": "firmware/loader/ldr_core.c",
+      "sha256": "389aa2e09e74fdac184221edd9b8b7d76eb59ec3dabd11008cbb06081f9fe1de"
+    },
+    {
+      "upstream_path": "firmware/loader/loader.c",
+      "import_path": "firmware/loader/loader.c",
+      "sha256": "d1a68016bde7c5f1ecdd2613f1f9ef55cd5822e65a0c6e3394fb9249f1d0fdea"
+    },
+    {
+      "upstream_path": "firmware/loader/loader.ld",
+      "import_path": "firmware/loader/loader.ld",
+      "sha256": "4acae8c9a16cf9a70f53a546f9175b5a86d2bc5cb6bce39513a2ff3c4fdba4ae"
+    },
+    {
+      "upstream_path": "firmware/src/arranger.c",
+      "import_path": "firmware/src/arranger.c",
+      "sha256": "7d3c6cf7efdc660182f2c0906bf5211925ccfaf9143e1828b910fc1ef7edbd83"
+    },
+    {
+      "upstream_path": "firmware/src/arranger.h",
+      "import_path": "firmware/src/arranger.h",
+      "sha256": "56f1c7575cb44e8c200f0216c34f47ce39dd8f0029cd8ab14fd36364ff9f588f"
+    },
+    {
+      "upstream_path": "firmware/src/arranger_scene.c",
+      "import_path": "firmware/src/arranger_scene.c",
+      "sha256": "12bbe5a59f9d14cd568c5abb37b3a922969d8a27e20c376de8ce63617a3ca55d"
+    },
+    {
+      "upstream_path": "firmware/src/audio.c",
+      "import_path": "firmware/src/audio.c",
+      "sha256": "02560fb1cc4c9b2ac7b41f83a624e86784952f094be7d07c552f053cc24e952f"
+    },
+    {
+      "upstream_path": "firmware/src/bootguard.h",
+      "import_path": "firmware/src/bootguard.h",
+      "sha256": "bf19ef423356552105115a3ec3dde3beddb0369670f4b4317520ebfd8f032afb"
+    },
+    {
+      "upstream_path": "firmware/src/console.c",
+      "import_path": "firmware/src/console.c",
+      "sha256": "6d3c256f3a46e7833dfa40334419865e13a3870361a9ba9e00fdbe2944da8cdf"
+    },
+    {
+      "upstream_path": "firmware/src/core.h",
+      "import_path": "firmware/src/core.h",
+      "sha256": "1bad989bf0787b6cf16ca9dcc065a009bf07ac99289a54ef685b91a42c7f2f95"
+    },
+    {
+      "upstream_path": "firmware/src/drum_synth.c",
+      "import_path": "firmware/src/drum_synth.c",
+      "sha256": "6ff15d2820c1f4103f42dd56e89a66dddd7260ad7adc846df53f443b0946031a"
+    },
+    {
+      "upstream_path": "firmware/src/drums.c",
+      "import_path": "firmware/src/drums.c",
+      "sha256": "ad6367941c3a30f1db71d9483988eafb2bd18c45e1447c0877bf1f7005392963"
+    },
+    {
+      "upstream_path": "firmware/src/dsp.c",
+      "import_path": "firmware/src/dsp.c",
+      "sha256": "927a3aa07d4f4b96daefdc8ad843452478f673e2b306f232ca86d3235ebdc1f0"
+    },
+    {
+      "upstream_path": "firmware/src/editor.c",
+      "import_path": "firmware/src/editor.c",
+      "sha256": "4bf3162bf24e84da5c14f3e9a278681aa8a3244f8a5ce9228eeebe1ad6cca8ec"
+    },
+    {
+      "upstream_path": "firmware/src/editor_dsyn.c",
+      "import_path": "firmware/src/editor_dsyn.c",
+      "sha256": "9b36724943c12f1df33c224e610673b67d1963084e4d463f7d254ea70f8e803d"
+    },
+    {
+      "upstream_path": "firmware/src/editor_fm6.c",
+      "import_path": "firmware/src/editor_fm6.c",
+      "sha256": "9951d859355a5e0d4d05c32e035d8ee69d9155a9cb6c15b48b00436cc82da17b"
+    },
+    {
+      "upstream_path": "firmware/src/eng_analog.c",
+      "import_path": "firmware/src/eng_analog.c",
+      "sha256": "929ac03333ee1bfb1c6a23ccd9812b02e44fb9bdbce244545c04de864b69aeff"
+    },
+    {
+      "upstream_path": "firmware/src/eng_digital.c",
+      "import_path": "firmware/src/eng_digital.c",
+      "sha256": "01931e1acba15cbdfeb89fa2bdba3b94e09d6cc6f1661da59b1cf9db10d379f8"
+    },
+    {
+      "upstream_path": "firmware/src/eng_drawbar.c",
+      "import_path": "firmware/src/eng_drawbar.c",
+      "sha256": "08b544972e15edf758a1ddd4917297778fbcab8f8073c569bf62903b9345f2ef"
+    },
+    {
+      "upstream_path": "firmware/src/eng_fm6.c",
+      "import_path": "firmware/src/eng_fm6.c",
+      "sha256": "022ff122d3e9a574f62ccb0678fe7d558a6fa59740f8500671a91be97cafb0a1"
+    },
+    {
+      "upstream_path": "firmware/src/eng_formant.c",
+      "import_path": "firmware/src/eng_formant.c",
+      "sha256": "6fa744c6a9cf1acd6f7bd793a5302c0557d950432d07f245f682ec12b2892bb6"
+    },
+    {
+      "upstream_path": "firmware/src/eng_grain.c",
+      "import_path": "firmware/src/eng_grain.c",
+      "sha256": "928ab2a1deaa296ae032cf48d339a8bc82dc20ff1e40329ec328d9e0934e3091"
+    },
+    {
+      "upstream_path": "firmware/src/eng_lofi.c",
+      "import_path": "firmware/src/eng_lofi.c",
+      "sha256": "5dab4001d2119af13d616a2f2a44a7e619b9080d3fbbe1c9b736d488f62e988d"
+    },
+    {
+      "upstream_path": "firmware/src/eng_noise.c",
+      "import_path": "firmware/src/eng_noise.c",
+      "sha256": "86d38abb129cccfba7ae40a39c66d5a6a7b29e0f30a3b0cfde649d40de24b101"
+    },
+    {
+      "upstream_path": "firmware/src/eng_phase.c",
+      "import_path": "firmware/src/eng_phase.c",
+      "sha256": "17efa7f6d0b24cfad33dc96973b741a1b831cba3fed0ce9aaa1cac9d28395ea9"
+    },
+    {
+      "upstream_path": "firmware/src/eng_phys.c",
+      "import_path": "firmware/src/eng_phys.c",
+      "sha256": "ee1977cd4c5978a31a4c7e475d07f06fdfa22d5755f32bd94331523233df28fd"
+    },
+    {
+      "upstream_path": "firmware/src/eng_sample.c",
+      "import_path": "firmware/src/eng_sample.c",
+      "sha256": "29a278bd944537cd0a890588e91f3daa25bef156a19cb1d28856d1966aead9b9"
+    },
+    {
+      "upstream_path": "firmware/src/eng_slice.c",
+      "import_path": "firmware/src/eng_slice.c",
+      "sha256": "0c4e70ba5d5ba8038f0d84fd9b41da24b5297fc4491da856b15406fa5a9ddeee"
+    },
+    {
+      "upstream_path": "firmware/src/eng_trio.c",
+      "import_path": "firmware/src/eng_trio.c",
+      "sha256": "d9921dd19381cf1fad2c800716a662ee5ecabe885ace7b9b44ea8ba97e3fa518"
+    },
+    {
+      "upstream_path": "firmware/src/engines.c",
+      "import_path": "firmware/src/engines.c",
+      "sha256": "df204fa4842ef0ff018f3a515aa51b0dd09dfbef81d3dd357b7302468be23673"
+    },
+    {
+      "upstream_path": "firmware/src/felucca.c",
+      "import_path": "firmware/src/felucca.c",
+      "sha256": "74d6f465f207d0738113f9a5dd5fba5c91f421d99d578cc5d791ec380470bde4"
+    },
+    {
+      "upstream_path": "firmware/src/fm6_bank.c",
+      "import_path": "firmware/src/fm6_bank.c",
+      "sha256": "7bdd50d5ee518f8981d0693aeb5f36a5de61782a3bd6770965455a77187600fd"
+    },
+    {
+      "upstream_path": "firmware/src/fm6_core.c",
+      "import_path": "firmware/src/fm6_core.c",
+      "sha256": "d2851cd7ce04cf1bae7f6fa3a80ffe860000e9c0188c7cff8916b1fc07c2e18c"
+    },
+    {
+      "upstream_path": "firmware/src/fx.c",
+      "import_path": "firmware/src/fx.c",
+      "sha256": "ee9bdd28054af261c7a75e5fec570a5ec24002841e2c462c5fa311a96dde2c69"
+    },
+    {
+      "upstream_path": "firmware/src/gfx.c",
+      "import_path": "firmware/src/gfx.c",
+      "sha256": "cbdd00534b5c602ce6a95697fe197d6643dfb1321ac52a24e0b5764a62d54bfe"
+    },
+    {
+      "upstream_path": "firmware/src/icons.c",
+      "import_path": "firmware/src/icons.c",
+      "sha256": "cf3b1facde757aded10101df74de52e06be66dbc3cbfbe89dfc6208f1f517795"
+    },
+    {
+      "upstream_path": "firmware/src/lcd.c",
+      "import_path": "firmware/src/lcd.c",
+      "sha256": "b69f0c3d6a5b61c883a35b50ddd6582811bd620a45268543e923fb8849caaac4"
+    },
+    {
+      "upstream_path": "firmware/src/libc.c",
+      "import_path": "firmware/src/libc.c",
+      "sha256": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a"
+    },
+    {
+      "upstream_path": "firmware/src/main.c",
+      "import_path": "firmware/src/main.c",
+      "sha256": "2fb9767d6085df9f404ec3bbec2b0eaccdb7892dd6bd62028fff1d91e7b44fc6"
+    },
+    {
+      "upstream_path": "firmware/src/midi_uart.c",
+      "import_path": "firmware/src/midi_uart.c",
+      "sha256": "7a87da4a1c3fe103cbda65d13977af9385dffa1997bb1a752a0ae6d6d46c380f"
+    },
+    {
+      "upstream_path": "firmware/src/ota.c",
+      "import_path": "firmware/src/ota.c",
+      "sha256": "ffc981586704b41f62c763248037d1fe373c84c3566c0486de795296f9841855"
+    },
+    {
+      "upstream_path": "firmware/src/panel.c",
+      "import_path": "firmware/src/panel.c",
+      "sha256": "30e137fa20a239d07b34a0b7b76190b085f9d7da320ccf79fec60d98e1234a29"
+    },
+    {
+      "upstream_path": "firmware/src/params.c",
+      "import_path": "firmware/src/params.c",
+      "sha256": "4da33b7d95ce0146257ca108bcd74ac02aeaad448ff4ae027b4edc86a3886388"
+    },
+    {
+      "upstream_path": "firmware/src/phys_dsp.c",
+      "import_path": "firmware/src/phys_dsp.c",
+      "sha256": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c"
+    },
+    {
+      "upstream_path": "firmware/src/phys_symp.c",
+      "import_path": "firmware/src/phys_symp.c",
+      "sha256": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47"
+    },
+    {
+      "upstream_path": "firmware/src/preset_trim.h",
+      "import_path": "firmware/src/preset_trim.h",
+      "sha256": "84557efefd5479d383c731ff51a03547a81a78a784798e9acf96ea18979342db"
+    },
+    {
+      "upstream_path": "firmware/src/project.c",
+      "import_path": "firmware/src/project.c",
+      "sha256": "946e2c1b0400ad093dfed37cf9bd7e1ac1fa8d1519518b2e657cc2ba782e6055"
+    },
+    {
+      "upstream_path": "firmware/src/punch.c",
+      "import_path": "firmware/src/punch.c",
+      "sha256": "3a32ea8fd8aadadb1eca3becafbd599ba79b668c1b7ad0b2a81111bfd3eccd0f"
+    },
+    {
+      "upstream_path": "firmware/src/recovery.c",
+      "import_path": "firmware/src/recovery.c",
+      "sha256": "eeb80e386e92c19fa909ecb904fcff208460ab7118a1d4cedd3aa6663d114516"
+    },
+    {
+      "upstream_path": "firmware/src/seq.c",
+      "import_path": "firmware/src/seq.c",
+      "sha256": "a4c612c06bed2dbe6f578e6c94953e777a8f1434a7b6d2ccf5b1f7639db9c328"
+    },
+    {
+      "upstream_path": "firmware/src/slicer.c",
+      "import_path": "firmware/src/slicer.c",
+      "sha256": "ceaefa1de87b143a8ea64d2916d52b2cbce31fd5fc548f128cd18670724409db"
+    },
+    {
+      "upstream_path": "firmware/src/splash.c",
+      "import_path": "firmware/src/splash.c",
+      "sha256": "9991f7d09075ae718bbf9edc6e8bf91322ae51174b9c12ec528d7787afd763e1"
+    },
+    {
+      "upstream_path": "firmware/src/storage.c",
+      "import_path": "firmware/src/storage.c",
+      "sha256": "e06fe82bb9cc303ba24bb694729e368c3cda4897eafd2873045bec1954d0de5a"
+    },
+    {
+      "upstream_path": "firmware/src/uac_fir.h",
+      "import_path": "firmware/src/uac_fir.h",
+      "sha256": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56"
+    },
+    {
+      "upstream_path": "firmware/src/ui.c",
+      "import_path": "firmware/src/ui.c",
+      "sha256": "606ebac3af91652f3c1de4c909bc133d68978c960391b63dd8915a892d6db174"
+    },
+    {
+      "upstream_path": "firmware/src/ui_draw.c",
+      "import_path": "firmware/src/ui_draw.c",
+      "sha256": "a20eca57d4faf4b25b41b431b89fff08f63b2eee575a21a50d2d3c3cfb03b884"
+    },
+    {
+      "upstream_path": "firmware/src/ui_input.c",
+      "import_path": "firmware/src/ui_input.c",
+      "sha256": "bffa77905064893fca1f31b3cb39b1610d4f695befae304229ffcee8bc87a2bd"
+    },
+    {
+      "upstream_path": "firmware/src/ui_layers.c",
+      "import_path": "firmware/src/ui_layers.c",
+      "sha256": "47b5d96057b5090c7f8da7455523ac5004b9e3ce32c609dd1839d56b561ad0d9"
+    },
+    {
+      "upstream_path": "firmware/src/ui_menu.c",
+      "import_path": "firmware/src/ui_menu.c",
+      "sha256": "ae466525b6dd7516fd3d03d1b6e06f8a421312648317afce13e6323c7e300284"
+    },
+    {
+      "upstream_path": "firmware/src/ui_song.c",
+      "import_path": "firmware/src/ui_song.c",
+      "sha256": "92ec30d3ae8f65ef987508f5a52b926f6be0cff7e3d6076871c143534b4e7fdc"
+    },
+    {
+      "upstream_path": "firmware/src/ui_studio.c",
+      "import_path": "firmware/src/ui_studio.c",
+      "sha256": "86c7f3f706ccc745f7c9a9387ec1601124eac46834d408a300a07d33e01d699e"
+    },
+    {
+      "upstream_path": "firmware/src/ui_vis.c",
+      "import_path": "firmware/src/ui_vis.c",
+      "sha256": "aab57d452245a1a758c660ff270de42db1ebd6ce7e3876c2f96ffaaf0a995049"
+    },
+    {
+      "upstream_path": "firmware/src/upreset.c",
+      "import_path": "firmware/src/upreset.c",
+      "sha256": "588159ffaa8f81eacb91499d78f15f4a5673ff967a6ebafc74a46bfa0e39c4e6"
+    },
+    {
+      "upstream_path": "firmware/src/usb.c",
+      "import_path": "firmware/src/usb.c",
+      "sha256": "f23a862537b1a87f6f0c114ae328f654ebf49472fac9c6b5e8420a1324e61714"
+    },
+    {
+      "upstream_path": "firmware/src/voice.c",
+      "import_path": "firmware/src/voice.c",
+      "sha256": "136b1590f2690b77f60d9d27f9997bc8bfd9f86b904564a4da5c442207e52ba8"
+    },
+    {
+      "upstream_path": "tests/_cap26.c",
+      "import_path": "tests/_cap26.c",
+      "sha256": "b515cb9217ff00c986b6c99b9007ca998d4fc8365b0812639a434e872b54f3d2"
+    },
+    {
+      "upstream_path": "tests/arena_test.c",
+      "import_path": "tests/arena_test.c",
+      "sha256": "6309ae6c3c342e1924799ef42df2db40d72ed092988768cebdf6dba801133753"
+    },
+    {
+      "upstream_path": "tests/arranger_test.c",
+      "import_path": "tests/arranger_test.c",
+      "sha256": "877ac73ec440d0f3c65c292e3302a0d54d102cc5ca0e2d876adc2adb0c7a1108"
+    },
+    {
+      "upstream_path": "tests/cpu_baseline.txt",
+      "import_path": "tests/cpu_baseline.txt",
+      "sha256": "4cc85da14eb4fc86d816ab1e84768bfd8c25992511a80ae11c161ff96654be2f"
+    },
+    {
+      "upstream_path": "tests/drum_level.c",
+      "import_path": "tests/drum_level.c",
+      "sha256": "1de98debf7de9933132b40447716e4f9b902c24e101844ba5a3f3c4f258d7b6e"
+    },
+    {
+      "upstream_path": "tests/drumkit_test.c",
+      "import_path": "tests/drumkit_test.c",
+      "sha256": "76bce6460a21a70de7228c9412f34dc6cb84eb83ab4a040f416b4d245de6b62c"
+    },
+    {
+      "upstream_path": "tests/dsyn_test.c",
+      "import_path": "tests/dsyn_test.c",
+      "sha256": "631212af04f12f5f9f714710ed6de2207dfd7f6854ad2bb4e1d43992a14c6d86"
+    },
+    {
+      "upstream_path": "tests/encoder_test.c",
+      "import_path": "tests/encoder_test.c",
+      "sha256": "10f0187981ce1c4f2aea721c37620127647353d8dbd2728e8e739609a2747311"
+    },
+    {
+      "upstream_path": "tests/fm6_test.c",
+      "import_path": "tests/fm6_test.c",
+      "sha256": "539a1263d281fa58289bd56828a767ceacc800cf169be4fb177cb58e0459d8dd"
+    },
+    {
+      "upstream_path": "tests/font_test.c",
+      "import_path": "tests/font_test.c",
+      "sha256": "16fd8f703d8f15e35281e193f1049e458825fe76d42d77b56fef9a54670179da"
+    },
+    {
+      "upstream_path": "tests/fx251_test.c",
+      "import_path": "tests/fx251_test.c",
+      "sha256": "67e282e552380b7bb75db6e1b68c9619e17f0a97e45926ab1da8fa67aa7a84ec"
+    },
+    {
+      "upstream_path": "tests/golden.txt",
+      "import_path": "tests/golden.txt",
+      "sha256": "ef0a03cd39d7e06956f79c666f5224b708192fdab8f0607ac2daa641cb363428"
+    },
+    {
+      "upstream_path": "tests/hostsim.c",
+      "import_path": "tests/hostsim.c",
+      "sha256": "6f32888474939417aa362164931e2f11ea420dad88d517d216fe7546150699ce"
+    },
+    {
+      "upstream_path": "tests/install_test.py",
+      "import_path": "tests/install_test.py",
+      "sha256": "e630c49c02be0c7d9d3e2f93849a15556f0655525b8b4b7b6e0c28dd56c11aae"
+    },
+    {
+      "upstream_path": "tests/ldr_test.c",
+      "import_path": "tests/ldr_test.c",
+      "sha256": "9614f627ad4509601dd160f32a259abe408589e45e47bffc50e51eb7717f9698"
+    },
+    {
+      "upstream_path": "tests/midi_uart_test.c",
+      "import_path": "tests/midi_uart_test.c",
+      "sha256": "8457ec3465d40ff3c6f310eda0df1f257be20292ab2a2c6c93acef6f036ecb61"
+    },
+    {
+      "upstream_path": "tests/ota_test.c",
+      "import_path": "tests/ota_test.c",
+      "sha256": "a3727fa2b90b8b83f8a9ce97d8617ec43a8ad5d18723a1cfd4237f7b2c8b60ae"
+    },
+    {
+      "upstream_path": "tests/pitch.py",
+      "import_path": "tests/pitch.py",
+      "sha256": "4c1205db804ddb1208a72ef63dc7f6958798883013aa4917b0542fda419f2f3e"
+    },
+    {
+      "upstream_path": "tests/preset_level.c",
+      "import_path": "tests/preset_level.c",
+      "sha256": "580cd844fa374708fa24e7f8b842f3e2b024bfe370bb25bd8cdcf12e7dfa3d4d"
+    },
+    {
+      "upstream_path": "tests/preview_native.c",
+      "import_path": "tests/preview_native.c",
+      "sha256": "d3cf87d461f02de236d77da61f34cbf9fdd84e3e2bd5e4767c3b95412860a29e"
+    },
+    {
+      "upstream_path": "tests/preview_test.mjs",
+      "import_path": "tests/preview_test.mjs",
+      "sha256": "3bc881223007bda724f7962c730d07abb098be7cbd64f0543ff4536989b398f0"
+    },
+    {
+      "upstream_path": "tests/project_test.c",
+      "import_path": "tests/project_test.c",
+      "sha256": "bdf990c489c2d9216d4ec113c9048f685f981758a3152597cd0f677a5df07b13"
+    },
+    {
+      "upstream_path": "tests/punch_test.c",
+      "import_path": "tests/punch_test.c",
+      "sha256": "8147a40253459076214d62a313a323812dce5f0bb42997428ab9d3d59cde66da"
+    },
+    {
+      "upstream_path": "tests/pwa_test.mjs",
+      "import_path": "tests/pwa_test.mjs",
+      "sha256": "911ce992f18d55926e23d2d5e3ad2a3d7bd31457c7a46c00f63d6514b4518291"
+    },
+    {
+      "upstream_path": "tests/recovery_test.c",
+      "import_path": "tests/recovery_test.c",
+      "sha256": "95fd12f7d249599909c0b175a4914a64e7449347631d54aaec3fc38c4ab05342"
+    },
+    {
+      "upstream_path": "tests/regress.c",
+      "import_path": "tests/regress.c",
+      "sha256": "2f1eef210fc08c1b536b905ab5063e43dfc7f8b10e873c15d285ace27ddf68a8"
+    },
+    {
+      "upstream_path": "tests/run_preview_tests.sh",
+      "import_path": "tests/run_preview_tests.sh",
+      "sha256": "4ab9aa95b9e88bd38a968cb980180e9f7f663620ed2069e552f0c7b8b38755f6"
+    },
+    {
+      "upstream_path": "tests/run_tests.sh",
+      "import_path": "tests/run_tests.sh",
+      "sha256": "2e77ebb84c91aca83e2b2eae9ed36e21131dfc55a7aeef2e03264948e833e174"
+    },
+    {
+      "upstream_path": "tests/scale_test.c",
+      "import_path": "tests/scale_test.c",
+      "sha256": "b0f01bec326b8f6122c8a57cdf6af1393dfed43eed7d6ff0b6d8124169d5ecee"
+    },
+    {
+      "upstream_path": "tests/seq2_test.c",
+      "import_path": "tests/seq2_test.c",
+      "sha256": "bbb296ba5aa9436216d2fe42a57fb00c1ed35c59ac0b2f45d04513e0cbfde005"
+    },
+    {
+      "upstream_path": "tests/site_test.py",
+      "import_path": "tests/site_test.py",
+      "sha256": "ec539b702a37bce04ba37c1a94306e9f6e4c4ff0a060241bad9ed083d597840c"
+    },
+    {
+      "upstream_path": "tests/slice_loop.py",
+      "import_path": "tests/slice_loop.py",
+      "sha256": "96508d80d36b9fa7a0ba8c04eef745043abdc2b2ff96d406a08c46f78a79ddfd"
+    },
+    {
+      "upstream_path": "tests/slice_test.c",
+      "import_path": "tests/slice_test.c",
+      "sha256": "d383c169c3e47132429f56c0211ad30559366906102c21fbdd192c08d4951f50"
+    },
+    {
+      "upstream_path": "tests/slicer_test.c",
+      "import_path": "tests/slicer_test.c",
+      "sha256": "12f43044d1a174a2e40fa22a0d14877c413799bfa89e6489e0cae41d6959c20f"
+    },
+    {
+      "upstream_path": "tests/soak_test.c",
+      "import_path": "tests/soak_test.c",
+      "sha256": "560e17ef300f4620002a69217f1b54ffe9f4fb70192808bcfcfea4f8a9b9d573"
+    },
+    {
+      "upstream_path": "tests/song_audio_test.c",
+      "import_path": "tests/song_audio_test.c",
+      "sha256": "d63e6493cf66b75a80652bc2dda0223ed60819f27ad054e455936c7afb758b5c"
+    },
+    {
+      "upstream_path": "tests/song_ui_test.c",
+      "import_path": "tests/song_ui_test.c",
+      "sha256": "681ef288235ede9e0f2f927ad872ce7483590231e9aeb4692ca2ab4b4025e86f"
+    },
+    {
+      "upstream_path": "tests/storage_test.c",
+      "import_path": "tests/storage_test.c",
+      "sha256": "3d4c29fc8d2759f4e2a186d8ae14a25cb3c5877cf608128d0f874026f183871d"
+    },
+    {
+      "upstream_path": "tests/stress_test.c",
+      "import_path": "tests/stress_test.c",
+      "sha256": "40e5abce064fab17b5fbb853edec952bf5dc6566d2ba959bcd8d1cb8a2f119f6"
+    },
+    {
+      "upstream_path": "tests/studio_drums_test.c",
+      "import_path": "tests/studio_drums_test.c",
+      "sha256": "af9f46b0ff3da08e850e9dc68177246f12089f31f026a79cb48f4a9fa073445d"
+    },
+    {
+      "upstream_path": "tests/target_budget.py",
+      "import_path": "tests/target_budget.py",
+      "sha256": "cb33b73a98a6471516b3003afd04266d9132f0a6a0ffa3a8af2fb83d185eab58"
+    },
+    {
+      "upstream_path": "tests/target_budget.txt",
+      "import_path": "tests/target_budget.txt",
+      "sha256": "b213de5a16ae980ccc6fbd7b669dc61b7bc0817cd19676bf465939a5a5851431"
+    },
+    {
+      "upstream_path": "tests/uac_test.c",
+      "import_path": "tests/uac_test.c",
+      "sha256": "69c84d34104854c347436963771eea0a224be39f67092f368442d80503b8406f"
+    },
+    {
+      "upstream_path": "tests/ui_pages_test.c",
+      "import_path": "tests/ui_pages_test.c",
+      "sha256": "a1dbf2faac75a5879aa77d08d550f611ba37a654f3167059f4dad03cee35d3f0"
+    },
+    {
+      "upstream_path": "tests/upreset_test.c",
+      "import_path": "tests/upreset_test.c",
+      "sha256": "3f5457b55e113edb147ae996526d9366398dbca2178985cc6fd6e8ea013327ea"
+    },
+    {
+      "upstream_path": "tests/userkit_test.c",
+      "import_path": "tests/userkit_test.c",
+      "sha256": "f4e87e0d3b138b4df6072868074e161f9992eb642d29f75a3b599427b1be3593"
+    },
+    {
+      "upstream_path": "tools/build.py",
+      "import_path": "tools/build.py",
+      "sha256": "8b42493b5d794bc9f20c6200438231b24cf468f4defcec174bb966169adbee67"
+    },
+    {
+      "upstream_path": "tools/build_preview.py",
+      "import_path": "tools/build_preview.py",
+      "sha256": "ac4ce07e9d8f5be39580facb56fff5b769c3a472c8f47500796d94c086465a8f"
+    },
+    {
+      "upstream_path": "tools/build_windows.py",
+      "import_path": "tools/build_windows.py",
+      "sha256": "b9e132f08f622f4463e2244e70e553e0d9f351de23fa484931497fd1bbfcd772"
+    },
+    {
+      "upstream_path": "tools/drumkit_levels.json",
+      "import_path": "tools/drumkit_levels.json",
+      "sha256": "26606c5f046c94cc6228c6dd30bfc334706b88e9102689b49ff9b34d61db6d45"
+    },
+    {
+      "upstream_path": "tools/fetch_cc0.py",
+      "import_path": "tools/fetch_cc0.py",
+      "sha256": "d8e470bc85bb0d03c3e2c38090c025c09934a7c87aa296e4e0143190e94ff861"
+    },
+    {
+      "upstream_path": "tools/fm1_install.py",
+      "import_path": "tools/fm1_install.py",
+      "sha256": "9e117608e328b91dd5cb178400d9c88b1ee45677b87ae8b704536c0f38fea8f9"
+    },
+    {
+      "upstream_path": "tools/fm1_sample_upload.py",
+      "import_path": "tools/fm1_sample_upload.py",
+      "sha256": "3fd55423be9e0cab346120c5c56ef04908a2fdcac577377d93537b51537243f1"
+    },
+    {
+      "upstream_path": "tools/fm1pkg_make.py",
+      "import_path": "tools/fm1pkg_make.py",
+      "sha256": "284fa4553d3194d6c374b7cb3ff169ac11a5d3f496861ed17f7bae28e79d7ea3"
+    },
+    {
+      "upstream_path": "tools/gen_builtin_hiphop.py",
+      "import_path": "tools/gen_builtin_hiphop.py",
+      "sha256": "2ebd770757a355cda5d05a5526b4e407b91c30d41f3b3ca1b7afcb0ab3c8f8c3"
+    },
+    {
+      "upstream_path": "tools/gen_drumkits.py",
+      "import_path": "tools/gen_drumkits.py",
+      "sha256": "c4c1fd65761242d3670e03eed9ebdc83530d94e1995a075fe1cf5e52c872a2ed"
+    },
+    {
+      "upstream_path": "tools/gen_fm6_patches.py",
+      "import_path": "tools/gen_fm6_patches.py",
+      "sha256": "409a2f98dd5adc5b3efc6ebf5571a80179c6fcbd3610efea66508bd0cfe6a787"
+    },
+    {
+      "upstream_path": "tools/gen_font.py",
+      "import_path": "tools/gen_font.py",
+      "sha256": "d5127c268eaf4a9f12dff53d64f49543a53b7ff054aafd053b14e439168f85c5"
+    },
+    {
+      "upstream_path": "tools/gen_hiphop_pack.py",
+      "import_path": "tools/gen_hiphop_pack.py",
+      "sha256": "b15bb550b6ab64afc55817aa8a9676e380b60182b3540cf5500772fa68891065"
+    },
+    {
+      "upstream_path": "tools/gen_icons.py",
+      "import_path": "tools/gen_icons.py",
+      "sha256": "265ac900b9174347952de70f1c065386199f47880184e0a2fc03a7890d5bbc33"
+    },
+    {
+      "upstream_path": "tools/gen_logo.py",
+      "import_path": "tools/gen_logo.py",
+      "sha256": "ddfd1923460fe2fd71a5aa691679040b9b5ab64239a316093e495177edb9cc91"
+    },
+    {
+      "upstream_path": "tools/gen_samples.py",
+      "import_path": "tools/gen_samples.py",
+      "sha256": "aa8564d79f78471f399b402772cfaaeed398092368a44489c1add439a3326cb5"
+    },
+    {
+      "upstream_path": "tools/gen_tables.py",
+      "import_path": "tools/gen_tables.py",
+      "sha256": "abfa75250c7f7f6cdd75ccbe8aadd4a63f92279e0e921fe39bd1206f082fcef5"
+    },
+    {
+      "upstream_path": "tools/gen_uac_fir.py",
+      "import_path": "tools/gen_uac_fir.py",
+      "sha256": "8d26f838b84d8e0d0142e0780a9fac379a072024d6f0d9cb7fcfd9d02dffdf85"
+    },
+    {
+      "upstream_path": "tools/gen_waves.py",
+      "import_path": "tools/gen_waves.py",
+      "sha256": "d574048795c3e3824bdf367e952b855fdad568efc28c55d42029ece9dd46d0fe"
+    },
+    {
+      "upstream_path": "tools/gen_webfont.py",
+      "import_path": "tools/gen_webfont.py",
+      "sha256": "f380b18c0e7ba0ed69cab326535771c3b6352c91c46280298380fe3f7aba1842"
+    },
+    {
+      "upstream_path": "tools/get_toolchain.sh",
+      "import_path": "tools/get_toolchain.sh",
+      "sha256": "01c997cf377aa964eceaaaa05f6e75c0df92a863297ca7d3cc4a71472764f5f3"
+    },
+    {
+      "upstream_path": "tools/level_drumkits.py",
+      "import_path": "tools/level_drumkits.py",
+      "sha256": "0c024a439e0399997d74a49f19b95bebaf15e3003bb92f5e4d59f9ae80066823"
+    },
+    {
+      "upstream_path": "tools/level_presets.py",
+      "import_path": "tools/level_presets.py",
+      "sha256": "85034ca9280ad70207c9880bdbab3c8ddff19b95cb60bf6e7256af3ec1a2fb00"
+    },
+    {
+      "upstream_path": "tools/lz4blk.py",
+      "import_path": "tools/lz4blk.py",
+      "sha256": "bede501ca8774ba6942b35ad2c43823e9f48f13d0fb001ef9b73cdaf41460e16"
+    },
+    {
+      "upstream_path": "tools/make_quickguide.py",
+      "import_path": "tools/make_quickguide.py",
+      "sha256": "061dacb573ca0fcca7c4a858e2c362d43843956de6fed3d678894f4b2e5c8059"
+    },
+    {
+      "upstream_path": "tools/sampleio.py",
+      "import_path": "tools/sampleio.py",
+      "sha256": "b4500741f30e42ee4759abc064ee2ea4b365099e53d47a338e96819a86457ec1"
+    },
+    {
+      "upstream_path": "web/EDITOR_PROTOCOL.md",
+      "import_path": "web/EDITOR_PROTOCOL.md",
+      "sha256": "357a83d5736fb525d654e7b202971725b2ef23e5ceaeb0f6bfd05062af0a85bb"
+    },
+    {
+      "upstream_path": "web/FUKIAI-LICENSE.txt",
+      "import_path": "web/FUKIAI-LICENSE.txt",
+      "sha256": "242ea3b0915e1f58cbf14ecafd4eee2733565a44e3b2629036d965168a2b0b19"
+    },
+    {
+      "upstream_path": "web/editor.html",
+      "import_path": "web/editor.html",
+      "sha256": "c0e8464b150c8096ce0205cc5ff1e27ff5aa14df146317c984ccd3a478c62120"
+    },
+    {
+      "upstream_path": "web/fm1ota.js",
+      "import_path": "web/fm1ota.js",
+      "sha256": "6abc67681bd1dbd46933603932bd8734a8222b5171a2a57d718c690fb55358f3"
+    },
+    {
+      "upstream_path": "web/fm1pkg.js",
+      "import_path": "web/fm1pkg.js",
+      "sha256": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b"
+    },
+    {
+      "upstream_path": "web/fukiai.ttf",
+      "import_path": "web/fukiai.ttf",
+      "sha256": "6111a741524c2f3935442830f67e9c220b234f0f7718bd2e9dd3587867d30e01"
+    },
+    {
+      "upstream_path": "web/icon-192.png",
+      "import_path": "web/icon-192.png",
+      "sha256": "cdf289da29524ca25bf4f4c8d89e0e200419c4d1e37c42f859839875aa7ce7aa"
+    },
+    {
+      "upstream_path": "web/icon-512.png",
+      "import_path": "web/icon-512.png",
+      "sha256": "d8636b2091a6a5f9d99dba2c24af9e2e7d8ece8824496a473a4fd139f94a32fa"
+    },
+    {
+      "upstream_path": "web/icon-maskable-512.png",
+      "import_path": "web/icon-maskable-512.png",
+      "sha256": "1ccc8be077901cea72ff614ef9fcafd4a0829740c92f374ca5b3a70ff51780b5"
+    },
+    {
+      "upstream_path": "web/index_pkg.html",
+      "import_path": "web/index_pkg.html",
+      "sha256": "4e0d9eb0fc7f1a077660bd4f5d6be4626035ff9a9d4109569185efd1f6807d98"
+    },
+    {
+      "upstream_path": "web/make_site.py",
+      "import_path": "web/make_site.py",
+      "sha256": "7245e95add8da3d0afc8d274fbad99355da2096d9a180c2ffd58bce2372f30db"
+    },
+    {
+      "upstream_path": "web/package.json",
+      "import_path": "web/package.json",
+      "sha256": "609158e6c5fbc237939fa3ddf7faab80ab690bdc0c8d584414a885130103c4e8"
+    },
+    {
+      "upstream_path": "web/preview-worklet.js",
+      "import_path": "web/preview-worklet.js",
+      "sha256": "a9c7f661c0786aa29e06fc9c2946adb40ecf2a5bb418e98b56d7d503f6d8ff4d"
+    },
+    {
+      "upstream_path": "web/preview.js",
+      "import_path": "web/preview.js",
+      "sha256": "2a7b656f238ec9f5720f5a7615a5bfa7c24fb9e3c9da400a4f3690c5c80d894b"
+    },
+    {
+      "upstream_path": "web/sw.js",
+      "import_path": "web/sw.js",
+      "sha256": "e92b6575d0823c4aea4441338e483f890331c0f69b89daab7d77335c6bf64bf9"
+    },
+    {
+      "upstream_path": "web/test_web.mjs",
+      "import_path": "web/test_web.mjs",
+      "sha256": "1f16d11f03fa6a7be105f1e56372a0036af1a1ced25e2d786d8555f7d88d0980"
+    }
+  ]
+}

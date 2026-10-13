@@ -1,0 +1,143 @@
+seq2: 2.6: IN = CH 12: notes on other channels play nothing                    ok
+seq2: 2.6: IN = CH 12: a note on channel 12 plays the selected track (3)       ok
+seq2: 2.6: its note-off ends it on track 3, where it started                   ok
+seq2: 2.6: a CC on channel 12 sets the selected track; on channel 1 it is ignored ok
+seq2: 2.6: IN changed while a note is held: it is released (no hanging note)   ok
+seq2: #191: the latched arp plays its keys (C4 E4)                             ok
+seq2: #191: TRN +2 after the keys: the latched arp follows (D4 F#4)            ok
+seq2: #191: QNT WHITE, SCALE MIN after the keys: C4 Eb4                        ok
+seq2: #191: ROOT D after the keys: D4 F4                                       ok
+seq2: #191: CHORD+ 7th added after OCT+: in the key's octave (60 63 67 70, not 82) ok
+  drum DLY: echo rms off 81605, 64 737425, 127 2181470, 127 + filter 2121269
+seq2: 2.5: GLO > DRUMS > DLY: the drums echo in the tempo delay (more with more DLY, through the FILTER too); 0: none ok
+seq2: track FILTER: LP -50 darkens a part (HF / 2), HP +50 thins it (level / 2) ok
+seq2: track FILTER: back to 0, it opens and is bypassed again                  ok
+seq2: track FILTER on the drum track: LP darkens the hats                      ok
+seq2: track FILTER on the drum track: open again, bypassed                     ok
+seq2: track FILTER: a step can lock it                                         ok
+seq2: USB AUDIO FULL: the USB level stays up when MASTER is low, no clipping   ok
+seq2: 2.4: nudge +16 fires a quarter step late, -16 a quarter step early (within a block) ok
+seq2: 2.4: 16 nudged steps (two crossing) over 8 bars: every step once, in order, none doubled ok
+seq2: 2.4: lock_set takes P_E0 and P_DIST, refuses P_SLEN and P_AMODE (not lockable) ok
+seq2: 2.4: lock_set bounds the step and the parameter                          ok
+seq2: 2.4: a lock on P_E0 / P_DIST at step 3: set for that step, the base back at step 4 ok
+seq2: 2.4: a knob turned during the locked step: kept as the new base          ok
+seq2: 2.4: STOP during the locked step: the base (4) is back                   ok
+seq2: 2.4: a lock's value is clamped (WAVE 99 -> 4); lock_del clears a step's locks ok
+seq2: 2.4: steps_clear frees every lock and nudge                              ok
+seq2: 2.4: step_fill / step_fill_set: 2 bits a step, the index bounded         ok
+seq2: 2.4: no fill: the kick and the NO FILL hat play, the FILL ONLY snare (x4) is silent ok
+seq2: 2.4: fill held: the snare plays with its 4 ratchet hits, the NO FILL hat is silent ok
+seq2: 2.4: fill let go: back to normal                                         ok
+seq2: 2.4: a synth FILL ONLY step: one note a bar without the fill, two with it ok
+seq2: 2.4: FILL NEXT BAR: the whole next bar is a fill (the snare plays, the hat not)... ok
+seq2: 2.4: ... and only that bar                                               ok
+seq2: 2.4: FILL NEXT BAR pressed again before the bar: cancelled               ok
+seq2: 2.4: STOP clears the held and the armed fill                             ok
+seq2: 2.4: section_bars: A 1 bar, B 2 bars (32 x 1/16), C 3 bars (3 x 1BAR); an empty slot 1 ok
+seq2: 2.4: chain A B: A on the next bar, B a bar later, A two bars after that, round again (bar exact) ok
+seq2: 2.4: the chain state follows: entry 2 (B), 2 bars                        ok
+seq2: 2.4: a single section tap cancels the chain: A, and it stays             ok
+seq2: 2.4: STOP: no chain, no request                                          ok
+seq2: REC mode FREE, empty project: the first note starts a free take          ok
+seq2: REC mode TEMPO, empty project: the first note starts the loop at 100 BPM, recording ok
+seq2: REC START COUNT: a note only sounds, nothing starts                      ok
+seq2: REC START COUNT: PLAY -> one bar of clicks, not playing yet              ok
+seq2: REC START COUNT: 4 clicks (one bar of 4/4)                               ok
+seq2: REC START COUNT: after the bar the loop starts and records               ok
+seq2: REC START COUNT: REC during the count-in cancels it                      ok
+seq2: REC START COUNT: PLAY again during the count-in: back to armed           ok
+seq2: MIDI clock: stopped, BPM follows the master (120)                        ok
+seq2: MIDI clock: START, 2 bars at 120 -> beat 8 exactly                       ok
+seq2: MIDI clock: the master at 100 -> 2 more bars, BPM 100                    ok
+seq2: MIDI clock: SYNC USB ignores the TRS jack                                ok
+seq2: MIDI clock: STOP                                                         ok
+seq2: MIDI clock: no pulse for 0.5 s -> the internal tempo plays               ok
+seq2: 2.4: count-in running before the master starts                           ok
+seq2: 2.4: a MIDI START during the count-in starts and records at once         ok
+seq2: 2.4: SWING on the 8T grid does nothing (triplets stay even)              ok
+seq2: 2.4: DIV 1/8 -> 1/4 in the first beat: the step on beat 2 plays          ok
+seq2: 2.4: DIV 2BAR: one step every 8 beats (3 hits in 16 beats)               ok
+seq2: 2.4: DIV 1/2: one step every 2 beats (5 hits in 8 beats)                 ok
+seq2: 2.4: delay TIME 1/8D = 3/4 beat, 1/16D = 3/8 beat                        ok
+seq2: 2.6: delay TIME 1/4D = 1.5 beats, after 1/16D (older projects keep their value) ok
+seq2: 2.4: div_units: 1BAR = 4 beats, 2BAR = 8, 1/16 = a quarter beat          ok
+seq2: 2.4: MIDI = KEYS: the sequencer sends nothing to MIDI OUT                ok
+seq2: 2.4: MIDI = SEQ: the steps go out on their track's channel (drums on 10) ok
+seq2: 2.4: MIDI = SEQ: every note sent on was ended (STOP ends the rest)       ok
+seq2: 2.4: IN = NOTES: a MIDI note plays                                       ok
+seq2: 2.4: IN = CLOCK: a MIDI note-on is ignored                               ok
+seq2: 2.4: IN = CLOCK: the note-off still ends the note held before            ok
+seq2: 2.4: IN = CLOCK: the clock still runs SLOOP (START, one bar)             ok
+seq2: 2.5: CC 7 10 74 72 73 75 5 91 93 94 on ch 1 set track 1 (64 = the middle of PAN / FILTER) ok
+seq2: 2.5: CC 0 / 127: the ends of the range                                   ok
+seq2: 2.5: CC71 = the engine's RES; an engine without one, and unmapped CCs, change nothing ok
+seq2: 2.6: CC 64 (sustain) on ch 2: track 2's pedal down (no parameter changed) ok
+seq2: 2.5: a CC on ch 4-16 sets the selected track                             ok
+seq2: 2.5: the drum channel: 7 / 91 / 94 = DRUMS LVL / REV / DLY, 10 PAN, 74 FILTER; 73 ignored ok
+seq2: 2.5: IN = CLOCK: CCs ignored                                             ok
+seq2: 2.6: GLO > MIDI: ch 2, 11, 8 play tracks 1, 2, 3; ch 1 (nobody's): the selected track ok
+seq2: 2.6: a CC follows the track's channel too                                ok
+seq2: 2.6: their note-offs end them                                            ok
+seq2: 2.6: OTHER = OFF: a channel no track has plays nothing (notes and CCs)   ok
+seq2: 2.6: MIDI out: a track's keys on its own channel (track 2 on 11)         ok
+seq2: 2.6: sustain down: a note let go keeps sounding                          ok
+seq2: 2.6: sustain up: the waiting note ends, the one still held by its key stays ok
+seq2: 2.6: (and ends with its key)                                             ok
+seq2: 2.6: pedal up after another track was selected: the first one's note ends ok
+seq2: 2.6:   and its later notes end with their keys (no pedal stuck)          ok
+seq2: 2.6: the wheel let go after another track was selected: the first one back too ok
+seq2: 2.6: a project / NEW (every track released): the bends back to the middle ok
+seq2: 2.6: OTHER = OFF: a note-off on an ignored channel does not end the selected track's note ok
+seq2: 2.6: a note played again under the pedal: no key left counted by the arp ok
+seq2: 2.6: MIDI Program Change: queued for the track its channel plays (ch 2: track 2, ch 10: drums); OTHER = OFF / IN = CLOCK: none ok
+seq2: 2.6: GLO > MIDI CH2 changed with a note held on it: the note does not stay stuck ok
+seq2: 2.6: GLO > MIDI CH1 = OFF: track 1 sends nothing to MIDI OUT either      ok
+seq2: 2.6: CH1 changed with a sequencer note on: its note-off on the channel it went out on (5) ok
+seq2: overload: the releasing voice goes first, faded (stage 4)                ok
+seq2: overload: the upper notes thin out, the bass and the MONO lead stay      ok
+seq2: 64 bars at 87..174 BPM: every kick in the block of its downbeat click    ok
+seq2: DIV 1/4 -> 1/32 and 40 -> 240 BPM mid-step: one step a block, no burst   ok
+seq2: SWING 75 %, LEN 3 against LEN 16: in phase after 15 bars (no drift)      ok
+seq2: LEN 32 -> 16 while playing: in phase with a 16-step track                ok
+seq2: drums: a hat x4 plays 4 even hits in its step, the next step plays       ok
+seq2: synth: a note x3 starts 3 times in its step                              ok
+seq2: roll 1/32 held 8 steps: ~16 hits                                         ok
+seq2: roll 1/32 recorded: one hit a step, ratchet x2                           ok
+seq2: EDIT + hat while playing steps 4..7: those hats gone, the rest and the kicks kept ok
+seq2: undo: the erased hats are back                                           ok
+seq2: EDIT + hat while stopped: every hat gone                                 ok
+seq2: OCT- / OCT+ held on the drums: a ghost snare and a hard kick recorded    ok
+seq2: ... and played at 42 / 127                                               ok
+seq2: chord 9TH on C4 in C minor: C Eb Bb D                                    ok
+seq2: chord TRIAD on D4 in C minor: D F Ab                                     ok
+seq2: chord mode: the black keys are silent                                    ok
+seq2: drum track muted: no hits                                                ok
+seq2: track 1 soloed: the drums silent (faded out)                             ok
+seq2: solo off: the drums back                                                 ok
+seq2: CHORD+: C4, no modifier: C E G                                           ok
+seq2: CHORD+: F# held: the third flips, C Eb G                                 ok
+seq2: CHORD+: ... and back the other way on a minor chord: D F# A              ok
+seq2: CHORD+: G#: the 7th, C E G B                                             ok
+seq2: CHORD+: A#: sus4, C F G                                                  ok
+seq2: CHORD+: C#: the 9th, C E G D                                             ok
+seq2: CHORD+: G# + C#: 7th and 9th, four notes (the 5th gives way)             ok
+seq2: CHORD+: D#: an inversion, E G C                                          ok
+seq2: CHORD+: modifiers combine (F# + G#: C Eb G B)                            ok
+seq2: CHORD+: the black keys F# G# A# C# D# (both octaves), white keys none    ok
+seq2: CHORD+ keys: F#3 held, C4: C Eb G sound                                  ok
+seq2: CHORD+ keys: F#3 let go with C4 held: C E G (the chord changes under the finger) ok
+seq2: CHORD+ keys: G#3 pressed with C4 held: the 7th joins                     ok
+seq2: CHORD+ keys: all let go: nothing held                                    ok
+seq2: CHORD+: a modifier key plays no note of its own                          ok
+seq2: STRUM 20: the lowest note at once                                        ok
+seq2: STRUM 20: the next one 20 ms later                                       ok
+seq2: STRUM 20: the third 20 ms after that                                     ok
+seq2: STRUM -20 (up): the highest note first                                   ok
+seq2: STRUM: a key let go before its notes start: they never start (no hanging note) ok
+seq2: VLEAD: C E G then F: C F A (the nearest inversion)                       ok
+seq2: VLEAD: ... then G: B D G (or D G B), no jump up                          ok
+seq2: STRUM on a chord step: the low note first, the others after              ok
+seq2: STRUM on a chord step: all three within 30 ms                            ok
+seq2: STOP: no strummed note left waiting                                      ok
+seq2: all checks ok

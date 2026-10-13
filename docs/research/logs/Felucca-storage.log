@@ -1,0 +1,36 @@
+empty flash loads nothing                      ok
+save A                                         ok
+load returns A                                 ok
+save B                                         ok
+load returns B (newer seq)                     ok
+torn save keeps B                              ok
+header not written keeps B                     ok
+save A again                                   ok
+load returns A                                 ok
+both copies corrupt -> nothing                 ok
+other objects untouched                        ok
+settings save/load                             ok
+CRC-32 is zlib's (check value 0xCBF43926)      ok
+newer copy rotten -> the older one loads       ok
+save over the rotten copy                      ok
+... loads the new data                         ok
+both headers broken -> nothing                 ok
+data stays in the Felucca regions              ok
+FM6 user preset patches (and the retired bank) in the sectors 0x9F000 / 0xFE000 ok
+the autosave in its own sectors 0xE5000 / 0xE6000, nothing else touched ok
+a bank copy does not read as the patches object (its type) ok
+st_save_to: the first patches write into A, the bank's older copy; the bank's B still loads ok
+the next save goes to B (over the bank), A/B as any object ok
+FM6 patches: the sector tails stay erased      ok
+every payload/header byte cut keeps old data   ok
+erase failure keeps old data                   ok
+write protection is a save error               ok
+save sequence wraps                            ok
+wrapped sequence loads new data                ok
+save after sequence wrap                       ok
+invalid object load does no flash access       ok
+invalid object save does no flash access       ok
+wrapped object rejected                        ok
+small destination rejects whole object         ok
+oversized save rejected                        ok
+storage test passed

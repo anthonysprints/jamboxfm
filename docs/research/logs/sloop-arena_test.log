@@ -1,0 +1,8 @@
+arena: every engine after every other one (68 pairs, both PHYS layouts) bit-identical to a fresh start ok
+fuzz: 300 s, 799 engine switches, 44 PHYS model flips, 136 arena claims, peak 17994
+fuzz: 300 s on 3 parts: the mix stays under full scale (peak 17994)                                  ok
+fuzz: every voice free 20 s after the last note-off (0 hanging)                                      ok
+fuzz: silence at the end (last second peak 0)                                                        ok
+ownership: no engine touched the arena of a part that does not play it (0)                           ok
+PHYS: MODEL flips under chords for 120 s: peak 17994 (17994 without the flips), 0 voices hanging, end 0 ok
+arena_test: all checks ok

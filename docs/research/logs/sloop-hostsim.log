@@ -1,0 +1,21 @@
+tracks: recording: drums step 4 = 4 lanes (kick snare hat + clap: yes), hits when step 4 played right after: 3 (want 3: the clap is not triggered twice) ok
+tracks: recording: MIDI ch 3 -> lead step 1 = 84 (want 84) ok; keys -> pad step 14 = 2 notes 60 64 ok
+tracks: voices sounding at most 6 (budget 8) ok; given up to another part 0; 0 samples near full scale
+tracks: stealing across parts: 5 voices taken; largest sample step at a take / before it: at most 0.84 x (a hard cut: several x) ok
+tracks: TRS MIDI IN: ch 1..3 -> parts ok, ch 10 -> drums ok, ch 5 -> the selected track ok; note-offs (running status, vel 0) ok
+tracks: TRS MIDI IN: note-off after another track was selected reaches the note's track ok; ch 3 records into armed track 3 ok
+tracks: recording lengths: held 3.3 steps -> NOTE TIE TIE (the 4th step put back) ok; 0.3 step -> one step ok; past the middle of the next -> NOTE TIE ok
+tracks: recording lengths: a chord ties until its last key ok; capped at LEN 4 ok; MONO legato A..B -> A TIE B TIE ok
+tracks: recording with SWING 50 %: nearest swung step, as heard (0.55 into a long step stays, 0.56 into a short one moves on) ok
+tracks: engine switch ANALOG -> DIGITAL (release tail): largest sample step 852 in the 10 ms after, 736 in the 0.1 s before (1.16 x)
+tracks: engine switch ANALOG -> PHASE (chord held): largest sample step 640 in the 10 ms after, 631 in the 0.1 s before (1.01 x)
+tracks: engine switch ANALOG -> LOFI (chord held): largest sample step 364 in the 10 ms after, 588 in the 0.1 s before (0.62 x)
+tracks: engine switch: at most 1.16 x the step before (a hard cut: several x) ok
+tracks: a note during the switch sounds on the new engine (SAMPLE) ok
+tracks: WAVs in /workspace/scratch/fm1-research/deep/audio-tests/sloop/tracks: tracks_demo.wav (mix), t1_bass.wav, t2_pad.wav, t3_lead.wav, t4_drums.wav, steal.wav, engine_switch.wav
+tracks: one part, 8 notes held + drums (host -O2, ns per sample, heaviest preset per engine): ANALOG SAW BASS 191.3, DIGITAL FM BASS 180.4, PHASE CZ STRING 158.5, LOFI WAVE LEAD 121.1, SAMPLE LOFI KEYS 175.8, VOICE WOW BASS 161.6, TRIO ACCORDION 198.2, WHEEL HOUSE ORGN 226.4, GRAIN VIBE HAZE 155.4, FM6 BRASS SECT 190.3, PHYS BOWED MTL 240.5, NOISE RADIO 204.5
+tracks: worst single part: PHYS BOWED MTL 240.5 ns
+tracks: DIGITAL + PHASE + VOICE + drums, 3 + 3 + 2 notes: 194.8 ns (0.81 x the worst single part), 8 voices
+tracks: the same, 8 + 8 + 4 notes asked for (budget keeps 8): 230.9 ns (0.96 x)
+tracks: two VOICE parts, 4 + 4 voices (the heaviest 8 the budget allows): 252.1 ns (1.05 x); no notes (drums, buses, 3 idle parts): 71.8 ns
+tracks: all checks ok

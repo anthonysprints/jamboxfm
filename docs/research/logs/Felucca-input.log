@@ -1,0 +1,136 @@
+debounce: press 2 frames, release 8 frames, frame 1100 us
+clean press: contact -> press avg 1746 us, max 2297 us; release -> note off max 8897 us
+clean presses: one press and one release each, every key and button      ok
+clean press: counted within 2.3 ms of the contact (2 frames)             ok
+clean release: the note ends within 10 ms                                ok
+press stat (first closed frame -> press): avg 1100 us over 1
+the press stat counts the note keys' presses (one frame after the first) ok
+bouncy press (<= 3 ms of bounce): first touch -> press avg 2511 us, max 5186 us; settled -> press max 2298 us; last bounce -> note off max 8899 us
+2000 bouncy presses: exactly one note-on / press and one release each    ok
+no note ends while its key is held                                       ok
+no hanging note 12 ms after the last bounce of a release                 ok
+bouncy press: counted within 2.3 ms of the contact settling, or sooner   ok
+bouncy release: the note ends within 10 ms of the last bounce            ok
+a 150 us glitch plays no note                                            ok
+10 notes 40 ms apart (20 ms held, bouncy): 10 note-ons, 10 releases      ok
+encoder 0: one cycle -> 1 step(s)
+an encoder detent cycle is one step                                      ok
+#63 a still knob: one contact chattering or both lost together never steps ok
+encoder at speed: 720 turns of 12 detents, 0 miscounted (worst by 0)
+#126 12-detent turns up to 300 detents/s (even) / 150/s (bunched in half a click): every detent ok
+#126 slow turns (3..40 detents/s), contacts bouncing 1.5 ms: one step a click (0 off) ok
+#126 120 detents/s, bouncing 0.2 ms: 8 right then 6 left at once -> 8, then 2 ok
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 1: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3125..3375 ns (target 3200 +-30 %) ok
+LEDs HI, bus 2: the pulse spans 11..12 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 4: the pulse spans 5..5 bits of the shift (no wait)
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 1: the pulse spans 11..11 bits of the shift (no wait)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1375..1625 ns (target 1600 +-30 %) ok
+LEDs LO, bus 2: the pulse spans 4..5 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1208..1708 ns (target 1600 +-30 %) ok
+LEDs LO, bus 4: the pulse spans 1..2 bits of the shift (no wait)
+#119 breath HI, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 60.8 % of lit (50..70), from the peak (57.7 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 8 over 25 %, 28 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath HI, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 61.0 % of lit (50..70), from the peak (57.9 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 7 over 25 %, 38 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath LO, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 29.2 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 22 over 25 %, 58 at all ok
+  the glow still 1500..1625 ns (target 1583 +-30 %)                      ok
+#119 breath LO, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 32.3 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 13 over 25 %, 39 at all ok
+  the glow still 1458..1708 ns (target 1583 +-30 %)                      ok
+mid level HI: lit 1 frame in 8, evenly (every 8 frames, ~113 Hz), the glow between, in step ok
+  its level 15.5 % of lit (1/8 + the glow), above the glow, below a breath's peak ok
+mid level LO: lit 1 frame in 12, evenly (every 12 frames, ~75 Hz), the glow between, in step ok
+  its level 9.8 % of lit (1/12 + the glow), above the glow, below a breath's peak ok
+power-on sweep DIM: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, the glow on every LED; nothing breathing or mid  ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep (DIM): frame  ms  keys F3..G5 (black and white by place)  buttons
+     0    0  |:                          |     0/64
+    32   35  |*@-.                       |     0/64
+    64   70  |-=+%+:                     |     0/64
+    96  105  |.:--+#%.                   |     0/64
+   128  140  |...::-=%=:                 |     0/64
+   160  176  |......:-+##:               |     0/64
+   192  211  |.......::-=*=:             |     0/64
+   224  246  |..........:-+##:.          |     0/64
+   256  281  |............:-=*%=.        |     0/64
+   288  316  |..............:--+#:       |     0/64
+   320  352  |................::-*@-.    |     0/64
+   352  387  |..................:-=+#*   |     0/64
+   384  422  |....................::-=@-.|  .  0/64
+   416  457  |......................::=+%|  .  0/64
+   448  492  |........................::-|  :  6/64
+   480  528  |..........................:|  - 11/64
+   512  563  |...........................|  - 13/64
+   544  598  |...........................|  :  8/64
+   576  633  |...........................|  :  5/64
+   608  668  |...........................|  .  0/64
+   640  704  |...........................|  .  0/64
+power-on sweep OFF: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, dark (no glow); nothing breathing or mid         ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep: a key down at frame 200: done the next frame, the glow left ok
+idle animation DIM: endless (12288 frames, 13 s), every LED every frame as its level asks ok
+  one soft light (11..23 /64 at it), drifting F3 -> G5 and back each 9 s, falling away ok
+  the buttons breathe: the glow (1/64) .. 8 /64 (lit frames 0..8); the glow under every LED ok
+  a key down ends it before its next frame (the LEDs as left); fm1_led_anim_stop too; the sweep is no idle ok
+idle animation OFF: endless (12288 frames, 13 s), every LED every frame as its level asks ok
+  one soft light (11..23 /64 at it), drifting F3 -> G5 and back each 9 s, falling away ok
+  the buttons breathe: the glow (1/64) .. 8 /64 (lit frames 0..8); no glow ok
+  a key down ends it before its next frame (the LEDs as left); fm1_led_anim_stop too; the sweep is no idle ok
+idle animation (DIM): frame  s  keys F3..G5  buttons
+      0  0.0  |=-:........................|  .  0/64
+    512  0.6  |-=-:.......................|  .  0/64
+   1024  1.1  |..::-=-....................|  .  0/64
+   1536  1.7  |.......:=-::...............|  .  0/64
+   2048  2.3  |............-=-:...........|  .  0/64
+   2560  2.8  |................::-::......|  :  4/64
+   3072  3.4  |....................:-=-:..|  :  6/64
+   3584  3.9  |.......................:-=-|  :  7/64
+   4096  4.5  |........................:-=|  :  8/64
+   4608  5.1  |.......................:-=:|  :  7/64
+   5120  5.6  |....................:-=-...|  :  6/64
+   5632  6.2  |................:-=:.......|  :  4/64
+   6144  6.8  |............-=-:...........|  .  0/64
+   6656  7.3  |.......-=-:................|  .  0/64
+   7168  7.9  |..::=-:....................|  .  0/64
+   7680  8.4  |-=-:.......................|  .  0/64
+   8192  9.0  |=-:........................|  .  0/64
+LEDs: refresh 909 Hz lit, 909 Hz dim
+LEDs: host 39.1 ns per tick without dim LEDs, 53.3 ns with, 68.7 ns with a breath too
+input debounce: all ok

@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-13",
+  "files": [
+    {
+      "path": "build/jambox-emulator.html",
+      "bytes": 7002508,
+      "sha256": "8fbceaf2c06beaa395c1ee30cfdd735a1c63f8e8efaa46b1bbfbfeb33b881034"
+    },
+    {
+      "path": "build/jambox-source.zip",
+      "bytes": 4481062,
+      "sha256": "74fbae4a971136f5e98e7e3011fcf5d25e236463aa86541457972fe804e1bbd3"
+    },
+    {
+      "path": "build/jambox-web.zip",
+      "bytes": 9932754,
+      "sha256": "832e705831ef6206df4810cfecb74db0eeed4fabf9a0e13cd6fe13ce564decd8"
+    },
+    {
+      "path": "build/jam-emu/jam-emu.wasm",
+      "bytes": 679279,
+      "sha256": "88f52ef09404069593fe36f4a2304a821f32f14190e353cfbd18d070f9dd99da"
+    },
+    {
+      "path": "web/emu/style.css",
+      "bytes": 23796,
+      "sha256": "d1210a1d3399d6af54928a022cad9097d051ba7529455529cdd9befcb5b6e0aa"
+    },
+    {
+      "path": "web/emu/worklet.js",
+      "bytes": 5408,
+      "sha256": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5"
+    },
+    {
+      "path": "web/emu/app.js",
+      "bytes": 18458,
+      "sha256": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290"
+    },
+    {
+      "path": "web/emu/index.html",
+      "bytes": 5436,
+      "sha256": "dfd3633fad7af9125e873b6cf59e9637be1a20e794a30d27cbd89f10bb8ffa5a"
+    },
+    {
+      "path": "firmware/host/jam_emu.c",
+      "bytes": 12547,
+      "sha256": "dae0f1f827906e877eabf9f77cd3245f675a707e470de2bc30bd46768505e8a2"
+    },
+    {
+      "path": "tools/build_jam_emu.py",
+      "bytes": 3234,
+      "sha256": "66d5d0caf1f4c338b322a75c0620ba1f3c9222c54d7ba0167f44c9138e93297b"
+    },
+    {
+      "path": "tools/package_jam_emu.py",
+      "bytes": 11690,
+      "sha256": "b50f94dfc8549bcef2fa06a0b1de340d0fc99bcb1e05b9e1388b8119594f54e6"
+    },
+    {
+      "path": "tests/jam_emu_native.c",
+      "bytes": 5253,
+      "sha256": "0848c7d564716929b0f31f0e9524bada32c63b11a89b9a91ba032ed280ebc2e6"
+    },
+    {
+      "path": "tests/jam_emu_browser.mjs",
+      "bytes": 15582,
+      "sha256": "524e23dad23a0c35c81f3c87f711ab7071149661af9b92c8c8628b17bc77fe64"
+    },
+    {
+      "path": "tests/run_jam_emu_tests.sh",
+      "bytes": 631,
+      "sha256": "17589f6441863c85cbb26afb19050da1a7875f9ebef48c44ee32f21e6b7694da"
+    }
+  ]
+}

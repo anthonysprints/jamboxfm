@@ -1,0 +1,11 @@
+{
+  "action": "dry-run",
+  "branch": "refs/heads/gh-pages",
+  "bytes": 12383832,
+  "commit": "98beb2a7f7f65c713c4dd6c615f3c19fa0639255",
+  "destination": "https://github.com/sprintrstudio/jamboxfm.git",
+  "files": 21,
+  "package_sha256": "483b27665d2797940a0c0ba63abe3aca756313f55dca8419b0f4e637b007425a",
+  "parent": null,
+  "tree": "d212ca29d4ce2ddc0d30852651935999d1eb12fa"
+}

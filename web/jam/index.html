@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ebe7dc">
+  <title>JamBoxFM · Dusty sessions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="JamBoxFM home">jam<span>box</span><sup>FM</sup></a>
+      <div class="edition"><span class="edition-dot"></span> THE FIRST SESSION <b>01</b></div>
+    </header>
+
+    <section class="intro">
+      <div><p class="eyebrow">LESS MENU. MORE MUSIC.</p><h1>Find your pocket.</h1><p class="lede">A dusty beat. Four parts. A little room to get lost.</p></div>
+      <div class="palette-tag"><span class="record" aria-hidden="true"></span><div><small>ON THE DECK</small><strong>Dusty</strong><span>Warm bass · soft chords · rough edges</span></div></div>
+    </section>
+
+    <section class="instrument" aria-label="JamBox instrument">
+      <div class="transport">
+        <button id="audio-start" class="start-audio">Start audio <span aria-hidden="true">↗</span></button>
+        <fieldset id="transport-controls" disabled>
+          <button id="play" class="play" aria-pressed="false"><span aria-hidden="true">▸</span> <span id="play-label">Play beat</span></button>
+          <label class="tempo">TEMPO <span><input id="tempo" type="number" min="40" max="240" value="88" aria-label="Tempo"> <small>BPM</small></span></label>
+          <label class="swing">SWING <output id="swing-value">0%</output><input id="swing" type="range" min="0" max="100" value="0" aria-label="Swing"></label>
+          <button id="panic" class="quiet">All notes off</button>
+        </fieldset>
+        <div class="output"><span id="audio-status" role="status">Audio is off</span><meter id="meter" min="0" max="1" value="0" aria-label="Audio output level"></meter></div>
+      </div>
+
+      <fieldset id="instrument-controls" disabled>
+        <div class="section-label"><span>01 / YOUR BAND</span><span>Pick a part. Find a sound.</span></div>
+        <div id="parts" class="parts"></div>
+
+        <div class="workbench">
+          <section class="shape">
+            <div class="section-label"><span>02 / SHAPE IT</span><span id="selected-sound">Dusty palette</span></div>
+            <div id="macros" class="macros"></div>
+          </section>
+          <section class="key-settings">
+            <div class="section-label"><span>PLAYING SETTINGS</span><span id="setting-part">Chords</span></div>
+            <div id="melodic-settings" class="settings-grid">
+              <label>Root<select id="root" aria-label="Root note"><option value="0">C</option><option value="1">C♯</option><option value="2">D</option><option value="3">D♯</option><option value="4">E</option><option value="5">F</option><option value="6">F♯</option><option value="7">G</option><option value="8">G♯</option><option value="9">A</option><option value="10">A♯</option><option value="11">B</option></select></label>
+              <label>Scale<select id="scale" aria-label="Scale"><option value="0">Chromatic</option><option value="1">Major</option><option value="2">Minor</option><option value="3">Dorian</option><option value="4">Mixolydian</option><option value="5">Major pentatonic</option><option value="6">Minor pentatonic</option><option value="7">Harmonic minor</option><option value="8">Phrygian</option><option value="9">Lydian</option><option value="10">Locrian</option><option value="11">Melodic minor</option><option value="12">Blues</option><option value="13">Whole tone</option><option value="14">Diminished H/W</option><option value="15">Diminished W/H</option></select></label>
+              <label>Pitch mapping<select id="quant" aria-label="Pitch mapping"><option value="0">Off</option><option value="1">Snap to scale</option><option value="2">White keys → scale</option></select></label>
+              <label>One-key chords<select id="chord" aria-label="One-key chords"><option value="0">Off</option><option value="1">Triad</option><option value="2">Seventh</option><option value="3">Ninth</option><option value="4">Sus 4</option><option value="5">Power</option></select></label>
+            </div>
+            <p id="drum-settings" hidden>The pads play the kit’s sixteen drum sounds. Tap a step below to change the groove.</p>
+            <p class="small-note" id="playing-hint">Chords follow the selected scale. These settings belong to the selected part.</p>
+          </section>
+        </div>
+
+        <section class="performance">
+          <div class="section-label"><span>03 / PLAY SOMETHING</span><div class="octaves"><button id="octave-down" aria-label="Octave down">−</button><span>OCT <output id="octave-value">0</output></span><button id="octave-up" aria-label="Octave up">+</button></div></div>
+          <div id="pads" class="pads" aria-label="Performance pads"></div>
+          <p class="pad-help">Click or touch to play. Computer keys: <b>A–K</b> and <b>Z–,</b> as shown. <kbd>Space</kbd> plays / stops. <kbd>Esc</kbd> releases everything.</p>
+          <div class="capture"><button id="record" aria-pressed="false">● Record Chords</button><p id="record-hint">Capture into a two-bar loop. Grid-snapped overdub.</p></div>
+        </section>
+
+        <section class="groove">
+          <div class="section-label"><span>04 / THE POCKET</span><span>Two bars · tap steps to edit</span></div>
+          <div class="groove-scroll"><div id="drum-grid" class="drum-grid" aria-label="Drum sequencer"></div></div>
+        </section>
+      </fieldset>
+    </section>
+    <p id="message" class="message" role="status">Start audio, press Play beat, then try the Chords pads.</p>
+    <footer><span>JAMBOXFM <b>·</b> PLAYABLE SKETCH 01</span><p>Changes stay in this session. Reload to start fresh.</p><span>Built on Sloop / Felucca <b>·</b> GPL-3.0-only</span></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

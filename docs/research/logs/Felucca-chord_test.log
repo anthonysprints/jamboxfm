@@ -1,0 +1,65 @@
+ui: C major DIA3 on D: D F A                                                   ok
+ui: C major DIA3 on B: B D F (diminished)                                      ok
+ui: C major DIA7 on G: G B D F                                                 ok
+ui: C major DIA7 on C: C E G B                                                 ok
+ui: C major: C Dm Em F G Am Bdim, Cmaj7 Dm7 Em7 Fmaj7 G7 Am7 Bm7b5             ok
+ui: A minor DIA3 on B: B D F                                                   ok
+ui: A minor DIA3 on A: A C E (Am), on C: C E G, on E: E G B (Em)               ok
+ui: A harmonic minor DIA3 on E: E G# B (E), on C: C E G# (Caug)                ok
+ui: A harmonic minor DIA7 on E: E G# B D (E7), on G#: G# B D F (G#dim7), on A: AmM7 ok
+ui: Eb major DIA7 on Bb: Bb D F Ab (A#7)                                       ok
+ui: D dorian DIA3 on D: Dm, on G: G (the major IV)                             ok
+ui: a key outside the scale: the scale note below (C# in C major: C)           ok
+ui: CHR: the major scale of ROOT (G: on A, Am; on F#, F#dim)                   ok
+ui: pentatonic DIA3: in the scale (C E A: C6)                                  ok
+ui: DIA3 / DIA7 of every scale and root: 3 / 4 notes, every one in key         ok
+ui: MAJ on C4: C E G                                                           ok
+ui: MIN: C Eb G (Cm)                                                           ok
+ui: DOM7: C E G Bb (C7)                                                        ok
+ui: MAJ7: C E G B (Cmaj7)                                                      ok
+ui: MIN7: C Eb G Bb (Cm7)                                                      ok
+ui: SUS4: C F G (Csus4)                                                        ok
+ui: POW: C G C (C5)                                                            ok
+ui: a fixed shape ignores the scale (MIN on D# in C major: D# F# A#)           ok
+ui: OPEN: C G E (1-5-3)                                                        ok
+ui: INV1: E G C                                                                ok
+ui: INV2: G C E                                                                ok
+ui: +OCT: C3 C E G                                                             ok
+ui: +OCT of a seventh: C3 C E B (the fifth dropped, 4 notes)                   ok
+ui: OPEN seventh: C G B E                                                      ok
+ui: INV1 seventh: E G B C                                                      ok
+ui: INV2 seventh: G B C E                                                      ok
+ui: INV1 of POW: G C (the doubled root once)                                   ok
+ui: every scale x CHRD x VOIC x note: 1..4 notes, ascending, once each, 0..127, a name ok
+ui: OFF: the note alone                                                        ok
+ui: a key plays its chord (D4: D F A), MIDI OUT the three                      ok
+ui:   chord_last: Dm for the CHORD page                                        ok
+ui: its release ends exactly those (CHRD / VOIC changed meanwhile), MIDI OUT their note-offs ok
+ui: two chords: the shared notes sound once (C E G B)                          ok
+ui:   C up: C ends, E G stay for the E key                                     ok
+ui:   E up: nothing left, MIDI OUT balanced                                    ok
+ui: MONO: the root alone (C# in C major: C)                                    ok
+ui:   released (MONO switched off meanwhile)                                   ok
+ui: LEGATO: the root alone (E)                                                 ok
+ui: QNT WHITE: the key mapped first (A minor, D4 -> B4), then its chord B D F  ok
+ui:   released                                                                 ok
+ui: OFF: one note, as before                                                   ok
+ui: ARP: one key, the chord as held notes (C E G B)                            ok
+ui:   key up: nothing held                                                     ok
+ui: live recording: the chord into one step (D F A)                            ok
+ui:   a 4-note voicing: 4 notes in the step (the most a step holds)            ok
+ui:   MONO records its root alone                                              ok
+ui: MIDI IN: a note plays its chord (D F A)                                    ok
+ui:   its note-off ends the chord (CHRD OFF meanwhile), the table empty        ok
+ui: MIDI and a key share notes: C E G B once each                              ok
+ui:   MIDI C off: C ends, E G stay for the key                                 ok
+ui:   key up: nothing left                                                     ok
+ui: pedal: the chord (F A C) held after its note-off                           ok
+ui:   pedal up: released                                                       ok
+ui: a full chord table: further notes play alone; all end                      ok
+ui: All Sound Off forgets the track's MIDI chords                              ok
+ui: DRUM: CHRD ignored (one hit per key)                                       ok
+ui:   MIDI IN on the DRUM track: one hit, no chord kept                        ok
+ui: SAMPLE SET 4 (once PERC): chords, no kit                                   ok
+ui: SAMPLE with a melodic set: chords                                          ok
+chord keys test passed

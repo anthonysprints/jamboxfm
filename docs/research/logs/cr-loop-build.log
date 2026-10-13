@@ -1,0 +1,4 @@
+/workspace/scratch/fm1-research/ChoralRootFM1/firmware/src/cr_loop.c: In function ‘crl_step_commit’:
+/workspace/scratch/fm1-research/ChoralRootFM1/firmware/src/cr_loop.c:523:37: warning: operand of ‘?:’ changes signedness from ‘int’ to ‘unsigned int’ due to unsignedness of other operand [-Wsign-compare]
+  523 |     n = lp->d.nev > lp->layer_ev0 ? lp->d.nev - lp->layer_ev0 : 0u;
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~

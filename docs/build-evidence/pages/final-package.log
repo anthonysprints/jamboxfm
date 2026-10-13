@@ -1,0 +1,12 @@
+tables: /workspace/jamboxfm/build/jam-emu-gen/felucca_tables.h
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/jam-emu-gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/jam-emu-gen/felucca_fm6.h
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+JamBox panel emulator built: /workspace/jamboxfm/build/jam-emu
+build/jambox-emulator.html: 7,017,556 bytes; SHA256 d975f01b7ae261fa95af57f00de905b5cf05820488b0efbf51874b838e01420d
+build/jambox-source.zip: 4,492,348 bytes; SHA256 56c935755a0fcf2c022d70e426e7b61f4dd8d1cf2f7c99bddfab710e6677033f
+build/jambox-web.zip: 9,955,017 bytes; SHA256 a0e93b324e3b068cf98cb2e13e78ff5524d98f988b577afaec1aea02009d0e5c
+Static publish root: build/jambox-web (21 files)

@@ -1,0 +1,4 @@
+Same-batch tap: { energy: 7.135897767730057, keys: 0, held: 0 }
+Double PLAY: { playing: false, queued: 0 }
+Relative master: { before: 100, after: 99 }
+PASS: independent worklet/WASM queue probe; not a browser audio timing test.

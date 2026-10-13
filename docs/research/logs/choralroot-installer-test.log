@@ -1,0 +1,213 @@
+page: /*LIB*/ and /*META*/ exactly once                                  ok
+page: one <script type="module">, no other script                        ok
+page: no link to ../editor/                                              ok
+page: the status does not name Felucca as the product                    ok
+page: English only (no ja table, no language toggle)                     ok
+page: the backup step (capture, restore, restart; Skip backup, Back up, Restore, stock resume box) ok
+page: the "no backup" texts are gone                                     ok
+page: the Sounds section (after Back up and restore): Read sounds, the table, the file input ok
+page: title and lang                                                     ok
+page: link to the landing page and the licence links                     ok
+page: source, Felucca, Hügelton and M-VAVE links                         ok
+page: no external assets                                                 ok
+texts: a single `en` table                                               ok
+texts: every data-t key has a text (63 keys)                             ok
+texts: every fm1ota.js error code and status has a text (20)             ok
+texts: every key the script names has a text ()                          ok
+texts: every key tf() fills has a text (7)                               ok
+texts: the Sounds section's data-t keys and its statuses                 ok
+status: `ChoralRoot ${meta.version} · ${meta.product}` -> ChoralRoot 0.1 · FM-1_920 ok
+make_site.py inlines fm1pkg.js, fm1ota.js, fm1backup.js, fm1sounds.js (fm1sounds.js after fm1backup.js) ok
+inlined page (fm1pkg.js, fm1ota.js, fm1backup.js, fm1sounds.js + META) compiles ok
+inlined page: no import / export left                                    ok
+test package: identity FM-1_920                                          ok
+no Web MIDI: the page's top-level code runs                              ok
+no Web MIDI: status = the nomidi text                                    ok
+no Web MIDI: every data-t element has its text ({version} = 0.1)         ok
+no Web MIDI: lang en, Install and stock buttons disabled                 ok
+load: status ChoralRoot 0.1 · FM-1_920, Install enabled                  ok
+install: stock -> loader -> FM-1_920, status Done, bar 100 (11 reads, 2040 ms) ok
+install: Install locked and the page guarded against closing while writing ok
+install: unlocked afterwards                                             ok
+install: the log lists the steps                                         ok
+install: the stock firmware does not answer the backup -> asked once to install without one ok
+over Felucca: the backup saved first (felucca-backup-20261013.json)      ok
+over Felucca: installed, then the restore offered                        ok
+over Felucca: its settings, banks, FM6 bank restored on ChoralRoot (no samples: all-synth), then RESTART ok
+over Felucca: the status lists what was restored and what stays in the file ok
+Skip backup: installed with no backup taken (only INFO, to identify the firmware), no question ok
+no backup, declined: nothing written, unlocked                           ok
+ChoralRoot over ChoralRoot: backed up, no restore offered                ok
+Back up enabled, Restore waits for a file                                ok
+Back up: the file holds ChoralRoot's 17 objects                          ok
+Restore: a file that is not a backup is refused                          ok
+Restore: a backup file enables Restore                                   ok
+Restore: confirmed, every object back, the settings last, RESTART        ok
+load: a package for another identity -> badpkg, Install stays disabled   ok
+load: HTTP 404 -> loadfail with the reason                               ok
+resume: loader -> FM-1_920, status Done                                  ok
+resume: no firmware check, no question (the loader only writes)          ok
+guard: the override box is in the page, hidden                           ok
+help: "Device not found?": the symptom, the recovery repo, the Transporter ok
+help: the rescue key (OCT- at power-on), marked as true only from the boot stub on (0.16) ok
+guard: over Sloop -> refused with the message and the recovery link      ok
+guard: ... nothing written, no backup, no question; the override box appears ok
+guard: override ticked, the second confirm declined -> nothing written   ok
+guard: override ticked and confirmed -> installed over Sloop             ok
+guard: over FM-1_909 FELUCCA 0.9-BETA -> refused                         ok
+guard: over FM-1_922 FELUCCA 2.2 BETA -> refused                         ok
+guard: over FM-1_000 (no INFO) -> refused                                ok
+guard: over FM-1_900 (no INFO) -> refused                                ok
+guard: over FELUCCA v1.0.1 -> installed, no override shown               ok
+guard: over MELODEE v0.11.1 -> installed, no override shown              ok
+guard: over ChoralRoot 0.12 -> installed, no override shown              ok
+guard: over the stock FM-1_015 -> installed, no override shown           ok
+error: no FM-1 -> notfound text, Install unlocked                        ok
+error: another device -> model text                                      ok
+error: the FM-1 reports another identity -> mismatch text + identity     ok
+error: SysEx refused -> denied text, Install unlocked                    ok
+stock: the warning and the confirm speak of the backup                   ok
+stock: its own bar, status line, done panel, guidance and log, in the section, under the button ok
+stock: a file of the wrong size is refused, the V15 (stub) accepted: said in the section, which is opened ok
+stock: the backup is saved first                                         ok
+stock: declined -> confirm asked once, nothing written, unlocked         ok
+stock: declined -> Cancelled in the section, no panel, the install card as it was ok
+stock: after a declined confirm the install card answers again (the section's line stays) ok
+stock: confirmed -> backup, ChoralRoot -> loader -> FM-1_015, status Done (in the section) ok
+stock: the bar moves through the check and the write, never back, 100 only at the end (0.1 0.2 0.2 6 11.8 17.6 23.4 29.3 35.1 40.9 40.9 100) ok
+stock: during the run nothing is said in the install card, which goes back to idle (its bar 0, its panels hidden) ok
+stock: the done panel: the identity the FM-1 answers with, the backup file saved, the way back ok
+stock: the status line is scrolled into view at the start; the section shows the run's log lines (the main log has them too) ok
+stock: the section cannot be folded over its done panel                  ok
+stock: an install of ChoralRoot afterwards reports in the install card (status, bar, done panel), not in the section ok
+stock interrupted: the cable lost while writing -> said in the section with its guidance; the install card's guidance stays hidden ok
+stock interrupted: the guidance names the resume box and the same file, and the way to the help ok
+stock: after an error the install card answers again                     ok
+stock interrupted: the resume box ticked, the button again -> FM-1_015, the done panel (no backup in this run: it says so) ok
+stock resume (in update mode) without the resume box: nothing written    ok
+stock resume (box ticked): declined -> nothing written, Cancelled        ok
+stock resume (box ticked): confirmed -> FM-1_015, status Done            ok
+stock resume: the bar moves the same way (11.8 17.6 23.4 29.3 35.1 40.9 40.9 100), and the done panel ok
+stock: no FM-1 -> notfound before any confirm, in the section, without the guidance (nothing was started) ok
+stock: after notfound the install card answers again                     ok
+stock: MIDI refused -> denied in the section, unlocked, and the install card answers again ok
+sounds: Read sounds enabled, the table hidden until a read               ok
+sounds: Read sounds -> 32 rows (U01..U32) with the names, empty slots marked, nothing written ok
+sounds: status "Sounds read: 3 of 32 slots used.", unlocked              ok
+sounds: Export U01 -> a download readSoundFile accepts (VA with its patch), nothing written ok
+sounds: Rename U03 -> only bank 0 written, the table read again          ok
+sounds: a 16-character name refused, nothing written                     ok
+sounds: Import opens the file picker for the row                         ok
+sounds: Import into U05 (empty): no question, the VA store then bank 0 written ok
+sounds: Import over U18 (used): asked, declined -> nothing written       ok
+sounds: ... confirmed -> the VA store, the CZ-1 half cleared, then bank 1 ok
+sounds: a backup file chosen for Import -> refused (a whole backup), nothing written ok
+sounds: Delete U01 (confirmed) -> the VA store then the bank; the settings untouched ok
+sounds: the installer unlocked afterwards                                ok
+sounds: on Felucca -> the status says the Sounds need ChoralRoot, nothing read or written ok
+page: Export .syx on the rows, the Import picker accepts .json and .syx  ok
+texts: the .syx button, its section text, the statuses and the voice prompt ok
+syx: Export .syx on the FM6 and CZ-1 rows with a patch only (not ANALOG, not empty) ok
+syx: Export .syx on U02 (FM6) -> a 163-byte DX7 voice download, nothing written ok
+syx: Export .syx on U03 (CZ-1) -> a 295-byte tone dump                   ok
+syx: a .syx imported into U05 (empty): the FM6 store, then bank 0; named from the voice ok
+syx: a two-voice file asks which voice (2 -> SECOND)                     ok
+syx: a voice number out of range -> nothing written                      ok
+syx: a CZ-101 tone refused with the message, nothing written             ok
+syx: the installer unlocked afterwards                                   ok
+page: no step strip, no steps, no Next buttons, no step machinery in the script ok
+page: the version, Install, Other versions, then Device not found?, Back up and restore, Sounds, Return to official V15, The files ok
+page: the going-back note, the interrupted box, the done box and the browser notice are in the page, hidden ok
+page: [hidden] wins over a class that sets display (the override box)    ok
+page: one way to the browser's MIDI (refused in demo mode), one fetch (the chosen version's package) ok
+texts: every key tv() fills has a text (18)                              ok
+texts: no text is left that the page does not use ()                     ok
+texts: what an update keeps and what it does not; the SAFE MODE and update-gesture hints ok
+texts: the notice for a browser that cannot install names the ones that can (Android as untested) ok
+versions: the page runs with the real list                               ok
+at once: Install is enabled with no click before it and says "Install ChoralRoot 0.21"; only the newest package was fetched ok
+what is new: "ChoralRoot 0.21 · 12 October 2026" over the button, marked Newest ok
+what is new: "New in 0.21" with every bullet of web/releases.json at once, and the link to the full notes ok
+other versions: 0.20, 0.19, 0.18, 0.17, 0.16 from web/releases.json, each with its date; none chosen ok
+other versions: 0.14 and 0.15 are not offered; one line links the releases on GitHub ok
+the files: a download link, the sha256, the full notes and the source at its tag for each version ok
+at once: one click on Install wrote 0.21 (11 reads)                      ok
+done: the page names the version installed                               ok
+done: "What is on my FM-1?" reads the version back -> "Read back: the FM-1 runs ChoralRoot 0.21." ok
+check: finds ChoralRoot 0.20, writes nothing                             ok
+check: 0.20 is marked "On your FM-1" in the other versions; Install still says 0.21 ok
+check: the version the FM-1 already runs, chosen -> said so (no going-back note: it is not going back), Install still enabled ok
+older: one click on 0.20 -> "Install ChoralRoot 0.20", its package loaded and checked, 0.20 marked as chosen and as an older version ok
+older: the going-back sentence of 0.20 is shown by the button, with the way back to 0.21 ok
+older: the notes are 0.20's: date, bullets, the going-back sentence; the points in full behind a disclosure; notes, file, source ok
+older: one click on 0.19 -> "Install ChoralRoot 0.19", its package loaded and checked, 0.19 marked as chosen and as an older version ok
+older: the going-back sentence of 0.19 is shown by the button, with the way back to 0.21 ok
+older: the notes are 0.19's: date, bullets, the going-back sentence; the points in full behind a disclosure; notes, file, source ok
+older: one click on 0.18 -> "Install ChoralRoot 0.18", its package loaded and checked, 0.18 marked as chosen and as an older version ok
+older: the going-back sentence of 0.18 is shown by the button, with the way back to 0.21 ok
+older: the notes are 0.18's: date, bullets, the going-back sentence; the points in full behind a disclosure; notes, file, source ok
+older: one click on 0.17 -> "Install ChoralRoot 0.17", its package loaded and checked, 0.17 marked as chosen and as an older version ok
+older: the going-back sentence of 0.17 is shown by the button, with the way back to 0.21 ok
+older: the notes are 0.17's: date, bullets, the going-back sentence; the points in full behind a disclosure; notes, file, source ok
+older: one click on 0.16 -> "Install ChoralRoot 0.16", its package loaded and checked, 0.16 marked as chosen and as an older version ok
+older: the going-back sentence of 0.16 is shown by the button, with the way back to 0.21 ok
+older: the notes are 0.16's: date, bullets, the going-back sentence; the points in full behind a disclosure; notes, file, source ok
+label: Install always names the version it writes (Install ChoralRoot 0.21, Install ChoralRoot 0.20, Install ChoralRoot 0.19, Install ChoralRoot 0.18, Install ChoralRoot 0.17, Install ChoralRoot 0.16) ok
+older: one click on "Back to 0.21, the newest" -> 0.21 again             ok
+older: a version that is not in the list cannot be chosen                ok
+older: "Install ChoralRoot 0.19" wrote the 0.19 package, byte for byte (11 reads) ok
+older: the page says which version is installed, beside its notes        ok
+older: the read-back -> "Read back: the FM-1 runs ChoralRoot 0.19."      ok
+older: (the control) the default installs another package: the same unit sees 9 reads that are not 0.19's ok
+read-back: a unit that reports another version than the one installed is told so ok
+hash: the file differs from the list's sha256 -> refused with the reason, Install disabled, nothing sent to the FM-1 ok
+hash: ... back to the newest, Install is enabled again                   ok
+hash: the list's sha256 differs from the file -> refused with the reason, Install disabled, nothing sent to the FM-1 ok
+hash: ... back to the newest, Install is enabled again                   ok
+hash: the newest version's file is checked the same way at load          ok
+label: Install is disabled while a chosen package loads, and the last choice is the one loaded ok
+label: ... and the one written                                           ok
+interrupted: the guidance is hidden before an install                    ok
+interrupted: the cable lost while writing -> the status says so and the guidance appears; Install can be pressed again ok
+interrupted: the three cases (nothing written, still on, switched off) and the way to the help ok
+check: a unit in update mode is recognised (Install will finish it)      ok
+interrupted: Install again on the unit in update mode finishes the write -> installed ok
+check: a firmware the installer refuses is named with the refusal        ok
+interrupted: a refusal is not an interruption (no guidance, nothing written) ok
+check: no FM-1 -> the notfound text                                      ok
+check: the stock firmware -> "On your FM-1: the official M-VAVE firmware (FM-1_015). Chora..." ok
+no Web MIDI: a notice says which browsers can install; Install, the check and Back up are disabled; nothing is fetched ok
+demo: the states idle, older, writing, interrupted, done, nomidi, stockwriting, stockdone ok
+demo ?demo=idle: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo idle: "Install ChoralRoot 0.21", and only this state's boxes        ok
+demo idle: the newest selected, the FM-1 shown as running the version before it ok
+demo ?demo=older: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo older: "Install ChoralRoot 0.19", and only this state's boxes       ok
+demo older: an older version chosen, its going-back sentence and its notes ok
+demo ?demo=writing: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo writing: "Install ChoralRoot 0.21" (disabled), and only this state's boxes ok
+demo writing: the bar part way, the status Writing                       ok
+demo ?demo=interrupted: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo interrupted: "Install ChoralRoot 0.21", and only this state's boxes ok
+demo interrupted: the lost-connection status with the guidance           ok
+demo ?demo=done: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo done: "Install ChoralRoot 0.21", and only this state's boxes        ok
+demo done: installed, and the read-back                                  ok
+demo ?demo=nomidi: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo nomidi: "Install ChoralRoot 0.21" (disabled), and only this state's boxes ok
+demo nomidi: the notice of a browser that cannot install                 ok
+demo ?demo=stockwriting: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo stockwriting: "Install ChoralRoot 0.21", and only this state's boxes ok
+demo stockwriting: the section open, its bar part way, its status Writing; the install card idle ok
+demo ?demo=stockdone: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo stockdone: "Install ChoralRoot 0.21", and only this state's boxes   ok
+demo stockdone: the section's done panel; the install card idle          ok
+demo ?x=1&demo=writing: marked as a demo; Install, the check, Back up, Read sounds, Restore, Return to V15: no MIDI request, no fetch, nothing changes ok
+demo writing: "Install ChoralRoot 0.21" (disabled), and only this state's boxes ok
+demo writing: the bar part way, the status Writing                       ok
+demo: ?demo=9 is not demo mode (the page works as usual)                 ok
+demo: ?demo=1 is not demo mode (the page works as usual)                 ok
+demo: ?demo= is not demo mode (the page works as usual)                  ok
+demo: ?demo=idleX is not demo mode (the page works as usual)             ok
+demo: ?nodemo=idle is not demo mode (the page works as usual)            ok
+installer tests passed

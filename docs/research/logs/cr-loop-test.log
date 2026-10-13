@@ -1,0 +1,473 @@
+ok   overwrite: a 1-bar take of 3 events plays
+ok   overwrite: REC while playing stops and arms; the loop is still there
+ok   overwrite: armed, the loop silent
+ok   overwrite: REC again before the first chord cancels, the loop intact
+ok   overwrite: armed again (stopped, a loop)
+ok   overwrite: the first chord starts the take: the loop goes now
+ok   overwrite: the new take replaced it (Em alone, 1 layer, playing)
+ok   overwrite, 1 bar synced: REC starts the count-in, the loop kept
+ok   overwrite: halfway through the count-in, still kept
+ok   overwrite: the count-in's end starts the take, the loop cleared (cap 3 nev 0)
+ok   overwrite: the synced take committed by itself (D, 1 bar)
+ok   advance: slot 3 -> 4, 10 wraps to 1
+ok   advance: over a loop (the slot jumped to), as Overwrite
+ok   advance: LOOP during the count-in cancels, the loop kept
+ok   overwrite: a panic while armed keeps the loop
+ok   overwrite: no stuck, double or stray note
+ok   replace: the take D G Ab (G at 96 for 192, A at 288)
+ok   replace: REC while playing arms it
+ok   replace: the chord opened the layer, G (sounding) hidden
+ok   replace: G cut at 144 (a copy in the new layer, ending there)
+ok   replace: A, starting inside the held span, hidden by layer 2
+ok   replace: D, before the span, untouched
+ok   replace: released, nothing more is erased
+ok   replace: REC ends it: 2 layers
+ok   replace: the record holds the live events only (D, G cut, F)
+ok   replace: the next cycle plays D, G (cut), F; not Ab (1 1 1 0)
+ok   undo: the layer goes, G (whole) and Ab come back
+ok   undo: Ab plays again, F no longer
+ok   replace again: D and G hidden while C is held
+ok   undo while replacing: the layer in progress goes, D and G back
+ok   replace: no stuck, double or stray note
+ok   step: REC while playing stops the loop, step entry at step 1; a step is a 1/16 (Quantize none)
+ok   step: the loop stopped
+ok   step: D written at step 1 (one step long), the cursor on 2
+ok   step: keys up again with nothing written: the cursor stays
+ok   step: Em at step 2, Ab at step 3
+ok   step: OCT+ a rest, the cursor on 5
+ok   step: OCT- back to 4 (nothing erased)
+ok   step: REC commits the steps as the loop (the old one gone), stopped
+ok   step: Free, 4 steps used (3 chords, a rest): the loop is 4 steps long, no rounding to a bar (len 96)
+ok   step: playback D, Em 125 ms later, Ab 250 ms (1/16s at 120)
+ok   step: the 4-step loop comes round every 4 steps (500 ms)
+ok   step: Rate x2: the 4 steps come round every 250 ms, a step is 62 ms (a 1/32 of the tempo)
+ok   step: Rate x1/2: every 1000 ms, a step is 250 ms (an 1/8)
+ok   step: REC REC with nothing entered keeps the loop
+ok   step: at every Quantize setting (none .. 1/32) three chords are three sixteenths (72 ticks), a step long each
+ok   step: Free: 1 chords = 1 steps (len 24, 1 events, each on its own step)
+ok   step: Free: 3 chords = 3 steps (len 72, 3 events, each on its own step)
+ok   step: Free: 5 chords = 5 steps (len 120, 5 events, each on its own step)
+ok   step: Free: 17 chords = 17 steps (len 408, 17 events, each on its own step)
+ok   step: Free: 64 chords = 64 steps (len 1536, 64 events, each on its own step)
+ok   step: 64 steps entered play back in order, each 125 ms after the last (65 onsets in 8.1 s: 64 + the loop's start again)
+ok   step: after the 64th the cursor is past the end
+ok   step: a 65th chord is refused (step_no: the UI's "64 steps: full"), nothing written
+ok   step: .. and a rest there does nothing
+ok   step: OCT- from there: back on step 64
+ok   step: .. where a chord still goes (beside the one there)
+ok   step: 64 steps: 1536 ticks, 4 bars of 4/4
+ok   step: the chord key held, six roots tapped under it: six steps (not six chords on step 1)
+ok   step: .. every key up: the cursor moves on once
+ok   step: two roots held together: both on the step
+ok   step: a key held over two roots: it is written on the step it was pressed on, a step long
+ok   step: .. nine steps used: 216 ticks
+ok   step, 1 bar: 16 steps
+ok   step, a set Length: back past step 1 wraps to the last step (16)
+ok   step, a set Length: the cursor wraps at the length
+ok   step, a set Length: it goes round (nothing is refused)
+ok   step: a set Length (1 bar): LOOP leaves step entry and plays the steps (2 events, the bar)
+ok   step: no stuck, double or stray note
+ok   step: Length 1 2 4 bars: 16 32 64 steps; 8 and 16 bars: 64 steps (4 bars); 3/4: 12 a bar, 60 steps (5 bars) at most
+ok   rate: a 1-bar loop, x1 by default
+ok   rate x1/16: the 1-bar loop starts 3 times in 48 bars (want 3), evenly (32000 ms apart)
+ok   rate x1/12: the 1-bar loop starts 4 times in 48 bars (want 4), evenly (23999 ms apart)
+ok   rate x1/8: the 1-bar loop starts 6 times in 48 bars (want 6), evenly (15998 ms apart)
+ok   rate x1/6: the 1-bar loop starts 8 times in 48 bars (want 8), evenly (11996 ms apart)
+ok   rate x1/4: the 1-bar loop starts 12 times in 48 bars (want 12), evenly (8000 ms apart)
+ok   rate x1/2: the 1-bar loop starts 24 times in 48 bars (want 24), evenly (3998 ms apart)
+ok   rate x3/4: the 1-bar loop starts 36 times in 48 bars (want 36), evenly (2664 ms apart)
+ok   rate x1: the 1-bar loop starts 48 times in 48 bars (want 48), evenly (1995 ms apart)
+ok   rate x1.5: the 1-bar loop starts 72 times in 48 bars (want 72), evenly (1333 ms apart)
+ok   rate x2: the 1-bar loop starts 96 times in 48 bars (want 96), evenly (998 ms apart)
+ok   rate x4: the 1-bar loop starts 192 times in 48 bars (want 192), evenly (496 ms apart)
+ok   rate: every rate stops clean (no stuck, double or stray note)
+ok   rate: changed while playing: the old rate until the loop's start
+ok   rate: x1 -> x2 while playing: the cycle in progress ends at x1 (2 s), the next ones last 1 s: no jump, on the beat
+ok   rate x2: the click stays the tempo's (8 beats in 2 bars; the accent on each loop start)
+ok   rate x3/4: 16 clicks in 4 bars: the click keeps the tempo where the loop's start is off the beat
+ok   rate x4: the count-in is a bar of the tempo (still counting after 1.99 s)
+ok   rate x4: .. and the take starts after it
+ok   rate x4: a 1-bar take is a bar of the LOOP's time: still recording at 490 ms
+ok   rate x4: .. and done at 500 ms (len 384 loop ticks)
+ok   rate x2: a 1 s take is 384 loop ticks, the second note at 192: the events are in loop time
+ok   rate x2: played back at x2 it is what was played (D, F 500 ms later, round every second)
+ok   rate: the same loop at x1: half the speed (F a second after D)
+ok   rate: no stuck, double or stray note
+ok   slow: eleven rates, x1 the eighth (the session's 0)
+ok   slow x1/16: one pass: a step is 2000 ms: C at 0, C# at 2000, D at 4000 (a ratchet x4), Eb at 6000
+ok   slow x1/16: the ratchet's four hits are a quarter of the step apart (500 500 500 ms, want 500)
+ok   slow x1/16: the lengths: a step 2000 ms, 1/4 step 500, a ratchet hit 500, 1/2 step 1000 (want 2000 500 500 1000)
+ok   slow x1/16: the 4 steps come round after 8000 ms
+ok   slow: stops clean
+ok   slow x1/12: one pass: a step is 1500 ms: C at 0, C# at 1500, D at 3000 (a ratchet x4), Eb at 4500
+ok   slow x1/12: the ratchet's four hits are a quarter of the step apart (375 375 375 ms, want 375)
+ok   slow x1/12: the lengths: a step 1500 ms, 1/4 step 375, a ratchet hit 375, 1/2 step 750 (want 1500 375 375 750)
+ok   slow x1/12: the 4 steps come round after 6000 ms
+ok   slow: stops clean
+ok   slow x1/8: one pass: a step is 1000 ms: C at 0, C# at 1000, D at 2000 (a ratchet x4), Eb at 3000
+ok   slow x1/8: the ratchet's four hits are a quarter of the step apart (250 250 250 ms, want 250)
+ok   slow x1/8: the lengths: a step 1000 ms, 1/4 step 250, a ratchet hit 250, 1/2 step 500 (want 1000 250 250 500)
+ok   slow x1/8: the 4 steps come round after 4000 ms
+ok   slow: stops clean
+ok   slow x1/6: one pass: a step is 750 ms: C at 0, C# at 750, D at 1500 (a ratchet x4), Eb at 2250
+ok   slow x1/6: the ratchet's four hits are a quarter of the step apart (188 187 188 ms, want 187)
+ok   slow x1/6: the lengths: a step 750 ms, 1/4 step 188, a ratchet hit 188, 1/2 step 375 (want 750 187 187 375)
+ok   slow x1/6: the 4 steps come round after 3000 ms
+ok   slow: stops clean
+ok   slow x1/16, 64 steps: half way (64 s): position 768 of 1536 (want 768), ring 128 (128), bar 3 beat 1 (3, 1) of the loop
+ok   slow x1/16, 64 steps: the last step starts 126000 ms in (want 126000), the position 1535 of 1536, ring 255, bar 4 beat 4
+ok   slow x1/16, 64 steps: three starts 128000 and 128000 ms apart (want 128000), 49152 whole loop ticks' tempo ticks for 2 passes (want 49152)
+ok   slow x1/16, 64 steps: stops clean
+ok   slow x1/16: a 1:2 step plays every second pass (8 s apart), the plain step every pass (4 s)
+ok   slow x1/16: the click is the tempo's: 32 beats, 8 of them a bar's first, in 2 passes of 4 bars (want 32, 8)
+ok   slow x1/16: the count-in is a bar of the tempo (still counting after 1.99 s)
+ok   slow x1/16: .. and the take starts after it
+ok   slow x1/16: a 1-bar take is 16 bars of the tempo: still recording at 31 s
+ok   slow x1/16: .. done at 32 s (len 384), the note played 290 ms early is on step 5 (t 96, want 96), 1 ticks long
+ok   slow x1/16: played back, the note comes round every 32 s
+ok   slow: a rate out of range is x1
+ok   slow: x1/16 is 3 48ths
+ok   slow: no stuck, double or stray note
+ok   edit: opens on a step loop with Quantize none: the grid is the sixteenth, always
+ok   edit: the step loop is its steps exactly: 3 steps, all filled
+ok   edit: a chord played replaces the selected step's notes (Em -> Am), the others untouched
+ok   edit: .. and it sounds (the keys play)
+ok   edit: the cursor stays on the step
+ok   edit: two roots held together: the old chord goes once, both are in the step
+ok   edit: the next push replaces again
+ok   edit: a bass-side note joins the step: the chord side is kept (Split Bass's rule)
+ok   edit: another bass-side note replaces the bass side alone
+ok   edit: a chord replaces the chord side alone
+ok   edit: clear: the step's notes go (both sides)
+ok   edit: .. the step stays, empty: still 3 steps
+ok   edit: an empty step has no note length to set
+ok   edit: a chord entered on an empty step is one step long
+ok   edit: note length 4: the step's chord sounds 4 steps (96 ticks)
+ok   edit: .. no other step moved, the loop as long as it was (D at 0, G at 48, 72 ticks)
+ok   edit: note length 16: 384 ticks, still nothing moved
+ok   edit: note length 64: the longest
+ok   edit: 1 .. 64 steps
+ok   edit: note length 1 again
+ok   edit: after 4 / 16 / 64 / 1: every event where and what it was
+ok   edit: the loop 16 steps (Steps)
+ok   edit: step 2 four steps long: steps 1-3 start (7), 4 and 5 are its tail (18), 16 steps
+ok   edit: a chord played on a step with a long note keeps the length (4 steps)
+ok   edit: playback: the long chord sounds 4 steps (500 ms); the next step's chord starts under it, 125 ms after
+ok   edit: a long note over other steps: no stuck, double or stray note
+ok   edit: the step's velocity (100 -> 60 -> 127, clamped)
+ok   edit: an edited loop's record: version 1, flags 0, read by 0.14 .. 0.17
+ok   edit: unpack: the same loop
+ok   edit: note lengths survive the record with no new field (they are the events' dur)
+ok   edit: loop length -1 step: 48 ticks, the last step's event kept in RAM
+ok   edit: .. 2 steps now, the hidden one known
+ok   edit: a save while it is hidden writes what sounds (2 events, a valid record)
+ok   edit: loop length +1 step
+ok   edit: .. the hidden step is back (G)
+ok   edit: longer than it was: an empty step added
+ok   edit: .. 4 steps, the new one empty
+ok   edit: closed with the loop shortened: the hidden step's event is gone for good
+ok   edit: no event beyond the end outside the editor
+ok   edit: LOOP plays in the editor, the new chord is heard in place
+ok   edit: edits under a playing loop: no stuck, double or stray note
+ok   edit: a played loop with Quantize none: it opens
+ok   edit: .. unchanged: no event moved, nothing requantised
+ok   edit: D (a beat), G (two beats, late), Ab on the sixteenth grid: 16 steps, starts 1011, tails EFEE
+ok   edit: G's step: its note about 8 steps long (a part of a step counts whole)
+ok   edit: a chord entered on another step: the played events keep their exact times and lengths
+ok   edit: G's note 2 steps long: it keeps its (late) start and ends on the grid
+ok   edit: G's step replaced: the new chord starts on the step's tick
+ok   edit: opened, looked at and closed: the loop as it was
+ok   edit: not while a take is armed
+ok   edit: an 8-bar take (128 steps) opens
+ok   edit: .. page 1: steps 1-64 (D on step 1)
+ok   edit: .. page 2: steps 65-128 (G where it was played)
+ok   edit: .. a step of page 2 edited as any other
+ok   edit: a loop with a Replace layer opens
+ok   edit: opened and closed without an edit: the layers and what Replace hid as they were
+ok   edit: looking (the velocity read) is no edit
+ok   edit: the first edit makes the loop one layer: what Replace hid is gone (2 live events + the new one = 3)
+ok   edit: REC held (undo) after an edit: nothing to undo
+ok   edit: .. and the loop packs to a valid one-layer record
+ok   edit: an empty slot (Quantize none, Length Free): an empty pattern of a bar
+ok   edit: .. 16 empty steps (4 until 2026-10-12: quarter-note steps)
+ok   edit: closed with nothing entered: the slot empty again, nothing to save
+ok   edit: an empty slot, Length 2 bars: 32 steps
+ok   edit: a chord entered there: a loop (dirty: the global save writes it)
+ok   edit: an empty slot, Length 16 bars: 64 steps (a pattern's most)
+ok   old step loop: a record of three quarter-note steps loads
+ok   old step loop: it plays as it did (a quarter note a step: Em 500 ms after D, 1.5 s round)
+ok   old step loop: the editor opens on it
+ok   old step loop: 12 sixteenth steps, its chords on steps 1, 5, 9, each 4 steps long
+ok   old step loop: closed: as it was
+ok   part: nothing before the step
+ok   part: a note 6 ticks long (1/4 step) sounds 31 ms of the step's 125
+ok   part: the editor opens
+ok   part: 6 ticks read as 1/4 (whole steps: 1, as before)
+ok   part: 12 = 1/2, 18 = 3/4; 10 ticks (off the scale): 1 step, as before
+ok   part: a whole step is not a part; a note that sounds past its step's end neither
+ok   part: set to 1/2: 12 ticks, nothing else moved
+ok   part: 0 and 4 quarters refused
+ok   part: a chord played into the step is as long as its notes were: 1/2
+ok   part: and back to whole steps: 2
+ok   part: an empty step has no length
+ok   ratchet x2: 2 hits 62 ms apart, all inside the one step; one loop voice at most (1)
+ok   ratchet: (the second pass runs)
+ok   ratchet: stopped: silent, no voice kept, no doubled or stray note
+ok   ratchet x3: 3 hits 42 ms apart, all inside the one step; one loop voice at most (1)
+ok   ratchet: (the second pass runs)
+ok   ratchet: stopped: silent, no voice kept, no doubled or stray note
+ok   ratchet x4: 4 hits 31 ms apart, all inside the one step; one loop voice at most (1)
+ok   ratchet: (the second pass runs)
+ok   ratchet: stopped: silent, no voice kept, no doubled or stray note
+ok   ratchet x2 on a 1/2-step note: two hits of a quarter step with a gap between them
+ok   ratchet on a long note: two hits in its step, the last one sounds on to the note's end, then nothing
+ok   ratchet x4 on eight chords: 32 hits on the eight loop voices
+ok   ratchet: the step over: every voice free again (none leaked)
+ok   ratchet x4 on ten chords: never more than the eight voices
+ok   ratchet: ten chords, three passes, stopped: silent
+ok   ratchet: the step cleared between two hits: no more hits, the voice free
+ok   condition Always: passes 1 .. 12 FFF, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 1:2: passes 1 .. 12 555, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 2:2: passes 1 .. 12 AAA, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 1:3: passes 1 .. 12 249, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 2:3: passes 1 .. 12 492, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 3:3: passes 1 .. 12 924, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 1:4: passes 1 .. 12 111, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 2:4: passes 1 .. 12 222, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 3:4: passes 1 .. 12 444, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 4:4: passes 1 .. 12 888, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 1st: passes 1 .. 12 001, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition not 1st: passes 1 .. 12 FFE, and the same over the next twelve
+ok   condition: a new start counts from pass 1 again
+ok   condition 2:2 on a step with a chord and a bass-side note, ratchet x2: pass 1 neither, pass 2 both twice; the other step always
+ok   chance 90 %: 549 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 75 %: 456 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 60 %: 351 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 50 %: 295 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 40 %: 240 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 25 %: 132 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance 10 %: 67 of 600 passes; a step's chord, its bass note and both ratchet hits always together
+ok   chance: 100 % .. 10 % in eight levels
+ok   chance: the same seed and the same timing: the same 200 passes (the host tests are deterministic)
+ok   chance: another seed: other passes
+ok   chance: two steps at 50 % roll apart (the same on 98 of 200 passes)
+ok   condition 1:2 and chance 50 %: never on the even passes, 98 of the 200 odd ones
+ok   voicing: a step set to +2 sounds as the live voicing +2 does
+ok   voicing: .. and the live voicing turned while it sounds leaves it alone
+ok   voicing: Follow: the live voicing, as before (0 then, +2 once it is turned)
+ok   voicing: a single note ignores its step's voicing
+ok   voicing: silent, no doubled or stray note
+ok   record: a loop with no step property: byte for byte the record written before them
+ok   edit: opened and closed: not a byte of the loop moved
+ok   props: a step with notes: ratchet off, Always, Follow, 100 %
+ok   props: set and read back: x3, 2:3, +3, 60 %
+ok   props: out of range: refused
+ok   props: the map has the step's ratchet (x3), its chance (60 %) and that it has a condition, and its velocity's level
+ok   props: the step's notes replaced: its properties stay
+ok   record: a step with properties: flag bit 1, the same record with {count, step, 2 bytes} after the events
+ok   record: 0.14 .. 0.17's unpack accepts it (it reads neither the flag nor what follows the events)
+ok   record: round trip: the steps' properties come back
+ok   record: the old record of the same loop loads, with no property
+ok   record: a table with no entry, a step past 64, an unknown condition or voicing, cut short, out of order: refused as empty
+ok   record: a step hidden beyond the loop's end: its entry is not written
+ok   props: Steps longer again: the hidden step's properties are back with it
+ok   props: REC clears the step: its properties with its notes; an empty step has none
+ok   props: an empty step: none can be set
+ok   props: notes played into it: a step with the defaults
+ok   props: closed with a step hidden: it is deleted, its properties too; the others kept
+ok   props: undo of an overdub: a step it alone filled loses its properties, the others keep theirs
+ok   props: another slot's loop comes with its own (none here)
+ok   props: step entry open: the loop there is untouched until the commit
+ok   props: a pattern entered by steps replaces the loop: no property left from it
+ok   props: Overwrite armed: the loop and its properties intact until the take starts
+ok   props: the take started: the old loop's properties went with it
+ok   props: a cleared loop has none
+ok   record: 512 events and 64 steps with a property: the record stays within CRL_REC_MAX, the first 20 entries fit
+ok   props: on a loop of 512 events the editor sets 20 steps' and refuses the 21st (no room in the record), so none is lost at a save
+ok   props: a step past the 64th (a long take's second page): none
+ok   ratchet x2, Note len 2.00 steps, Rate x1: 2 hits at ticks 24 36 0 0, 12 36 0 0 long (want 12 36 0 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x4, Note len 4.00 steps, Rate x1: 4 hits at ticks 24 30 36 42, 6 6 6 78 long (want 6 6 6 78)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x3, Note len 2.00 steps, Rate x1: 3 hits at ticks 24 32 40 0, 8 8 32 0 long (want 8 8 32 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x2, Note len 2.00 steps, Rate x1/16: 2 hits at ticks 24 36 0 0, 12 36 0 0 long (want 12 36 0 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x4, Note len 4.00 steps, Rate x1/16: 4 hits at ticks 24 30 36 42, 6 6 6 78 long (want 6 6 6 78)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x3, Note len 2.00 steps, Rate x1/16: 3 hits at ticks 24 32 40 0, 8 8 32 0 long (want 8 8 32 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x2, Note len 1.00 steps, Rate x1: 2 hits at ticks 24 36 0 0, 12 12 0 0 long (want 12 12 0 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x4, Note len 1.00 steps, Rate x1: 4 hits at ticks 24 30 36 42, 6 6 6 6 long (want 6 6 6 6)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x2, Note len 0.50 steps, Rate x1: 2 hits at ticks 24 36 0 0, 6 6 0 0 long (want 6 6 0 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x2, Note len 1.04 steps, Rate x1: 2 hits at ticks 24 36 0 0, 12 13 0 0 long (want 12 13 0 0)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x4, Note len 60.00 steps, Rate x1: 4 hits at ticks 24 30 36 42, 6 6 6 1422 long (want 6 6 6 1422)
+ok     .. on one loop voice, silent after the note's end, no doubled or stray note
+ok   ratchet x2 on a 3-step note: the next step's chord plays over its held last hit (two voices), which ends with the note
+ok   ratchet x2 on a 2-step note on the last step: the last hit holds across the loop's start (36 ticks) and ends there
+ok     .. stopped: silent
+ok   ratchet x4 on a 4-step note, stopped inside the held last hit: silent, the voice free
+ok   the editor's map: a ratcheted 4-step note: its step, three steps it sounds on in (the bar and the dark cells), Note len 4, x4
+ok   transpose: nothing outside the editor
+ok   transpose +1: the chord's root, the single note and the bass-side note each a semitone up (C7 -> C#7)
+ok   transpose: nothing else moves: quality, extensions, the part, times, lengths, velocity, the other step, the loop's length
+ok   transpose: the step's ratchet, condition, voicing and chance stay; the loop is changed (to save)
+ok   transpose: the record: the same size, version and flags (roots only)
+ok   transpose -1 after +1: the record byte for byte what it was
+ok   transpose: an octave up and back; 0: nothing
+ok   transpose: the loop plays C# where C was (both hits of its ratchet)
+ok   transpose: up to 127
+ok   transpose: a detent past 127 is refused: no note of the step moves (no wrap), nothing marked changed
+ok   transpose: down to 0 (the bass-side note)
+ok   transpose: a detent under 0 is refused: the chord above stays too
+ok   transpose: three at once would pass 127: refused; two: done
+ok   transpose: an empty step has nothing to move
+ok   transpose: step 4 alone: Gm -> Cm
+ok   transpose: the first edit: one layer (the hidden event gone, never moved), nothing for the looper's undo, as the other edits
+ok   no latch: a chord played into step 3 while the loop plays is in it when its keys go up, alone: none of the loop's playing chords (6 played meanwhile)
+ok   no latch: then Fm into step 2: step 2 is Fm, step 3 still Cm (not the chord that was still sounding)
+ok   no latch: the same step again: replaced (one chord); two roots of one push: both in it, and nothing else
+ok     .. closed and stopped: silent, the loop as edited
+ok   LATCH (Sticky): a chord played into step 3 while the loop plays is in it when its keys go up, alone: none of the loop's playing chords (6 played meanwhile)
+ok   LATCH (Sticky): then Fm into step 2: step 2 is Fm, step 3 still Cm (not the chord that was still sounding)
+ok   LATCH (Sticky): the same step again: replaced (one chord); two roots of one push: both in it, and nothing else
+ok     .. closed and stopped: silent, the loop as edited
+ok   Arp with Hold: a chord played into step 3 while the loop plays is in it when its keys go up, alone: none of the loop's playing chords (6 played meanwhile)
+ok   Arp with Hold: then Fm into step 2: step 2 is Fm, step 3 still Cm (not the chord that was still sounding)
+ok   Arp with Hold: the same step again: replaced (one chord); two roots of one push: both in it, and nothing else
+ok     .. closed and stopped: silent, the loop as edited
+ok   Arp, no Hold: a chord played into step 3 while the loop plays is in it when its keys go up, alone: none of the loop's playing chords (6 played meanwhile)
+ok   Arp, no Hold: then Fm into step 2: step 2 is Fm, step 3 still Cm (not the chord that was still sounding)
+ok   Arp, no Hold: the same step again: replaced (one chord); two roots of one push: both in it, and nothing else
+ok     .. closed and stopped: silent, the loop as edited
+ok   LATCH: a chord latched before the editor opened is not written when the next press ends it: the step gets the keys played
+ok   LATCH, a take: the latched chords are recorded with the length they sounded (to the next press), as before
+ok   split bass, live: F3 on the bass stream alone, C5 on the main one
+ok   split bass: a take of 3 notes
+ok   split bass: F3 and G3 recorded as bass-side notes, C5 (above the split) not
+ok   playback: F3 and G3 on the bass stream alone, C5 on the main one (bass 1 1, main 0 0 1)
+ok   Single = Full at playback: the bass-side notes still on the bass part
+ok   Split Oct, the Chords layout, Bass off at playback: the same
+ok   the split moved above a recorded chord-side note: it stays on the chord part
+ok   the bass register + 1 at playback: the looped bass notes an octave up
+ok   voicing + 1 and transpose + 5 at playback: the bass notes as recorded
+ok   the looped F3 sounds on the bass stream
+ok   a live bass-side D3 over it: both notes on (the part's voice mode decides)
+ok   the live note's end ends the live note only
+ok   a live F3 over the looped F3: one note, two owners
+ok   the loop's F3 ended: the held live one still sounds
+ok   the live F3 let go: off
+ok   a live G3 held through the looped G3: still sounding after the loop's ended
+ok   live over a looped bass: no stuck, double or stray note
+ok   Single = Full: F3 recorded as a chord-side note
+ok   pack: no bass-side note: the flags byte 0 (the record as 0.17 wrote it)
+ok   Split Bass on at playback: it stays on the chord part
+ok   the Chords layout: G major a chord, D4 (below the split point) a bass-side note
+ok   playback: D on the bass stream, G major on the main one, nothing follows the chord (Split Bass)
+ok   Single = Full + Bass on at playback: the follower's G1 and the recorded D4, both on the bass stream (1 1 of 2)
+ok   overdub armed
+ok   overdub: C4 a bass-side note of layer 2, quantized to the 1/8
+ok   undo: the layer goes, the first layer's parts kept
+ok   replace: the looped D hidden, its cut copy a bass-side note
+ok   replace: 2 layers, the cut D and the new C on the bass side
+ok   replace: the next cycle plays both on the bass stream
+ok   pack: version 1, the flags byte says single notes carry their part
+ok   pack: 0.14 .. 0.17's unpack accepts the record (it reads neither byte 7 nor a single note's nibble)
+ok   unpack: 3 events, 2 of them bass-side
+ok   unpack: every event's root, time, length and part as packed
+ok   undo: the whole D back, a bass-side note
+ok   a loaded slot: its bass-side notes on the bass stream
+ok   unpack, a 0.17 record (flags 0) with the nibble set on single notes: no bass-side note, the chord as it was
+ok   it plays as 0.17 played it: single notes of the chord part
+ok   unpack: a chord's extensions kept; a single note: the part bit alone
+ok   step: D and C entered as bass-side steps, G major a chord step
+ok   step: the loop plays them on the bass stream
+ok   split bass loops: no stuck, double or stray note
+ok   free: REC arms (nothing runs until a chord)
+ok   free: still armed after 100 ms of silence
+ok   free: the first chord started the take
+ok   free: REC again commits
+ok   free: playing, 1 layer, 2 events
+ok   free: 2 s at 120 BPM = one 4/4 bar (len 384 ticks)
+ok   free: events D at 0, Em at beat 3 (resolved roots and qualities)
+ok   free: a 500 ms chord lasts a beat (96 ticks)
+ok   playback: D re-triggers every 2 s (2 ons: 3100 5099)
+ok   playback: Em 1 s after each D
+ok   the ring position is a fraction of the cycle
+ok   voicing +1 at playback: D's lowest note moved up (D5, no D4)
+ok   240 BPM: the loop cycles in 1 s (3 ons)
+ok   overdub: REC while playing arms it
+ok   overdub: the chord opened a layer
+ok   overdub: REC ends it: 2 layers, 3 events
+ok   overdub: C plays in the next cycle
+ok   undo: the overdub layer is gone
+ok   undo: C no longer plays, D still does
+ok   undo: the first layer stays (CLEAR empties)
+ok   LOOP tap: stop
+ok   stop: nothing left sounding
+ok   LOOP tap: play again from the start
+ok   play: the event at 0 sounds at once
+ok   clear: empty
+ok   clear: no stuck, double or stray note
+ok   sync: REC starts a one-bar count-in
+ok   sync: half-way through the count-in, 2 beats left
+ok   sync: recording after one bar
+ok   sync: the count-in clicked 4 beats, the first accented (1 + 3)
+ok   sync: still recording in bar 2
+ok   sync: committed by itself after 2 bars (768 ticks), playing
+ok   sync: no quantize: D 30 ms (5.76 ticks) late as played
+ok   sync: D plays once per 4 s cycle
+ok   quantize 1/16: a chord 6 ticks late lands on 0
+ok   quantize: its note-off kept (the length grows by the shift)
+ok   panic: stopped, loop kept, silence
+ok   after panic: plays again
+ok   stop after panic: silence
+ok   panic during a take: dropped
+ok   pack: header + 2 layer counts + 2 x 7 bytes
+ok   unpack: the same loop back (layers kept)
+ok   unpack: a bad event: refused, empty
+ok   unpack: short: refused
+ok   queue while playing: waits for the cycle's end
+ok   the next cycle is the queued slot's (C plays)
+ok   set when stopped: loaded at once, not dirty
+ok   set(0): empty
+ok   slots: no stuck, double or stray note
+ok   a take and an overdub: dirty (the UI saves it on leaving)
+ok   queued, then an overdub armed: the switch cancelled
+ok   cancelled: the loop stays (no load)
+ok   queued, then an undo: the switch cancelled, the undo done
+ok   queued, then a stop: cancelled, kept
+ok   queued, the cycle's end: taken (loads + 1), not dirty, playing on
+ok   set: a load (loads + 1)
+ok   switches: no stuck, double or stray note
+ok   the event cap ends the take by itself (512 events)
+ok   a full loop played and stopped: silence
+ok   determinism: the same take, the same loop
+ok   loop level 50%: velocity 100 plays at 50
+ok   loop level 0: silent
+ok   6th with 7th: REC arms
+ok   recorded In place: C7 6 sounds C E G A Bb
+ok   one bar, one event, playing
+ok   the event is root 60, MAJ, 6 + 7 (no notes)
+ok   played In place: the same five notes
+ok   Octave up set while the loop plays: the next cycle's chord has its 6th an octave up (A5)
+ok     the stored event is untouched
+ok   In place again: the next cycle plays it as recorded
+ok   stopped with the option changed under a sounding step: no note left, doubled or ended twice
+
+cr_loop: 471 passed, 0 failed

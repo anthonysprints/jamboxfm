@@ -1,0 +1,26 @@
+{
+  "date_utc": "2026-10-13",
+  "repository": "sprintrstudio/jamboxfm",
+  "git_read": "passed",
+  "git_push_dry_run": "passed",
+  "git_push": "passed",
+  "credentials": "existing platform GitHub connection; no new credential requested or stored",
+  "repository_api": {
+    "http_status": 200,
+    "private": true,
+    "has_pages": false
+  },
+  "pages_read_api": {
+    "http_status": 403,
+    "message": "Resource not accessible by integration"
+  },
+  "pages_create_api": {
+    "http_status": 403,
+    "message": "Resource not accessible by integration"
+  },
+  "live_site": {
+    "url": "https://sprintrstudio.github.io/jamboxfm/emu/",
+    "http_status": 404
+  },
+  "remaining_action": "Repository owner enables Pages: Deploy from a branch, gh-pages, /(root). Private repository Pages requires an eligible GitHub plan."
+}

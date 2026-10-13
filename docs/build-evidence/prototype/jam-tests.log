@@ -1,0 +1,103 @@
+tables: /workspace/jamboxfm/build/gen/felucca_tables.h
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/gen/felucca_fm6.h
+JamBox browser preview built: /workspace/jamboxfm/build/jam-preview
+In file included from tests/jam_palette_test.c:5:
+In file included from tests/hostsim.c:34:
+In file included from tests/../firmware/src/engines.c:23:
+In file included from tests/../firmware/src/eng_sample.c:40:
+tests/../firmware/src/../hal/fm1_xip.h:13:62: warning: cast to 'const uint8_t *' (aka 'const unsigned char *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   13 | FM1_INLINE const uint8_t *fm1_xip_ptr(uint32_t off) { return (const uint8_t *)FM1_XIP(off); }
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from tests/jam_palette_test.c:5:
+In file included from tests/hostsim.c:41:
+In file included from tests/../firmware/src/usb.c:22:
+tests/../firmware/src/../hal/fm1_usb.h:49:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   49 |         FM1_USB_EP_RADR(n) = (uint32_t)(uintptr_t)ep0;
+      |         ^~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:29:30: note: expanded from macro 'FM1_USB_EP_RADR'
+   29 | #define FM1_USB_EP_RADR(n) (*(volatile uint32_t *)(0x11820u + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:84:58: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   84 | FM1_INLINE void fm1_usb_ep_txbuf(uint32_t ep, void *p) { FM1_USB_EP_TADR(ep) = (uint32_t)(uintptr_t)p; }
+      |                                                          ^~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:28:30: note: expanded from macro 'FM1_USB_EP_TADR'
+   28 | #define FM1_USB_EP_TADR(n) (*(volatile uint32_t *)(0x1181Cu + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:85:58: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   85 | FM1_INLINE void fm1_usb_ep_rxbuf(uint32_t ep, void *p) { FM1_USB_EP_RADR(ep) = (uint32_t)(uintptr_t)p; }
+      |                                                          ^~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:29:30: note: expanded from macro 'FM1_USB_EP_RADR'
+   29 | #define FM1_USB_EP_RADR(n) (*(volatile uint32_t *)(0x11820u + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:95:5: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   95 |     FM1_USB_EP_TADR(ep) = (uint32_t)(uintptr_t)p;
+      |     ^~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:28:30: note: expanded from macro 'FM1_USB_EP_TADR'
+   28 | #define FM1_USB_EP_TADR(n) (*(volatile uint32_t *)(0x1181Cu + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:96:5: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   96 |     FM1_USB_EP_CNT(ep) = n;
+      |     ^~~~~~~~~~~~~~~~~~
+tests/../firmware/src/../hal/fm1_usb.h:26:29: note: expanded from macro 'FM1_USB_EP_CNT'
+   26 | #define FM1_USB_EP_CNT(n) (*(volatile uint32_t *)(0x11808u + 4u * (n)))          /* EP0..3 */
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+6 warnings generated.
+audio: peak=17994, max synth voices=6, final tail peak=0; native render only
+macro audio: peak=17994, full-scale samples=0; native render only
+jam_palette: 435 checks, 0 failures
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+logo: splash 240x188, 4635 B RLE -> build/gen/sloop_logo.h
+ui: the stopped Dusty session initializes                                      ok
+ui: startup uses the JamBox Home                                               ok
+ui: startup selects the chord role                                             ok
+ui: SELECT chooses Lead without changing tempo                                 ok
+ui: SELECT clamps to Drums in display order                                    ok
+ui: the next role after Drums is Bass                                          ok
+ui: PRESETS browses the selected part's curated sounds                         ok
+ui: curated sound browsing preserves all four patterns                         ok
+ui: ALGORITHM browses sound and never selects a different part                 ok
+ui: one detent moves even a narrow-range macro                                 ok
+ui: macro turns clamp at 100                                                   ok
+ui: macro turns clamp at zero                                                  ok
+ui: one detent moves even a narrow-range macro                                 ok
+ui: macro turns clamp at 100                                                   ok
+ui: macro turns clamp at zero                                                  ok
+ui: one detent moves even a narrow-range macro                                 ok
+ui: macro turns clamp at 100                                                   ok
+ui: macro turns clamp at zero                                                  ok
+ui: one detent moves even a narrow-range macro                                 ok
+ui: macro turns clamp at 100                                                   ok
+ui: macro turns clamp at zero                                                  ok
+ui: the Home knobs leave the transport tempo alone                             ok
+ui: ENV still reaches the deep envelope page                                   ok
+ui: HOME returns to overview instead of opening the visualizer                 ok
+ui: EDIT tap still reaches deep sound controls                                 ok
+ui: SEL opens the real chord/scale pages                                       ok
+ui: FX tap still reaches effect controls                                       ok
+ui: the armed recorder owns input and display                                  ok
+ui: free capture retains its encoder handling                                  ok
+ui: count-in retains its encoder handling                                      ok
+ui: a held FX layer retains input and display                                  ok
+ui: the system menu retains input and display                                  ok
+ui: a clear/save confirmation retains its input                                ok
+ui: PLAY starts the shared transport from Home                                 ok
+ui: PLAY stops the shared transport from Home                                  ok
+ui: an upstream ANALOG preset no longer carries the curated name               ok
+ui: the sound title refreshes without a forced redraw                          ok
+ui: curated browsing restores its own sound label after a deep preset load     ok
+ui: other engines direct editing to their real sound pages                     ok
+ui: zero-valued macros redraw as unavailable without forcing                   ok
+ui: the deep-edit footer hint refreshes without forcing                        ok
+ui: the engine hint refreshes while the first footer line shows a message      ok
+jam-ui: all checks passed
+JamBox native: local chord path, release ledger, two-chord/bass recording, replay and panic passed
+native/WASM local chord audio matches: max delta 0
+WASM: two chords, bass overdub, record finish, replay and part-switch release passed
+WASM: drum edits, macro bounds, sound browsing, ready beat and bounded event queue passed
+JamBox WASM contract tests passed
+JamBox palette, Home, and native/WASM contracts passed.

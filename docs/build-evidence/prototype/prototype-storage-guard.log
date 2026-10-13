@@ -1,0 +1,127 @@
+firmware/src/felucca.c:16:2: error: "JAMBOX_PROTO requires FLASH=0 and OTA=0 until versioned storage is implemented"
+   16 | #error "JAMBOX_PROTO requires FLASH=0 and OTA=0 until versioned storage is implemented"
+      |  ^
+In file included from firmware/src/felucca.c:24:
+firmware/hal/fm1_sys.h:172:52: warning: cast to 'const volatile uint8_t *' (aka 'const volatile unsigned char *') from smaller integer type 'uint32_t' (aka 'unsigned int') [-Wint-to-pointer-cast]
+  172 | FM1_INLINE uint8_t fm1_peek8(uint32_t a) { return *(const volatile uint8_t *)a; }
+      |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:25:
+firmware/hal/fm1_irq.h:59:10: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   59 |         *(volatile uint32_t *)(0x1EEF100u + 4u * i) = 0;   /* every source off (CPU0 bank) */
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_irq.h:81:5: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   81 |     FM1_ICFG(n) = (FM1_ICFG(n) & ~(0xFu << sh)) | ((((prio & 7u) << 1) | 1u) << sh);
+      |     ^~~~~~~~~~~
+firmware/hal/fm1_irq.h:20:23: note: expanded from macro 'FM1_ICFG'
+   20 | #define FM1_ICFG(n) (*(volatile uint32_t *)(0x1EEF100u + 4u * ((n) >> 3)))
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_irq.h:81:20: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   81 |     FM1_ICFG(n) = (FM1_ICFG(n) & ~(0xFu << sh)) | ((((prio & 7u) << 1) | 1u) << sh);
+      |                    ^~~~~~~~~~~
+firmware/hal/fm1_irq.h:20:23: note: expanded from macro 'FM1_ICFG'
+   20 | #define FM1_ICFG(n) (*(volatile uint32_t *)(0x1EEF100u + 4u * ((n) >> 3)))
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_irq.h:83:40: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   83 | static void fm1_irq_mask(uint32_t n) { FM1_ICFG(n) &= ~(1u << ((n & 7u) * 4u)); }
+      |                                        ^~~~~~~~~~~
+firmware/hal/fm1_irq.h:20:23: note: expanded from macro 'FM1_ICFG'
+   20 | #define FM1_ICFG(n) (*(volatile uint32_t *)(0x1EEF100u + 4u * ((n) >> 3)))
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_irq.h:114:28: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  114 |         fm1_crash.etm[i] = FM1_ETM_PC(i);
+      |                            ^~~~~~~~~~~~~
+firmware/hal/fm1_irq.h:27:25: note: expanded from macro 'FM1_ETM_PC'
+   27 | #define FM1_ETM_PC(i) (*(volatile uint32_t *)(0x1EEF1C4u + 4u * (i)))
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:112:13: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  112 |             FM1_PR(FM1_LED_PORT[r], FM1_OUT) |= 1u << FM1_LED_BIT[r];
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:114:13: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  114 |             FM1_PR(FM1_LED_PORT[r], FM1_OUT) &= ~(1u << FM1_LED_BIT[r]);
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:161:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  161 |         FM1_PR(p, FM1_DIE) |= m;
+      |         ^~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:162:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  162 |         FM1_PR(p, FM1_OUT) &= ~m;
+      |         ^~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:163:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  163 |         FM1_PR(p, FM1_DIR) &= ~m;
+      |         ^~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:164:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  164 |         FM1_PR(p, FM1_HD0) |= m;
+      |         ^~~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:27:
+firmware/hal/fm1_input.h:165:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  165 |         FM1_PR(p, FM1_HD) |= m;
+      |         ^~~~~~~~~~~~~~~~~
+firmware/hal/fm1_gpio.h:10:24: note: expanded from macro 'FM1_PR'
+   10 | #define FM1_PR(p, r) (*(volatile uint32_t *)(FM1_PORT(p) + (r)))
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:38:
+In file included from firmware/src/engines.c:23:
+In file included from firmware/src/eng_sample.c:40:
+firmware/src/../hal/fm1_xip.h:13:62: warning: cast to 'const uint8_t *' (aka 'const unsigned char *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   13 | FM1_INLINE const uint8_t *fm1_xip_ptr(uint32_t off) { return (const uint8_t *)FM1_XIP(off); }
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:62:
+In file included from firmware/src/usb.c:22:
+firmware/src/../hal/fm1_usb.h:49:9: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   49 |         FM1_USB_EP_RADR(n) = (uint32_t)(uintptr_t)ep0;
+      |         ^~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:29:30: note: expanded from macro 'FM1_USB_EP_RADR'
+   29 | #define FM1_USB_EP_RADR(n) (*(volatile uint32_t *)(0x11820u + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:84:58: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   84 | FM1_INLINE void fm1_usb_ep_txbuf(uint32_t ep, void *p) { FM1_USB_EP_TADR(ep) = (uint32_t)(uintptr_t)p; }
+      |                                                          ^~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:28:30: note: expanded from macro 'FM1_USB_EP_TADR'
+   28 | #define FM1_USB_EP_TADR(n) (*(volatile uint32_t *)(0x1181Cu + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:85:58: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   85 | FM1_INLINE void fm1_usb_ep_rxbuf(uint32_t ep, void *p) { FM1_USB_EP_RADR(ep) = (uint32_t)(uintptr_t)p; }
+      |                                                          ^~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:29:30: note: expanded from macro 'FM1_USB_EP_RADR'
+   29 | #define FM1_USB_EP_RADR(n) (*(volatile uint32_t *)(0x11820u + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:95:5: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   95 |     FM1_USB_EP_TADR(ep) = (uint32_t)(uintptr_t)p;
+      |     ^~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:28:30: note: expanded from macro 'FM1_USB_EP_TADR'
+   28 | #define FM1_USB_EP_TADR(n) (*(volatile uint32_t *)(0x1181Cu + 8u * ((n) - 1u)))  /* EP1..3 */
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:96:5: warning: cast to 'volatile uint32_t *' (aka 'volatile unsigned int *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+   96 |     FM1_USB_EP_CNT(ep) = n;
+      |     ^~~~~~~~~~~~~~~~~~
+firmware/src/../hal/fm1_usb.h:26:29: note: expanded from macro 'FM1_USB_EP_CNT'
+   26 | #define FM1_USB_EP_CNT(n) (*(volatile uint32_t *)(0x11808u + 4u * (n)))          /* EP0..3 */
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from firmware/src/felucca.c:93:
+firmware/hal/fm1_flash.h:264:33: warning: cast to 'const volatile uint8_t *' (aka 'const volatile unsigned char *') from smaller integer type 'unsigned int' [-Wint-to-pointer-cast]
+  264 |     const volatile uint8_t *p = (const volatile uint8_t *)FL_XIP(off);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+20 warnings and 1 error generated.

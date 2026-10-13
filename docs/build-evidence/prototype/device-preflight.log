@@ -1,0 +1,3 @@
+Compiler executables missing at /workspace/toolchains/jieli/toolchain: pi32v2/bin/clang, pi32v2/bin/ld, common/bin/objcopy, common/bin/objdump
+Prepare compiler: python3 tools/cloud/prepare_toolchain.py; requires verified HTTPS access to pkgman.jieliapp.com
+SDK: three pinned binary hashes verified (/workspace/deps/ac79-sdk)

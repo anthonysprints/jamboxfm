@@ -1,0 +1,25 @@
+audio: USB / DAC rms: MASTER full 6560 / 6560, 1/4 2753 / 2753, 0 0 / 0; FIXED 1/4 6560 / 1640, 0 6560 / 0
+audio: USB LEVEL MASTER (default): USB is the DAC's signal and follows the knob (0: silent) ok
+audio: USB LEVEL FIXED: USB at the full level whatever MASTER is (within 0.1 dB), MASTER 0 too ok
+audio: USB LEVEL FIXED: the DAC gets exactly USB scaled by MASTER (MASTER 0: silent, 1/4: -12 dB) ok
+audio: boot, pot 300 (MASTER 351): splash peak 0, then rms 110373 (by hand 110373); before the fix: MASTER 2048, splash peak 2151168, then rms 710116
+audio: #137 boot: MASTER is the pot's level before the first block (pot 300, pot 0) ok
+audio: #137 boot: keys hammered under the splash sound nothing (before the fix: they did) ok
+audio: #137 boot: a key held across the splash's end stays silent until pressed again ok
+audio: #137 boot: after the splash the keys play at the pot's level, as set by hand (pot 0: silent) ok
+audio: overload keeps each part's MONO lead and lowest POLY note                  ok
+audio: overload frees its victim within one control block                         ok
+audio: a lead alone on each part stays protected                                  ok
+audio: overload frees a held one-shot drum without waiting for its decay          ok
+audio: UNISON loses an extra voice and retains its lead                           ok
+audio: overload can reclaim stale POLY voices after a MONO / LEGATO change        ok
+audio: overload can reclaim stale POLY voices after a MONO / LEGATO change        ok
+audio: released voices shed the quieter tail first                                ok
+audio: an auxiliary interrupt does not render a DMA half                          ok
+audio: one slow half records elapsed load but does not shed yet                   ok
+audio: a second slow half in a row requests shedding                              ok
+audio: DMA advancing during a render is counted once                              ok
+audio: TIMER5 nested in the render counts toward the deadline                     ok
+audio: slow halves that are not consecutive do not shed                           ok
+audio: steady CPU load converges without integer smoothing bias                   ok
+audio: all passed

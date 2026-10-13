@@ -1,0 +1,51 @@
+{
+  "recorded_date": "2026-10-13",
+  "base_commit": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+  "files": [
+    {
+      "path": "build/jam-preview/app.js",
+      "bytes": 17858,
+      "sha256": "f2e87540d2b3e8d3f46c7b999ec51ec46b1af8a660fb350c6c09aac185247dc3"
+    },
+    {
+      "path": "build/jam-preview/index.html",
+      "bytes": 6019,
+      "sha256": "b14197310bc9f47fa1e9a0338dc087f00a969d5899f146f40336cd7961cd49f7"
+    },
+    {
+      "path": "build/jam-preview/jam-preview.wasm",
+      "bytes": 489017,
+      "sha256": "9f94c17e70831e0416c43e8ab423576eac5e2308139423659a74f279f0e12d06"
+    },
+    {
+      "path": "build/jam-preview/style.css",
+      "bytes": 15201,
+      "sha256": "4535f16c777395a0f7bfc29bcf4704b0271a29c24ba73207301ad57e2b320868"
+    },
+    {
+      "path": "build/jam-preview/worklet.js",
+      "bytes": 7258,
+      "sha256": "ddb46e5dd01f66b68bebbe96d91b7a1c52a032a7287599ef7f568d256c259a8b"
+    },
+    {
+      "path": "build/jam-tests/dusty-demo.wav",
+      "bytes": 2453548,
+      "sha256": "5fc172e5ac78ada0badb511bdbb492d7e1957bc91dc5b642128388351d4e9b1c"
+    },
+    {
+      "path": "docs/build-evidence/screens/browser-desktop.png",
+      "bytes": 312516,
+      "sha256": "1d9d50cd08bbea21ca4dddc3818a10e0081381f87f14749b097de30c16f5d161"
+    },
+    {
+      "path": "docs/build-evidence/screens/browser-mobile.png",
+      "bytes": 118660,
+      "sha256": "f69e205908e44d38006d5cfcc113d2b0a05d0f1fcd81a4dbc972f41f03855122"
+    },
+    {
+      "path": "docs/build-evidence/screens/fm1-home.png",
+      "bytes": 5025,
+      "sha256": "186cff1971e62d0ed6f4f02ae54d9be6068e89f6b301cb794a8f2643ae862705"
+    }
+  ]
+}

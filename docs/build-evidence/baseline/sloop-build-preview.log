@@ -1,0 +1,6 @@
+tables: /workspace/scratch/fm1-research/sloop/build/gen/felucca_tables.h
+generated waves into /workspace/scratch/fm1-research/sloop/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/scratch/fm1-research/sloop/build/gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/scratch/fm1-research/sloop/build/gen/felucca_fm6.h
+Browser audio built: /workspace/scratch/fm1-research/sloop/build/preview/sloop-preview.wasm

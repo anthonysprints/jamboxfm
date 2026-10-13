@@ -1,0 +1,11 @@
+swing: track SWG + global SWG, at most 100 (0+0 30+20 60+40 100+0 0+100 70+50 100+100) ok
+swing: sequencer: SWG 100 + global 100 -> 100: steps 1.40 x / 0.60 x, pairs = 2 steps ok
+swing: sequencer: SWG 100 + global 0 -> 100: steps 1.40 x / 0.60 x, pairs = 2 steps ok
+swing: sequencer: SWG 0 + global 100 -> 100: steps 1.40 x / 0.60 x, pairs = 2 steps ok
+swing: sequencer: SWG 30 + global 20 -> 50: steps 1.20 x / 0.80 x, pairs = 2 steps ok
+swing: sequencer: SWG 0 + global 0 -> 0: steps 1.00 x / 1.00 x, pairs = 2 steps    ok
+swing: step_samples at 100 + 100: 1.4 x and 0.6 x of the straight step (was 1.8 x / 0.2 x) ok
+swing: SLICER step lengths == the sequencer's (one helper) at 100+100, 100+0, 0+100, 80+70, 0+0 ok
+swing: SLICER on the sequencer's step, SWG 40..100 + global 100, 131 BPM, 4 tracks ok
+swing: display: SWG / global SWG / ARP SWG 100 -> 100 %, 50 -> 50 %; 0..127 percents unchanged ok
+swing: all ok

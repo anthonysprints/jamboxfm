@@ -1,0 +1,72 @@
+{
+  "artifact": "/workspace/scratch/fm1-research/sloop/docs/webapp/editor/sloop-preview.wasm",
+  "sha256": "55e2b480ebc689664918f331cbb74b94c78f10b006a06c8e5807c9975ff69ffe",
+  "bytes": 773070,
+  "imports": [],
+  "exports": [
+    "memory",
+    "preview_init",
+    "preview_buffer",
+    "preview_frames",
+    "preview_rate",
+    "preview_track",
+    "preview_param",
+    "preview_global",
+    "preview_select",
+    "preview_step",
+    "preview_locks",
+    "preview_fm6",
+    "preview_sample",
+    "preview_kit",
+    "preview_hit",
+    "preview_note",
+    "preview_play",
+    "preview_position",
+    "preview_panic",
+    "preview_render"
+  ],
+  "checks": [
+    {
+      "name": "bass",
+      "frames": 44100,
+      "energy": 2504.9058227539062,
+      "peak": 0.15203857421875,
+      "stopped_energy": 0
+    },
+    {
+      "name": "four-note chord",
+      "frames": 44100,
+      "energy": 1022.5805053710938,
+      "peak": 0.13519287109375,
+      "stopped_energy": 0
+    },
+    {
+      "name": "lead",
+      "frames": 44100,
+      "energy": 243.232421875,
+      "peak": 0.029449462890625,
+      "stopped_energy": 0
+    },
+    {
+      "name": "drum kick",
+      "frames": 44100,
+      "energy": 1795.2445068359375,
+      "peak": 0.549102783203125,
+      "stopped_energy": 0
+    },
+    {
+      "name": "combined roles",
+      "frames": 44100,
+      "energy": 3530.1475830078125,
+      "peak": 0.54913330078125,
+      "stopped_energy": 0
+    }
+  ],
+  "result": "passed",
+  "limits": [
+    "Node execution of the checked-in WebAssembly and adapter, not a source rebuild.",
+    "No AudioContext, browser UI, MIDI device, target CPU timing, flash or USB hardware tested.",
+    "Combined output does not prove every requested voice survived allocation.",
+    "Uses existing analog preset defaults; does not audition or implement JamBoxFM palettes."
+  ]
+}

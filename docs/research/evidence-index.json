@@ -1,0 +1,115 @@
+{
+  "research_date": "2026-10-13",
+  "files": [
+    {
+      "path": "assist-notes.md",
+      "bytes": 21457,
+      "sha256": "356e8824aef9f1e980e0792db90053e0948853b807503f04957f1da554b0b7c9"
+    },
+    {
+      "path": "audio-notes.md",
+      "bytes": 24501,
+      "sha256": "d50b9ad5e7bf0ba935b6c596adc2cad3f1356242c0fab0dbdd3575e057d58cf7"
+    },
+    {
+      "path": "device-notes.md",
+      "bytes": 25246,
+      "sha256": "2674f2821221f1a7dac52892f7a27aacf874c4e11086d5e196ba92335b260f60"
+    },
+    {
+      "path": "evidence/sloop-wasm-probe.json",
+      "bytes": 1844,
+      "sha256": "f98cc321a99da5e9f0e0080d04bfb871a4e45541b9784dadfbb970db7e661615"
+    },
+    {
+      "path": "evidence/sloop-web-modules.json",
+      "bytes": 8601,
+      "sha256": "dd3de736cff7fc4a965440679a4bc975ce89092ff5a91b3433c56a5275e4770b"
+    },
+    {
+      "path": "evidence/sloop-web-rea.json.gz",
+      "bytes": 311896,
+      "sha256": "4f0d33f816c588940f294617be1b7108c98dfe17e5eb1f726eae83bc02200309"
+    },
+    {
+      "path": "evidence/sloop-web-summary.json",
+      "bytes": 9900,
+      "sha256": "71c53cf3d91815ac33cdce9d83263550e6b8d85f45807205c76810e4ea01c278"
+    },
+    {
+      "path": "logs/Felucca-audio_test.log",
+      "bytes": 2216,
+      "sha256": "87c692aaab2a7acd3aea45f1f6ab37c96cedbc196c9663fff15a92a41a8849fb"
+    },
+    {
+      "path": "logs/Felucca-chord_test.log",
+      "bytes": 5298,
+      "sha256": "05d8ee75f6c74008fffbd84b635c195407a27deb16c47f770d3eb86d044bbd5b"
+    },
+    {
+      "path": "logs/Felucca-drum_test.log",
+      "bytes": 7224,
+      "sha256": "2f99c62bd5a1a94d57440b9e924982121f25168591da8169cbf006b6902779ea"
+    },
+    {
+      "path": "logs/Felucca-input.log",
+      "bytes": 10084,
+      "sha256": "0d2fe20c5316fdcf759d1471adfdc265ce42f21097c45715d581afc642c1d31e"
+    },
+    {
+      "path": "logs/Felucca-storage.log",
+      "bytes": 1897,
+      "sha256": "71f89238d275e91d713d353b546cd9291827d442eaaa9f9f4dc4cbe37152633b"
+    },
+    {
+      "path": "logs/Felucca-swing_test.log",
+      "bytes": 916,
+      "sha256": "725cc659c6347b7dae09cabaaa95b5d5df5701d394e593695b904c13e73784fb"
+    },
+    {
+      "path": "logs/choralroot-installer-test.log",
+      "bytes": 19262,
+      "sha256": "3dd2f9de2f22aa341f97be6f114d22e2da57695c2414e001f327a9e2988c6946"
+    },
+    {
+      "path": "logs/cr-loop-build.log",
+      "bytes": 467,
+      "sha256": "c78581edd458ddac96c53f912500f7723a0e7a848c50ee5e2f52ed499b9fd2fb"
+    },
+    {
+      "path": "logs/cr-loop-test.log",
+      "bytes": 32601,
+      "sha256": "67363a261c20b87549f14bfea8d98c367d4f9addec933095caf77bd83b1f5c40"
+    },
+    {
+      "path": "logs/sloop-arena_test.log",
+      "bytes": 739,
+      "sha256": "dfb80d1866432d5f1a48d877756c9b4654c5e8d576e4a420b53ed12f7973d648"
+    },
+    {
+      "path": "logs/sloop-drumkit_test.log",
+      "bytes": 97,
+      "sha256": "7690df4f17f5c4c17a3aef55d9100a8d5e023e3deb294aa913864c6a4d1029ec"
+    },
+    {
+      "path": "logs/sloop-hostsim.log",
+      "bytes": 2637,
+      "sha256": "4f2ae1691eb3b03be32ae23de0efa46c08275b42106a37a21c31eddd7c10cd52"
+    },
+    {
+      "path": "logs/sloop-scale_test.log",
+      "bytes": 160,
+      "sha256": "91a131c42af3a97eca67382a790e3a7ca82e1ba313b23294ea2771a36d753199"
+    },
+    {
+      "path": "logs/sloop-seq2_test.log",
+      "bytes": 12033,
+      "sha256": "818b102ad10ab31489514256c885fec998535892d10aa9cf348b9b309c52fbc5"
+    },
+    {
+      "path": "probes/probe-sloop-wasm.mjs",
+      "bytes": 3103,
+      "sha256": "3a2aed6f0714c2f572a6f7739f14ff552a35f63652de2850d8fa2370cdb89db6"
+    }
+  ]
+}

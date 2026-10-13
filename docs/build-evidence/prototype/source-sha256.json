@@ -1,0 +1,926 @@
+{
+  "recorded_date": "2026-10-13",
+  "base_commit": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+  "files": [
+    {
+      "path": "firmware/app.ld",
+      "bytes": 1747,
+      "sha256": "6a9f41205e482fbdf2d24dc418416e45a3a8e1781d3e594279d751335af8942a"
+    },
+    {
+      "path": "firmware/crt0.S",
+      "bytes": 798,
+      "sha256": "2212471c4a70e94022ba24ef65a4b208fadd5f7e33f80745c5f5e8b9f4aa840c"
+    },
+    {
+      "path": "firmware/hal/fm1_adc.h",
+      "bytes": 1380,
+      "sha256": "1917870bd802de9134d33335efbcf886b296705dff06688925fd7325589c0c1a"
+    },
+    {
+      "path": "firmware/hal/fm1_audio.h",
+      "bytes": 3267,
+      "sha256": "22351440699748546e932098e3016c618d6137dd0ae34557e08a107641d4e62e"
+    },
+    {
+      "path": "firmware/hal/fm1_cc.h",
+      "bytes": 561,
+      "sha256": "46c533a0926ba9298ae36705f857ed609a61b95511ba7f0d1800857b4760dd73"
+    },
+    {
+      "path": "firmware/hal/fm1_flash.h",
+      "bytes": 9901,
+      "sha256": "ff2c7dacafc775c810f2cb1ffae38b96ced8c515355cae8487b8f4e56af81d4f"
+    },
+    {
+      "path": "firmware/hal/fm1_gpio.h",
+      "bytes": 644,
+      "sha256": "5e3937e32a3b4b9b9ae622c5b42c8819ec8a16f2d76dbddec91654703c77a216"
+    },
+    {
+      "path": "firmware/hal/fm1_guard.h",
+      "bytes": 4105,
+      "sha256": "dda2ebdd3024aab7700f8ef00cc55de23c0b369be1d889741d2058eb5c33ce74"
+    },
+    {
+      "path": "firmware/hal/fm1_input.h",
+      "bytes": 15626,
+      "sha256": "7579aa8e061e4b23a86aee693f1d6004dc552b888457ea507f1ba3d941465241"
+    },
+    {
+      "path": "firmware/hal/fm1_irq.h",
+      "bytes": 5717,
+      "sha256": "9966b15bdd1c2595204147979acb0c497ca6500198dfdf5c98b6432b9aa56f88"
+    },
+    {
+      "path": "firmware/hal/fm1_isr.S",
+      "bytes": 587,
+      "sha256": "5e45c960577354184efa3bf984a1c14bffb0c5967cbdb643e1f4c9cc196105c5"
+    },
+    {
+      "path": "firmware/hal/fm1_lcd_hw.h",
+      "bytes": 2608,
+      "sha256": "4fc3318a703fd55200153442acac4eb33ef56ff8e2eb82ba18ed0a3b9e655c1e"
+    },
+    {
+      "path": "firmware/hal/fm1_sys.h",
+      "bytes": 5785,
+      "sha256": "5d56781274406b0a1bf816c66d86c0b0b23b49757cc6f5644df566127827a9a7"
+    },
+    {
+      "path": "firmware/hal/fm1_time.h",
+      "bytes": 1478,
+      "sha256": "e83c725eae2ec5a163771ca2b8f1c0779354456f2e20a32febc7b6755758a97d"
+    },
+    {
+      "path": "firmware/hal/fm1_timer.h",
+      "bytes": 996,
+      "sha256": "1ec236ce4a75a5b94b9c16999dcdf7d71e4e0c5e0d2f14dbfb87bbaf025e1004"
+    },
+    {
+      "path": "firmware/hal/fm1_uart.h",
+      "bytes": 3042,
+      "sha256": "482da9e67231a7b42bff63362dec60aa8f43ca6e8d4962df57f8be6f9ea5d8c9"
+    },
+    {
+      "path": "firmware/hal/fm1_usb.h",
+      "bytes": 5031,
+      "sha256": "667289a678a027221343b6496b61870222eb80394a696d7dd896dbc2ffe303d4"
+    },
+    {
+      "path": "firmware/hal/fm1_vec.S",
+      "bytes": 713,
+      "sha256": "8f9e787871332f522157d561dc3cfe8906ed0abf160139ed5819cfdeab66f01a"
+    },
+    {
+      "path": "firmware/hal/fm1_xip.h",
+      "bytes": 580,
+      "sha256": "dcba6ddb9cd2403e1d97c4db49d836110ef2805d2369db7ed323e3fbe26c56ed"
+    },
+    {
+      "path": "firmware/host/jam_preview.c",
+      "bytes": 5395,
+      "sha256": "1f31ef7590a7938ff8f889bb501a419e2297ed88a56b6c1791fd55056848c4a2"
+    },
+    {
+      "path": "firmware/host/preview.c",
+      "bytes": 5397,
+      "sha256": "592e9c34eafe20e35305e0382f4be36e17711bdcdc9929f44c3ad06b168e9e53"
+    },
+    {
+      "path": "firmware/loader/crt0_ldr.S",
+      "bytes": 558,
+      "sha256": "bd4149b97520d1dcc271f730c5a046b0dbf97909e48e968e0ba18304ffc37841"
+    },
+    {
+      "path": "firmware/loader/ldr_core.c",
+      "bytes": 7996,
+      "sha256": "389aa2e09e74fdac184221edd9b8b7d76eb59ec3dabd11008cbb06081f9fe1de"
+    },
+    {
+      "path": "firmware/loader/loader.c",
+      "bytes": 4338,
+      "sha256": "d1a68016bde7c5f1ecdd2613f1f9ef55cd5822e65a0c6e3394fb9249f1d0fdea"
+    },
+    {
+      "path": "firmware/loader/loader.ld",
+      "bytes": 855,
+      "sha256": "4acae8c9a16cf9a70f53a546f9175b5a86d2bc5cb6bce39513a2ff3c4fdba4ae"
+    },
+    {
+      "path": "firmware/src/arranger.c",
+      "bytes": 824,
+      "sha256": "7d3c6cf7efdc660182f2c0906bf5211925ccfaf9143e1828b910fc1ef7edbd83"
+    },
+    {
+      "path": "firmware/src/arranger.h",
+      "bytes": 2942,
+      "sha256": "56f1c7575cb44e8c200f0216c34f47ce39dd8f0029cd8ab14fd36364ff9f588f"
+    },
+    {
+      "path": "firmware/src/arranger_scene.c",
+      "bytes": 2337,
+      "sha256": "12bbe5a59f9d14cd568c5abb37b3a922969d8a27e20c376de8ce63617a3ca55d"
+    },
+    {
+      "path": "firmware/src/audio.c",
+      "bytes": 4418,
+      "sha256": "02560fb1cc4c9b2ac7b41f83a624e86784952f094be7d07c552f053cc24e952f"
+    },
+    {
+      "path": "firmware/src/bootguard.h",
+      "bytes": 1131,
+      "sha256": "bf19ef423356552105115a3ec3dde3beddb0369670f4b4317520ebfd8f032afb"
+    },
+    {
+      "path": "firmware/src/console.c",
+      "bytes": 8898,
+      "sha256": "6d3c256f3a46e7833dfa40334419865e13a3870361a9ba9e00fdbe2944da8cdf"
+    },
+    {
+      "path": "firmware/src/core.h",
+      "bytes": 22673,
+      "sha256": "1bad989bf0787b6cf16ca9dcc065a009bf07ac99289a54ef685b91a42c7f2f95"
+    },
+    {
+      "path": "firmware/src/drum_synth.c",
+      "bytes": 19252,
+      "sha256": "6ff15d2820c1f4103f42dd56e89a66dddd7260ad7adc846df53f443b0946031a"
+    },
+    {
+      "path": "firmware/src/drums.c",
+      "bytes": 18813,
+      "sha256": "ad6367941c3a30f1db71d9483988eafb2bd18c45e1447c0877bf1f7005392963"
+    },
+    {
+      "path": "firmware/src/dsp.c",
+      "bytes": 4256,
+      "sha256": "927a3aa07d4f4b96daefdc8ad843452478f673e2b306f232ca86d3235ebdc1f0"
+    },
+    {
+      "path": "firmware/src/editor.c",
+      "bytes": 46340,
+      "sha256": "4bf3162bf24e84da5c14f3e9a278681aa8a3244f8a5ce9228eeebe1ad6cca8ec"
+    },
+    {
+      "path": "firmware/src/editor_dsyn.c",
+      "bytes": 4856,
+      "sha256": "9b36724943c12f1df33c224e610673b67d1963084e4d463f7d254ea70f8e803d"
+    },
+    {
+      "path": "firmware/src/editor_fm6.c",
+      "bytes": 3940,
+      "sha256": "9951d859355a5e0d4d05c32e035d8ee69d9155a9cb6c15b48b00436cc82da17b"
+    },
+    {
+      "path": "firmware/src/eng_analog.c",
+      "bytes": 9978,
+      "sha256": "929ac03333ee1bfb1c6a23ccd9812b02e44fb9bdbce244545c04de864b69aeff"
+    },
+    {
+      "path": "firmware/src/eng_digital.c",
+      "bytes": 7861,
+      "sha256": "01931e1acba15cbdfeb89fa2bdba3b94e09d6cc6f1661da59b1cf9db10d379f8"
+    },
+    {
+      "path": "firmware/src/eng_drawbar.c",
+      "bytes": 14294,
+      "sha256": "08b544972e15edf758a1ddd4917297778fbcab8f8073c569bf62903b9345f2ef"
+    },
+    {
+      "path": "firmware/src/eng_fm6.c",
+      "bytes": 17280,
+      "sha256": "022ff122d3e9a574f62ccb0678fe7d558a6fa59740f8500671a91be97cafb0a1"
+    },
+    {
+      "path": "firmware/src/eng_formant.c",
+      "bytes": 12771,
+      "sha256": "6fa744c6a9cf1acd6f7bd793a5302c0557d950432d07f245f682ec12b2892bb6"
+    },
+    {
+      "path": "firmware/src/eng_grain.c",
+      "bytes": 21207,
+      "sha256": "928ab2a1deaa296ae032cf48d339a8bc82dc20ff1e40329ec328d9e0934e3091"
+    },
+    {
+      "path": "firmware/src/eng_lofi.c",
+      "bytes": 12707,
+      "sha256": "5dab4001d2119af13d616a2f2a44a7e619b9080d3fbbe1c9b736d488f62e988d"
+    },
+    {
+      "path": "firmware/src/eng_noise.c",
+      "bytes": 13560,
+      "sha256": "86d38abb129cccfba7ae40a39c66d5a6a7b29e0f30a3b0cfde649d40de24b101"
+    },
+    {
+      "path": "firmware/src/eng_phase.c",
+      "bytes": 8341,
+      "sha256": "17efa7f6d0b24cfad33dc96973b741a1b831cba3fed0ce9aaa1cac9d28395ea9"
+    },
+    {
+      "path": "firmware/src/eng_phys.c",
+      "bytes": 15187,
+      "sha256": "ee1977cd4c5978a31a4c7e475d07f06fdfa22d5755f32bd94331523233df28fd"
+    },
+    {
+      "path": "firmware/src/eng_sample.c",
+      "bytes": 9884,
+      "sha256": "29a278bd944537cd0a890588e91f3daa25bef156a19cb1d28856d1966aead9b9"
+    },
+    {
+      "path": "firmware/src/eng_slice.c",
+      "bytes": 17211,
+      "sha256": "0c4e70ba5d5ba8038f0d84fd9b41da24b5297fc4491da856b15406fa5a9ddeee"
+    },
+    {
+      "path": "firmware/src/eng_trio.c",
+      "bytes": 18116,
+      "sha256": "d9921dd19381cf1fad2c800716a662ee5ecabe885ace7b9b44ea8ba97e3fa518"
+    },
+    {
+      "path": "firmware/src/engines.c",
+      "bytes": 3572,
+      "sha256": "df204fa4842ef0ff018f3a515aa51b0dd09dfbef81d3dd357b7302468be23673"
+    },
+    {
+      "path": "firmware/src/felucca.c",
+      "bytes": 6742,
+      "sha256": "57cdeb59b7c0a150bb03b65fd77c5138d31ef3204bbf996f3f5526cf05e52a71"
+    },
+    {
+      "path": "firmware/src/fm6_bank.c",
+      "bytes": 4815,
+      "sha256": "7bdd50d5ee518f8981d0693aeb5f36a5de61782a3bd6770965455a77187600fd"
+    },
+    {
+      "path": "firmware/src/fm6_core.c",
+      "bytes": 25549,
+      "sha256": "d2851cd7ce04cf1bae7f6fa3a80ffe860000e9c0188c7cff8916b1fc07c2e18c"
+    },
+    {
+      "path": "firmware/src/fx.c",
+      "bytes": 61154,
+      "sha256": "ee9bdd28054af261c7a75e5fec570a5ec24002841e2c462c5fa311a96dde2c69"
+    },
+    {
+      "path": "firmware/src/gfx.c",
+      "bytes": 7769,
+      "sha256": "cbdd00534b5c602ce6a95697fe197d6643dfb1321ac52a24e0b5764a62d54bfe"
+    },
+    {
+      "path": "firmware/src/icons.c",
+      "bytes": 8300,
+      "sha256": "cf3b1facde757aded10101df74de52e06be66dbc3cbfbe89dfc6208f1f517795"
+    },
+    {
+      "path": "firmware/src/jam_palette.c",
+      "bytes": 12536,
+      "sha256": "005312ee414a65684365ded95a885293cea1653a24155e1dc2d4ceb24c3514c9"
+    },
+    {
+      "path": "firmware/src/jam_ui.c",
+      "bytes": 7854,
+      "sha256": "6132acdcb5aac5c0263cf736277c7019f0705748fe5f6e06bb4e5675bd4a1d87"
+    },
+    {
+      "path": "firmware/src/lcd.c",
+      "bytes": 4073,
+      "sha256": "b69f0c3d6a5b61c883a35b50ddd6582811bd620a45268543e923fb8849caaac4"
+    },
+    {
+      "path": "firmware/src/libc.c",
+      "bytes": 1880,
+      "sha256": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a"
+    },
+    {
+      "path": "firmware/src/main.c",
+      "bytes": 12648,
+      "sha256": "6bed7ca1d6e71a61f9c83f4dedcf0d773b57f3ac89836fb0f8ad6bd2761ea1a6"
+    },
+    {
+      "path": "firmware/src/midi_uart.c",
+      "bytes": 4027,
+      "sha256": "7a87da4a1c3fe103cbda65d13977af9385dffa1997bb1a752a0ae6d6d46c380f"
+    },
+    {
+      "path": "firmware/src/ota.c",
+      "bytes": 14473,
+      "sha256": "ffc981586704b41f62c763248037d1fe373c84c3566c0486de795296f9841855"
+    },
+    {
+      "path": "firmware/src/panel.c",
+      "bytes": 7363,
+      "sha256": "30e137fa20a239d07b34a0b7b76190b085f9d7da320ccf79fec60d98e1234a29"
+    },
+    {
+      "path": "firmware/src/params.c",
+      "bytes": 25571,
+      "sha256": "4da33b7d95ce0146257ca108bcd74ac02aeaad448ff4ae027b4edc86a3886388"
+    },
+    {
+      "path": "firmware/src/phys_dsp.c",
+      "bytes": 36721,
+      "sha256": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c"
+    },
+    {
+      "path": "firmware/src/phys_symp.c",
+      "bytes": 8584,
+      "sha256": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47"
+    },
+    {
+      "path": "firmware/src/preset_trim.h",
+      "bytes": 3973,
+      "sha256": "84557efefd5479d383c731ff51a03547a81a78a784798e9acf96ea18979342db"
+    },
+    {
+      "path": "firmware/src/project.c",
+      "bytes": 47222,
+      "sha256": "df4b1a98943582e74f32af05da4d166b62c209fc0603198164b01bc326ba2804"
+    },
+    {
+      "path": "firmware/src/punch.c",
+      "bytes": 24324,
+      "sha256": "3a32ea8fd8aadadb1eca3becafbd599ba79b668c1b7ad0b2a81111bfd3eccd0f"
+    },
+    {
+      "path": "firmware/src/recovery.c",
+      "bytes": 2409,
+      "sha256": "eeb80e386e92c19fa909ecb904fcff208460ab7118a1d4cedd3aa6663d114516"
+    },
+    {
+      "path": "firmware/src/seq.c",
+      "bytes": 113594,
+      "sha256": "a4c612c06bed2dbe6f578e6c94953e777a8f1434a7b6d2ccf5b1f7639db9c328"
+    },
+    {
+      "path": "firmware/src/slicer.c",
+      "bytes": 9734,
+      "sha256": "ceaefa1de87b143a8ea64d2916d52b2cbce31fd5fc548f128cd18670724409db"
+    },
+    {
+      "path": "firmware/src/splash.c",
+      "bytes": 1611,
+      "sha256": "9991f7d09075ae718bbf9edc6e8bf91322ae51174b9c12ec528d7787afd763e1"
+    },
+    {
+      "path": "firmware/src/storage.c",
+      "bytes": 6809,
+      "sha256": "e06fe82bb9cc303ba24bb694729e368c3cda4897eafd2873045bec1954d0de5a"
+    },
+    {
+      "path": "firmware/src/uac_fir.h",
+      "bytes": 6459,
+      "sha256": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56"
+    },
+    {
+      "path": "firmware/src/ui.c",
+      "bytes": 32061,
+      "sha256": "fae63171dcf68bbf0c85fcac77df068d45884b7fc8747530ae4319e1036315ec"
+    },
+    {
+      "path": "firmware/src/ui_draw.c",
+      "bytes": 42783,
+      "sha256": "7d3d9d7b502092e7d03af010aac5ceb4599ecad8a8c1a4ab67d22a67f02069ce"
+    },
+    {
+      "path": "firmware/src/ui_input.c",
+      "bytes": 48945,
+      "sha256": "4a5883de9e0696f036a2c79bb404b24a3bdf3b1011c8f63bf6c334b9a57006b0"
+    },
+    {
+      "path": "firmware/src/ui_layers.c",
+      "bytes": 46524,
+      "sha256": "47b5d96057b5090c7f8da7455523ac5004b9e3ce32c609dd1839d56b561ad0d9"
+    },
+    {
+      "path": "firmware/src/ui_menu.c",
+      "bytes": 12482,
+      "sha256": "ae466525b6dd7516fd3d03d1b6e06f8a421312648317afce13e6323c7e300284"
+    },
+    {
+      "path": "firmware/src/ui_song.c",
+      "bytes": 7868,
+      "sha256": "92ec30d3ae8f65ef987508f5a52b926f6be0cff7e3d6076871c143534b4e7fdc"
+    },
+    {
+      "path": "firmware/src/ui_studio.c",
+      "bytes": 33596,
+      "sha256": "86c7f3f706ccc745f7c9a9387ec1601124eac46834d408a300a07d33e01d699e"
+    },
+    {
+      "path": "firmware/src/ui_vis.c",
+      "bytes": 29109,
+      "sha256": "aab57d452245a1a758c660ff270de42db1ebd6ce7e3876c2f96ffaaf0a995049"
+    },
+    {
+      "path": "firmware/src/upreset.c",
+      "bytes": 10942,
+      "sha256": "e004b2238e713b8277b63b396a8c699895e3decb9f250e4b3fb09f8fe40d537c"
+    },
+    {
+      "path": "firmware/src/usb.c",
+      "bytes": 47388,
+      "sha256": "f23a862537b1a87f6f0c114ae328f654ebf49472fac9c6b5e8420a1324e61714"
+    },
+    {
+      "path": "firmware/src/voice.c",
+      "bytes": 35637,
+      "sha256": "136b1590f2690b77f60d9d27f9997bc8bfd9f86b904564a4da5c442207e52ba8"
+    },
+    {
+      "path": "tests/_cap26.c",
+      "bytes": 7585,
+      "sha256": "b515cb9217ff00c986b6c99b9007ca998d4fc8365b0812639a434e872b54f3d2"
+    },
+    {
+      "path": "tests/arena_test.c",
+      "bytes": 12556,
+      "sha256": "6309ae6c3c342e1924799ef42df2db40d72ed092988768cebdf6dba801133753"
+    },
+    {
+      "path": "tests/arranger_test.c",
+      "bytes": 3102,
+      "sha256": "877ac73ec440d0f3c65c292e3302a0d54d102cc5ca0e2d876adc2adb0c7a1108"
+    },
+    {
+      "path": "tests/cpu_baseline.txt",
+      "bytes": 4561,
+      "sha256": "4cc85da14eb4fc86d816ab1e84768bfd8c25992511a80ae11c161ff96654be2f"
+    },
+    {
+      "path": "tests/drum_level.c",
+      "bytes": 1427,
+      "sha256": "1de98debf7de9933132b40447716e4f9b902c24e101844ba5a3f3c4f258d7b6e"
+    },
+    {
+      "path": "tests/drumkit_test.c",
+      "bytes": 4816,
+      "sha256": "76bce6460a21a70de7228c9412f34dc6cb84eb83ab4a040f416b4d245de6b62c"
+    },
+    {
+      "path": "tests/dsyn_test.c",
+      "bytes": 11369,
+      "sha256": "631212af04f12f5f9f714710ed6de2207dfd7f6854ad2bb4e1d43992a14c6d86"
+    },
+    {
+      "path": "tests/encoder_test.c",
+      "bytes": 4052,
+      "sha256": "10f0187981ce1c4f2aea721c37620127647353d8dbd2728e8e739609a2747311"
+    },
+    {
+      "path": "tests/fm6_test.c",
+      "bytes": 33007,
+      "sha256": "539a1263d281fa58289bd56828a767ceacc800cf169be4fb177cb58e0459d8dd"
+    },
+    {
+      "path": "tests/font_test.c",
+      "bytes": 6495,
+      "sha256": "16fd8f703d8f15e35281e193f1049e458825fe76d42d77b56fef9a54670179da"
+    },
+    {
+      "path": "tests/fx251_test.c",
+      "bytes": 28013,
+      "sha256": "67e282e552380b7bb75db6e1b68c9619e17f0a97e45926ab1da8fa67aa7a84ec"
+    },
+    {
+      "path": "tests/golden.txt",
+      "bytes": 7666,
+      "sha256": "ef0a03cd39d7e06956f79c666f5224b708192fdab8f0607ac2daa641cb363428"
+    },
+    {
+      "path": "tests/hostsim.c",
+      "bytes": 41390,
+      "sha256": "6f32888474939417aa362164931e2f11ea420dad88d517d216fe7546150699ce"
+    },
+    {
+      "path": "tests/install_test.py",
+      "bytes": 13340,
+      "sha256": "e630c49c02be0c7d9d3e2f93849a15556f0655525b8b4b7b6e0c28dd56c11aae"
+    },
+    {
+      "path": "tests/jam_palette_test.c",
+      "bytes": 13710,
+      "sha256": "aa73a48acc35394f1ab513fe4766f51ec6f3356a6397edda5f78f55601b39ad4"
+    },
+    {
+      "path": "tests/jam_preview_browser.mjs",
+      "bytes": 11153,
+      "sha256": "188b08ddaaeae29e0fa22a979e8ee8beb0c174f5dcd89d0c756705deebe4097d"
+    },
+    {
+      "path": "tests/jam_preview_native.c",
+      "bytes": 2820,
+      "sha256": "735093a625fdc914cb918e3546ef5da23cb5d03b91b68b9ad2db6acd90098084"
+    },
+    {
+      "path": "tests/jam_preview_test.mjs",
+      "bytes": 6092,
+      "sha256": "da306a91f8f7d63550025d66ff68ceb6bc25d142d37d0d4aa42377098dd44dc0"
+    },
+    {
+      "path": "tests/jam_ui_test.c",
+      "bytes": 6868,
+      "sha256": "8770ad44bea179c986b769ff40386f348a68f077f03ea92fe62bc81dfb866ac7"
+    },
+    {
+      "path": "tests/ldr_test.c",
+      "bytes": 9734,
+      "sha256": "9614f627ad4509601dd160f32a259abe408589e45e47bffc50e51eb7717f9698"
+    },
+    {
+      "path": "tests/midi_uart_test.c",
+      "bytes": 10736,
+      "sha256": "8457ec3465d40ff3c6f310eda0df1f257be20292ab2a2c6c93acef6f036ecb61"
+    },
+    {
+      "path": "tests/ota_test.c",
+      "bytes": 8404,
+      "sha256": "a3727fa2b90b8b83f8a9ce97d8617ec43a8ad5d18723a1cfd4237f7b2c8b60ae"
+    },
+    {
+      "path": "tests/pitch.py",
+      "bytes": 571,
+      "sha256": "4c1205db804ddb1208a72ef63dc7f6958798883013aa4917b0542fda419f2f3e"
+    },
+    {
+      "path": "tests/preset_level.c",
+      "bytes": 5502,
+      "sha256": "580cd844fa374708fa24e7f8b842f3e2b024bfe370bb25bd8cdcf12e7dfa3d4d"
+    },
+    {
+      "path": "tests/preview_native.c",
+      "bytes": 1001,
+      "sha256": "d3cf87d461f02de236d77da61f34cbf9fdd84e3e2bd5e4767c3b95412860a29e"
+    },
+    {
+      "path": "tests/preview_test.mjs",
+      "bytes": 10399,
+      "sha256": "3bc881223007bda724f7962c730d07abb098be7cbd64f0543ff4536989b398f0"
+    },
+    {
+      "path": "tests/project_test.c",
+      "bytes": 23881,
+      "sha256": "bdf990c489c2d9216d4ec113c9048f685f981758a3152597cd0f677a5df07b13"
+    },
+    {
+      "path": "tests/punch_test.c",
+      "bytes": 15603,
+      "sha256": "8147a40253459076214d62a313a323812dce5f0bb42997428ab9d3d59cde66da"
+    },
+    {
+      "path": "tests/pwa_test.mjs",
+      "bytes": 7010,
+      "sha256": "911ce992f18d55926e23d2d5e3ad2a3d7bd31457c7a46c00f63d6514b4518291"
+    },
+    {
+      "path": "tests/recovery_test.c",
+      "bytes": 4464,
+      "sha256": "95fd12f7d249599909c0b175a4914a64e7449347631d54aaec3fc38c4ab05342"
+    },
+    {
+      "path": "tests/regress.c",
+      "bytes": 47145,
+      "sha256": "2f1eef210fc08c1b536b905ab5063e43dfc7f8b10e873c15d285ace27ddf68a8"
+    },
+    {
+      "path": "tests/run_jam_palette_tests.sh",
+      "bytes": 772,
+      "sha256": "4b1d59f6e6024593a1da3304df22e80025db37df311af7adb8ecefe061a97509"
+    },
+    {
+      "path": "tests/run_jam_tests.sh",
+      "bytes": 1005,
+      "sha256": "84189447d136e9af300b9e469ee93899f76eaa876e56e46e85513af8c5a1e112"
+    },
+    {
+      "path": "tests/run_preview_tests.sh",
+      "bytes": 562,
+      "sha256": "4ab9aa95b9e88bd38a968cb980180e9f7f663620ed2069e552f0c7b8b38755f6"
+    },
+    {
+      "path": "tests/run_tests.sh",
+      "bytes": 11386,
+      "sha256": "2e77ebb84c91aca83e2b2eae9ed36e21131dfc55a7aeef2e03264948e833e174"
+    },
+    {
+      "path": "tests/scale_test.c",
+      "bytes": 5714,
+      "sha256": "b0f01bec326b8f6122c8a57cdf6af1393dfed43eed7d6ff0b6d8124169d5ecee"
+    },
+    {
+      "path": "tests/seq2_test.c",
+      "bytes": 75804,
+      "sha256": "bbb296ba5aa9436216d2fe42a57fb00c1ed35c59ac0b2f45d04513e0cbfde005"
+    },
+    {
+      "path": "tests/site_test.py",
+      "bytes": 4486,
+      "sha256": "ec539b702a37bce04ba37c1a94306e9f6e4c4ff0a060241bad9ed083d597840c"
+    },
+    {
+      "path": "tests/slice_loop.py",
+      "bytes": 2395,
+      "sha256": "96508d80d36b9fa7a0ba8c04eef745043abdc2b2ff96d406a08c46f78a79ddfd"
+    },
+    {
+      "path": "tests/slice_test.c",
+      "bytes": 15819,
+      "sha256": "d383c169c3e47132429f56c0211ad30559366906102c21fbdd192c08d4951f50"
+    },
+    {
+      "path": "tests/slicer_test.c",
+      "bytes": 15954,
+      "sha256": "12f43044d1a174a2e40fa22a0d14877c413799bfa89e6489e0cae41d6959c20f"
+    },
+    {
+      "path": "tests/soak_test.c",
+      "bytes": 8165,
+      "sha256": "560e17ef300f4620002a69217f1b54ffe9f4fb70192808bcfcfea4f8a9b9d573"
+    },
+    {
+      "path": "tests/song_audio_test.c",
+      "bytes": 5094,
+      "sha256": "d63e6493cf66b75a80652bc2dda0223ed60819f27ad054e455936c7afb758b5c"
+    },
+    {
+      "path": "tests/song_ui_test.c",
+      "bytes": 4190,
+      "sha256": "681ef288235ede9e0f2f927ad872ce7483590231e9aeb4692ca2ab4b4025e86f"
+    },
+    {
+      "path": "tests/storage_test.c",
+      "bytes": 7623,
+      "sha256": "3d4c29fc8d2759f4e2a186d8ae14a25cb3c5877cf608128d0f874026f183871d"
+    },
+    {
+      "path": "tests/stress_test.c",
+      "bytes": 19246,
+      "sha256": "40e5abce064fab17b5fbb853edec952bf5dc6566d2ba959bcd8d1cb8a2f119f6"
+    },
+    {
+      "path": "tests/studio_drums_test.c",
+      "bytes": 10865,
+      "sha256": "af9f46b0ff3da08e850e9dc68177246f12089f31f026a79cb48f4a9fa073445d"
+    },
+    {
+      "path": "tests/target_budget.py",
+      "bytes": 5654,
+      "sha256": "cb33b73a98a6471516b3003afd04266d9132f0a6a0ffa3a8af2fb83d185eab58"
+    },
+    {
+      "path": "tests/target_budget.txt",
+      "bytes": 1076,
+      "sha256": "b213de5a16ae980ccc6fbd7b669dc61b7bc0817cd19676bf465939a5a5851431"
+    },
+    {
+      "path": "tests/uac_test.c",
+      "bytes": 21463,
+      "sha256": "69c84d34104854c347436963771eea0a224be39f67092f368442d80503b8406f"
+    },
+    {
+      "path": "tests/ui_pages_test.c",
+      "bytes": 80534,
+      "sha256": "57b14cda2e4acfcc175718c9007605da8d0b7f3e9833972f750a89c006fad474"
+    },
+    {
+      "path": "tests/upreset_test.c",
+      "bytes": 9308,
+      "sha256": "3f5457b55e113edb147ae996526d9366398dbca2178985cc6fd6e8ea013327ea"
+    },
+    {
+      "path": "tests/userkit_test.c",
+      "bytes": 10155,
+      "sha256": "f4e87e0d3b138b4df6072868074e161f9992eb642d29f75a3b599427b1be3593"
+    },
+    {
+      "path": "tools/build.py",
+      "bytes": 16280,
+      "sha256": "6d4cdc5ea61502fd77c69e0ac4fface8aa539f443e32818e093a641da18ae561"
+    },
+    {
+      "path": "tools/build_jam_preview.py",
+      "bytes": 2604,
+      "sha256": "8a91d88da1d73364d9af292c11fb139bccbadb4ae5d802da9760d0d45d867efe"
+    },
+    {
+      "path": "tools/build_preview.py",
+      "bytes": 1948,
+      "sha256": "ac4ce07e9d8f5be39580facb56fff5b769c3a472c8f47500796d94c086465a8f"
+    },
+    {
+      "path": "tools/build_windows.py",
+      "bytes": 1664,
+      "sha256": "b9e132f08f622f4463e2244e70e553e0d9f351de23fa484931497fd1bbfcd772"
+    },
+    {
+      "path": "tools/cloud/activate.sh",
+      "bytes": 683,
+      "sha256": "6f5bf868a9b854d4bc078e3fdaa37585c9c5f73d485dc6e222f81a2bbb69445a"
+    },
+    {
+      "path": "tools/cloud/browser/package-lock.json",
+      "bytes": 698,
+      "sha256": "b104f6ef1bae9cf85783e56d3c84e67fd03c657181d2441f6144557c55ab18ab"
+    },
+    {
+      "path": "tools/cloud/browser/package.json",
+      "bytes": 136,
+      "sha256": "5aa41d49f0eb298c83e113e929bfd04ae0ab17178137ee336f4fdcf4c4c900a7"
+    },
+    {
+      "path": "tools/cloud/build_device.sh",
+      "bytes": 345,
+      "sha256": "d5a9f70c247945bc8390bbfea1e64d21b61cbf22a3ec723bc782e77ddf66bb22"
+    },
+    {
+      "path": "tools/cloud/check_device.py",
+      "bytes": 2296,
+      "sha256": "6aa9126d8d9aab6836772ed86ca72ed7863472197945c17398aef08c1a88ebb0"
+    },
+    {
+      "path": "tools/cloud/install_browser.py",
+      "bytes": 3669,
+      "sha256": "5fa482b999425e3fd78f111c6bdbae83b3611587a55dfb3a12b43a45d20c87b1"
+    },
+    {
+      "path": "tools/cloud/packages.json",
+      "bytes": 4039,
+      "sha256": "ff0f3524509b9f435c04e104f41e48c739bf353c6877a5361e5fc380fe1e5da1"
+    },
+    {
+      "path": "tools/cloud/prepare_sdk.py",
+      "bytes": 4170,
+      "sha256": "8426c61e59c019fdd4c8f56f23c1ba3d4b421dd1e74501b2212d1d58767bd8e7"
+    },
+    {
+      "path": "tools/cloud/prepare_toolchain.py",
+      "bytes": 5257,
+      "sha256": "988ec4e20cc4a365d93d6e8bba45c6269f5a1bd8f934d0aef93b4334a2b3b7c7"
+    },
+    {
+      "path": "tools/cloud/python-requirements.txt",
+      "bytes": 33,
+      "sha256": "5ad775b9e8aee4ef5b142feb4a022283fa18e0318f9519b21034494a9d848104"
+    },
+    {
+      "path": "tools/cloud/setup.sh",
+      "bytes": 1244,
+      "sha256": "fafbfbf9b8552779a034d2c308d578f15b23b2164a4a7bbb6f51efe207f16e08"
+    },
+    {
+      "path": "tools/drumkit_levels.json",
+      "bytes": 9038,
+      "sha256": "26606c5f046c94cc6228c6dd30bfc334706b88e9102689b49ff9b34d61db6d45"
+    },
+    {
+      "path": "tools/fetch_cc0.py",
+      "bytes": 4851,
+      "sha256": "d8e470bc85bb0d03c3e2c38090c025c09934a7c87aa296e4e0143190e94ff861"
+    },
+    {
+      "path": "tools/fm1_install.py",
+      "bytes": 19518,
+      "sha256": "9e117608e328b91dd5cb178400d9c88b1ee45677b87ae8b704536c0f38fea8f9"
+    },
+    {
+      "path": "tools/fm1_sample_upload.py",
+      "bytes": 5739,
+      "sha256": "3fd55423be9e0cab346120c5c56ef04908a2fdcac577377d93537b51537243f1"
+    },
+    {
+      "path": "tools/fm1pkg_make.py",
+      "bytes": 8637,
+      "sha256": "284fa4553d3194d6c374b7cb3ff169ac11a5d3f496861ed17f7bae28e79d7ea3"
+    },
+    {
+      "path": "tools/gen_builtin_hiphop.py",
+      "bytes": 5675,
+      "sha256": "2ebd770757a355cda5d05a5526b4e407b91c30d41f3b3ca1b7afcb0ab3c8f8c3"
+    },
+    {
+      "path": "tools/gen_drumkits.py",
+      "bytes": 24107,
+      "sha256": "c4c1fd65761242d3670e03eed9ebdc83530d94e1995a075fe1cf5e52c872a2ed"
+    },
+    {
+      "path": "tools/gen_fm6_patches.py",
+      "bytes": 7254,
+      "sha256": "409a2f98dd5adc5b3efc6ebf5571a80179c6fcbd3610efea66508bd0cfe6a787"
+    },
+    {
+      "path": "tools/gen_font.py",
+      "bytes": 9351,
+      "sha256": "d5127c268eaf4a9f12dff53d64f49543a53b7ff054aafd053b14e439168f85c5"
+    },
+    {
+      "path": "tools/gen_hiphop_pack.py",
+      "bytes": 15024,
+      "sha256": "b15bb550b6ab64afc55817aa8a9676e380b60182b3540cf5500772fa68891065"
+    },
+    {
+      "path": "tools/gen_icons.py",
+      "bytes": 3903,
+      "sha256": "265ac900b9174347952de70f1c065386199f47880184e0a2fc03a7890d5bbc33"
+    },
+    {
+      "path": "tools/gen_logo.py",
+      "bytes": 10071,
+      "sha256": "ddfd1923460fe2fd71a5aa691679040b9b5ab64239a316093e495177edb9cc91"
+    },
+    {
+      "path": "tools/gen_samples.py",
+      "bytes": 23127,
+      "sha256": "aa8564d79f78471f399b402772cfaaeed398092368a44489c1add439a3326cb5"
+    },
+    {
+      "path": "tools/gen_tables.py",
+      "bytes": 7073,
+      "sha256": "abfa75250c7f7f6cdd75ccbe8aadd4a63f92279e0e921fe39bd1206f082fcef5"
+    },
+    {
+      "path": "tools/gen_uac_fir.py",
+      "bytes": 3130,
+      "sha256": "8d26f838b84d8e0d0142e0780a9fac379a072024d6f0d9cb7fcfd9d02dffdf85"
+    },
+    {
+      "path": "tools/gen_waves.py",
+      "bytes": 6931,
+      "sha256": "d574048795c3e3824bdf367e952b855fdad568efc28c55d42029ece9dd46d0fe"
+    },
+    {
+      "path": "tools/gen_webfont.py",
+      "bytes": 5194,
+      "sha256": "f380b18c0e7ba0ed69cab326535771c3b6352c91c46280298380fe3f7aba1842"
+    },
+    {
+      "path": "tools/get_toolchain.sh",
+      "bytes": 578,
+      "sha256": "01c997cf377aa964eceaaaa05f6e75c0df92a863297ca7d3cc4a71472764f5f3"
+    },
+    {
+      "path": "tools/level_drumkits.py",
+      "bytes": 2674,
+      "sha256": "0c024a439e0399997d74a49f19b95bebaf15e3003bb92f5e4d59f9ae80066823"
+    },
+    {
+      "path": "tools/level_presets.py",
+      "bytes": 3795,
+      "sha256": "85034ca9280ad70207c9880bdbab3c8ddff19b95cb60bf6e7256af3ec1a2fb00"
+    },
+    {
+      "path": "tools/lz4blk.py",
+      "bytes": 2508,
+      "sha256": "bede501ca8774ba6942b35ad2c43823e9f48f13d0fb001ef9b73cdaf41460e16"
+    },
+    {
+      "path": "tools/make_quickguide.py",
+      "bytes": 9131,
+      "sha256": "061dacb573ca0fcca7c4a858e2c362d43843956de6fed3d678894f4b2e5c8059"
+    },
+    {
+      "path": "tools/sampleio.py",
+      "bytes": 11299,
+      "sha256": "b4500741f30e42ee4759abc064ee2ea4b365099e53d47a338e96819a86457ec1"
+    },
+    {
+      "path": "web/jam/app.js",
+      "bytes": 17858,
+      "sha256": "f2e87540d2b3e8d3f46c7b999ec51ec46b1af8a660fb350c6c09aac185247dc3"
+    },
+    {
+      "path": "web/jam/index.html",
+      "bytes": 6019,
+      "sha256": "b14197310bc9f47fa1e9a0338dc087f00a969d5899f146f40336cd7961cd49f7"
+    },
+    {
+      "path": "web/jam/style.css",
+      "bytes": 15201,
+      "sha256": "4535f16c777395a0f7bfc29bcf4704b0271a29c24ba73207301ad57e2b320868"
+    },
+    {
+      "path": "web/jam/worklet.js",
+      "bytes": 7258,
+      "sha256": "ddb46e5dd01f66b68bebbe96d91b7a1c52a032a7287599ef7f568d256c259a8b"
+    }
+  ]
+}
