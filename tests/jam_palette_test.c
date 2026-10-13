@@ -49,7 +49,7 @@ static void test_session(void)
     CHECK(drum_hits == 29, "ready beat has exactly 29 explicit drum hits");
     CHECK(trk[0].p[P_VOICE] == V_LEGATO && trk[1].p[P_VOICE] == V_POLY && trk[2].p[P_VOICE] == V_LEGATO,
           "bass/lead mono, chords poly");
-    CHECK(trk[1].p[P_CHORD] == 2 && trk[2].p[P_QUANT] == 2, "upstream seventh and scale helpers available");
+    CHECK(trk[1].p[P_CHORD] == 2 && trk[2].p[P_QUANT] == 1, "one-key sevenths and lead scale snap available");
     block_run();
     for (k = 0; k < NPART; k++) CHECK(trk[k].engine == 0, "melodic role renders ANALOG");
     song.playing = 1;

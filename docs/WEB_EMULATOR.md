@@ -13,6 +13,13 @@ shortcuts. **All notes off** releases notes and stops playback. Browser
 sessions are temporary: reloading loses edits and recorded notes. This
 page does not install firmware or access an attached FM-1.
 
+The Dusty session starts Lead in **SNAP** mode: every key plays a note in
+the chosen scale, including the black keys. Neighboring keys can share a
+pitch. To change this, select Lead, tap **SEL**, and adjust **QNT** with
+the third small knob: **OFF** plays normal keyboard notes, **SNAP** stays
+in scale, and **WHITE** uses only white keys. In Chords mode, white keys
+play chords and black keys modify a chord while a white key is held.
+
 ## Build and package
 
 From the repository root, with Python 3, Pillow and Emscripten on PATH:

@@ -283,7 +283,8 @@ int jam_new_dusty(void)
         t->p[P_ROOT] = 0;
         t->p[P_SCALE] = 2;            /* C minor; upstream helpers for this first slice */
         if (k == 1u) t->p[P_CHORD] = 2;
-        if (k == 1u || k == 2u) t->p[P_QUANT] = 2;
+        if (k == 1u) t->p[P_QUANT] = 2;
+        if (k == 2u) t->p[P_QUANT] = 1; /* SNAP: every lead key plays within the scale */
         if (k < NPART) t->p[P_LEVEL] = level[k];
         jam_sound_write(k, 0);
     }
