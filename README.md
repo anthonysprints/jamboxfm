@@ -2,6 +2,8 @@
 
 Custom M-VAVE FM-1 instrument: scrappy band jams, dusty beats, and big synth hooks. The first software prototype has drums, bass, chords and lead, an 88 BPM Dusty groove, two curated sounds per part, and four sound-shaping controls.
 
+Development continues in the public [anthonysprints/jamboxfm repository](https://github.com/anthonysprints/jamboxfm), on `main`. The website publishing target is `https://anthonysprints.github.io/jamboxfm/emu/`; check its deployment status before treating it as live.
+
 The [browser instrument](docs/WEB_EMULATOR.md) has the FM-1's 27 keys, 14 buttons, seven encoders, master control and live 240×240 screen. The firmware's C UI, sound and sequencing run together through WebAssembly. You can play one-key chords, record, browse sounds and use the real deeper editing pages. The earlier four-part browser workbench is also retained.
 
 ## Develop in the cloud

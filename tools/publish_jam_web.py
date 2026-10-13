@@ -4,7 +4,7 @@
 
 Default: verify build/jambox-web, make an isolated local deployment commit and
 run git push --dry-run. --publish performs a normal, non-forced push to only
-sprintrstudio/jamboxfm's gh-pages branch. It does not enable GitHub Pages settings.
+anthonysprints/jamboxfm's gh-pages branch. It does not enable GitHub Pages settings.
 The source checkout, its index and its branches are never changed.
 """
 from __future__ import annotations
@@ -26,7 +26,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "build/jambox-web"
-DESTINATION = "https://github.com/sprintrstudio/jamboxfm.git"
+DESTINATION = "https://github.com/anthonysprints/jamboxfm.git"
 BRANCH = "refs/heads/gh-pages"
 EXPECTED_FILES = frozenset({
     ".nojekyll", "index.html", "LICENSE", "LICENSING.md", "LICENSES.html", "WEB_EMULATOR.md",

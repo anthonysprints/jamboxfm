@@ -1,7 +1,7 @@
 # Publishing JamBoxFM to GitHub Pages
 
-Use `sprintrstudio/jamboxfm` and a dedicated `gh-pages` branch containing only
-the generated site. The source checkout and the inherited Sloop installer
+Use the public `anthonysprints/jamboxfm` repository and a dedicated `gh-pages`
+branch containing only the generated site. The source checkout and the inherited Sloop installer
 remain separate from the publication branch. The page's relative asset URLs
 work under the repository path, and `.nojekyll` keeps the generated site intact.
 Use `main` when checking out the editable JamBox source for a future session.
@@ -10,36 +10,36 @@ the reserved upstream artwork and inherited generated deployment stay out of it.
 
 ## One-time setup
 
-The cloud environment's existing HTTPS Git connection can publish the site.
-An actual push to `gh-pages` and a subsequent remote comparison have passed;
-no additional publishing token is needed. Keep this repository enabled in the
-Codex GitHub connection for future sessions.
+Keep `anthonysprints/jamboxfm` enabled in the Codex GitHub connection for
+future sessions. Use the cloud environment's existing HTTPS Git connection
+and the publisher's dry-run to verify access to this destination. The
+publisher targets only this repository; the previous repository is no
+longer the operational destination. Historical deployment evidence under
+`docs/build-evidence/pages/` describes that earlier setup.
 
-The environment configuration draft adds these two destinations while
-preserving the device-compiler hostname and package-manager preset:
+The cloud environment needs these destinations in its network configuration,
+alongside its existing Git, device-compiler and package-manager access:
 
 - `api.github.com`: inspect/configure Pages and check build status.
-- `sprintrstudio.github.io`: verify the published page and its assets.
+- `anthonysprints.github.io`: verify the published page and its assets.
 
-Both destinations were reachable during the final setup check. On a new
-environment, review and save the settings, then publish the environment
+On a new environment, review and save the settings, then publish the environment
 configuration if these network additions have not been applied. A proxy
 `Tunnel connection failed: 403 Forbidden` is a network failure, whereas
 GitHub's JSON `Resource not accessible by integration` is an authorization
-failure. The current connection successfully reads repository metadata and
-pushes Git commits, but GitHub denied both reading and creating Pages settings.
-Adding a token is unnecessary for the branch publishing workflow below.
+failure. Git push permission and permission to configure Pages are separate;
+check the specific operation before considering another credential.
 
 After the `gh-pages` branch has been pushed, open
-[repository Pages settings](https://github.com/sprintrstudio/jamboxfm/settings/pages)
+[repository Pages settings](https://github.com/anthonysprints/jamboxfm/settings/pages)
 and select **Deploy from a branch**, **gh-pages**, **/(root)**, then **Save**.
 Changing this setting requires repository admin or maintainer access (or a
 custom role with permission to manage Pages settings). Routine updates need
 repository push permission, without continuing admin access to Pages settings.
-This repository is private. If GitHub presents an upgrade prompt, Pages for
-private repositories requires an eligible GitHub plan.
+The destination repository is public, so Pages does not require a plan
+that supports Pages for private repositories.
 
-The expected project address is `https://sprintrstudio.github.io/jamboxfm/emu/`.
+The expected project address is `https://anthonysprints.github.io/jamboxfm/emu/`.
 Treat it as a destination until an actual HTTP check succeeds. No custom domain,
 DNS change or third-party hosting account is required.
 
