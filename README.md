@@ -26,6 +26,7 @@ The first slice uses a RAM session and Sloop's existing chord/scale/recording be
 
 - [Product brief](PRODUCT_BRIEF.md): agreed musical direction and user experience.
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md): selected firmware baseline, modules, control mapping, sound/voice budgets, recording, persistence, browser and installer architecture.
+- [First FM-1 device build plan](docs/FM1_DEVICE_PLAN.md): Dinghy/FM-1-RE findings, compiler path, update/recovery work, first hardware trial and release gates.
 - [Research evidence](docs/RESEARCH_EVIDENCE.md): pinned source links, REA results, executed host checks and limitations.
 - [Validation plan](docs/VALIDATION_PLAN.md): reproducible build, software, browser, hardware and release gates.
 - [Current build status](docs/BUILD_STATUS.md): implemented slice, executed checks and remaining hardware blocker.

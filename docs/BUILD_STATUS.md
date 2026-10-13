@@ -2,6 +2,8 @@
 
 October 13, 2026. The source now contains the first Dusty palette, physical Home screen and shared C browser instrument. The target FM-1 compiler download remains blocked, so this is a tested software prototype, not a hardware-validated firmware release.
 
+The follow-up [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. It separates temporary musical sessions from the flash support needed for firmware updates and early USB rescue. The current OTA-disabled prototype wrapper remains a diagnostic compile target, not an owner-device installation candidate.
+
 ## Implemented
 
 - Four roles: Drums, Bass, Chords and Lead, preserving Sloop's internal track IDs.
@@ -20,7 +22,7 @@ The new [browser instrument](WEB_EMULATOR.md) exposes the physical FM-1 layout: 
 
 The adapter passed 27 native checks. Real Chromium checks passed for screen pixels, selection, sound and macro edits, drag/wheel input, master level, held layers, deeper pages, chord recording, focus-loss release, rapid repeated PLAY, pause during input, and desktop/mobile layout. Independent probes confirmed audible short taps and correct layer release ordering. This is a host port; it does not emulate the AC791 chip or establish device timing.
 
-`tools/package_jam_emu.py` creates a standalone HTML and a separate static site rooted at `build/jambox-web/`. Source and notices accompany the runtime. A public JamBox URL is not configured or verified. Managed Chromium blocks local-file navigation, so direct double-click execution is not claimed as tested; use HTTPS hosting when local-file AudioWorklet access is unavailable.
+`tools/package_jam_emu.py` creates a standalone HTML and a separate static site rooted at `build/jambox-web/`. Source and notices accompany the runtime. The public [JamBox browser instrument](https://anthonysprints.github.io/jamboxfm/emu/) is deployed and verified. Follow-up source `5b24d1e` passed 36 native adapter checks and the real Chromium suite, including corrected SNAP note lights; its published HTML, JavaScript and WASM matched the tested build. Managed Chromium blocks local-file navigation, so direct double-click execution is not claimed as tested; use HTTPS hosting when local-file AudioWorklet access is unavailable.
 
 ## Validation
 

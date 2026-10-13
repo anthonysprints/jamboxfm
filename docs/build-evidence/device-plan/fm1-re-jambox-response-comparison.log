@@ -1,0 +1,2 @@
+PASS: 1028 byte-identical replies; all lengths 0..512 including 481; two address/flag pairs; both completion replies.
+Only pure packet-builder functions called. No MIDI/device I/O, no firmware package read or written.

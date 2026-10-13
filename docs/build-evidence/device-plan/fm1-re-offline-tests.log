@@ -1,0 +1,32 @@
+test_data_response_checksum_includes_flash_type (test_fm1_ota.CodecTests.test_data_response_checksum_includes_flash_type) ... ok
+test_data_response_matches_known_packet (test_fm1_ota.CodecTests.test_data_response_matches_known_packet) ... ok
+test_done_responses_match_updater (test_fm1_ota.CodecTests.test_done_responses_match_updater) ... ok
+test_handshake_accepts_observed_41_byte_stock_ota_frame (test_fm1_ota.CodecTests.test_handshake_accepts_observed_41_byte_stock_ota_frame) ... ok
+test_handshake_accepts_stock_plain_identities (test_fm1_ota.CodecTests.test_handshake_accepts_stock_plain_identities) ... ok
+test_handshake_identity_matches_windows_parser (test_fm1_ota.CodecTests.test_handshake_identity_matches_windows_parser) ... ok
+test_handshake_legacy_checksum_exception_is_exact (test_fm1_ota.CodecTests.test_handshake_legacy_checksum_exception_is_exact) ... ok
+test_handshake_rejects_invalid_header_length_and_framing (test_fm1_ota.CodecTests.test_handshake_rejects_invalid_header_length_and_framing) ... ok
+test_pack7_round_trip (test_fm1_ota.CodecTests.test_pack7_round_trip) ... ok
+test_parse_request_checks_checksum (test_fm1_ota.CodecTests.test_parse_request_checks_checksum) ... ok
+test_response_contract_for_every_supported_length (test_fm1_ota.CodecTests.test_response_contract_for_every_supported_length) ... ok
+test_response_rejects_out_of_range_wire_fields (test_fm1_ota.CodecTests.test_response_rejects_out_of_range_wire_fields) ... ok
+test_response_rejects_wrong_payload_length (test_fm1_ota.CodecTests.test_response_rejects_wrong_payload_length) ... ok
+test_stock_v15_final_loader_block_declares_489_body_bytes (test_fm1_ota.CodecTests.test_stock_v15_final_loader_block_declares_489_body_bytes) ... ok
+test_flash_rejects_wrong_device_model (test_fm1_ota.FlashStateTests.test_flash_rejects_wrong_device_model) ... ok
+test_flash_rejects_wrong_installed_version (test_fm1_ota.FlashStateTests.test_flash_rejects_wrong_installed_version) ... ok
+test_flash_requires_upgrade_complete_signal (test_fm1_ota.FlashStateTests.test_flash_requires_upgrade_complete_signal) ... ok
+test_second_verification_signal_is_failure (test_fm1_ota.FlashStateTests.test_second_verification_signal_is_failure) ... ok
+test_alsa_pollfd_layout (test_fm1_ota.ImageTests.test_alsa_pollfd_layout) ... ok
+test_logical_image_strips_twenty_marker_bytes (test_fm1_ota.ImageTests.test_logical_image_strips_twenty_marker_bytes) ... ok
+test_rejects_out_of_bounds_request (test_fm1_ota.TransferTests.test_rejects_out_of_bounds_request) ... ok
+test_serves_data_then_stops_on_finish (test_fm1_ota.TransferTests.test_serves_data_then_stops_on_finish) ... ok
+test_recorded_chain_and_response_framing (test_reflash_record.ReflashRecordTests.test_recorded_chain_and_response_framing) ... ok
+test_rejects_incomplete_request_stream (test_reflash_record.ReflashRecordTests.test_rejects_incomplete_request_stream) ... ok
+test_rejects_verification_signal_as_flash_completion (test_reflash_record.ReflashRecordTests.test_rejects_verification_signal_as_flash_completion) ... ok
+test_rejects_wrong_package_and_invalid_descriptor (test_reflash_record.ReflashRecordTests.test_rejects_wrong_package_and_invalid_descriptor) ... ok
+test_terminal_alone_does_not_prove_installed_version (test_reflash_record.ReflashRecordTests.test_terminal_alone_does_not_prove_installed_version) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.635s
+
+OK

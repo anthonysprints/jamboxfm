@@ -1,0 +1,18 @@
+{
+  "research_date": "2026-10-13",
+  "jambox_starting_source": "5b24d1e82efa785bb79a820b7eba2c9df8bb26ec",
+  "sources": {
+    "AL-255/FM-1-RE main": "ec832f281ca165a7d5e0722985f3acb1465046d5",
+    "AL-255/FM-1-RE with-custom-firmware": "628fcaf8945f7353ed86ea4fe2c723ddd704c8a5",
+    "zvenson/dinghy": "d44df7db09b98ccad2f1233b8f83f5f09c04829e",
+    "isod89/sloop-fm1 baseline": "8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e",
+    "kurogedelic/FM-1-transporter prior research": "a632d923203170e3a08565f4056dbb3fd3d65ca5"
+  },
+  "executed": {
+    "fm1_re_offline_tests": 27,
+    "matching_python_response_packets": 1028
+  },
+  "device_build_performed": false,
+  "hardware_connected": false,
+  "firmware_flash_performed": false
+}

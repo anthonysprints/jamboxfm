@@ -4,6 +4,8 @@ Status: implementation gates, with completed research checks identified separate
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
+The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds, update/recovery support with app-data writes disabled, an experimental hardware trial, then versioned persistence. Its temporary-session milestone does not require every future musical feature below.
+
 ## Already done
 
 See [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) for pinned sources, actual outcomes, warning qualifications and logs. Completed work includes REA analysis of the checked-in Sloop web distribution, a five-scenario shipped-WASM probe, targeted upstream native tests, the earlier ChoralRoot installer simulation, and comparison of the three required SDK hashes.
