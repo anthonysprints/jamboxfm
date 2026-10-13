@@ -1,0 +1,13 @@
+{
+  "fresh_clone": {
+    "path": "/workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/jam-emu/jam-emu.wasm",
+    "bytes": 679279,
+    "sha256": "88f52ef09404069593fe36f4a2304a821f32f14190e353cfbd18d070f9dd99da"
+  },
+  "current_checkout": {
+    "path": "/workspace/jamboxfm/build/jam-emu/jam-emu.wasm",
+    "bytes": 679279,
+    "sha256": "88f52ef09404069593fe36f4a2304a821f32f14190e353cfbd18d070f9dd99da"
+  },
+  "match": true
+}

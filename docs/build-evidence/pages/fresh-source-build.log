@@ -1,0 +1,8 @@
+tables: /workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/jam-emu-gen/felucca_tables.h
+generated waves into /workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM
+drum kits: 32 synthesised -> /workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/jam-emu-gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/jam-emu-gen/felucca_fm6.h
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+JamBox panel emulator built: /workspace/scratch/jambox-fresh-main-p28fvtgq/source/build/jam-emu
