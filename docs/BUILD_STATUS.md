@@ -1,8 +1,8 @@
-# First JamBox software prototype
+# JamBox software prototype and FM-1 update isolation
 
-October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. The owner-supplied compiler now builds the first JamBox FM-1 diagnostic target. This remains a software prototype, with no physical-device test or firmware release.
+October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. Milestone 2 adds FM-1 update/rescue support while keeping musical sessions temporary. The owner-supplied compiler builds the device targets. This remains a software prototype, with no physical-device test or firmware release.
 
-The follow-up [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. It separates temporary musical sessions from the flash support needed for firmware updates and early USB rescue. The current OTA-disabled prototype wrapper remains a diagnostic compile target, not an owner-device installation candidate.
+The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper still builds the OTA-disabled diagnostic target; `--with-updater` selects the update-enabled software bring-up target. Neither output is ready for owner installation. Milestone 3 still needs JamBox identity/splash, a package manifest, installer transition simulations and read-only device inventory.
 
 ## Implemented
 
@@ -14,7 +14,18 @@ The follow-up [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and
 - Chord and bass capture through the existing grid-snapped recorder. Finishing a take leaves playback running. Browser part selection finishes the current take and releases its held input.
 - Bounded browser commands, panic on overflow/focus loss, and explicit audio start.
 
-Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). The default application remains Sloop; `JAMBOX_PROTO=1` selects the device prototype. The prototype rejects enabled flash storage or OTA. No JamBox package has been flashed or published.
+Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). The default application remains Sloop; `JAMBOX_PROTO=1` selects JamBox. `FELUCCA_PERSIST=0` disables app-data persistence independently of `FELUCCA_FLASH` and `FELUCCA_OTA`. No JamBox package has been flashed or published.
+
+## Milestone 2: update support with temporary sessions
+
+- `bash tools/cloud/build_device.sh --with-updater` enables low-level flash and OTA, with app persistence disabled and both OTA dry-run/RAM-only modes disabled.
+- Normal JamBox boot clears retained projects and settings, starts Dusty, and imports no foreign musical state. A separate read-only helper accepts only a recognized, CRC-validated settings schema containing a strictly valid PAN5 physical-control mapping.
+- Project/preset save, erase and editor restore/upload actions report storage unavailable before changing banks or flash. Settings and calibration edits are labeled temporary. Autosave and pre-reset app-data writes are disabled.
+- Internal arranger snapshots use private `JRM0` magic. Returning to Sloop cannot treat them as `FUN6` projects. Settings and panel mappings still use shared `SET3`/`PAN5` RAM layouts: if Sloop has no valid flash settings, temporary JamBox preferences/calibration may carry back on a warm return.
+- The app's lowest flash writer permits only OTA staging, `[0xE0000, 0xE5000)`. The JamBox loader writes the app region and cleans only its known resume-record sector. Unknown flash identity refuses writes. Normal boot may clear stale OTA staging; the guarantee is no app-data writes, not a completely read-only chip.
+- USB timeout/retry and bus-reset handling close or discard abandoned SysEx state, and rescue drains complete messages. Loader cleanup errors prevent a success reset and keep the current loader session available for retry; final regression results are retained with the software evidence.
+
+The [update-isolation evidence](build-evidence/update-isolation/README.md) is the source for final build sizes, flags, hashes and test outcomes. These software checks cannot establish physical USB recovery, flash timing, power-loss behavior or audio deadlines.
 
 ## Device-style web emulator
 
@@ -36,11 +47,13 @@ Screenshots: [browser desktop](build-evidence/screens/browser-desktop.png), [bro
 
 The audition fixture uses the actual new patches with a demo-only Cm7/Abmaj7 phrase, bass and lead. It peaked at 17,994 on the signed 16-bit range, used at most six busy synth voices in that phrase and reached silence after release/tail draining. Maximum-macro fixtures produced no full-scale samples. This is numeric audio validation; musical voicing still needs listening feedback.
 
-The prototype device C composition passed a host syntax check with freestanding settings. Its enabled-flash configuration correctly failed at the explicit build guard. These checks are not a pi32v2 compile, link, memory report or real-device timing measurement.
+Before milestone 1, the prototype device C composition passed a host syntax check and its then-forbidden enabled-flash configuration failed at a build guard. Those historical checks were superseded by actual pi32v2 builds and milestone 2's separate persistence policy; they never established device timing.
 
 The UI sanitizer investigation found no address failures but did report inherited signed-shift undefined behavior in `drum_synth.c` and `fx.c`. It is not a sanitizer-clean result. Existing host compiler warnings are retained in the logs. No golden DSP baselines or assertions were weakened to pass.
 
 The device build follow-up now produces `.fwsc` files for the unchanged Sloop baseline and JamBox diagnostic target. Its full inherited runner outcome, memory gates and clean-source comparison are recorded in [device build evidence](build-evidence/device-build/README.md). Current validation commands are in [CLOUD_SETUP.md](CLOUD_SETUP.md).
+
+Milestone 2 adds real application/UI/editor code over simulated NOR, foreign/retained-data fixtures, strict calibration cases, explicit save rejection, staging-boundary checks, OTA and loader failures, and USB/browser-parser recovery regressions. Run `sh tests/jam_storage_run.sh build/felucca.fwsc` after the update-enabled build. Final test counts and logs belong to the [update-isolation record](build-evidence/update-isolation/README.md); they are separate from the inherited full-suite result below.
 
 That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative to the published Sloop 2.6 machine code: the rebuilt IRQ is byte-identical to the shipped one. Separately, the PWA launch-path workaround ran 14/15 assertions successfully; Chromium 154 reports `in-incognito` for the unchanged test's installability check. Both failures remain visible. JamBox's own native/emulator browser regression passed, and no baseline or assertion was relaxed.
 
@@ -48,7 +61,7 @@ That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative 
 
 The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and supported installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
-The diagnostic target occupies 533,012 of 581,564 available app bytes. Ordinary RAM uses 70,520 of 98,304 bytes; the large-buffer pool uses 324,580 of 344,064. These figures are for OTA/storage disabled and will change when those capabilities are added. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or recovery. Those remain future gates. The owner's installed Sloop version has not been identified.
+Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 2 report](build-evidence/update-isolation/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's installed Sloop version has not been identified.
 
 ## Environment
 

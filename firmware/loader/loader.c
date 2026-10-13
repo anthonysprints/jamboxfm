@@ -17,7 +17,11 @@
 #include "fm1_time.h"
 #include "fm1_sys.h"
 /* the loader may write the app area and erase update records; never the head */
+#if JAMBOX_PROTO
+#define FL_RANGE_OK(off, n) (FL_IN(off, n, 0x4000u, 0x93000u) || FL_IN(off, n, 0xE4000u, 0xE5000u))
+#else
 #define FL_RANGE_OK(off, n) (FL_IN(off, n, 0x4000u, 0x93000u) || FL_IN(off, n, 0x93000u, 0xFC000u))
+#endif
 #include "fm1_flash.h"
 #include "../src/libc.c"
 #include "../src/usb.c"
@@ -95,7 +99,7 @@ void ldr_main(void)
             int rc;
             usb.ota_req = 0;
             rc = ldr_session();
-            if (rc == 0 || rc == LDR_EFLASH) {      /* done, or another flash chip: the old firmware again */
+            if (rc == 0) {                        /* success only; unknown flash stays available for diagnosis */
                 fm1_delay_ms(200);                  /* the "success" reply leaves */
                 usb_detach();
                 fm1_delay_ms(30);

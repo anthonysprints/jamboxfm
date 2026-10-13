@@ -1,0 +1,20 @@
+SDK: three pinned binary hashes verified (/workspace/deps/ac79-sdk)
+Compiler: four required executables present (/workspace/toolchains/jieli/toolchain); compilation has not been tested by this check
+Device build prerequisites present; no firmware build or hardware validation was performed
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+tables: /workspace/jamboxfm/build/gen/felucca_tables.h
+loader: image 8400 B at 0x1c0a800, bss end 0x1c0f4b0
+loader: ota.bin 7092 B
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/gen/felucca_fm6.h
+logo: splash 240x188, 4635 B RLE -> /workspace/jamboxfm/build/gen/sloop_logo.h
+  ok    .ram_text: 884 insns, no calls
+  ok    image 552952 B; RAM .data+.bss 80600 B of 98304; pool 324580 B of 344064
+  ok    register access: hal/ only (src/, loader/ clean)
+app      /workspace/jamboxfm/build/felucca.bin  552952 B
+loader   /workspace/jamboxfm/build/loader/ota.bin  7092 B
+package  /workspace/jamboxfm/build/felucca.fwsc  610248 B, identity FM-1_900

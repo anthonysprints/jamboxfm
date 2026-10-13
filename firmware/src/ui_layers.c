@@ -383,6 +383,10 @@ static void layer_key(uint32_t layer, uint32_t k, uint32_t down)
                 ui_say("LOADED ", b);
             }
         } else if (w < 8) {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+            sec_armed = 0;
+            ui_message("STORAGE DISABLED");
+#else
             uint32_t s = (uint32_t)w - 4u;
             if (((arrangement_ready() >> s) & 1u) && !(sec_armed == s + 1u && fm1_ms - sec_armed_ms < 3000u)) {
                 sec_armed = (uint8_t)(s + 1u);
@@ -393,6 +397,7 @@ static void layer_key(uint32_t layer, uint32_t k, uint32_t down)
                 section_store(s);
                 ui_say("SAVED ", b);
             }
+#endif
         } else if (w == 12) {
             if (srec) {
                 ui_message("REC IS ON");

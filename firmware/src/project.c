@@ -1,7 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
-/* Projects: four slots in .noinit RAM (the song sections A..D), so they survive resets and UBOOT
- * entry. With FELUCCA_FLASH every save also goes to flash through storage.c, and an empty RAM slot
+/* Projects: four slots in .noinit RAM (the song sections A..D), so SLOOP keeps them across resets and UBOOT
+ * entry. JamBox clears them on boot and uses a private RAM-only magic. With FELUCCA_PERSIST every save
+ * also goes to flash through storage.c, and an empty RAM slot
  * is filled from flash on load. The working project is also kept in flash by itself (autosave, when
  * the transport is stopped and nothing sounds) and comes back at power-on: SLOOP starts where you
  * left it.
@@ -21,7 +22,13 @@
  *
  * Built on the host too (tests/project_test.c, -DPROJ_HOST): the part above the #ifndef
  * PROJ_HOST needs core.h, params.c (TP), drums.c (the lanes), the engines and trk_def_engine (ui.c). */
+#include "app_policy.h"
+#if JAMBOX_PROTO
+/* Temporary arranger snapshots only. A reset into SLOOP must not interpret JamBox RAM as FUN6. */
+#define PROJ_MAGIC 0x4A524D30u                 /* "JRM0": not the future on-flash JamBox project format */
+#else
 #define PROJ_MAGIC 0x46554E36u                 /* "FUN6": format 5 + the 2.6 parameters, nudge and condition in a byte */
+#endif
 #define PROJ_MAGIC_V5 0x46554E35u              /* "FUN5": format 4 + per-step nudge, parameter locks, fill conditions (SLOOP 2.4) */
 #define PROJ_MAGIC_V4 0x46554E34u              /* "FUN4": four tracks, P_COUNT parameters each, 10-byte steps; read only */
 #define PROJ_MAGIC_V3 0x46554E33u              /* "FUN3": SLOOP 1.x; read only */
@@ -372,16 +379,20 @@ static int proj_from_v1(project_t *q, const project_v1_t *v1, int n)
     return 1;
 }
 
-/* n bytes of a stored project (any format) -> slot q as format 5; 0 = not a project */
+/* n bytes of a stored project -> current slot q; 0 = not a supported project family/format. */
 static int proj_import(project_t *q, const void *b, int n)
 {
     if (n == (int)sizeof *q && proj_ok((const project_t *)b)) {
         memcpy(q, b, sizeof *q);
         return 1;
     }
+#if JAMBOX_PROTO
+    return 0;                                  /* no foreign-family project import in the RAM prototype */
+#else
     return proj_from_v5(q, (const project_v5_t *)b, n) || proj_from_v4(q, (const project_v4_t *)b, n) ||
            proj_from_v3(q, (const project_v3_t *)b, n) ||
            proj_from_v2(q, (const project_v2_t *)b, n) || proj_from_v1(q, (const project_v1_t *)b, n);
+#endif
 }
 
 /* ---- the working project <-> a project_t */
@@ -511,7 +522,7 @@ static void proj_apply(const project_t *p, int all)
 #include "arranger_scene.c"
 #endif
 static uint8_t sec_dirty, song_dirty;           /* live sections / the song: in RAM, not yet in flash */
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
 /* slot from flash into RAM (format 5, or an old one converted) */
 static union {
     project_t v6;
@@ -533,18 +544,21 @@ static void proj_fetch(uint32_t slot)
 
 static void project_save(uint32_t slot)
 {
+#if !FELUCCA_PERSIST
+    (void)slot;
+    ui_message("STORAGE DISABLED");
+#else
     project_t *p = &proj_slot[slot & 3u];
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE SAVE"); return; }
 #endif
     proj_capture(p);
-#if FELUCCA_FLASH
     if (flash_ok) {
         ui_message(st_save(OBJ_PROJECT0 + (slot & 3u), p, sizeof *p) ? "SAVE ERROR" : "SAVED");
         return;
     }
-#endif
     ui_message("SAVED (RAM)");
+#endif
 }
 
 /* SAVE > PROJECT > ERASE (SLOOP 2.6, after a YouTube comment): the slot (section A..D) empty again. In flash as the
@@ -553,6 +567,10 @@ static void project_save(uint32_t slot)
  * so song mode still plays. Stopped only: a flash erase stops the audio ~50 ms */
 static void project_erase(uint32_t slot)
 {
+#if !FELUCCA_PERSIST
+    (void)slot;
+    ui_message("STORAGE DISABLED");
+#else
     slot &= 3u;
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE ERASE"); return; }
@@ -561,12 +579,10 @@ static void project_erase(uint32_t slot)
         ui_message("EMPTY SLOT");
         return;
     }
-#if FELUCCA_FLASH
     if (flash_ok && st_save(OBJ_PROJECT0 + slot, &proj_slot[slot], 0)) {
         ui_message("ERASE ERROR");
         return;
     }
-#endif
     fm1_irq_off();
     memset(&proj_slot[slot], 0, sizeof proj_slot[slot]);
     sec_dirty &= (uint8_t)~(1u << slot);
@@ -578,6 +594,7 @@ static void project_erase(uint32_t slot)
 #endif
     fm1_irq_on();
     ui_message("ERASED");
+#endif
 }
 
 /* a project into the working one: the transport stops, everything sounding is released */
@@ -606,7 +623,7 @@ static void project_load(uint32_t slot)
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE LOAD"); return; }
 #endif
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     if (flash_ok && !proj_ok(p))
         proj_fetch(slot);
 #endif
@@ -641,7 +658,7 @@ static int audio_quiet(void)
 
 static void autosave_tick(void)                /* main loop */
 {
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     uint32_t h, now = fm1_ms;
     if (!flash_ok || song.playing || transport_req || rec_wait || ft_on || ui.menu ||
         now - ui_input_ms < AUTOSAVE_IDLE || now - autosave_ms < AUTOSAVE_GAP || now - autosave_checked < 1000u)
@@ -661,7 +678,7 @@ static uint8_t drch_seed;                           /* a settings object as 2.5 
                                                      * project's then (autosave_resume takes it from a 2.5 autosave) */
 static void autosave_resume(void)              /* power-on: the project as it was left (felucca_init) */
 {
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     project_t *q = &autosave_buf;
     int n;
     if (!flash_ok)
@@ -705,25 +722,32 @@ _Static_assert(__builtin_offsetof(persist_t, arrangement) == 48u && sizeof(arr_c
 #else
 #define PERSIST_MAGIC 0x50455232u
 #endif
-#if FELUCCA_FLASH
+#include "jam_calibration.h"                    /* read-only, validated panel mapping; never app-state import */
+#if FELUCCA_PERSIST
 static persist_t persist_saved;
 static void dsu_boot(void);
 #endif
 
 static void persist_boot(void)                    /* before settings_init / panel_init */
 {
+#if JAMBOX_PROTO
+    /* .noinit survives firmware changes. Every JamBox boot starts a fresh musical session. */
+    memset(proj_slot, 0, sizeof proj_slot);
+    memset(&settings, 0, sizeof settings);
+    panel = PANEL_DEFAULT;
+    sec_dirty = song_dirty = settings_later = 0;
+    up_boot();                                    /* empty RAM banks when application persistence is disabled */
+#if FELUCCA_FLASH && !FELUCCA_PERSIST
+    (void)jam_calibration_boot();                  /* flash_boot already established the physical flash capability */
+#endif
+#endif
 #if FELUCCA_ARRANGER
     arr_defaults(&arrangement);
 #endif
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     persist_t p;
-    uint32_t f = irq_save();
-    flash_ok = FL_FAR(fl_jedec_ram)() == 0x856014u;       /* the expected 1 MiB part, else stay RAM-only */
-    irq_restore(f);
     if (!flash_ok)
         return;
-    fl_plain_window_init();                        /* flash above 0x93000 reads as plaintext through XIP
-                                                    * (user sample sets are played from there) */
     {
         uint32_t k;
         for (k = 0; k < SMP_USER_SLOTS; k++)
@@ -788,7 +812,7 @@ static void persist_boot(void)                    /* before settings_init / pane
 
 static int project_used(uint32_t slot) { return proj_ok(&proj_slot[slot & 3u]); }
 
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
 /* SLOOP 2.5: the settings object holds the SYN kits after persist_t (drum_synth.c dsu): firmware before 2.5 reads
  * its persist_t and leaves the rest (st_load cuts at its size); its own next save drops them. 2.6: then the MIDI LEARN
  * map (seq.c ml_tab, ML_N entries), only while something is learned; 2.5 reads an object with the map as one without
@@ -898,7 +922,7 @@ static void persist_fill(persist_t *p)              /* the settings as they are 
 
 static void settings_save(void)
 {
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     persist_t p;
     if (!flash_ok)
         return;
@@ -914,7 +938,7 @@ static void settings_save(void)
 #endif
 }
 
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
 _Static_assert(sizeof(project_t) <= ST_PAYLOAD_MAX, "project does not fit one flash sector");
 
 /* ---- backup restore (editor.c BK_PUT): each object checked as a load checks it, then written through the
@@ -1002,7 +1026,7 @@ static void arrangement_save(void)
 {
     if (song.playing || transport_req) { ui_message("STOP BEFORE SAVE"); return; }
     settings_save();
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     if (flash_ok) {
         ui_message(memcmp(&persist_saved.arrangement, &arrangement, sizeof arrangement) ? "SAVE ERROR" : "SONG SAVED");
         return;
@@ -1032,7 +1056,7 @@ static void section_load(uint32_t s)                    /* stopped: the section 
 static void sections_write(void)                        /* the dirty sections and song into flash */
 {
     uint32_t i;
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     if (flash_ok)
         for (i = 0; i < 4u; i++)
             if (((sec_dirty >> i) & 1u) && st_save(OBJ_PROJECT0 + i, &proj_slot[i], sizeof proj_slot[i]) == 0)
@@ -1051,7 +1075,7 @@ static void sections_write(void)                        /* the dirty sections an
 static void persist_flush_now(void)
 {
     sections_write();
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     if (flash_ok && !arrangement_clock.running) {     /* (a song playing: the tracks hold a section) */
         proj_capture(&autosave_buf);
         if (autosave_buf.sum != autosave_hash && st_save(OBJ_AUTOSAVE, &autosave_buf, sizeof autosave_buf) == 0)

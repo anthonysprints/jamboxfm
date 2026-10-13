@@ -24,14 +24,24 @@
  * Hooks from the platform (loader.c, tests/ldr_test.c):
  *   ldr_fread(off, p, n)  ldr_erase(off)  ldr_prog(off, p, n)   flash, 0 = ok
  *   ldr_record_clear()    forget the RAM update record
- *   ldr_flash_known()     the flash chip is the 1 MiB part SLOOP's storage expects (else nothing is
- *                         written: the update records go and the old firmware starts again)
+ *   ldr_flash_known()     the flash chip is the supported 1 MiB part (else no flash writes,
+ *                         including record cleanup; preserve the records and refuse the update)
  *   ldr_progress(done, total)
  * plus the ota.c hooks (frames, time, idle). */
 #define LDR_APP_LO 0x4000u
 #define LDR_APP_HI 0x93000u
+#if JAMBOX_PROTO
+/* Restricted staging contract: the inspected Sloop/JamBox updater puts its
+ * resume record at 0xE4F00, in the last sector of [0xE0000, 0xE5000).
+ * Never infer ownership of project/bank/sample sectors from an AT+CRC match.
+ * This policy does not approve a firmware transition: milestone 3 must gate
+ * exact source/target versions that use this staging location. */
+#define LDR_REC_LO 0xE4000u
+#define LDR_REC_HI 0xE5000u
+#else
 #define LDR_REC_LO 0x93000u                     /* update records live above the app ... */
 #define LDR_REC_HI 0xFC000u                     /* ... and below Felucca's globals */
+#endif
 
 static int ldr_fread(uint32_t off, void *p, uint32_t n);
 static int ldr_erase(uint32_t off);
@@ -86,20 +96,30 @@ static int ldr_chip_key(uint32_t *key)
 
 #define LDR_EBADPKG (-12)                       /* flash.bin as served does not match the package's CRC16 */
 #define LDR_ENOFIN (-13)                        /* no "success" from the host */
-#define LDR_EFLASH (-14)                        /* another flash chip: nothing written, the records dropped */
+#define LDR_EFLASH (-14)                        /* unsupported/missing flash: no writes, records preserved */
+#define LDR_ERECORD (-15)                       /* resume-record cleanup could not be read/erased/verified */
 
-/* the update records (RAM, and flash: a 4K boundary - 256) go: the SPL boots the app */
-static void ldr_records_drop(void)
+/* Clear flash records before clearing RAM state or permitting a success reset.
+ * A failed cleanup stays in the current loader session for host retry. Startup's
+ * separate RAM-record clearing policy is unchanged; this does not promise that
+ * a RAM record was present when the session began. */
+static int ldr_records_drop(void)
 {
-    uint32_t s;
-    ldr_record_clear();
+    uint32_t s, i;
     for (s = LDR_REC_HI; s > LDR_REC_LO; s -= 0x1000u) {
         uint8_t r[80];
         if (ldr_fread(s - 0x100u, r, 80))
-            break;
-        if (ota_rd16(r + 6) == 0x5441u && ota_rd16(r) && ota_rd16(r) == ota_crc16(r + 2, 78, 0))
-            ldr_erase(s - 0x1000u);
+            return LDR_ERECORD;
+        if (ota_rd16(r + 6) == 0x5441u && ota_rd16(r) && ota_rd16(r) == ota_crc16(r + 2, 78, 0)) {
+            if (ldr_erase(s - 0x1000u) || ldr_fread(s - 0x100u, r, 80))
+                return LDR_ERECORD;
+            for (i = 0; i < sizeof r; i++)
+                if (r[i] != 0xFFu)
+                    return LDR_ERECORD;
+        }
     }
+    ldr_record_clear();
+    return 0;
 }
 
 static int ldr_pass(void)
@@ -120,10 +140,8 @@ static int ldr_pass(void)
     ldr_sfc(sec, 32, 0, key);
     if (ota_crc16(sec + 2, 30, 0) != ota_rd16(sec))
         return -6;                                       /* package for another chip key */
-    if (!ldr_flash_known()) {                            /* SLOOP would run without its storage and could not */
-        ldr_records_drop();                              /* be updated again: keep the firmware there is */
+    if (!ldr_flash_known())                              /* never erase even a valid record on an unknown chip */
         return LDR_EFLASH;
-    }
     /* the head of flash.bin is never written, but it is part of the package's CRC */
     for (s = 0; s < LDR_APP_LO; s += 512u) {
         if (ota_read(fl_off + s, sec, 512))
@@ -172,8 +190,7 @@ static int ldr_pass(void)
             break;
     if (i == 4u)
         return LDR_ENOFIN;
-    ldr_records_drop();
-    return 0;
+    return ldr_records_drop();
 }
 
 /* a pass that does not add up (a byte damaged on the way) is run again: the host answers any read, so it

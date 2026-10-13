@@ -416,6 +416,13 @@ static void edit_param(uint32_t slot, int32_t steps)
         }
         if (steps <= 0)
             return;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+        if (slot >= 2u) {
+            ui.arm = 0;
+            ui_message("STORAGE DISABLED");
+            return;
+        }
+#endif
         if (ui.arm != 0xE0u + slot) {                     /* one detent arms, a second one within ~1.5 s acts */
             ui.arm = (uint8_t)(0xE0u + slot);
             ui.arm_t = 90;
@@ -429,6 +436,11 @@ static void edit_param(uint32_t slot, int32_t steps)
     if (pg->graph == GR_SLOTS && slot == 1u) {           /* 2.6: KNOB 2 ERASE, a GO button (the slot KNOB 1 picks) */
         if (steps <= 0)
             return;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+        ui.arm = 0;
+        ui_message("STORAGE DISABLED");
+        return;
+#endif
         if (ui.arm != 0xE8u) {                            /* one detent arms, a second one within ~1.5 s acts */
             ui.arm = 0xE8u;
             ui.arm_t = 90;
@@ -451,6 +463,14 @@ static void edit_param(uint32_t slot, int32_t steps)
         ml_knob(TSEL, id);                                /* MIDI LEARN: this parameter (2.6) */
     if (!v)
         return;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    if (pg->scope == SC_GLOBAL && id == G_SAVE) {
+        *vp = 0;
+        ui.arm = 0;
+        ui_message("STORAGE DISABLED");
+        return;
+    }
+#endif
     if (pg->scope == SC_GLOBAL && (id == G_LOAD || id == G_SAVE || id == G_CLRSEQ || id == G_INITSND || id == G_NEWPRJ) &&
         ui.arm != id) {                                   /* one detent arms, a second one within ~1.5 s acts */
         *vp = 0;
@@ -1125,7 +1145,11 @@ static void panel_setup(void)
     const panel_t old = panel;
     lcd_fill(0, 0, 240, 240, C_BLACK);
     draw_text_box(0, 10, 240, &FONT_S, "HARDWARE CALIBRATION", C_WHITE, 1);
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    draw_text_box(0, 30, 240, &FONT_S, "RAM ONLY: RESETS AT BOOT", C_GRAY, 1);
+#else
     draw_text_box(0, 30, 240, &FONT_S, "TEACH EACH BUTTON AND KNOB", C_GRAY, 1);
+#endif
     while (fm1_in.buttons) {                             /* wait for OCT-/OCT+ release */
         fm1_wdt_feed();
         if (fm1_ms - t0 > SETUP_IDLE_MS)
@@ -1178,6 +1202,9 @@ static void panel_setup(void)
     lcd_fill(0, 0, 240, 240, C_BLACK);
     layers_init();
     ui.force = 1;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    ui_message("CALIBRATION RAM ONLY");
+#endif
     return;
 timeout:
     panel = old;

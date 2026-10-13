@@ -812,25 +812,66 @@ static void ep1_rx(void)                                /* leaves the packet (NA
 static uint32_t ota_now_ms(void);
 static void ota_idle(void);
 
+/* A queued prefix whose tail timed out must end before the next reply starts.
+ * Otherwise a host can keep collecting the abandoned SysEx across retries. */
+static volatile uint8_t sx_open, sx_cancel;
 static int ota_wire_send(const uint8_t *p, uint32_t n)   /* F0..F7 -> USB-MIDI SysEx packets */
 {
     uint32_t i = 0, t0 = ota_now_ms();
+    sx_cancel = 0;
     sx_busy = 1;
+    if (sx_open) {
+        while (so_w - so_r >= SXQ) {
+            if (sx_cancel || !*(volatile uint8_t *)&usb.config || ota_now_ms() - t0 > 500u) {
+                sx_busy = 0;
+                return -1;
+            }
+            ota_idle();
+        }
+        if (sx_cancel || !*(volatile uint8_t *)&usb.config) {
+            sx_busy = 0;
+            return -1;
+        }
+        sx_out_q[so_w % SXQ] = 5u | 0xF7u << 8;          /* CIN 5: end the interrupted frame */
+        RING_PUBLISH();
+        so_w++;
+        if (sx_cancel) {                               /* reset interrupted the publication */
+            so_r = so_w;
+            sx_open = sx_busy = 0;
+            return -1;
+        }
+        sx_open = 0;
+    }
     while (i < n) {
         uint32_t k = n - i >= 3u ? 3u : n - i, pkt;
         uint32_t cin = k == 3u && i + 3u < n ? 4u : k == 3u ? 7u : 4u + k;   /* 4 continues; 5/6/7 end */
         pkt = cin | (uint32_t)p[i] << 8 | (k > 1u ? (uint32_t)p[i + 1] << 16 : 0u) |
               (k > 2u ? (uint32_t)p[i + 2] << 24 : 0u);
         while (so_w - so_r >= SXQ) {
-            if (!*(volatile uint8_t *)&usb.config || ota_now_ms() - t0 > 200u) {
+            if (sx_cancel || !*(volatile uint8_t *)&usb.config || ota_now_ms() - t0 > 500u) {
+                sx_open = i > 0u;
+                if (sx_cancel) sx_open = 0;
                 sx_busy = 0;
                 return -1;
             }
             ota_idle();
         }
+        /* A bus reset in ota_idle can empty the ring. Do not enqueue the old
+         * frame's tail onto the new connection, or resurrect its open flag. */
+        if (sx_cancel || !*(volatile uint8_t *)&usb.config) {
+            sx_open = i > 0u;
+            if (sx_cancel) sx_open = 0;
+            sx_busy = 0;
+            return -1;
+        }
         sx_out_q[so_w % SXQ] = pkt;
         RING_PUBLISH();
         so_w++;
+        if (sx_cancel) {
+            so_r = so_w;
+            sx_open = sx_busy = 0;
+            return -1;
+        }
         i += k;
     }
     sx_busy = 0;
@@ -1208,6 +1249,8 @@ static void usb_poll(void)                              /* TIMER5 ISR, 2 kHz */
         usb.sx_on = 0;
 #if FELUCCA_OTA
         so_r = so_w;
+        sx_open = 0;
+        sx_cancel = 1;
         sx_collect = 0;
 #endif
         usb.e0_tx = 0;

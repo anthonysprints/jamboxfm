@@ -16,7 +16,11 @@ static void recovery_poll(void)
     fm1_wdt_feed();
     if (now - recovery_usb_last >= 500u * FM1_TICKS_PER_US) {
         recovery_usb_last = now;
+        /* Rescue has no sequencer to consume notes or clocks. Leave room for
+         * the next USB packet, which may also contain updater SysEx. */
+        mi_r = mi_w;
         usb_poll();
+        mi_r = mi_w;
     }
 }
 

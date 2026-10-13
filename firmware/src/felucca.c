@@ -4,20 +4,21 @@
 #ifndef JAMBOX_PROTO
 #define JAMBOX_PROTO 0
 #endif
-#if JAMBOX_PROTO
-/* The first musical prototype has no JamBox storage/migration implementation. */
 #ifndef FELUCCA_FLASH
-#define FELUCCA_FLASH 0
+#define FELUCCA_FLASH (!JAMBOX_PROTO)
 #endif
 #ifndef FELUCCA_OTA
-#define FELUCCA_OTA 0
+#define FELUCCA_OTA (!JAMBOX_PROTO)
 #endif
-#if FELUCCA_FLASH || FELUCCA_OTA
-#error "JAMBOX_PROTO requires FLASH=0 and OTA=0 until versioned storage is implemented"
+#ifndef FELUCCA_OTA_DRYRUN
+#define FELUCCA_OTA_DRYRUN 0
 #endif
-#ifndef FELUCCA_VERSION
+#ifndef FELUCCA_OTA_RAMONLY
+#define FELUCCA_OTA_RAMONLY 0
+#endif
+#include "app_policy.h"
+#if JAMBOX_PROTO && !defined(FELUCCA_VERSION)
 #define FELUCCA_VERSION "JAMBOX DEV"
-#endif
 #endif
 #include <stdint.h>
 #include "fm1_time.h"
@@ -41,12 +42,6 @@
 #include "voice.c"
 #include "slicer.c"          /* per-track SLICER insert, used by fx.c */
 #include "fx.c"
-#ifndef FELUCCA_OTA
-#define FELUCCA_OTA 1            /* M-UPGRADE update entry; needs FELUCCA_FLASH */
-#endif
-#ifndef FELUCCA_OTA_DRYRUN
-#define FELUCCA_OTA_DRYRUN 0     /* 1 = stage, ask "success", then undo: no record, no reset */
-#endif
 #ifndef FELUCCA_ID
 #define FELUCCA_ID "FM-1_900"    /* package identity (build.py: the .fwsc marker string) */
 #endif
@@ -83,63 +78,12 @@
 #include "ui_layers.c"       /* hold a function button: what the keys and knobs do (TE style) */
 #include "ui_menu.c"
 #include "ui_input.c"
-#ifndef FELUCCA_FLASH
-#define FELUCCA_FLASH 1          /* flash driver + storage.c */
-#endif
-#if FELUCCA_OTA && !FELUCCA_FLASH
-#error "FELUCCA_OTA needs FELUCCA_FLASH"
-#endif
 #if FELUCCA_FLASH
 #include "fm1_flash.h"
-static uint8_t flash_ok;                 /* JEDEC id matched at boot (persist_boot) */
-static int st_read(uint32_t off, void *dst, uint32_t n)   /* 256-byte IRQ-off windows: audio keeps up */
-{
-    uint8_t *d = dst;
-    while (n) {
-        uint32_t k = n > 256u ? 256u : n, f = irq_save();
-        int rc = FL_FAR(fl_read_ram)(off, d, k);
-        irq_restore(f);
-        if (rc)
-            return rc;
-        off += k;
-        d += k;
-        n -= k;
-    }
-    return 0;
-}
-static void audio_silence(void)                 /* IRQs off: the DMA would loop stale audio (buzz) */
-{
-    uint32_t i;
-    for (i = 0; i < sizeof abuf / sizeof abuf[0]; i++)
-        abuf[i] = 0;
-}
-/* a sector erase with the audio silenced inside the same interrupts-off window (silenced before it, the
- * audio interrupt could render a fresh half that the DMA then loops for the whole erase: a buzz) */
-static int fl_erase4k_quiet(uint32_t off, uint32_t *took)
-{
-    uint32_t f = irq_save();
-    int rc;
-    audio_silence();
-    rc = FL_FAR(fl_erase4k_ram)(off, took);
-    irq_restore(f);
-    return rc;
-}
-static int st_erase(uint32_t off)
-{
-    uint32_t took;
-    if (!FL_STORE_OK(off, 0x1000u))
-        return -8;
-    return fl_erase4k_quiet(off, &took);
-}
-static int st_prog(uint32_t off, const void *src, uint32_t n)
-{
-    if (!FL_STORE_OK(off, n))
-        return -8;
-    return fl_write(off, src, n);
-}
+#include "flash_access.c"
 #include "storage.c"
 #endif
-#include "upreset.c"          /* user presets (RAM mirror; flash with FELUCCA_FLASH) */
+#include "upreset.c"          /* user presets (RAM mirror; flash with FELUCCA_PERSIST) */
 #include "project.c"
 #if FELUCCA_OTA
 static uint8_t recovery_active;
@@ -152,21 +96,7 @@ static void ota_idle(void)
     fm1_wdt_feed();
     if (recovery_active) recovery_poll();
 }
-static int ota_in_area(uint32_t off, uint32_t n) { return FL_IN(off, n, OTA_AREA, OTA_AREA + OTA_AREA_LEN); }
-static int ota_erase(uint32_t off)
-{
-    uint32_t took;
-    if (!ota_in_area(off, 0x1000u) || (off & 0xFFFu))
-        return -8;
-    return fl_erase4k_quiet(off, &took);
-}
-static int ota_prog(uint32_t off, const void *p, uint32_t n)
-{
-    if (!ota_in_area(off, n))
-        return -8;
-    return fl_write(off, p, n);
-}
-static int ota_fread(uint32_t off, void *p, uint32_t n) { return st_read(off, p, n); }
+#include "ota_flash_access.c"
 static void ota_show(uint32_t step, int32_t code)
 {
     static const char *const STEP[] = {"", "PACKAGE", "CHECK HEAD", "LOADER", "CONFIRM", "RESTART"};

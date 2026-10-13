@@ -201,6 +201,10 @@ static void con_status(void)
 #if FELUCCA_FLASH
     con_kv("flash", flash_ok);
 #endif
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    con_kv("persistence", 0);
+    con_puts("storage disabled; settings are RAM only\r\n");
+#endif
 }
 
 static void con_dbg(void)

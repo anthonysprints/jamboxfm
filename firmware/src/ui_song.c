@@ -103,6 +103,13 @@ static void song_screen_input(uint32_t pressed, uint32_t home)
             open_family(FAM_SEQ);
         } else if (b == B_SAVE || b == B_REC || b == B_OCTDN || b == B_OCTUP) {
             uint32_t scene = arrangement.entry[song_cursor].scene;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+            if (b == B_SAVE || b == B_REC) {
+                song_store_armed = 0;
+                ui_message("STORAGE DISABLED");
+                continue;
+            }
+#endif
             if (song.playing || transport_req) { ui_message("STOP FIRST"); continue; }
             if (b == B_SAVE) {
                 arrangement_save();

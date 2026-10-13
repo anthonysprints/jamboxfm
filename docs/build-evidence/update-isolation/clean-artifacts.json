@@ -1,0 +1,49 @@
+{
+  "same_day": true,
+  "source_manifest": "source-inputs.sha256",
+  "artifacts": [
+    {
+      "file": "felucca.bin",
+      "bytes": 552952,
+      "sha256": "cccb002ab54f4f8378426e6fe692c65305dd0d406da317c978488d38deb7db8f",
+      "clean_sha256": "cccb002ab54f4f8378426e6fe692c65305dd0d406da317c978488d38deb7db8f",
+      "identical": true
+    },
+    {
+      "file": "felucca.elf",
+      "bytes": 590420,
+      "sha256": "f3bd56c436629aba676e69f1188315b6b787de22bbab485677c161263308e7ac",
+      "clean_sha256": "f3bd56c436629aba676e69f1188315b6b787de22bbab485677c161263308e7ac",
+      "identical": true
+    },
+    {
+      "file": "felucca.fwsc",
+      "bytes": 610248,
+      "sha256": "f1f763945eeb0206600468865f701b97dd86b8d793305acf87b0559bc909dffc",
+      "clean_sha256": "f1f763945eeb0206600468865f701b97dd86b8d793305acf87b0559bc909dffc",
+      "identical": true
+    },
+    {
+      "file": "loader/loader.bin",
+      "bytes": 8400,
+      "sha256": "fddc541bacba5fc0e7aefac259ff38b69a48e72993029a14a95053be045be85d",
+      "clean_sha256": "fddc541bacba5fc0e7aefac259ff38b69a48e72993029a14a95053be045be85d",
+      "identical": true
+    },
+    {
+      "file": "loader/loader.elf",
+      "bytes": 10872,
+      "sha256": "38023e72d2af05de5439876f3b43a750e162c3b8caeaf92294ebd9c64e78a8e9",
+      "clean_sha256": "38023e72d2af05de5439876f3b43a750e162c3b8caeaf92294ebd9c64e78a8e9",
+      "identical": true
+    },
+    {
+      "file": "loader/ota.bin",
+      "bytes": 7092,
+      "sha256": "8ee7458ad6a74babc923d67526be718bb1ef3b9cf57a27c4b82a046cae46fa60",
+      "clean_sha256": "8ee7458ad6a74babc923d67526be718bb1ef3b9cf57a27c4b82a046cae46fa60",
+      "identical": true
+    }
+  ],
+  "all_identical": true
+}

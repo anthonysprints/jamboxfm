@@ -1,0 +1,14 @@
+tables: /workspace/jamboxfm/build/jam-emu-gen/felucca_tables.h
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM (cached)
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/jam-emu-gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/jam-emu-gen/felucca_fm6.h
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+JamBox panel emulator built: /workspace/jamboxfm/build/jam-emu
+build/jambox-emulator.html: 7,085,562 bytes; SHA256 9ebcea91811d0e5f2494d27c08a6ebf5c20ab4dd4565c48d828a9916cd351889
+build/jambox-source.zip: 4,542,643 bytes; SHA256 3ab6b9e1df041ecf28658a8ad4e4ee5f376e6787110b62343b51e497c5e2c488
+build/jambox-web.zip: 10,053,595 bytes; SHA256 e162e0c9f6e3eb4c555583465ae102632c43c60af98f3242c5a9be11573be64e
+Static publish root: build/jambox-web (21 files)
+native: tests/jam_emu_native.c:159: int main(int, char **): Assertion `str_eq(ui.msg, "BROWSER: NO STORAGE")' failed.
+Aborted

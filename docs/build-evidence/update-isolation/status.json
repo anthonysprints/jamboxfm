@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-13",
+  "physical_device_access": false,
+  "firmware_release_published": false,
+  "website_republished": false,
+  "with_updater_flags": {
+    "JAMBOX_PROTO": 1,
+    "FELUCCA_PERSIST": 0,
+    "FELUCCA_FLASH": 1,
+    "FELUCCA_OTA": 1,
+    "FELUCCA_OTA_DRYRUN": 0,
+    "FELUCCA_OTA_RAMONLY": 0,
+    "FELUCCA_ICONS": 0,
+    "FELUCCA_SLICE": 0
+  },
+  "exit_codes": {
+    "update_enabled_build": 0,
+    "clean_update_enabled_build": 0,
+    "default_diagnostic_build": 0,
+    "device_memory_report": 0,
+    "clean_memory_report": 0,
+    "diagnostic_memory_report": 0,
+    "jam_storage_run_final": 0,
+    "jam_emu_initial_obsolete_message_assertion": 134,
+    "jam_emu_final": 0,
+    "web_test_web": 0,
+    "target_budget": 1
+  },
+  "known_remaining_gates": [
+    "inherited static IRQ cost 256 vs budget174",
+    "prior inherited PWA Chromium installability assertion",
+    "candidate identity, splash and manifest",
+    "supported installer transitions and read-only inventory",
+    "physical backup/recovery, audio timing, stack, controls and USB",
+    "JAM1 persistence"
+  ]
+}

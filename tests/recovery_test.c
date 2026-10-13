@@ -10,6 +10,7 @@ static bootguard_t bootguard;
 static uint32_t ticks, fm1_ms, polls, feeds, retries, services, sessions, rom, detached, scans;
 static uint32_t jedec = 0x856014u, jedec_reads, lcd_calls, font;
 static uint8_t recovery_active, flash_ok;
+static uint32_t mi_w, mi_r;
 static struct { uint8_t ota_req, uboot_req; } usb;
 static struct { uint32_t buttons; } fm1_in;
 static uint32_t input_buttons, stop_at_retry;

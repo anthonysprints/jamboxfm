@@ -9,6 +9,7 @@
 #define JAMBOX_PROTO 1
 #define FELUCCA_ARRANGER 1
 #define FELUCCA_FLASH 0
+#include "../src/app_policy.h"
 #define FELUCCA_OTA 0
 #define FELUCCA_ICONS 0
 #define FELUCCA_SLICE 0
@@ -128,7 +129,7 @@ static uint32_t scope_w;
 
 /* Deliberately empty storage. Never report a successful save or load. */
 static uint8_t emu_storage_notice;
-static void emu_no_storage(void) { emu_storage_notice = 1; ui_message("BROWSER: NO STORAGE"); }
+static void emu_no_storage(void) { emu_storage_notice = 1; ui_message("STORAGE DISABLED"); }
 static int project_used(uint32_t slot) { (void)slot; return 0; }
 static void project_save(uint32_t slot) { (void)slot; emu_no_storage(); }
 static void project_load(uint32_t slot) { (void)slot; emu_no_storage(); }
@@ -183,7 +184,7 @@ static void emu_input(void)
      * Replace that message after both input passes, when the callback is ours. */
     if (emu_storage_notice) {
         emu_storage_notice = 0;
-        ui_message("BROWSER: NO STORAGE");
+        ui_message("STORAGE DISABLED");
     }
 }
 

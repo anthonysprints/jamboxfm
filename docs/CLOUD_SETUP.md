@@ -1,6 +1,6 @@
 # JamBox development environment
 
-The browser, native C and FM-1 target build workflows are available in this Debian 13 amd64 cloud environment. The owner supplied the official-download compiler archive after its redirect host was blocked. Sloop and JamBox now compile for pi32v2; [device build evidence](build-evidence/device-build/README.md) distinguishes software checks from the remaining hardware work.
+The browser, native C and FM-1 target build workflows are available in this Debian 13 amd64 cloud environment. The owner supplied the official-download compiler archive after its redirect host was blocked. Sloop and JamBox now compile for pi32v2; [baseline device evidence](build-evidence/device-build/README.md) and [update-isolation evidence](build-evidence/update-isolation/README.md) distinguish software checks from the remaining hardware work.
 
 ## Install and activate
 
@@ -87,7 +87,20 @@ python3 tools/cloud/prepare_toolchain.py \
 
 The archive is 26,027,508 bytes and reports Clang 4.0.1. `prepare_toolchain.py` records the acquisition method, SHA-256 and version outside the repository. This instance's lock explicitly records an **owner-provided archive**; the agent did not observe that download's HTTPS transfer. The digest pins those bytes, not a vendor signature. Mismatches are errors; do not replace the pin simply because the moving vendor URL changes.
 
-`build_device.sh` performs the SDK/compiler preflight, then sets `JAMBOX_PROTO=1`, `FELUCCA_FLASH=0`, `FELUCCA_OTA=0`, `FELUCCA_OTA_DRYRUN=0`, `FELUCCA_ICONS=0` and `FELUCCA_SLICE=0`. It invokes `bash build.sh` because the inherited script is not executable in Git. The prototype uses a fresh RAM session. The C entry point rejects enabled flash storage or OTA. **Its generated `.fwsc` is diagnostic only: do not install it.** Update/rescue support must be separated from app-data persistence before an owner-device candidate, as described in [the device plan](FM1_DEVICE_PLAN.md).
+`build_device.sh` performs the SDK/compiler preflight, then sets `JAMBOX_PROTO=1`, `FELUCCA_PERSIST=0`, `FELUCCA_FLASH=0`, `FELUCCA_OTA=0`, `FELUCCA_OTA_DRYRUN=0`, `FELUCCA_OTA_RAMONLY=0`, `FELUCCA_ICONS=0` and `FELUCCA_SLICE=0`. It invokes `bash build.sh` because the inherited script is not executable in Git. This default remains the diagnostic target.
+
+Milestone 2's update-enabled software target and isolation tests use:
+
+```sh
+bash tools/cloud/build_device.sh --with-updater
+python3 tools/cloud/report_device.py > build/device-memory.json
+sh tests/jam_storage_run.sh build/felucca.fwsc
+sh tests/run_jam_emu_tests.sh
+```
+
+Put `--with-updater` first. It changes `FELUCCA_FLASH` and `FELUCCA_OTA` to `1`; app persistence stays `0`. The policy rejects JamBox builds with persistence enabled or an updater configured for dry-run/RAM-only resume. Normal Sloop builds continue to default persistence to their flash capability. Both targets reuse `build/felucca.*`, so preserve evidence before switching targets.
+
+The update-enabled target starts a fresh Dusty RAM session, accepts only strictly validated read-only panel calibration, and permits bounded update writes while rejecting app-data saves/restores. The software test runner uses synthetic NOR and transport fixtures; it never connects to an FM-1. Its final command list, outcomes and current target memory report are retained in [update-isolation evidence](build-evidence/update-isolation/README.md). **Neither generated `.fwsc` is ready for owner installation.** Identity/splash/manifest work, installer transition simulation, read-only inventory and the physical recovery gates remain in [the device plan](FM1_DEVICE_PLAN.md). No installer or firmware release is published by these commands.
 
 The memory reporter checks the app and loader regions, reserves, unresolved/runtime-helper symbols and compressed loader headers/size. It cannot measure physical stack use or audio deadlines. Build outputs stay under ignored `build/`; the public repository retains text evidence and hashes, not a firmware release or the proprietary compiler archive.
 

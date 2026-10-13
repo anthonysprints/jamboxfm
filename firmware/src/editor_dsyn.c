@@ -21,7 +21,9 @@ static void ed_dsyn_name(const char *n8)
 }
 static uint32_t ed_dsyn_store(void)
 {
-#if FELUCCA_FLASH
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    return ED_STORAGE_DISABLED;
+#elif FELUCCA_FLASH
     persist_t p;
     if (ed_flash_busy())
         return 3;
@@ -46,7 +48,12 @@ static int ed_dsyn_handle(uint32_t cmd, const uint8_t *a, uint32_t n)
     case ED_DSYN_LIST:
         if (n)
             return 0;
-        ed_b(DS_NKITS); ed_b(DSU_N); ed_b(!dsu_dirty);
+        ed_b(DS_NKITS); ed_b(DSU_N);
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+        ed_b(0);                                          /* RAM edits are never reported as stored */
+#else
+        ed_b(!dsu_dirty);
+#endif
         for (i = 0; i < DS_NKITS; i++)
             ed_str(DS_KITS[i].name, 8);
         for (i = 0; i < DSU_N; i++) {

@@ -986,7 +986,7 @@ const parse = {
   },
   [CMD.STEP_SET](a) { return parse[CMD.STEP_GET](a); },
   [CMD.PRESET](a) { const r = new Reader(a); return { engine: r.b(), preset: r.b() }; },
-  [CMD.PROJECT](a) { const r = new Reader(a); return { op: r.b(), slot: r.b(), used: r.b(), busy: a.length > 3 && a[3] === 1 }; },
+  [CMD.PROJECT](a) { const r = new Reader(a); const rc = a.length > 3 ? a[3] : 0; return { op: r.b(), slot: r.b(), used: r.b(), rc, busy: rc === 1 }; },
   [CMD.NAMES](a) {
     const r = new Reader(a);
     const o = { engine: r.b(), names: [] };
@@ -3829,7 +3829,7 @@ const TEXT = {
     skippedN: " 件（読めないもの {n} 件）", patchesN: " 件",
     putDone: "本体に書き込みました: スロット ", storedSlot: "本体に保存しました: スロット ", erasedSlot: "消去しました: スロット ",
     loadedUser: "読み込みました: ", reloaded: "本体で音色が変わったので読み直しました", readingBank: "スロットを読み込み中",
-    badEngine: "このファームウェアにないエンジンです: ", flashFail: "書き込みに失敗しました（rc {rc}）",
+    badEngine: "このファームウェアにないエンジンです: ", flashFail: "書き込みに失敗しました（rc {rc}）", storageDisabled: "このファームウェアでは保存できません。セッションは一時的です。",
     installer: "SLOOP インストーラー",
     offline: "エディタをダウンロード（パソコンでオフライン用：Chrome / Edge で開く）",
     install: "アプリとしてインストール（オフラインで使える・Android も）",
@@ -4033,7 +4033,7 @@ const TEXT = {
     skippedN: " ({n} unreadable)", patchesN: " patches",
     putDone: "Written to the device: slot ", storedSlot: "Stored on the device: slot ", erasedSlot: "Erased slot ",
     loadedUser: "Loaded ", reloaded: "The sound changed on the device: read again", readingBank: "Reading the slots",
-    badEngine: "This firmware has no such engine: ", flashFail: "Write failed (rc {rc})",
+    badEngine: "This firmware has no such engine: ", flashFail: "Write failed (rc {rc})", storageDisabled: "Saving is unavailable in this firmware. Sessions are temporary.",
     installer: "SLOOP installer",
     offline: "Download the editor (offline on a computer: open it in Chrome or Edge)",
     install: "Install the app (works offline, Android too)",
@@ -5371,6 +5371,7 @@ async function project(op, slot) {
     if (!op) selfLoad();
     const r = parse[CMD.PROJECT](await rq(req.project(op, slot), { timeout: 4000, retries: 0 }));
     if (r.busy) throw new Error("Stop playback before loading or saving a section.");
+    checkRc(r.rc);
     dev.slotUsed[slot] = r.used;
     renderSlots();
     if (!op && r.used) await afterSoundChange();
@@ -7923,7 +7924,7 @@ async function libOp(fn) {
   try { await fn(); } catch (err) { report(err); } finally { busy--; libBusy = false; renderLib(); renderBank(); }
 }
 const rqf = (r, o) => rq(r, o);
-const checkRc = (rc) => { if (rc === 3) throw new Error(t("bkStop")); if (rc) throw new Error(t("flashFail").replace("{rc}", rc)); };
+const checkRc = (rc) => { if (rc === 3) throw new Error(t("bkStop")); if (rc === 6) throw new Error(t("storageDisabled")); if (rc) throw new Error(t("flashFail").replace("{rc}", rc)); };
 async function refreshSlot(slot) {
   const r = parse[CMD.UP_LIST](await rq(req.upList(slot, 1)));
   if (dev && dev.bank && r.slots[0]) dev.bank.slots[slot] = r.slots[0];

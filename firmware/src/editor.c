@@ -30,6 +30,7 @@ enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, 
        ED_FM6_GET = 68, ED_FM6_PUT, ED_FM6_LIST, ED_FM6_ERASE };                /* v9: FM6 patches (Felucca's numbers) */
 /* v10 (SLOOP 2.5): DSYN_LIST .. DSYN_PLAY = 72..76, editor_dsyn.c; backup object 9 = the SYN kits */
 #define ED_PROTO 10u                                   /* the protocol version INFO ends with */
+#define ED_STORAGE_DISABLED 6u                         /* JamBox: this build never stores user data */
 
 static uint8_t ed_out[600];
 static uint32_t ed_n;
@@ -107,6 +108,11 @@ static void ed_smp_inval(uint32_t k)
 }
 static int ed_smp_erase(uint32_t k, uint32_t all)  /* header sector, or the whole slot */
 {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    (void)k;
+    (void)all;
+    return ED_STORAGE_DISABLED;
+#else
     uint32_t i, took;
     int rc = 0;
     usr_nz[k] = 0;
@@ -118,9 +124,16 @@ static int ed_smp_erase(uint32_t k, uint32_t all)  /* header sector, or the whol
     }
     ed_smp_inval(k);
     return rc;
+#endif
 }
 static int ed_smp_end(uint32_t k, const uint8_t *a, uint32_t na)
 {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    (void)k;
+    (void)a;
+    (void)na;
+    return ED_STORAGE_DISABLED;
+#else
     const smp_user_hdr_t *h = (const smp_user_hdr_t *)ed_smp_buf;
     uint32_t i;
     if (!ed_smp_open[k] || usr_nz[k])
@@ -142,6 +155,7 @@ static int ed_smp_end(uint32_t k, const uint8_t *a, uint32_t na)
     ed_smp_inval(k);
     smp_user_scan(k);
     return usr_nz[k] ? 0 : 5;
+#endif
 }
 
 /* the engine byte of DUMP / RELOAD / TRACK: NENGINES = the drum track (no engine) */
@@ -393,7 +407,10 @@ static const param_desc_t *ed_desc(uint32_t scope, uint32_t id, int16_t **vp)
  * LIST takes a snapshot of the working project and the settings; GET reads 1..256 bytes of an object.
  * PUT stages one object in RAM (begin: id, length, CRC-32; data; commit), checks it as a load would,
  * then writes it through the usual A/B commit: a cut-off restore never leaves half an object. */
-#if FELUCCA_FLASH
+/* Kept outside the backup implementation: user-bank commands also use it. */
+static uint32_t ed_flash_busy(void) { return song.playing || transport_req; }
+
+#if FELUCCA_FLASH && (!defined(FELUCCA_PERSIST) || FELUCCA_PERSIST)
 #define ED_BK_RAW ((uint8_t *)&proj_tmp)                  /* the staging RAM (main loop, as the project loads) */
 _Static_assert(sizeof proj_tmp >= sizeof(project_t) && sizeof proj_tmp >= sizeof(up_bank_t) &&
                sizeof proj_tmp >= sizeof(persist_t), "backup staging");
@@ -457,9 +474,6 @@ static const uint8_t *ed_bk_obj(uint32_t id, uint32_t *len)   /* 0 = no such obj
 }
 static const uint8_t ED_BK_IDS[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 32, 33, 34, 35};   /* 35: USR4 (2.4), 9: SYN kits (2.5),
                                                                                       * 10: MIDI LEARN (2.6) */
-
-/* a flash erase silences the audio for ~50 ms and stalls USB: only while stopped (as the panel) */
-static uint32_t ed_flash_busy(void) { return song.playing || transport_req; }
 
 static uint32_t ed_bk_commit(void)
 {
@@ -619,17 +633,80 @@ static int ed_backup(uint32_t cmd, const uint8_t *a, uint32_t na)   /* 1: a back
 #else
 static int ed_backup(uint32_t cmd, const uint8_t *a, uint32_t na)   /* no flash: nothing to back up */
 {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    uint32_t i;
+    if (cmd == ED_BK_LIST) {
+        ed_b(ED_STORAGE_DISABLED);
+        ed_b(0);
+    } else if (cmd == ED_BK_GET) {
+        ed_b(na ? a[0] : 127u);
+        ed_b(ED_STORAGE_DISABLED);
+        for (i = 0; i < 5u; i++)
+            ed_b(na > i + 1u ? a[i + 1u] : 0u);          /* requested offset */
+        ed_b(0); ed_b(0);                               /* no data */
+    } else if (cmd == ED_BK_PUT) {
+        ed_b(na ? a[0] : 127u);
+        ed_b(na > 1u ? a[1] : 127u);
+        ed_b(ED_STORAGE_DISABLED);
+    } else {
+        return 0;
+    }
+#else
     (void)a;
     (void)na;
     if (cmd < ED_BK_LIST || cmd > ED_BK_PUT)
         return 0;
     ed_b(4);
+#endif
     return 1;
 }
 #endif
 
 #include "editor_fm6.c"                               /* v9: the FM6 patches (68..71) */
 #include "editor_dsyn.c"                              /* v10: the SYN drum kits (72..76) */
+
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+/* Reject before parsing into staging RAM or changing a user bank. Replies keep
+ * each command's normal shape, so a host cannot mistake a refused write for success. */
+static int ed_storage_disabled(uint32_t cmd, const uint8_t *a, uint32_t na)
+{
+    uint32_t i;
+    switch (cmd) {
+    case ED_PROJECT:
+        if (!na || a[0] != 1u)
+            return 0;
+        ed_b(a[0]); ed_b(na > 1u ? a[1] & 3u : 127u);
+        ed_b(na > 1u ? project_used(a[1] & 3u) : 0u);
+        break;                                         /* optional fourth byte: status */
+    case ED_SMP_WRITE:
+        ed_b(na ? a[0] : 127u);
+        for (i = 1; i < 4u; i++)
+            ed_b(na > i ? a[i] : 0u);
+        break;
+    case ED_SMP_BEGIN:
+    case ED_SMP_END:
+    case ED_SMP_ERASE:
+    case ED_UP_PUT:
+    case ED_UP_STORE:
+    case ED_UP_ERASE:
+    case ED_FM6_ERASE:
+        ed_b(na ? a[0] : 127u);
+        break;
+    case ED_FM6_PUT:
+        if (!na || a[0] != ED_FM6_BANK)
+            return 0;                                  /* a part's patch remains editable in RAM */
+        ed_b(a[0]); ed_b(na > 1u ? a[1] : 127u);
+        break;
+    case ED_DSYN_STORE:
+        break;
+    default:
+        return 0;
+    }
+    ed_b(ED_STORAGE_DISABLED);
+    ui_message("STORAGE DISABLED");
+    return 1;
+}
+#endif
 
 static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0 and F7 */
 {
@@ -639,6 +716,12 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     int16_t *vp;
     const param_desc_t *d;
     ed_begin(cmd);
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    if (ed_storage_disabled(cmd, a, na)) {
+        ed_send();
+        return;
+    }
+#endif
     if (ed_backup(cmd, a, na)) {                           /* v6: backup / restore */
         ed_send();
         return;
@@ -780,10 +863,15 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         else if (usr_nz[a[0]] || !ed_smp_open[a[0]])
             rc = 4;                                        /* slot in use: SMP_BEGIN first (voices read it) */
         else {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+            (void)took;
+            rc = ED_STORAGE_DISABLED;
+#else
             if (!(off & 0xFFFu))                           /* first write into a sector: erase it */
                 rc = fl_erase4k_quiet(ed_smp_slot(a[0]) + off, &took) ? 2u : 0u;
             if (!rc && fl_write(ed_smp_slot(a[0]) + off, ed_smp_buf, len))
                 rc = 3;
+#endif
         }
         ed_b(a[0]);
         ed_b(off);

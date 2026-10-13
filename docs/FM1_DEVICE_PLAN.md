@@ -1,7 +1,7 @@
 # JamBoxFM: first physical FM-1 build
 
 Research and plan: October 13, 2026. Starting source: `5b24d1e82efa785bb79a820b7eba2c9df8bb26ec`.
-Status: milestone 1 target builds now pass; [build evidence and test outcomes](build-evidence/device-build/README.md). The current output is diagnostic, not an installable release. No physical device has been flashed or tested.
+Status: milestone 1 target builds passed; milestone 2 now implements update/rescue support with app-data persistence disabled. See [baseline build outcomes](build-evidence/device-build/README.md) and [update-isolation evidence](build-evidence/update-isolation/README.md). The outputs are software bring-up artifacts, not owner-installation releases. No physical device has been flashed or tested.
 
 ## Decision
 
@@ -17,19 +17,19 @@ The first owner-device candidate will run the current Dusty session: drums, bass
 | --- | --- | --- |
 | [Dinghy](https://github.com/zvenson/dinghy/tree/d44df7db09b98ccad2f1233b8f83f5f09c04829e), commit `d44df7d` | Small, readable example of boot, physical controls, USB audio/MIDI, update staging and early rescue around a tiny synth. Its platform is from the same Felucca/Sloop family. | Its README reports physical testing of Dinghy 0.3; that is upstream evidence, not a test of JamBox. Its four-voice sine app and 256-byte settings format do not replace our instrument or project storage. |
 | [FM-1-RE main](https://github.com/AL-255/FM-1-RE/tree/ec832f281ca165a7d5e0722985f3acb1465046d5), commit `ec832f2` | Hardware/stock-firmware analysis, update packet framing, an observed V15 reflash record and offline protocol tests. | Main is a research/tooling repository, not a replacement firmware builder. Its historical custom-firmware branch explicitly says it is not flash-ready. A successful reflash is not proof of recovery from a broken app. |
-| [Our pinned Sloop baseline](https://github.com/isod89/sloop-fm1/tree/8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e) | Existing DSP, sequencer, panel, HAL, package builder, update loader, installer transport and tests. | JamBox's prototype currently switches flash and OTA off. The presence of inherited code does not make those paths tested in JamBox. |
+| [Our pinned Sloop baseline](https://github.com/isod89/sloop-fm1/tree/8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e) | Existing DSP, sequencer, panel, HAL, package builder, update loader, installer transport and tests. | JamBox now separates app persistence from update support and adds software isolation tests. Neither inherited code nor those simulations establishes physical recovery. |
 
 Dinghy's code is GPL-3.0-only, matching our existing code licensing. Preserve file headers, credits and corresponding source for distributed firmware. Its logo is separately reserved; use JamBox artwork. FM-1-RE's root license is WTFPL v2, but that does not relicense manufacturer firmware or separately licensed submodules. Use its findings and appropriate test cases; do not ship its stock firmware dumps as JamBox assets. Keep the existing SDK, fonts, sample and third-party notices.
 
 ## Findings that change the order of work
 
 1. **The compiler blocker is resolved in this instance.** The owner uploaded the 20260730.1 archive from the documented vendor download. Its recorded hash and explicit owner-supplied provenance are in [the build evidence](build-evidence/device-build/README.md). All SDK binary hashes pass and both target builds compile. Fresh online acquisition still depends on access to the vendor redirect host; no alternative compiler distribution was substituted.
-2. **The present RAM-session wrapper is only a compile target.** `tools/cloud/build_device.sh` selects `JAMBOX_PROTO=1`, `FELUCCA_FLASH=0`, `FELUCCA_OTA=0`. The guard in `firmware/src/felucca.c` enforces that combination. With OTA off, `main.c` omits `recovery_main()` and falls back to ROM UBOOT after repeated boot failures. ROM entry is not a normal Web MIDI installer.
-3. **Turning both flags on is not the solution.** The existing `persist_boot()` also loads inherited settings/projects/banks and can mark retained projects for a later write. SAVE, autosave, editor restore, sample writes and pre-reset saving need an explicit policy before flash becomes available.
-4. **Dinghy demonstrates the useful separation.** Its updater can write its staging area independently of the optional app-settings save. We should preserve that distinction in our existing platform. Do not copy Dinghy's settings sector at `0xFC000`: Sloop already uses that sector for settings/calibration.
+2. **The wrapper now has two software targets.** Its default retains `JAMBOX_PROTO=1`, `FELUCCA_FLASH=0`, `FELUCCA_OTA=0`; `--with-updater` enables flash and OTA while keeping `FELUCCA_PERSIST=0`. With OTA off, repeated boot failures reach ROM UBOOT rather than the small application USB rescue. ROM entry is not a normal Web MIDI installer. Neither target is an installation release.
+3. **Update support is separated from app-data persistence.** `flash_boot()` initializes hardware capability independently. JamBox's `persist_boot()` clears retained musical state and imports only validated panel calibration; inherited project/settings/bank imports and app-data writers are gated by `FELUCCA_PERSIST`. This closes the behavior that merely enabling the old flash flag would have exposed.
+4. **Dinghy demonstrates the useful separation.** Its independent updater informed this change in our existing platform. We did not adopt Dinghy's app-settings format or its sector at `0xFC000`, which Sloop already uses for settings/calibration.
 5. **Recovery has limits.** OCT-minus rescue runs code in the installed application. It is not a second, protected firmware bank. A failure before that code can run may need a separate ROM recovery tool and physical adapter. We must establish the actual return path before an owner-device trial.
 
-## Milestone 1: reproducible target builds, with no device writes
+## Milestone 1: reproducible target builds, with no device writes — completed build work
 
 Owner: development environment / agent. No connected FM-1 required.
 
@@ -69,7 +69,7 @@ bash tools/cloud/build_device.sh
 sh tests/run_jam_emu_tests.sh
 ```
 
-The target-build commands now pass; the evidence record lists the full test outcome and clean-source comparison. A successful current `build_device.sh` output is a diagnostic build with OTA disabled, not the installation candidate. Do not distribute it as a release. An unchanged Dinghy target build remains an optional diagnostic if a future compiler/platform failure needs isolation; installing Dinghy on the owner's FM-1 is not required.
+The milestone 1 target builds passed; the evidence record lists the full test outcome and clean-source comparison. The full inherited suite still has the documented stale IRQ budget and Chromium PWA assertion failures; neither was relaxed. The default `build_device.sh` output remains diagnostic with OTA disabled. Milestone 2 adds the separate `--with-updater` target below. Do not distribute either as a release. An unchanged Dinghy target build remains an optional diagnostic if a future compiler/platform failure needs isolation; installing Dinghy on the owner's FM-1 is not required.
 
 Record the source SHA, compiler/SDK hashes, flags, generated-asset inputs, app and loader ELF files, disassembly, section sizes, `.fwsc` checksum and test logs. Add explicit checks for all linker regions, loader BSS/stack separation and unsupported arithmetic helpers; a desktop syntax check cannot establish these. Keep the existing device memory map and pool margin:
 
@@ -87,31 +87,40 @@ Deliverable: archived baseline and JamBox build reports. No hardware writes.
 
 ## Milestone 2: updateable JamBox with temporary musical sessions
 
-Owner: agent. This is implementation work still to do.
+Owner: agent. Software implementation is present; final target sizes, hashes and exact regression outcomes are recorded in [update-isolation evidence](build-evidence/update-isolation/README.md). This does not complete the owner-installation or physical recovery gates.
 
-Keep the current hardware drivers, startup, linker layout and loader. Introduce separate controls for low-level flash/update support and JamBox app-data persistence. The exact new macro name is an implementation choice; it must not be represented as an existing build option. Revise the present prototype guard only alongside the new isolation tests.
+The current hardware foundation and linker layout are retained. `app_policy.h` adds `FELUCCA_PERSIST`: it defaults to `FELUCCA_FLASH` for Sloop and is forced off for JamBox. `flash_boot()` probes hardware independently of app-data loading. The builder passes all relevant flags to the target compiler and selects the JamBox-specific loader policy.
 
-| Area to change | Required behavior |
+```sh
+bash tools/cloud/build_device.sh --with-updater
+python3 tools/cloud/report_device.py > build/device-memory.json
+sh tests/jam_storage_run.sh build/felucca.fwsc
+sh tests/run_jam_emu_tests.sh
+```
+
+| Area | Implemented policy / validation boundary |
 | --- | --- |
-| `felucca.c`, `project.c`, `main.c` | Initialize flash identity and update support without boot-loading foreign projects or enabling app-data writes. Start a fresh Dusty session. Validate/reset retained session data on firmware-family changes. |
-| Save/autosave/settings/presets/samples/FM6 banks/editor restore/reset hooks | Reject or explicitly label temporary operations. No hidden flash writes when moving a knob, pressing SAVE, connecting an editor, restarting or entering update mode. Inspect every writer, not only the SAVE button. |
-| Panel calibration | Preserve existing bytes. Provide a narrowly validated read-only mapping import, or a temporary calibration flow if needed; do not assume all physical units match browser defaults. |
-| Update staging | Existing updater writes only `[0xE0000, 0xE5000)`, including its resume record. Retain range checks, verification and error reporting. |
-| Package loader | Retain the inherited app-write boundary `[0x4000, 0x93000)`, CRC verification and retry behavior. Audit update-record cleanup separately: it scans above the app; “app-only image writing” does not mean the loader never erases any other sector. |
-| Early rescue / boot guard | OCT-minus at power-on and boot-failure entry must reach the small polled USB updater before synth initialization. Preserve fallback ROM entry, but do not label it equivalent to app rescue. |
-| SysEx transport | Review Dinghy's isolated partial-message fix: finish an abandoned packet with F7 before starting another, with its changed timeout. Port only with a regression proving timeout, retry and parser recovery. |
+| `felucca.c`, `project.c`, `main.c` | Independent flash probe, fresh Dusty initialization, retained project/settings clearing on every normal JamBox boot, no foreign project/bank import. Internal snapshots use private `JRM0` magic rather than Sloop `FUN6`. |
+| Save/autosave/settings/presets/samples/FM6 banks/editor restore/reset hooks | Explicit save/erase/restore/upload operations reject with storage-disabled status before bank mutation. Autosave and pre-reset app-data writes are excluded. Live settings and calibration edits are labeled RAM-only. |
+| Panel calibration | Full storage-record CRC and exact recognized schema length are checked; only a PAN5 mapping with unique in-range button/encoder IDs and directions ±1 is imported. Unknown/damaged records use defaults. No settings object is rewritten. |
+| Update staging | Separate hooks and the app's lowest flash-driver range allow only `[0xE0000, 0xE5000)`, including its resume record. App storage hooks reject writes even if accidentally called. Normal boot can clean stale OTA staging. |
+| Package loader | JamBox writes the app at `[0x4000, 0x93000)` and cleans only the known record sector `[0xE4000, 0xE5000)`. Unknown JEDEC identity refuses writes, including cleanup. Read/erase/verification failures during cleanup prevent a success reset and leave the current loader session available for retry; they do not prove power-loss recovery after a partial erase. |
+| Early rescue / boot guard | The update-enabled build retains OCT-minus and boot-failure entry to the polled updater before synth startup, complete-message draining, and fallback ROM entry. Actual physical enumeration/recovery remains untested. |
+| SysEx transport | Timeout/retry closes abandoned outbound framing, bus reset clears stale state, and new transfers do not inherit an old tail. Software regressions exercise real USB/parser and rescue paths, including bounded stalls. |
 
-The important property is **app-data writes disabled, firmware update writes bounded and working**. This is not a promise that the entire chip remains read-only during an update.
+The important property is **app-data writes disabled and firmware update writes bounded**. Normal-boot OTA cleanup is also a permitted staging write. Software tests do not prove on-device flash or USB behavior.
 
-For the actual installation candidate, verify the compiled values `FELUCCA_OTA_DRYRUN=0` and `FELUCCA_OTA_RAMONLY=0` and record them in the manifest. A dry-run updater cannot complete installation. Despite its name, RAMONLY changes the updater's resume record, not where songs are stored; it removes the flash record needed for power-loss resume. Do not assume an environment variable takes effect unless the builder passes it through.
+The retained-state policy protects musical projects in both directions: JamBox clears inherited slots and Sloop rejects `JRM0`. Settings and panel mappings still have shared `SET3`/`PAN5` layouts. If Sloop has no valid flash settings, a warm return may retain JamBox's temporary UI preferences or calibration. Preserve the owner's backup and validate the actual return transition; do not call every retained field family-private.
 
-Run simulated-flash tests using synthetic foreign Sloop settings, projects, user banks and samples. Exercise ordinary boot, warm restart, SAVE, idle autosave, editor requests and update entry; compare protected bytes before/after. Verify intended staging writes remain possible. Model missing/unknown flash, malformed lengths, timeout, damaged package, wrong chip/model and interrupted transfers. Run host recovery/bootguard/OTA/loader tests and the real browser regression suite after changes.
+The wrapper explicitly sets `FELUCCA_OTA_DRYRUN=0` and `FELUCCA_OTA_RAMONLY=0`; JamBox's policy rejects either mode with OTA enabled. Record the compiled values in the future manifest. A dry-run updater cannot complete installation. Despite its name, RAMONLY changes the updater's resume record, not where songs are stored; it removes the flash record needed for power-loss resume.
 
-Deliverable: a compiled candidate that has current JamBox musical behavior and a tested software update/recovery path, with no persistent song saving. Software simulations still do not establish recovery on a physical unit.
+`tests/jam_storage_run.sh` uses synthetic foreign settings/projects/banks/samples and the real instrument/UI/editor code with simulated NOR. Coverage includes normal and warm boot, disabled SAVE/autosave/editor requests, protected-byte comparisons, valid calibration and corruption, Sloop's positive `FUN6` control versus rejected `JRM0`, staging writes and refusal outside bounds. Its companion OTA/loader/USB/parser regressions cover malformed transfers and failure handling. Use the final evidence record for the complete command list and results; do not report an early subset as the finished suite. Browser regressions remain a separate command.
+
+Deliverable: software bring-up builds and isolation evidence, with no persistent song saving. Candidate identity/packaging and installer compatibility are milestone 3. No installer publication or hardware writing belongs to this milestone.
 
 ## Milestone 3: package identity and installer
 
-Owner: agent. User-facing target: `https://anthonysprints.github.io/jamboxfm/installer/` (planned; not published).
+Owner: agent. This is the next implementation milestone: identity/splash, manifest, installer transition simulations and read-only inventory. User-facing target: `https://anthonysprints.github.io/jamboxfm/installer/` (planned; not published).
 
 Reuse the inherited `.fwsc` builder and `web/fm1ota.js`/Python installer transport. A web installer serves an already-built package; it does not compile firmware in the browser. USB MIDI SysEx requests are handled on the owner's computer. This cloud environment cannot directly access that computer's USB port.
 
@@ -166,8 +175,8 @@ Only then label a version as a regular device release, with an explicit supporte
 
 ## Ordered implementation batches
 
-1. **Toolchain/build evidence:** trusted compiler acquisition or a tested manual CI fallback; unchanged baseline plus current JamBox target sizes and clean-source build.
-2. **Platform isolation:** separate update flash from app-data persistence; write-boundary, retained-state, calibration and rescue tests; retain browser behavior.
+1. **Toolchain/build evidence:** target builds and clean-source checks completed; retain the inherited IRQ/PWA failures and compiler provenance.
+2. **Platform isolation:** software implemented; final build/test evidence covers separate update flash, disabled app persistence, write boundaries, retained state, calibration and rescue. Hardware remains untested.
 3. **Candidate packaging:** JamBox identity/splash, manifest/source/notices, targeted transport fix if justified, simulated installer matrix and read-only identification page.
 4. **Hardware trial:** inventory/backup/recovery setup, baseline observations, candidate installation, functional/performance checks and return to Sloop.
 5. **Persistence/release:** schema, power-cycle checks, supported transitions and normal release packaging.

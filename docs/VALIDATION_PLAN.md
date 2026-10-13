@@ -1,16 +1,18 @@
 # JamBoxFM build and validation plan
 
-Status: implementation gates, with completed checks identified separately. The first JamBox diagnostic target build passes; no physical device has been flashed or tested.
+Status: implementation gates, with completed checks identified separately. JamBox diagnostic target builds and milestone 2's update/persistence isolation are implemented. Final software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md); no physical device has been flashed or tested.
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
-The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds, update/recovery support with app-data writes disabled, an experimental hardware trial, then versioned persistence. Its temporary-session milestone does not require every future musical feature below.
+The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds and update/persistence isolation, candidate identity/installer simulations and inventory, an experimental hardware trial, then versioned persistence. Milestone 3 packaging is next. The temporary-session milestone does not require every future musical feature below.
 
 ## Already done
 
 See [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) for pinned sources, actual outcomes, warning qualifications and logs. Completed work includes REA analysis of the checked-in Sloop web distribution, a five-scenario shipped-WASM probe, targeted upstream native tests, the earlier ChoralRoot installer simulation, and comparison of the three required SDK hashes.
 
 Those results justify proceeding to an implementation baseline. They do not certify new JamBox features or a physical update.
+
+The target-build follow-up compiled the unchanged Sloop baseline and JamBox diagnostic target. Milestone 2 separates `FELUCCA_PERSIST=0` from enabled low-level flash/OTA, rejects app-data saves/restores, clears retained musical state and accepts only narrowly validated read-only panel calibration. Its simulated NOR, UI/editor, OTA, loader and USB/parser tests validate software contracts; they cannot certify recovery on the owner's device.
 
 ## Gate 1: reproducible unchanged baseline
 
@@ -40,6 +42,8 @@ CC=clang sh tests/run_preview_tests.sh
 
 The unchanged browser build and preview tests passed; their evidence is in [BUILD_STATUS.md](BUILD_STATUS.md). The first baseline/JamBox target builds and the full inherited runner's actual outcome are recorded in [device evidence](build-evidence/device-build/README.md). The full runner depends on a generated `.fwsc`; do not label an incomplete subset as that full suite. Investigate failures without rewriting golden sound or CPU baselines merely to obtain a pass.
 
+That full baseline run remains a failure: the IRQ static-cost expectation is stale relative to the byte-identical published Sloop IRQ, and the separate PWA environment workaround still leaves Chromium's `in-incognito` assertion failing. Neither baseline nor assertion was relaxed. Passing new isolation tests does not erase those results.
+
 Retain: source SHA, compiler/SDK/asset identities, build flags, ELF/disassembly, app and loader sizes, all RAM-region sizes, `.fwsc` hash, browser JS/WASM hashes and test results. A runtime build on the same compiler/version should be reproducible; investigate differing artifacts before claiming determinism.
 
 ## Gate 2: musical core and recording contracts
@@ -64,7 +68,33 @@ Implement focused host tests against actual JamBox C modules:
 
 Use deterministic event fixtures. When changing synthesis intentionally, compare renders and listen before approving updated golden audio. Host execution speed is useful for regressions within that host; it is not FM-1 CPU utilization.
 
-## Gate 3: byte-exact storage and restart behavior
+## Gate 3: temporary-session isolation, then versioned persistence
+
+The milestone 2 policy is implemented separately from future JAM1 saving. Reproduce its software checks with:
+
+```sh
+bash tools/cloud/build_device.sh --with-updater
+python3 tools/cloud/report_device.py > build/device-memory.json
+sh tests/jam_storage_run.sh build/felucca.fwsc
+sh tests/run_jam_emu_tests.sh
+```
+
+The wrapper fixes `JAMBOX_PROTO=1`, `FELUCCA_FLASH=1`, `FELUCCA_OTA=1`, `FELUCCA_PERSIST=0`, and both OTA dry-run/RAM-only flags to `0`. It retains the diagnostic target without `--with-updater`. Both outputs share filenames and remain unsuitable for owner installation. Final sizes and test outcomes belong in [the isolation evidence](build-evidence/update-isolation/README.md), not estimates copied from an earlier build.
+
+Required isolation contracts:
+
+- Seed valid foreign projects, settings, user banks and sample metadata plus retained RAM; normal JamBox boot starts Dusty, clears retained projects/settings and does not import foreign musical state. Unknown JEDEC still clears retained session state without reading flash.
+- Accept only a recognized full settings-record schema with a valid storage CRC and a valid PAN5 mapping. Reject duplicate/out-of-range IDs, invalid directions, unknown sizes, damaged data and unsupported schemas; preserve flash bytes.
+- Reject project/preset save, erase, backup restore and sample/FM6-bank upload before mutations; verify UI/editor status as well as unchanged bytes. Live settings/calibration edits must clearly say RAM-only. Exercise autosave, idle flush and pre-reset hooks too.
+- Internal snapshots use `JRM0`, work during the live session, and are cleared on reboot. A real Sloop parser must still accept its valid `FUN6` control and reject `JRM0`; JamBox rejects foreign project imports without changing the destination.
+- App storage hooks refuse all writes; OTA hooks and the app's lowest driver admit staging only, `[0xE0000, 0xE5000)`. Normal boot is allowed to clean stale staging. The loader writes only the app and its known record sector; unknown flash causes no writes, and cleanup failures prevent a success reset while allowing retry in the current loader session.
+- Exercise partial SysEx timeout/retry, reset during sending, bounded stalls and rescue queue draining through real transport/parser units. Retain ordinary Sloop tests and compile-time rejection tests for invalid JamBox configurations.
+
+Compare the protected NOR bytes before/after, with raw mocks that actually mutate memory on unexpected writes. The ordinary Home test with storage stubs is insufficient for these contracts; use the real project/UI/editor/storage harness. The final evidence record retains initial failures and corrected reruns rather than reporting only the successful subset.
+
+`SET3` settings and `PAN5` calibration remain shared retained layouts. If a warm return to Sloop finds no valid flash settings, it may retain temporary JamBox preferences/calibration. Test that transition during hardware preparation; the current project-family isolation does not imply every retained field is family-private.
+
+JAM1 remains future implementation. Its separate acceptance cases are:
 
 - Assert the encoded JAM1 length is 3,840 bytes, including checksum and all 24 new metadata bytes.
 - Round-trip every Assist enum/mask, signed micro extremes, scale/root and palette ID. Reject unknown versions, invalid sizes, checksum errors and out-of-range fields.
@@ -101,11 +131,13 @@ Check:
 - A ten-minute worst-case palette workload: bass, rapid four-note chords, lead, six drums, maximum exposed FX, active screen/knob input and USB recording.
 - Total interrupt-duration histogram including nested timer/USB work: provisional p99 below 70% of deadline, maximum below 85%, zero late DMA halves and zero CPU-overload shedding. Distinguish intended voice stealing from overload shedding.
 - Real stack guards, actual remaining ordinary/pool RAM, code size, NOINIT fit, and guard diagnostics.
-- USB/TRS MIDI and sustain, USB audio continuity, stopped/quiet flash saves, reload and dirty-state behavior.
+- USB/TRS MIDI and sustain, USB audio continuity, and return through the supported updater/rescue path. The first temporary-session build must reject app-data saves; stopped/quiet saves, reload and dirty-state checks apply after JAM1 is implemented.
 
 If the workload fails, reduce unused processing/buffers, shorten preset releases or choose a cheaper engine/FX combination. A triad fallback must be explicit and musically auditioned. Do not hide the overload indicator or simply increase voice counts.
 
 ## Gate 6: installer and release
+
+This is the next software milestone. The update-enabled build still needs JamBox app/INFO identity, splash, manifest, supported transition simulations and read-only inventory before an installation candidate. No installer or firmware release has been published by milestone 2.
 
 Build a static installer using the existing SysEx transport. Validate `.fwsc` identity/structure/checksums against the manifest before writing. Preserve required model and loader compatibility markers.
 

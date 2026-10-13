@@ -154,9 +154,10 @@ int main(int argc, char **argv)
     panel_setup();
     CHECK(str_eq(ui.msg, "BROWSER PANEL FIXED"), "hardware calibration has a nonblocking browser handler");
     project_save(0);
-    CHECK(str_eq(ui.msg, "BROWSER: NO STORAGE") && !project_used(0), "storage never reports a pretend save");
+    CHECK(str_eq(ui.msg, "STORAGE DISABLED") && !project_used(0), "storage never reports a pretend save");
     jam_emu_button(B_SAVE, 1); jam_emu_key(key_of_white(4), 1); jam_emu_frame();
-    CHECK(str_eq(ui.msg, "BROWSER: NO STORAGE"), "the held SAVE gesture cannot replace the storage warning with SAVED");
+    CHECK(str_eq(ui.msg, "STORAGE DISABLED") && !project_used(0),
+          "the held SAVE gesture leaves its slot empty and reports STORAGE DISABLED");
     jam_emu_release();
     CHECK(jam_emu_value(18, 0) == 0, "all real LCD transfers stay within 240 by 240");
     test_snap_lights();

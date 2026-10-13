@@ -94,8 +94,8 @@ static int test_usb_sysex(void)
     bad += check("usb: send with a full ring and no host fails at once",
                  ota_wire_send(msg, 9) == -1 && !sx_busy && now_ms == 0);
     usb.config = 1;
-    bad += check("usb: send with a full ring times out (200 ms)",
-                 ota_wire_send(msg, 9) == -1 && !sx_busy && now_ms > 200u && now_ms < 210u);
+    bad += check("usb: send with a full ring times out (500 ms)",
+                 ota_wire_send(msg, 9) == -1 && !sx_busy && now_ms > 500u && now_ms < 510u);
     so_r = so_w;
     return bad;
 }

@@ -14,6 +14,7 @@
  *
  * With -DUP_HOST (host test) only the part above #ifndef UP_HOST is built;
  * it needs nothing but core.h. */
+#include "app_policy.h"
 #define UP_PER_BANK 16u
 #define UP_PMAX 72u                              /* room for P_COUNT to grow */
 #define UP_USED 0xA5u
@@ -162,16 +163,24 @@ static void up_values(const up_rec_t *r, int16_t *v)   /* mapped and clamped for
 
 static void up_boot(void)                      /* persist_boot: the banks from flash */
 {
-#if FELUCCA_FLASH
+#if FELUCCA_PERSIST
     uint32_t b;
     for (b = 0; b < UP_SLOTS / UP_PER_BANK; b++)
         up_bank_check(b, flash_ok ? st_load(OBJ_UPRESET0 + b, &up_bank[b], sizeof up_bank[b]) : -1);
+#else
+    memset(up_bank, 0, sizeof up_bank);
 #endif
 }
 
-/* record k = *r (0: erase), then the bank to flash: 0 ok, 2 flash error, 3 no flash (kept in RAM) */
+/* record k = *r (0: erase), then the bank to flash: 0 ok, 2 flash error, 3 no flash (kept in RAM),
+ * 6 application persistence disabled (no RAM mutation either). */
 static int up_put(uint32_t k, const up_rec_t *r)
 {
+#if !FELUCCA_PERSIST
+    (void)k;
+    (void)r;
+    return 6;
+#else
     up_bank_t *bk = &up_bank[k / UP_PER_BANK];
     bk->magic = UP_BANK_MAGIC;
     bk->rsize = sizeof(up_rec_t);
@@ -187,11 +196,10 @@ static int up_put(uint32_t k, const up_rec_t *r)
                 trk[i].user = 0;
     }
     up_gen++;
-#if FELUCCA_FLASH
     if (flash_ok)
         return st_save(OBJ_UPRESET0 + k / UP_PER_BANK, bk, sizeof *bk) ? 2 : 0;
-#endif
     return 3;
+#endif
 }
 
 static void up_slot_label(char *b, uint32_t k)  /* "U07" */
@@ -206,6 +214,11 @@ static void up_slot_label(char *b, uint32_t k)  /* "U07" */
  * 1 = the drum track is selected (it has no sound to store) */
 static int up_store(uint32_t k, const char *name)
 {
+#if !FELUCCA_PERSIST
+    (void)k;
+    (void)name;
+    return 6;
+#else
     up_rec_t r;
     uint32_t i;
     if (is_drum(TSEL))
@@ -231,6 +244,7 @@ static int up_store(uint32_t k, const char *name)
         r.p[i] = TSEL->p[i];
     up_pat_from(&r, TSEL->step);
     return up_put(k, &r);
+#endif
 }
 
 /* slot k -> the selected part's sound: engine and every parameter except its mix (LEVEL,
@@ -299,6 +313,12 @@ static void up_ui(uint32_t op, uint32_t k)     /* 0 load, 1 erase, 2 save */
 {
     char l[4];
     int rc;
+#if !FELUCCA_PERSIST
+    if (op != 0u) {
+        ui_message("STORAGE DISABLED");
+        return;
+    }
+#endif
     up_slot_label(l, k);
     if (op != 1u && is_drum(TSEL)) {
         ui_message("DRUM TRACK: NO SOUND");
@@ -318,7 +338,9 @@ static void up_ui(uint32_t op, uint32_t k)     /* 0 load, 1 erase, 2 save */
         return;
     }
     rc = op == 1u ? up_put(k, 0) : up_store(k, 0);
-    if (rc == 3)
+    if (rc == 6)
+        ui_message("STORAGE DISABLED");
+    else if (rc == 3)
         ui_message(op == 1u ? "ERASED (RAM)" : "SAVED (RAM)");
     else if (rc)
         ui_message(op == 1u ? "ERASE ERROR" : "SAVE ERROR");

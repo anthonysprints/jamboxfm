@@ -1,0 +1,236 @@
+drum kit: file names sorted onto the lanes                       ok
+drum kit: a taken lane gives way (KICK -> KICK 2), unknown names the first free pad, a drop its pad ok
+drum kit: +12 st plays it twice as fast (half the length), -6 dB half the level ok
+drum kit: LENGTH cuts it, with a 4 ms fade (no click)            ok
+drum kit: one zone per pad, lo = hi = root = the lane's note (drums.c LANE_NOTE: KICK 36, SNARE 38, OPEN HAT 46) ok
+drum kit: FIT shortens the longest pads to fill the slot, no more ok
+drum kit: USR3+4 takes a 13.3 s kit no slot could, every pad whole in one of the two ok
+drum kit: ... FIT for the pair fills both slots (no more than they hold) ok
+drum kit: ... a sound longer than a slot is cut to one slot      ok
+levels: half the amplitude is 6 dB quieter (6.02 dB)             ok
+levels: as the ear hears it, a 40 Hz tone counts less than 3 kHz at the same peak (9.3 dB) ok
+levels: a 10 ms click counts over 100 ms, as heard (-10.0 dB)    ok
+levels: MATCH LEVELS: kick -2, snare -2, hat 0 dB: heard within 0.40 dB, the quietest untouched ok
+levels: never more than 24 dB down (a near-silent sound does not mute the rest) ok
+levels: a file's Gain (-6 dB: half), 0 dB as it came             ok
+levels: the drum kit pad sends what was matched (kitPad, its Gain) ok
+drum kit: a kit ZIP reads back (zipRead)                         ok
+drum kit: ... deflated ZIP entries too                           ok
+editor: INFO                                                     ok
+editor: DESC for every parameter                                 ok
+editor: SLICER parameters 45..48 (mock == params.c)              ok
+editor: a factory preset turns the SLICER off                    ok
+editor: all 16 scale names exposed                               ok
+editor: new scale selection is not clamped to the old range      ok
+editor: DUMP                                                     ok
+editor: SET clamps to the range                                  ok
+editor: STEP_SET                                                 ok
+editor: PROJECT save                                             ok
+editor: sample upload (CRC checked by the mock)                  ok
+editor: no reply -> timeout after the retries                    ok
+librarian: parameter keys unique (label#n, E0..E7)               ok
+librarian: UP_LIST, 32 slots in 2 frames                         ok
+librarian: capture = DUMP + first 16 steps                       ok
+librarian: UP_PUT -> UP_GET round trip                           ok
+librarian: UP_PUT to a slot past the bank -> rc 1                ok
+librarian: device names (ASCII, 1..12)                           ok
+librarian: UP_STORE keeps the current sound                      ok
+librarian: UP_LOAD applies the sound, the sequencer stays empty (LIVE) ok
+librarian: UP_ERASE, UP_LOAD of an empty slot -> rc 1            ok
+librarian: audition = G_ENGSEL + SETs of the sound; no pattern, mix, LEN or key; no flash write ok
+librarian: audition keeps the sequencer as it is                 ok
+librarian: pattern ties / rests normalised like the firmware     ok
+librarian: UP_STORE with no name -> automatic name               ok
+library file: versioned, with P_COUNT, labels and engines        ok
+library file: write -> read round trip                           ok
+library file: other ids / engine order mapped by label and name  ok
+library file: a 2.5 one (61 parameters) read by 2.6: E1..E8 at 63..70, the new ones unset ok
+library file: a patch for an unknown engine is skipped           ok
+library file: bank export keeps slot numbers                     ok
+library file: reads the old "Save to file" format                ok
+library file: a "Save to file" of another version is read by count (the engine's 8 in their place, 61 <-> 71) ok
+library file: unknown format -> error                            ok
+live: WATCH on                                                   ok
+live: CHANGED while DUMP waits -> push handler, reply still matched ok
+live: RELOAD and STEP_CHANGED routed                             ok
+live: RELOAD after an editor PRESET too, nothing after its STEP_SET ok
+live: PING keeps WATCH on                                        ok
+live: WATCH ends by itself without requests                      ok
+live: drag SETs coalesce (2 frames for 40 values, latest kept)   ok
+live: no timeouts                                                ok
+live: older firmware -> WATCH unanswered (fall back to polling), no bank ok
+tracks: INFO NTRK, TRACK lists 4 (track 4 = drums, engine NENGINES) ok
+tracks: TRACK selects; DUMP / SET act on it, TRACK_DUMP reads any track ok
+tracks: TRACK_STEP set / get on another track                    ok
+tracks: TRACK_MIX level / mute (drums: G_DRLVL)                  ok
+tracks: drum track selected -> DUMP engine NENGINES, UP_STORE / UP_LOAD rc 1 ok
+tracks: WATCH on                                                 ok
+tracks: RELOAD / STEP_CHANGED carry the selected track           ok
+tracks: PROJECT save / load keeps every track and the selection  ok
+tracks: older firmware parses (no tracks)                        ok
+SetGate: DIV set on the drum track, then the same DIV on track 1: sent, both set ok
+SetGate: clear() forgets every control (another track / sound / FM-1) ok
+SetGate: pending: the same value skipped, a new value sent (queued) ok
+SetGate: the last value wins                                     ok
+SetGate: answered: the same value sent again (a knob may have moved it on the FM-1) ok
+mixer: read = TRACK + pan of every track (TRACK_DUMP)            ok
+mixer: TRACK_MIX level / mute round trip (drums: G_DRLVL, clamped) ok
+mixer: WATCH on                                                  ok
+mixer: pan of any track via SET (other track selected for a moment, then back; no push) ok
+mixer: device-side level (CHANGED push) and REC arm read back    ok
+mixer: drum level on the device pushes G_DRLVL                   ok
+mixer: the mock drum track holds a GM pattern (KICK CHH ...)     ok
+mixer: GM drum names parse (unique, 35..81)                      ok
+v4: WATCH 1 answers 1 as before (no TRACK_CHANGED pushes)        ok
+v4: WATCH 3 -> 3 (TRACK_PARAM / TRACK_CHANGED known)             ok
+v4: TRACK_PARAM get / set on other tracks (clamped as SET, selection kept, no push) ok
+v4: TRACK_PARAM of track 5: no reply                             ok
+v4: TRACK_CHANGED pushes for the other tracks, CHANGED for the selected one ok
+v4: v3 firmware -> WATCH 1, no TRACK_PARAM (pan by select / restore) ok
+v5..v10: INFO ends with the protocol version (10: SYN kits); 45 globals (2.5: drum DLY; 2.6: GLO > MIDI, TEXTURE, BEND) ok
+v5..v10: command numbers and INFO == editor.c / editor_dsyn.c    ok
+v5: CHORD, DUST, DUCK, FILT, ROLL, NEW (mock == params.c)        ok
+v5: SWING 0..100 (2.5), FILT LP / OFF / HP, PCT of the range     ok
+v5: STEP_SET / STEP_GET level and ratchet bytes (8 bits each), none for an old step ok
+v5: DRUM_STEP round trip (16 lanes, levels, ratchets)            ok
+v5: the drum track through TRACK_STEP: lanes <-> GM notes        ok
+v5: the 16 lanes (kick .. cowbell), 4 levels                     ok
+v5: lane notes == drums.c LANE_NOTE                              ok
+v5: the drum track's KIT (46 kits, == drums.c)                   ok
+v5: TRACK reports the soloed tracks                              ok
+v5: no unmatched replies                                         ok
+v5: older firmware -> proto 0, no DRUM_STEP (the editor keeps GM notes) ok
+v7: INFO ends with 10 (v10 includes v7)                          ok
+v7: the lockable parameters (editor == seq.c p_lockable; LEN, ARP, VOICE, CHORD are not) ok
+v7: MICRO_GET: 64 nudges, all 0                                  ok
+v7: MICRO_SET (sent + 64: -8 -> 56, 31 -> 95, -32 -> 32), clamped to -32..31 ok
+v7: LOCK_SET makes and clamps a lock (DIST 500 -> 127), refuses LEN (rc 2) and step 70 (rc 1); LOCK_GET lists them ok
+v7: LOCK_SET again moves the lock; without a value it deletes it ok
+v7: the 25th lock is refused (rc 3, 24 a track)                  ok
+v7: other tracks untouched; a nudge on the device -> STEP_CHANGED of its step ok
+v7: no unmatched replies                                         ok
+v7: a device without the commands: no reply (the editor hides the step detail) ok
+v8: INFO ends with 10 (v10 includes v8)                          ok
+v8: FC codes and the 2-bit layout == core.h / seq.c step_fill    ok
+v8: FILL_GET: 16 bytes, every step normal                        ok
+v8: FILL_SET sets a step (3 -> normal); FILL_GET returns the bytes as stored (0x80 through pack7) ok
+v8: fillSet / fillGet on the client; pack7 keeps the top bits of 16 bytes (3 groups) ok
+v8: other tracks untouched; a condition set on the device -> STEP_CHANGED of its step ok
+v8: no unmatched replies                                         ok
+v8: a v7 device: INFO 7, locks yes, no reply to FILL_GET (the editor hides the condition) ok
+v9: the editor's init and factory patches == felucca_fm6.h       ok
+v9: FM6 pack / unpack round trip (50 voices, sanitized)          ok
+v9: single-voice SysEx: 163 bytes, read back the same            ok
+v9: 32-voice bank SysEx: 4104 bytes, 32 voices with their names  ok
+v9: a bank with a wrong checksum is read but flagged             ok
+v9: a bank cut short: its whole voices, flagged                  ok
+v9: a bank and a voice in one file: 33 voices                    ok
+v9: a message with no end: the next one still read               ok
+v9: raw data, two 4096-byte banks: 64 voices                     ok
+v9: 4-operator voices: none read, said so                        ok
+v9: another maker's SysEx: its ID                                ok
+v9: not SysEx at all: said so                                    ok
+v9: INFO ends with 10 (v10 includes v9), FM6 is engine 9         ok
+v9: FM6_LIST: 8 factory patches, 27 bank slots                   ok
+v9: FM6_PUT to track 2, FM6_GET reads it back                    ok
+v9: stored in bank slot B5, listed by name                       ok
+v9: bank writes refused while the song plays (rc 3)              ok
+v9: FM6_ERASE empties the slot (GET rc 2), a bad index is rc 1   ok
+v9: a v8 device says 8 and does not answer FM6_LIST (the editor hides the FM6 panel) ok
+backup: INFO protocol v6 or later                                ok
+backup: the object ids == editor.c ED_BK_IDS (35: USR4, 9: SYN kits, 10: MIDI LEARN) ok
+backup: LIST + GET: 14 objects (project in C, sample in USR2, B empty, the FM6 bank, the SYN kits, USR4) ok
+backup: restore -> the same bytes again (presets, projects, samples, settings) ok
+backup: a damaged file is refused before anything is written     ok
+backup: firmware without it says protocol 5 (the editor hides backup) ok
+roll: a note length in steps (1/4 at 1/16 = 4, 1BAR = 1, at least 1, triplets) ok
+roll: place a note, a chord on its first step, a second note     ok
+roll: a fifth note, or the same note twice: nothing changes      ok
+roll: a note inside a held chord ends it; owner()                ok
+roll: a long note stops before the next chord                    ok
+roll: drag a length: longer (ties, up to the next chord or the end), shorter (rests) ok
+roll: remove a chord's note; the last one leaves rests (ties too) ok
+midi: a track's steps -> notes (ties as lengths; velocity, level, accent as the device plays them) ok
+midi: write -> read: the same notes, tempo, name, channel        ok
+midi: read back onto the grid: the same chords and lengths, a clean report ok
+midi: a format 1 file from Python (480 ppq): 4 notes a step (loudest), merged, moved, cut short, past the end ok
+midi: a non-MIDI file is refused; a cut one reads what is there  ok
+midi: the drum track: lanes as GM notes and back, levels ghost..hard kept (drums.c LANE_OF_GM) ok
+midi: LANE_OF_GM == drums.c                                      ok
+song: the settings' song order (PER3, arr_defaults)              ok
+song: rows (a section n times) <-> entries                       ok
+song: encode keeps the rest of the settings                      ok
+song: valid == arranger.h arr_valid (1..16 entries, A..D, 1..64 bars) ok
+song: PER3, persist_t has the arrangement, 16 steps; a new order refused while playing (project.c) ok
+song: mock: read, send (rc 0), a bad one (rc 2), a new one while playing (rc 3) ok
+editor: the LEN control (1..64), the grid and roll redrawn when LEN changes ok
+dsyn: the 22 fields in dsnd_t's order (drum_synth.c)             ok
+dsyn: the lanes' notes == DS_LANE_NOTE                           ok
+dsyn: backup object 9 == dsu_bank_t (1464 bytes, DSU1)           ok
+dsyn: the mock's 32 kits == build/gen/felucca_drumkits.h         ok
+dsyn: decode / encode: all 512 factory sounds unchanged; out-of-range values into the firmware's ranges ok
+dsyn: the units (Hz, ms, cutoff, dB) as tools/gen_tables.py      ok
+dsyn: a kit file and the backup object, there and back; a wrong file refused ok
+dsyn: LIST (32 + 4, stored), GET SYN1 = the 808, GET a factory kit ok
+dsyn: PUT a sound, the name and crush, a factory copy; PLAY hears the edit; LIST: not stored ok
+dsyn: STORE while playing: rc 3; stopped: stored; PLAY of no lane: rc 1 ok
+dsyn: a backup holds the SYN kits (object 9); a restore puts them back ok
+midi learn: a backup holds the learned CCs and GLO > MIDI (object 10, only when not the default); a restore puts them back ok
+backup: a 2.6 one without object 10 resets MIDI LEARN and GLO > MIDI to the defaults (they were then) ok
+backup: the project format of an object, what a device reads (INFO), the firmware compared ok
+backup: 2.6 projects into a 2.5 FM-1: refused (bkNewer), nothing written ok
+dsyn: a v9 device says 9 (the page says it needs 2.5), no object 9 ok
+dsyn: a 2.5 backup restores into a v9 device (object 9 skipped)  ok
+midi learn: a 2.6 backup with learned CCs restores into an older device (object 10 skipped) ok
+cart: the bank object == fm6_bank_t (3472 bytes, FM6B, 27 slots); a bad one is refused ok
+cart: while the song plays: rc 3, the bank unchanged             ok
+cart: 3 voices -> B1-B3 in one write (B2 replaced, B5 kept, B4 still empty) ok
+cart: the first 27 of a 32-voice cartridge fill B1-B27; 32 at once refused ok
+cart: a backup holds the filled bank (object 8)                  ok
+cart: preset slots: the first free ones, or from a slot; null when they do not fit ok
+cart: a preset = FM6, the voice's name, PTCH = its B slot, the rest as given ok
+cart: user presets CART 1-3 in the free slots (FM6, PTCH B1-B3), the others kept; refused while the song plays ok
+cart: a device before v9: 'old' (the page says it needs 2.4)     ok
+editor: 10 tabs, one panel each (sound sequencer tracks song library samples kits drumsynth projects settings) ok
+editor: last tab in localStorage (try/catch) and in the URL hash ok
+editor: every string in ja and en (408 used)                     ok
+editor: page script compiles                                     ok
+editor: the track colours of the device (ui_studio.c TE_COL), colours only as tokens ok
+editor: ... the same four as the firmware's TE_COL               ok
+editor: the device's Terminus font inlined (tools/gen_webfont.py) ok
+editor: every icon name is in GLYPH (37 used)                    ok
+editor: fukiai.ttf and FUKIAI-LICENSE.txt next to editor.html    ok
+editor: icons hidden until the font has loaded                   ok
+samples: editor == sampleio.py (4 WAV formats, 7737 B)           ok
+chop: hits found (8 of 8, each within 3 ms of its attack)        ok
+chop: low sensitivity keeps the hard hits only                   ok
+chop: a TAP 35 ms late / 30 ms early lands on its hit; away from hits it stays ok
+chop: grid (16 beats at 90 BPM) and equal parts                  ok
+chop: chops end at the next marker or the max length             ok
+chop: one key each from C4, levels kept (a ghost stays quiet), faded in ok
+chop: one chop over the whole keyboard                           ok
+chop: slot header (8 zones, one key each)                        ok
+chop: WAV writer round trip                                      ok
+chop: ZIP of the WAVs (Python reads it)                          ok
+chop: options (left out, own length over the max, never past the next marker) ok
+chop: left-out chops: the kept ones on consecutive keys, files keep their numbers ok
+chop: 40 chops: the first 16 kept go to the slot; mode 1 the selected ok
+chop: 20 s recording, 10 chops kept: they fit                    ok
+chop: Fit to slot: 16 x 0.5 s cut to 0.461 s each, the slot builds ok
+chop: fit keeps short chops whole, cuts the long ones            ok
+fm1pkg.js logicalImage                                           ok
+fm1pkg.js productOf                                              ok
+fm1ota.js: install: running firmware -> loader -> Felucca (11 reads) ok
+fm1ota.js: recovery mode -> loader -> normal firmware            ok
+fm1ota.js: boot into recovery is not reported as successful installation ok
+fm1ota.js: unplugged during the write -> stops at once           ok
+fm1ota.js: unplugged in step 1 -> error code 'lost'              ok
+fm1ota.js: no device -> error code 'notfound'                    ok
+fm1ota.js: an FM-1 under CLIPPER (port 'Clipper') -> found and installed ok
+fm1ota.js: a port of other gear is left alone; 'not found' lists it (MIDI: Arturia KeyStep Pro) ok
+fm1ota.js: FM1_PORT takes the FM-1's names (SLOOP, CLIPPER, the loader, the stock firmware), not other gear ok
+fm1ota.js: another firmware's loader is never resumed ('foreign') ok
+fm1ota.js: return to official: its own loader resumed, V15 checked when back ok
+fm1ota.js: return to official: another firmware coming back is not 'done' ok
+fm1pkg.js: only the exact official V15 is accepted (SHA-256)     ok
+web tests passed

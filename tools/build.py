@@ -145,6 +145,10 @@ def build_loader():
     LDR.mkdir(parents=True, exist_ok=True)
     src = FW / "loader"
     flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src"]
+    # JamBox's loader clears only its known resume-record sector. The legacy
+    # Sloop target retains its separately audited compatibility behavior.
+    if os.environ.get("JAMBOX_PROTO") == "1":
+        flags.append("-DJAMBOX_PROTO=1")
     tc_all(("cc", "-c", src / "crt0_ldr.S", "-o", LDR / "crt0_ldr.o"),
            ("cc", *flags, "-c", src / "loader.c", "-o", LDR / "loader.o"))
     elf = LDR / "loader.elf"
@@ -174,7 +178,7 @@ def build_loader():
 
 def build_app():
     flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src", "-Ibuild/gen"]
-    for flag in ("FELUCCA_FLASH", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_CDC", "FELUCCA_UART",
+    for flag in ("FELUCCA_FLASH", "FELUCCA_PERSIST", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY", "FELUCCA_CDC", "FELUCCA_UART",
                  "FELUCCA_ICONS", "FELUCCA_SLICE", "JAMBOX_PROTO"):
         v = os.environ.get(flag)    # unset: the default in firmware/src/felucca.c
         if v in ("0", "1"):

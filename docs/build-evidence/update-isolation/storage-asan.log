@@ -1,0 +1,239 @@
+storage: ordinary boot detects flash independently of persistence                     ok
+storage: ordinary boot clears retained slots and dirty state                          ok
+storage: ordinary boot applies JamBox display defaults                                ok
+storage: ordinary boot uses default panel when flash has no calibration               ok
+storage: real instrument initializer creates the playable Dusty session               ok
+storage: ordinary boot does not modify any NOR byte                                   ok
+storage: foreign retained FUN6 slots and flash projects are not imported              ok
+storage: foreign user preset bank is not imported and RAM banks are empty             ok
+storage: foreign settings and valid retained preferences are discarded                ok
+storage: only validated foreign physical panel mapping is imported                    ok
+storage: foreign autosave and pending saves cannot replace fresh session              ok
+storage: valid foreign SYN/MIDI/lighting/USB preferences are not imported             ok
+storage: boot does not import foreign sample indexes or attach FM6 bank               ok
+storage: foreign retained/flash boot preserves all NOR bytes                          ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: private JamBox RAM snapshot remains readable before a reset                  ok
+storage: warm boot discards every different retained JamBox section                   ok
+storage: warm JamBox boot neither flushes nor migrates retained sections              ok
+storage: JamBox rejects checksum-valid FUN6 without touching the destination          ok
+storage: JamBox rejects checksum-valid historical FUN5 without destination mutation   ok
+storage: unknown JEDEC still clears retained app data without any raw flash read      ok
+storage: unrecognized flash identity falls back to default calibration                ok
+storage: unrecognized flash identity cannot enable app storage                        ok
+storage: audited calibration schema PER1 / 40 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER2 / 48 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER2 / 52 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 52 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 84 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 88 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1552 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1584 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1588 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1592 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER4 / 572 bytes accepted                         ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER5 / 764 bytes accepted                         ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: torn newer calibration copy falls back to intact older copy                  ok
+storage: A/B calibration fallback does not repair or write flash                      ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: forbidden explicit project operations preserve RAM section contents          ok
+storage: preset PUT/erase/store return explicit disabled status                       ok
+storage: preset UI erase reports disabled                                             ok
+storage: preset UI save reports disabled                                              ok
+storage: forbidden preset operations preserve RAM banks                               ok
+storage: idle autosave and resume cannot claim a stored working project               ok
+storage: SAVE/autosave/settings/pre-reset flush cannot mutate NOR                     ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: direct app hooks and object storage cannot bypass session policy             ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: backup list advertises disabled, empty inventory                             ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: backup GET returns disabled with no data                                     ok
+storage: all forbidden editor writes preserve RAM projects/preset/drum banks          ok
+storage: direct sample/FM6/SYN helpers also refuse storage beneath the dispatcher     ok
+storage: all editor save/sample/backup/FM6/drum-store paths preserve NOR              ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor synth parameter editing still changes the live RAM sound              ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor step recording remains editable in RAM                                ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor FM6 track patch remains editable in RAM                               ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor synthesized drum kit remains editable in RAM                          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor never reports RAM drum kits as stored                                 ok
+storage: allowed live editor edits still cannot modify NOR                            ok
+storage: physical page ERASE rejects without arming                                   ok
+storage: physical page SAVE rejects without arming                                    ok
+storage: physical page ERASE rejects without arming                                   ok
+storage: physical page SAVE rejects without arming                                    ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: song-screen REC refuses a persistent section capture                         ok
+storage: song-screen SAVE refuses persistent storage                                  ok
+storage: disabled serial preference cannot offer a reboot-only change                 ok
+storage: settings menu labels temporary preferences truthfully                        ok
+storage: physical save gestures cannot mutate RAM sections or user banks              ok
+storage: physical UI settings/save/erase gestures preserve NOR                        ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: real updater erase hook rejects protected/misaligned sectors                 ok
+storage: rejected OTA hook requests do not reach raw NOR writers                      ok
+storage: updater hooks refuse writes without validated flash identity                 ok
+storage: missing flash identity cannot alter staging or protected data                ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may program first and last bounded staging bytes                ok
+storage: only requested bounded updater mutations reached raw flash hooks             ok
+storage: allowed update staging preserves every byte outside its 20 KiB window        ok
+storage: updater staging readback uses the actual shared flash read hook              ok
+JamBox temporary-session storage: 238 checks, 0 failures

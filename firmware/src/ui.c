@@ -705,7 +705,11 @@ static void ml_toggle(void)                      /* GLO + F#3 */
     mlu.pick = 0;
     ml_arm = 0;
     ml_heard = 0;
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    ui_message(mlu.on ? "LEARN: TURN A KNOB" : "LEARN DONE (RAM)");
+#else
     ui_message(mlu.on ? "LEARN: TURN A KNOB" : "LEARN DONE");
+#endif
     ui.force = 1;
 }
 /* a knob turned parameter id of track t: picked while learning (ui_input.c) */

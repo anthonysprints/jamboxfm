@@ -22,7 +22,11 @@ static void ed_fm6_name(const uint8_t *pk)       /* the record's name, trailing 
 /* a bank write: 0 ok, 1 bad slot, 2 flash (or a backup restore holds the staging RAM), 3 stop the song first */
 static uint32_t ed_fm6_bank_write(uint32_t k, const uint8_t *pk)
 {
-#if FELUCCA_FLASH
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    (void)k;
+    (void)pk;
+    return ED_STORAGE_DISABLED;
+#elif FELUCCA_FLASH
     int r;
     if (ed_flash_busy())
         return 3;

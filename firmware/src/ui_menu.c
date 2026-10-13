@@ -41,7 +41,13 @@ static const char *mi_value(uint32_t i, uint16_t *c)
     case MI_NOTES: return lights_notes ? "ON" : "OFF";
     case MI_LOWCUT: return settings.lowcut ? "ON" : "OFF";
     case MI_USB: return usb_full ? "FULL" : "MASTER";
-    case MI_SERIAL: return usb_serial ? "ON" : "OFF";
+    case MI_SERIAL:
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+        *c = C_DIM;
+        return "UNAVAILABLE";                            /* only takes effect after a persisted restart */
+#else
+        return usb_serial ? "ON" : "OFF";
+#endif
     case MI_LCLEAR: {                                 /* (2.6) the CCs MIDI LEARN holds; OCT+ clears them */
         static char b[8];
         uint32_t n = ml_count();
@@ -71,7 +77,11 @@ static void draw_menu(void)
     if (ui.force)                                   /* head + rule + two bands cover rows 0..229 */
         lcd_fill(0, H_HEAD + 1 + 124 + 95, 240, 240 - (H_HEAD + 1 + 124 + 95), C_BLACK);
     cv_begin(240, H_HEAD, C_BLACK);
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    cv_text(4, 1, &FONT_S, ui.menu == 2 ? "ABOUT" : "MENU: RAM ONLY", C_HI);
+#else
     cv_text(4, 1, &FONT_S, ui.menu == 2 ? "ABOUT" : "MENU", C_HI);
+#endif
     if (ui.menu != 2) {                             /* the section and its number, as a page's "ENV DEST 2/2" */
         char t[16];
         str_cpy(t, MS_NAME[sec], sizeof t);
@@ -134,8 +144,10 @@ static void draw_menu(void)
                     for (q = 0; q < 5u; q++)
                         cv_rect(xv + 10 + (int32_t)q * 14, y + 28, 10, 10, pal[q]);
                 }
+#if !defined(FELUCCA_PERSIST) || FELUCCA_PERSIST
                 if (i == MI_SERIAL && usb_serial != usb_cdc_now())
                     cv_text(xv + 8, y + 30, &FONT_S, "RESTART", C_AMB);   /* (usb.c: at the next start) */
+#endif
             }
             cv_text(4, MI_Y0 + 3 * MI_DY + 6, &FONT_S, "SELECT SECTION  KNOB SETS", C_DIM);
             cv_text(4, MI_Y0 + 3 * MI_DY + 22, &FONT_S, "OCT+ OK   OCT- CLOSE", C_DIM);   /* (rows .. 218) */
@@ -154,13 +166,20 @@ static void enc_drop(void)                             /* knob turns nobody take
 
 static void menu_close(void)
 {
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    settings_later = 0;
+#else
     if (song.playing || transport_req)
         settings_later = 1;                            /* (a flash write stops the audio: once stopped) */
     else
         settings_save();                               /* palette / panel table, if changed */
+#endif
     ui.menu = 0;
     ui.force = 1;
     go_home();
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+    ui_message("SETTINGS IN RAM ONLY");
+#endif
 }
 
 /* item i: a knob turned s (> 0 right, < 0 left), or 0: OCT+ (steps round, toggles, or opens) */
@@ -182,7 +201,11 @@ static void mi_set(uint32_t i, int32_t s)
         usb_full = (uint8_t)(s > 0 ? 1u : s < 0 ? 0u : !usb_full);
         break;
     case MI_SERIAL:
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+        ui_message("STORAGE DISABLED");
+#else
         usb_serial = (uint8_t)(s > 0 ? 1u : s < 0 ? 0u : !usb_serial);
+#endif
         break;
     case MI_NOTES:
         lights_notes = (uint8_t)(s > 0 ? 1u : s < 0 ? 0u : !lights_notes);
@@ -203,7 +226,11 @@ static void mi_set(uint32_t i, int32_t s)
     }
     case MI_LCLEAR:                                    /* (2.6) every learned CC: OCT+ */
         if (!s)
+#if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
+            ui_message(ml_clear_all() ? "LEARN CLEARED (RAM)" : "NOTHING LEARNED");
+#else
             ui_message(ml_clear_all() ? "LEARN CLEARED" : "NOTHING LEARNED");
+#endif
         break;
     case MI_PANEL:                                     /* actions: OCT+ only */
         if (!s) {
