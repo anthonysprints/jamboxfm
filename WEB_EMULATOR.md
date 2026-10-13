@@ -74,15 +74,18 @@ ordinary remote HTTP hosting is insufficient.
 
 Publish **the contents of `build/jambox-web/`** as a static HTTPS site.
 The [GitHub Pages workflow](GITHUB_PAGES.md) uses a dedicated `gh-pages`
-branch and the existing cloud Git connection for repeatable updates.
+branch in the public [anthonysprints/jamboxfm repository](https://github.com/anthonysprints/jamboxfm)
+and the existing cloud Git connection for repeatable updates.
 All runtime URLs are relative, so a repository subdirectory works. The
-resulting site opens the instrument at `emu/`.
+target address is `https://anthonysprints.github.io/jamboxfm/emu/`.
 
-Do not select the inherited `docs/` directory as a Pages source: it still
-contains Sloop's original installer and firmware. The isolated publication
-root contains only the JamBox browser instrument, its source and notices.
+Do not select `docs/` as a Pages source. The source branch excludes Sloop's
+original generated installer and firmware; older workspaces may retain them.
+The isolated publication root contains only the JamBox browser instrument,
+its source and notices.
 Packaging creates files locally; it does not push, enable Pages or publish
-a URL. No public JamBox deployment is configured or verified by this task.
+a URL. Confirm the Pages deployment and load the published HTML, JavaScript
+and WASM before reporting that the site is live.
 
 Keep the source download and license files beside any published binary.
 The standalone HTML carries its own corresponding-source download and
