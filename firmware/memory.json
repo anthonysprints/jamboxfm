@@ -1,32 +1,32 @@
 {
   "app": {
     "flash_slot_bytes": 581564,
-    "flash_spare_bytes": 30528,
-    "image_bytes": 551036,
+    "flash_spare_bytes": 24320,
+    "image_bytes": 557244,
     "regions": {
       "NOINIT": {
         "capacity_bytes": 15696,
         "minimum_spare_bytes": 0,
         "origin": 29868032,
-        "span_bytes": 15464,
-        "spare_bytes": 232,
-        "used_bytes": 15464
+        "span_bytes": 13952,
+        "spare_bytes": 1744,
+        "used_bytes": 13952
       },
       "POOL": {
         "capacity_bytes": 344064,
         "minimum_spare_bytes": 8192,
         "origin": 29491200,
-        "span_bytes": 324580,
-        "spare_bytes": 19484,
-        "used_bytes": 324580
+        "span_bytes": 325348,
+        "spare_bytes": 18716,
+        "used_bytes": 325348
       },
       "RAM": {
         "capacity_bytes": 98304,
         "minimum_spare_bytes": 4096,
         "origin": 29392896,
-        "span_bytes": 80744,
-        "spare_bytes": 17560,
-        "used_bytes": 80744
+        "span_bytes": 87944,
+        "spare_bytes": 10360,
+        "used_bytes": 87944
       },
       "RAMTEXT": {
         "capacity_bytes": 24576,
@@ -40,15 +40,15 @@
         "capacity_bytes": 581564,
         "minimum_spare_bytes": 0,
         "origin": 33554720,
-        "span_bytes": 551036,
-        "spare_bytes": 30528,
-        "used_bytes": 551036
+        "span_bytes": 557244,
+        "spare_bytes": 24320,
+        "used_bytes": 557244
       }
     },
     "sections": [
       {
         "address": 33554720,
-        "bytes": 545340,
+        "bytes": 551548,
         "name": ".text",
         "region": "XIP"
       },
@@ -66,19 +66,19 @@
       },
       {
         "address": 29395808,
-        "bytes": 77832,
+        "bytes": 85032,
         "name": ".bss",
         "region": "RAM"
       },
       {
         "address": 29491200,
-        "bytes": 324580,
+        "bytes": 325348,
         "name": ".pool",
         "region": "POOL"
       },
       {
         "address": 29868032,
-        "bytes": 15464,
+        "bytes": 13952,
         "name": ".noinit",
         "region": "NOINIT"
       }
@@ -130,8 +130,8 @@
   },
   "schema_version": 1,
   "sha256": {
-    "app_bin": "56e35b9652590430f664c25152f40ac7247f87bde2a57080b235f0295cd7cfb7",
-    "app_elf": "a0a0d7e7abbdb5fd12ae5ce48deaa8bf2cf79826a2a9e24c2caf99114d218500",
+    "app_bin": "382c4527294d046383df486af1d5a18b201cc38fd29622e34ae606f6e4947a71",
+    "app_elf": "312b0732aaa240eb876290e64ed39c7da843cd6ea72cdc3ad2c6bb3293c3e295",
     "loader_bin": "061e2f1db1ccfe75c3d5ad9f5b7348a66f384d08897f88d8db9beace2d3b92eb",
     "loader_elf": "640272884cd9856337fdb6703290b2ec8587c2197a047042d23274ec5921d447",
     "ota_bin": "ab1e368dd10ffe8dd1ccfdc03bc235df8992ee5961b20e056ae55079b7659d7e"
