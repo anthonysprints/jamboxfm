@@ -15,12 +15,21 @@ shortcuts. **All notes off** releases notes and stops playback. Browser
 sessions are temporary: reloading loses edits and recorded notes. This
 page does not install firmware or access an attached FM-1.
 
-The Dusty session starts Lead in **SNAP** mode: every key plays a note in
-the chosen scale, including the black keys. Neighboring keys can share a
-pitch. To change this, select Lead, tap **SEL**, and adjust **QNT** with
-the third small knob: **OFF** plays normal keyboard notes, **SNAP** stays
-in scale, and **WHITE** uses only white keys. In Chords mode, white keys
-play chords and black keys modify a chord while a white key is held.
+The Dusty session starts Chords and Lead in **SNAP** mode: every key works,
+including the black keys. Chords starts with **7TH** chord building; Lead
+starts with **CHORD OFF** for single notes. Neighboring keys can share a root.
+Select a melodic part and tap **SEL**. If SEL 2 opens, turn **SELECT** one click
+left to reach the first SEL page. Use small knobs 1–4 for **ROOT**,
+**SCL**, **QNT** and **CHORD**. QNT **OFF** uses the printed notes; **SNAP**
+rounds out-of-scale roots down into the scale; **WHITE** maps white keys to
+scale degrees and reserves black keys for chord modifiers when CHORD is on.
+**MAJOR**, **MINOR** and **DIM** build a chosen shape from the root; **TRIAD**
+and **7TH** choose their notes from the scale. Enabling CHORD sets POLY voices
+so Lead and Bass can sound the full chord; turning it off leaves POLY selected.
+From SEL's first page, turn SELECT one click for SEL 2, then use small knob 2
+for STRUM and knob 3 for INVERT (ROOT/AUTO/+1/+2/+3). See the
+[chord builder guide](CHORD_BUILDER.md) for examples, lights and the remaining
+planned Assist features.
 
 ## Build and package
 
@@ -51,8 +60,9 @@ Run the emulator's native contracts, build and real Chromium checks with:
 sh tests/run_jam_emu_tests.sh
 ```
 
-The native suite exercises 27 contracts, including physical key/button
-release order, LCD drawing and recording. Chromium exercises actual
+The native suite exercises 78 contracts, including physical key/button
+release order, LCD drawing, recording, black-key chord roots, chord lights,
+automatic polyphony and inversion controls. Chromium exercises actual
 AudioWorklet sound, panel controls, the live screen and desktop/mobile
 layout. After packaging, `node tests/jam_emu_browser.mjs` also exercises
 the standalone HTML while blocking every network request after its initial

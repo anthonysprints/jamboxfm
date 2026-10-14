@@ -4,9 +4,16 @@ Shared implementation: `/workspace/jamboxfm/firmware/src/jam_palette.c`, include
 
 ## Session and role routing
 
-`jam_new_dusty()` returns 1 only when transport, count-in, and first-take capture are stopped; it never starts playback. It produces 88 BPM, straight timing, 32 sixteenth-note steps per track (two bars), root C/minor, a ready drumbeat, and empty playable melodic patterns. Selected internal track 1 is CHORDS. Existing Sloop seventh-chord and WHITE scale helpers are enabled on chords; SNAP scale helper is enabled on lead. Arpeggiators and inserts are off. These are existing helpers, not the planned JamBox Assist/ownership contract. The proposed root/chord-shape changes are recorded in [First device feedback](FIRST_DEVICE_FEEDBACK.md).
+`jam_new_dusty()` returns 1 only when transport, count-in, and first-take capture are stopped; it never starts playback. It produces 88 BPM, straight timing, 32 sixteenth-note steps per track (two bars), root C/minor, a ready drumbeat, and empty playable melodic patterns. Selected internal track 1 is CHORDS. The chord-builder follow-up changes Chords from WHITE to SNAP while keeping 7TH; Lead keeps SNAP with CHORD OFF. Every black key can therefore start a note or chord under these defaults. Arpeggiators and inserts are off. These settings use the existing per-track parameters; the broader master Assist/timing/persistence contract remains future work. See [Chord builder](CHORD_BUILDER.md) and [First device feedback](FIRST_DEVICE_FEEDBACK.md) for the new mapping and its validation status.
 
 Display order DRUMS/BASS/CHORDS/LEAD maps to internal track 3/0/1/2. Track 0 bass and track 2 lead use V_LEGATO; track 1 chords uses V_POLY. Every melodic track uses ANALOG engine 0. Synth voice sharing remains the upstream eight-voice allocator. The audition phrase reached six busy synth voices; that is an observed phrase result, not a new six-voice cap. Six dedicated drum voices remain upstream behavior.
+
+The chord-builder follow-up selects V_POLY when CHORD is enabled on any melodic
+part, including Bass and Lead; curated sound loads retain POLY while chords
+are enabled. CHORD OFF leaves the resulting voice mode unchanged. These edits
+do not change a fresh Dusty session's Bass/Lead legato defaults or enlarge the
+shared voice pool. SEL 2's INVERT replaces the old VLEAD label, retaining its
+ROOT/AUTO values and adding three manual inversion steps.
 
 New clears the preceding session's lane mutes, erase state, held key/MIDI/sustain/bend ownership, queued MIDI/step/program/audition events, prior voice-leading context, rolls, punch request, and musical globals including master tuning and texture settings. Physical keys still down must be lifted before they can enter the new session. Existing short sound/punch fades and effects tails are allowed to decay; large audio rings are not cleared with interrupts disabled. Device MIDI routing/channels/sync/bend range and master volume are retained. No settings or flash writes occur.
 

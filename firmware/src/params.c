@@ -58,7 +58,10 @@ static const char *const N_SYNC[] = {"INT", "USB", "TRS"};   /* G_SYNC: the temp
 static const char *const N_GO[] = {"--", "GO"};
 static const char *const N_SLCR[] = {"OFF", "GATE", "STUT"};             /* SL_OFF .. SL_STUT (slicer.c) */
 static const char *const N_SLDIV[] = {"1/8", "1/16", "1/32", "8T", "16T", "32T"};   /* SL_DEN */
-static const char *const N_CHORD[] = {"OFF", "TRIAD", "7TH", "9TH", "SUS4", "POWER"};   /* seq.c CHORD_DEG */
+/* Append only: stored IDs 0..5 retain their scale-built / POWER meanings. */
+static const char *const N_CHORD[] = {"OFF", "TRIAD", "7TH", "9TH", "SUS4", "POWER", "MAJOR", "MINOR", "DIM"};
+/* P_VLEAD keeps 0/1 compatible; manual inversions append without moving IDs. */
+static const char *const N_INVERT[] = {"ROOT", "AUTO", "+1", "+2", "+3"};
 static const char *const N_ROLL[] = {"1/8", "1/16", "1/32", "32T", "1/64"};   /* seq.c ROLL_DEN */
 static const char *const N_ENGNAME[] = {"ANALOG", "DIGITAL", "PHASE", "LOFI", "SAMPLE", "VOICE", "TRIO", "WHEEL", "GRAIN",
                                         "FM6", "PHYS", "NOISE",
@@ -123,7 +126,7 @@ static const param_desc_t TP[P_COUNT] = {
     [P_CHORD] = PE("CHORD", N_CHORD, 0),
     [P_TFLT] = PD("FILT", F_FILT, -64, 63, 0),
     [P_STRUM] = PD("STRUM", F_INT, -60, 60, 0),   /* ms a note: > 0 low to high (down), < 0 high to low */
-    [P_VLEAD] = PE("VLEAD", N_ONOFF, 0),
+    [P_VLEAD] = PE("INVERT", N_INVERT, 0),
     /* 2.6, after Felucca 1.5 / 1.4. The INSERT (fx.c track_insert): TYPE OFF = as before. A B C as the editor
      * protocol names them; the device shows the type's own labels (ins_desc) */
     [P_ITYPE] = PE("INSRT", N_ITYPE, 0),
@@ -137,6 +140,17 @@ static const param_desc_t TP[P_COUNT] = {
     [P_LTRIG] = PE("TRIG", N_LTRIG, 0),
     [P_LPOL] = PE("POL", N_LPOL, 0),
 };
+/* Selecting a chord must make its notes audible, including on Bass and Lead.
+ * OFF leaves the chosen voice mode alone; a new Dusty session restores defaults. */
+static void chord_mode_set(track_t *t, int32_t value)
+{
+    t->p[P_CHORD] = (int16_t)clamp(value, TP[P_CHORD].min, TP[P_CHORD].max);
+#if JAMBOX_PROTO
+    if (t->p[P_CHORD] && !is_drum(t))
+        t->p[P_VOICE] = V_POLY;
+#endif
+}
+
 /* a preset's extra parameters (preset_t.x) into p, each clamped to its range */
 static void preset_extras(int16_t *p, const preset_t *pr)
 {

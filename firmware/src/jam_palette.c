@@ -189,7 +189,7 @@ static void jam_sound_write(uint32_t track, uint32_t index)
         for (i = 0; i < 4u; i++) t->p[P_ATK + i] = p->env[i];
         t->p[P_ED_FLT] = p->fenv;
         t->p[P_TRANS] = p->transpose;
-        t->p[P_VOICE] = track == 1u ? V_POLY : V_LEGATO;
+        t->p[P_VOICE] = track == 1u || t->p[P_CHORD] ? V_POLY : V_LEGATO;
         t->p[P_LRATE] = p->lrate;
         t->p[P_LTRIG] = 1;              /* free-running, gentle sine movement */
         t->p[P_CHOR] = track == 1u ? 12 : 0;
@@ -283,8 +283,7 @@ int jam_new_dusty(void)
         t->p[P_ROOT] = 0;
         t->p[P_SCALE] = 2;            /* C minor; upstream helpers for this first slice */
         if (k == 1u) t->p[P_CHORD] = 2;
-        if (k == 1u) t->p[P_QUANT] = 2;
-        if (k == 2u) t->p[P_QUANT] = 1; /* SNAP: every lead key plays within the scale */
+        if (k == 1u || k == 2u) t->p[P_QUANT] = 1; /* SNAP: every chord/lead key plays within the scale */
         if (k < NPART) t->p[P_LEVEL] = level[k];
         jam_sound_write(k, 0);
     }

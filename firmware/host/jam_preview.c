@@ -2,6 +2,7 @@
 /* JamBox browser entry point. Keep Sloop's preview adapter unchanged. The
  * audio worklet is the sole owner of this instance and calls these functions
  * between render blocks; local pads use the firmware keyboard path. */
+#define JAMBOX_PROTO 1
 #include "preview.c"
 #include "../src/jam_palette.c"
 

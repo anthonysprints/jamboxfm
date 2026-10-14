@@ -4,6 +4,18 @@ Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty
 
 The user-facing requirements are in [PRODUCT_BRIEF.md](../PRODUCT_BRIEF.md). Source evidence, executed checks, and remaining uncertainties are in [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md). Bring-up and release gates are in [VALIDATION_PLAN.md](VALIDATION_PLAN.md).
 
+The October 14 chord-builder follow-up implements a narrower part of section 4:
+QNT controls OFF/SNAP/WHITE independently of CHORD, MAJOR/MINOR/DIM add fixed shapes,
+and local keyboard chords retain their resolved notes through release. Enabling
+CHORD selects POLY on melodic parts, and SEL 2 exposes ROOT/AUTO/+1/+2/+3
+inversions beside the existing STRUM control. Dusty Chords now defaults to SNAP.
+The [current chord controls](CHORD_BUILDER.md)
+and [first-device feedback](FIRST_DEVICE_FEEDBACK.md) distinguish this work from
+the remaining master Assist, external-MIDI/playback ownership, new-input-only
+setting changes, timing correction, sequencer Home and persistence proposals.
+Validation of this new chord build is pending; earlier owner-reported device
+success applies to the preceding controls update.
+
 ## 1. Main decision: use Sloop's device engine as the first baseline
 
 Pin `isod89/sloop-fm1` at `8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e` for the first branch of implementation.
@@ -102,6 +114,12 @@ Muted parts and zero effect sends do not automatically free CPU or buffers. If n
 - Provisional hardware target: sustained total audio-interrupt duration p99 below 70% of the half-buffer deadline, maximum below 85%, and no underruns or overload-triggered shedding under the supported palette stress case. Include nested timer/USB work; the displayed smoothed CPU percentage subtracts that work and is insufficient. These are acceptance targets, not current measurements or guarantees. Fading voices still cost CPU, and the synth-shedding routine does not shed the independent drums.
 
 ## 4. Input-only Assist with reliable note release
+
+The following remains the full target contract. The current chord-builder
+increment uses the existing SEL pages, adds fixed shapes and manual inversions,
+selects POLY for full chords, and corrects the local keyboard mapping/overlap
+behavior. It does not implement the master switch,
+external source tokens or all live-versus-sequencer ownership described below.
 
 Provide a master Assist switch, per-part enable state, and separate one-key-chord, scale, and timing choices. Defaults: chord help on the Chords part, scale help on Lead, gentle record correction. A global bypass preserves the stored individual choices.
 

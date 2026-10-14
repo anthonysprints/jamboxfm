@@ -760,6 +760,8 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
                 set_engine((uint32_t)clamp(ed_rv(a + 2), 0, NENGINES - 1));
             } else if (d->max > d->min) {
                 *vp = (int16_t)clamp(ed_rv(a + 2), d->min, d->max);
+                if (a[0] == 0 && a[1] == P_CHORD)
+                    chord_mode_set(TSEL, *vp);
             }
             ui.force = 1;
             ed_w.v[a[0] ? P_COUNT + a[1] : a[1]] = *vp;   /* the editor's own change: no push */

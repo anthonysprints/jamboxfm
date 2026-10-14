@@ -883,7 +883,7 @@ int main(int argc, char **argv)
         track_t *t = &trk[1];
         song.sel = 1; go_home(); frames(2);
         steps_clear(t); t->p[P_SLEN] = 16; t->p[P_VOICE] = V_POLY;
-        t->p[P_ROOT] = 0; t->p[P_SCALE] = 1; t->p[P_QUANT] = 0; t->p[P_CHORD] = 1;   /* C major, TRIAD */
+        t->p[P_ROOT] = 0; t->p[P_SCALE] = 1; t->p[P_QUANT] = 2; t->p[P_CHORD] = 1;   /* C major, TRIAD, WHITE modifiers */
         for (j = 0; j < NPAGES; j++) if (!strcmp(PAGES[j].title, "STEP")) break;
         open_family(FAM_SEQ); ui.page = (uint8_t)j; ui.fam_last[FAM_SEQ] = (uint8_t)j; page_entered(); ui.force = 1; frames(2);
         cursor_set(0); frames(1);
@@ -897,6 +897,14 @@ int main(int argc, char **argv)
         t->p[P_CHORD] = 0;
         key(k5); frames(2);
         check(t->step[2].n == 1u && t->step[2].note[0] % 12u == 0u, "STEP page, no chord mode: one note");
+        /* Entry may precede the audio key event; its fallback must keep the chosen inversion. */
+        t->p[P_QUANT] = 1; t->p[P_ROOT] = 3; t->p[P_CHORD] = 6; t->p[P_VLEAD] = 2;
+        song.octave = 0; t->p[P_TRANS] = 0;
+        cursor_set(3); frames(1);
+        key(10); frames(2);
+        check(t->step[3].n == 3u && t->step[3].note[0] == 67 && t->step[3].note[1] == 70 && t->step[3].note[2] == 75,
+              "STEP page, SNAP D# MAJOR +1: records G A# D# in the chosen inversion");
+        t->p[P_CHORD] = t->p[P_VLEAD] = 0;
         steps_clear(t); song.sel = 0; go_home(); frames(4);
     }
     {   /* the visualiser (2.4): HOME on HOME opens it, SELECT its 12 styles, HOME / a page closes it; a layer

@@ -351,13 +351,14 @@ static void t_chords(void)
     reset(120);
     trk[0].p[P_ROOT] = 0;
     trk[0].p[P_SCALE] = 2;                           /* C minor */
+    trk[0].p[P_QUANT] = 2;                           /* explicit WHITE degree layout */
     trk[0].p[P_CHORD] = 3;                           /* 9TH: 1 3 7 9 */
     n = chord_notes(&trk[0], kb_map(&trk[0], 7), c); /* C4: i */
     check(n == 4u && c[0] == 60 && c[1] == 63 && c[2] == 70 && c[3] == 74, "chord 9TH on C4 in C minor: C Eb Bb D");
     trk[0].p[P_CHORD] = 1;
     n = chord_notes(&trk[0], kb_map(&trk[0], 9), c); /* D4: ii (dim) */
     check(n == 3u && c[0] == 62 && c[1] == 65 && c[2] == 68, "chord TRIAD on D4 in C minor: D F Ab");
-    check(kb_map(&trk[0], 8) == KB_SILENT, "chord mode: the black keys are silent");
+    check(kb_map(&trk[0], 8) == KB_SILENT, "WHITE chord mode: the black keys are modifiers");
 }
 
 /* CHORD+ (2.4): the black keys modify the chord of a white key (major / minor, 7th, sus4, 9th, inversion), also
@@ -400,6 +401,7 @@ static void t_chordplus(void)
     trk[0].p[P_ROOT] = 0;
     trk[0].p[P_SCALE] = 1;                           /* C major */
     trk[0].p[P_CHORD] = 1;                           /* TRIAD */
+    trk[0].p[P_QUANT] = 2;                           /* CHORD+ modifiers belong to WHITE */
     trk[0].p[P_STRUM] = 0;
     trk[0].p[P_VLEAD] = 0;
     trk[0].p[P_AMODE] = 0;
@@ -1438,7 +1440,7 @@ static void t_arp191(void)
         uint32_t want = 0;
         reset(120);
         song.sel = 0; song.octave = 0;
-        t->p[P_AMODE] = 1; t->p[P_AHOLD] = 0; t->p[P_AOCT] = 1; t->p[P_APROB] = 127; t->p[P_QUANT] = 0;
+        t->p[P_AMODE] = 1; t->p[P_AHOLD] = 0; t->p[P_AOCT] = 1; t->p[P_APROB] = 127; t->p[P_QUANT] = 2;
         t->p[P_TRANS] = 0; t->p[P_ROOT] = 0; t->p[P_SCALE] = 0; t->p[P_CHORD] = 1; t->p[P_VLEAD] = 0;
         keys(1u << 7);                                  /* C4 held: C minor triad (chromatic: 60 63 67) */
         arp_notes(t, 300);

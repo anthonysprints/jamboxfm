@@ -192,21 +192,21 @@ static int kb_scaled(const track_t *t)
     return 1;
 }
 /* key k's note on a scaled track with the octave buttons at oct (KB_SILENT: none): QNT, ROOT, SCALE, TRN as they are
- * now. WHITE (and chord mode): the white keys walk the scale from C4 = the root, the black keys are silent; SNAP: every
+ * now. WHITE: the white keys walk the scale from C4 = the root, the black keys are silent; SNAP: every
  * key, rounded down into the scale. The keys (kb_map), and the notes the arp holds (arp_next, 2.6 after Felucca 1.5
  * #191: a latched chord follows TRN, ROOT, SCALE and QNT, in the octave its keys were pressed in) */
 static uint32_t kb_pitch(const track_t *t, uint32_t k, int32_t oct)
 {
     static const int8_t DEGREE[12] = {0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6};
     int32_t n = 53 + (int32_t)k;
-    if (t->p[P_QUANT] == 1 && !t->p[P_CHORD]) {  /* SNAP: every key, rounded down to the scale (the old ON) */
+    if (t->p[P_QUANT] == 1) {                  /* SNAP: every root, rounded down before building a chord */
         uint32_t mask = scale_mask(t), guard = 12;
         n += 12 * oct + t->p[P_TRANS];
         while (guard-- && !((mask >> (uint32_t)((n - t->p[P_ROOT] + 120) % 12)) & 1u))
             n--;
         return (uint32_t)clamp(n, 0, 127);
     }
-    if (t->p[P_QUANT] == 2 || t->p[P_CHORD]) {   /* WHITE: white keys walk the scale, black keys are silent */
+    if (t->p[P_QUANT] == 2) {                  /* WHITE: white keys walk the scale, black keys are silent */
         uint32_t mask = t->p[P_CHORD] && !t->p[P_SCALE] ? SCALE_MASK[2] : scale_mask(t), i;
         int32_t count = 0, degree = DEGREE[n % 12], wo;
         if (degree < 0)
@@ -247,7 +247,8 @@ static uint32_t kb_map(const track_t *t, uint32_t k)
     return kb_pitch(t, k, song.octave);
 }
 
-/* chord mode (P_CHORD): the chord of the scale built on note n (in the scale; CHR: minor), into c[];
+/* chord mode (P_CHORD): build on the already-mapped root n, never quantise the result. IDs 0..5
+ * retain their scale-built meanings (CHR: minor); appended MAJ/MIN/DIM use fixed semitone intervals.
  * the notes it holds (<= 4, the most a step keeps) */
 static const int8_t CHORD_DEG[6][4] = {
     {0, -1, -1, -1},                     /* OFF */
@@ -259,13 +260,13 @@ static const int8_t CHORD_DEG[6][4] = {
 };
 static uint32_t chord_notes(const track_t *t, uint32_t n, uint8_t *c)
 {
-    uint32_t type = (uint32_t)clamp(t->p[P_CHORD], 0, 5), mask = t->p[P_SCALE] ? scale_mask(t) : SCALE_MASK[2];
+    uint32_t type = (uint32_t)clamp(t->p[P_CHORD], 0, TP[P_CHORD].max), mask = t->p[P_SCALE] ? scale_mask(t) : SCALE_MASK[2];
     uint32_t k = 0, j;
-    if (type == 5u) {
-        static const uint8_t PW[3] = {0, 7, 12};
+    if (type >= 5u) {
+        static const uint8_t SHAPE[4][3] = {{0, 7, 12}, {0, 4, 7}, {0, 3, 7}, {0, 3, 6}};
         for (j = 0; j < 3u; j++)
-            if (n + PW[j] < 128u)
-                c[k++] = (uint8_t)(n + PW[j]);
+            if (n + SHAPE[type - 5u][j] < 128u)
+                c[k++] = (uint8_t)(n + SHAPE[type - 5u][j]);
         return k;
     }
     for (j = 0; j < 4u && CHORD_DEG[type][j] >= 0; j++) {
@@ -281,7 +282,7 @@ static uint32_t chord_notes(const track_t *t, uint32_t n, uint8_t *c)
     return k;
 }
 
-/* CHORD+ (2.4, after HiChord / minichord): in chord mode the black keys are modifiers. Held while a white key
+/* CHORD+ (2.4, after HiChord / minichord): only in WHITE chord mode the black keys are modifiers. Held while a white key
  * plays (or pressed while it is held: the chord changes under the finger), they change its chord: F# flips its
  * third (major <-> minor), G# adds the 7th, A# makes it sus4, C# adds the 9th, D# inverts it (its lowest note an
  * octave up); several at once combine. P_VLEAD ON voices each chord nearest the last one played on the track. */
@@ -317,12 +318,12 @@ static void sort_notes(uint8_t *c, uint32_t n)
             uint8_t x = c[b]; c[b] = c[b - 1u]; c[b - 1u] = x;
         }
 }
-/* the chord of white key n with the modifiers held, voiced (VLEAD); its notes (<= 4) into c[] */
-static uint32_t chord_play_notes(track_t *t, uint32_t n, uint32_t mods, uint8_t *c)
+/* the chord of root n with the WHITE modifiers held, voiced (VLEAD); its notes (<= 4) into c[] */
+static uint32_t chord_voice_notes(const track_t *t, uint32_t n, uint32_t mods, uint8_t *c, int remember)
 {
-    uint32_t k = chord_notes(t, n, c), j, type = (uint32_t)clamp(t->p[P_CHORD], 0, 5), part = trk_index(t);
+    uint32_t k = chord_notes(t, n, c), j, type = (uint32_t)clamp(t->p[P_CHORD], 0, TP[P_CHORD].max), part = trk_index(t);
     if (type != 5u && k >= 2u && mods) {                /* (POWER: the inversion only) */
-        uint32_t third = scale_up(t, n, 2u);
+        uint32_t third = type >= 6u ? c[1] : scale_up(t, n, 2u);
         for (j = 0; j < k; j++) {
             if (c[j] == third && (mods & CM_SUS4))
                 c[j] = (uint8_t)scale_up(t, n, 3u);     /* the 4th instead of the 3rd */
@@ -352,7 +353,7 @@ static uint32_t chord_play_notes(track_t *t, uint32_t n, uint32_t mods, uint8_t 
         }
     }
     sort_notes(c, k);
-    if (t->p[P_VLEAD] && part < NPART && vl_n[part] && k) {   /* the inversion and octave nearest the last chord */
+    if (t->p[P_VLEAD] == 1 && part < NPART && vl_n[part] && k) {   /* AUTO: nearest the last chord */
         uint8_t best[4], cand[4];
         int32_t bcost = 0x7FFFFFFF, inv, oct;
         for (inv = 0; inv < (int32_t)k; inv++)
@@ -367,6 +368,13 @@ static uint32_t chord_play_notes(track_t *t, uint32_t n, uint32_t mods, uint8_t 
                 if (!ok)
                     continue;
                 sort_notes(cand, k);
+                /* An octave-doubled POWER root can collide when rotated. AUTO
+                 * may choose only voicings that keep every chord note distinct. */
+                for (j = 1; j < k; j++)
+                    if (cand[j] == cand[j - 1u])
+                        ok = 0;
+                if (!ok)
+                    continue;
                 for (j = 0; j < k; j++) {
                     int32_t d = (int32_t)cand[j] - vl_prev[part][j < vl_n[part] ? j : vl_n[part] - 1u];
                     cost += d < 0 ? -d : d;
@@ -379,15 +387,44 @@ static uint32_t chord_play_notes(track_t *t, uint32_t n, uint32_t mods, uint8_t 
         if (bcost != 0x7FFFFFFF)
             memcpy(c, best, k);
     }
-    if ((mods & CM_INV) && k >= 2u && c[0] + 12u < 128u) {   /* an inversion: the lowest an octave up */
-        c[0] = (uint8_t)(c[0] + 12u);
-        sort_notes(c, k);
+    {   /* INVERT preserves 0 ROOT / 1 AUTO; appended +1/+2/+3 raise the lowest note
+         * one octave that many times. The legacy WHITE D# modifier adds one more. */
+        uint32_t inv = t->p[P_VLEAD] >= 2 ? (uint32_t)clamp(t->p[P_VLEAD] - 1, 1, 3) : 0;
+        if (mods & CM_INV)
+            inv++;
+        while (inv-- && k >= 2u) {
+            uint32_t raised = c[0] + 12u;
+            /* POWER already contains the root's octave. Skip any occupied octave,
+             * preserving distinct notes and balanced note-on/off ownership. If no
+             * higher octave fits MIDI's range, leave this inversion unchanged. */
+            while (raised < 128u) {
+                for (j = 1; j < k && c[j] != raised; j++)
+                    ;
+                if (j == k)
+                    break;
+                raised += 12u;
+            }
+            if (raised >= 128u)
+                break;
+            c[0] = (uint8_t)raised;
+            sort_notes(c, k);
+        }
     }
-    if (part < NPART) {
+    if (remember && part < NPART) {
         memcpy(vl_prev[part], c, k);
         vl_n[part] = (uint8_t)k;
     }
     return k;
+}
+static uint32_t chord_play_notes(track_t *t, uint32_t n, uint32_t mods, uint8_t *c)
+{
+    return chord_voice_notes(t, n, mods, c, 1);
+}
+/* UI step entry may precede the audio key event: use the same voicing without
+ * replacing the previous played chord (or restoring over an intervening audio event). */
+static uint32_t chord_preview_notes(const track_t *t, uint32_t n, uint32_t mods, uint8_t *c)
+{
+    return chord_voice_notes(t, n, mods, c, 0);
 }
 
 /* ------------------------------------------------------------- grid --- */
@@ -1415,12 +1452,70 @@ static uint32_t key_lvl(void)
     return (b & dyn_bit[0]) ? LV_GHOST : (b & dyn_bit[1]) ? LV_HARD : LV_NORM;
 }
 
-/* CHORD+: the modifiers held (the black keys down in chord mode) */
-static uint32_t chord_mods(void)
+/* Local key ownership is the bounded press ledger, not a second pitch counter. Shared notes
+ * start once and end with their last key, including pending strums and recording holds.
+ * MIDI input and sequencer notes retain their existing independent pitch-based paths. */
+static uint32_t key_note_owner(uint32_t sel, uint32_t note, uint32_t except)
+{
+    uint32_t k, j;
+    for (k = 0; k < 27u; k++)
+        if (k != except && kb_kind[k] == KS_NOTE && kb_trk[k] == sel)
+            for (j = 0; j < kb_n[k]; j++)
+                if (kb_nt[k][j] == note)
+                    return k + 1u;
+    return 0;
+}
+static void key_note_on(uint32_t k, uint32_t note)
+{
+    uint32_t sel = kb_trk[k];
+    if (key_note_owner(sel, note, k))
+        return;
+    in_key = (uint8_t)(k + 1u);
+    input_on(&trk[sel], note, 100);
+    in_key = 0;
+    midi_out_note(trk_midi_ch(sel), note, 100);
+}
+/* The releasing key has already left the ledger (or published its new voicing). */
+static void key_note_off(uint32_t sel, uint32_t note)
+{
+    track_t *t = &trk[sel];
+    uint32_t owner = key_note_owner(sel, note, 27u), i;
+    if (owner) {
+        uint32_t k = owner - 1u;
+        /* ARP holds one copy per pitch. Keep it attached to a key that is still down, so
+         * later ROOT/QNT/TRN edits cannot map it through a released alias. */
+        for (i = 0; i < t->nheld; i++)
+            if (t->held[i] == note && held_key[sel][i]) {
+                held_key[sel][i] = (uint8_t)(owner | (uint32_t)(kb_oct[k] + 3) << 5);
+                held_dt[sel][i] = (int8_t)((int32_t)note - kb_root[k]);
+            }
+        return;
+    }
+    input_off(t, note);
+    midi_out_note(trk_midi_ch(sel), note, 0);
+}
+/* A panicked part no longer owns its held key notes. Keep the physical edge history so
+ * those fingers stay silent until released, but allow a newly pressed alias to play. */
+static void key_track_forget(uint32_t sel)
+{
+    uint32_t k, j;
+    for (k = 0; k < 27u; k++)
+        if (kb_kind[k] == KS_NOTE && kb_trk[k] == sel) {
+            kb_kind[k] = KS_NONE;
+            for (j = 0; j < kb_n[k]; j++)
+                if (!key_note_owner(sel, kb_nt[k][j], 27u))
+                    midi_out_note(trk_midi_ch(sel), kb_nt[k][j], 0);
+        }
+}
+
+/* CHORD+: only the modifiers held on this part, under the explicit WHITE layout. */
+static uint32_t chord_mods(uint32_t sel)
 {
     uint32_t k, m = 0;
+    if (trk[sel].p[P_QUANT] != 2)
+        return 0;
     for (k = 0; k < 27u; k++)
-        if (kb_kind[k] == KS_MOD)
+        if (kb_kind[k] == KS_MOD && kb_trk[k] == sel)
             m |= chord_mod_of_key(k);
     return m;
 }
@@ -1428,34 +1523,32 @@ static uint32_t chord_mods(void)
  * the ones it gains start; the ones it keeps ring on) */
 static void chord_revoice(uint32_t sel)
 {
-    uint32_t k, i, j, mods = chord_mods(), mc = trk_midi_ch(sel);
+    uint32_t k, i, j, mods = chord_mods(sel);
     track_t *t = &trk[sel % NTRK];
+    if (t->p[P_QUANT] != 2)
+        return;
     for (k = 0; k < 27u; k++) {
-        uint8_t nw[4];
-        uint32_t nn;
+        uint8_t nw[4], old[4];
+        uint32_t nn, old_n;
         if (kb_kind[k] != KS_NOTE || kb_trk[k] != sel || !t->p[P_CHORD] || is_drum(t))
             continue;
         nn = chord_play_notes(t, kb_root[k], mods, nw);
-        for (i = 0; i < kb_n[k]; i++) {             /* the notes it loses */
-            for (j = 0; j < nn && nw[j] != kb_nt[k][i]; j++)
-                ;
-            if (j == nn) {
-                input_off(t, kb_nt[k][i]);
-                midi_out_note(mc, (uint32_t)kb_nt[k][i], 0);
-            }
-        }
-        for (j = 0; j < nn; j++) {                  /* the notes it gains */
-            for (i = 0; i < kb_n[k] && kb_nt[k][i] != nw[j]; i++)
-                ;
-            if (i == kb_n[k]) {
-                in_key = (uint8_t)(k + 1u);         /* (a chord's new note: of this key, #191) */
-                input_on(t, nw[j], 100);
-                in_key = 0;
-                midi_out_note(mc, (uint32_t)nw[j], 100u);
-            }
-        }
+        old_n = kb_n[k];
+        memcpy(old, kb_nt[k], old_n);
         memcpy(kb_nt[k], nw, nn);
         kb_n[k] = (uint8_t)nn;
+        for (i = 0; i < old_n; i++) {             /* the notes it loses */
+            for (j = 0; j < nn && nw[j] != old[i]; j++)
+                ;
+            if (j == nn)
+                key_note_off(sel, old[i]);
+        }
+        for (j = 0; j < nn; j++) {                  /* the notes it gains */
+            for (i = 0; i < old_n && old[i] != nw[j]; i++)
+                ;
+            if (i == old_n)
+                key_note_on(k, nw[j]);
+        }
     }
 }
 
@@ -1509,7 +1602,7 @@ static void key_down(uint32_t k)
             uint32_t n = kb_map(t, k);
             if (n == KB_SILENT)
                 return;
-            kb_n[k] = (uint8_t)(t->p[P_CHORD] ? chord_notes(t, n, kb_nt[k]) : 1u);
+            kb_n[k] = (uint8_t)(t->p[P_CHORD] ? chord_preview_notes(t, n, chord_mods(sel), kb_nt[k]) : 1u);
             if (!t->p[P_CHORD])
                 kb_nt[k][0] = (uint8_t)n;
             for (i = 0; i < kb_n[k]; i++)
@@ -1544,7 +1637,7 @@ static void key_down(uint32_t k)
     {
         uint32_t n = kb_map(t, k);
         if (n == KB_SILENT) {
-            if (t->p[P_CHORD] && layer == LY_PLAY && chord_mod_of_key(k)) {   /* CHORD+: a modifier key */
+            if (t->p[P_CHORD] && t->p[P_QUANT] == 2 && layer == LY_PLAY && chord_mod_of_key(k)) {
                 kb_kind[k] = KS_MOD;
                 chord_revoice(sel);
             }
@@ -1561,22 +1654,22 @@ static void key_down(uint32_t k)
         kb_root[k] = (uint8_t)n;
         kb_oct[k] = (int8_t)song.octave;
         if (t->p[P_CHORD]) {
-            kb_n[k] = (uint8_t)chord_play_notes(t, n, chord_mods(), kb_nt[k]);   /* (the modifiers held, voiced) */
+#if JAMBOX_PROTO
+            /* Chord mode always sounds the full chord, including direct/MIDI-learn edits. */
+            t->p[P_VOICE] = V_POLY;
+#endif
+            kb_n[k] = (uint8_t)chord_play_notes(t, n, chord_mods(sel), kb_nt[k]);
         } else {
             kb_nt[k][0] = (uint8_t)n;
             kb_n[k] = 1;
         }
-        mc = trk_midi_ch(sel);
-        in_key = (uint8_t)(k + 1u);                 /* (the arp keeps the key: arp_add, #191) */
         for (i = 0; i < kb_n[k]; i++) {
             in_chord = kb_n[k] > 1u ? kb_nt[k] : 0;
             in_chord_n = kb_n[k];
             in_chord_i = i;
-            input_on(t, kb_nt[k][i], 100);
+            key_note_on(k, kb_nt[k][i]);
             in_chord = 0;
-            midi_out_note(mc, (uint32_t)kb_nt[k][i], 100u);
         }
-        in_key = 0;
         /* the pen of the SEQ layer: the keys down now (a chord), else this note */
         if (!(kb_prev & ~(1u << k)) || pen_n >= 4u)
             pen_n = 0;
@@ -1616,11 +1709,8 @@ static void key_up(uint32_t k)
                 roll_end(i);
         return;
     case KS_NOTE:
-        mc = trk_midi_ch(kb_trk[k] % NTRK);
-        for (i = 0; i < kb_n[k]; i++) {
-            input_off(t, kb_nt[k][i]);
-            midi_out_note(mc, (uint32_t)kb_nt[k][i], 0);
-        }
+        for (i = 0; i < kb_n[k]; i++)
+            key_note_off(kb_trk[k] % NTRK, kb_nt[k][i]);
         return;
     case KS_DRUM:
         if (ft_on && ft_trk == TRK_DRUM)
@@ -2507,6 +2597,7 @@ static void events_block(uint32_t n)
     for (i = 0; i < NTRK; i++) {
         track_t *t = &trk[i];
         if ((pr >> i) & 1u) {
+            key_track_forget(i);
             if (t->pold) {                            /* (2.6) a preset loaded: the notes keep sounding as they are
                                                        * and fade out with the old sound (voice.c sound_change):
                                                        * no release cut short (an organ's key-off) under the fade */

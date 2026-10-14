@@ -218,8 +218,10 @@ function render(state) {
   $('octave-up').disabled = state.octave >= 3 || selectedTrack() === 3;
   $('melodic-settings').hidden = selectedTrack() === 3; $('drum-settings').hidden = selectedTrack() !== 3;
   $('playing-hint').hidden = selectedTrack() === 3;
-  $('playing-hint').textContent = part.chord ? 'One pad plays a chord in this part’s scale. Pitch mapping is handled by chord mode.' : 'These pitch and scale settings belong to this part.';
-  $('quant').disabled = !!part.chord;
+  $('playing-hint').textContent = !part.chord ? 'These pitch and scale settings belong to this part.'
+    : part.quant === 2 ? 'White keys choose scale degrees; black keys modify a held chord. Choose Off or Snap to play chords from every key.'
+    : part.chord === 5 || part.chord >= 6 ? 'Every key starts the chosen chord shape. Snap corrects only its root; the chord keeps its shape.'
+    : 'Every key starts a chord built from the selected scale. Snap helps keep its root in scale.';
   state.pads.forEach(({ key, name }) => {
     const pad = document.querySelector(`[data-key="${key}"]`); pad.querySelector('strong').textContent = name;
     pad.setAttribute('aria-label', `Play ${part.role} ${name}`);

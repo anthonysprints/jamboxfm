@@ -2370,8 +2370,8 @@ function makeMockDevice(opt = {}) {
     E("VCE", ["POLY", "MONO", "LEG", "UNI"], 0), D("GLD", F.TIME, 0, 127, 0), D("PAN", F.BIPCT, -64, 63, 0), E("MUTE", NONOFF, 0),
     E("GLMOD", ["RATE", "TIME"], 0), E("PRIO", ["LAST", "LOW", "HIGH"], 0), E("ALLOC", ["ROT", "REUSE"], 0), D("DTUNE", F.INT, 0, 127, 40),
     E("SLCR", ["OFF", "GATE", "STUT"], 0), D("PAT", F.INT, 1, 16, 1), E("RATE", ["1/8", "1/16", "1/32", "8T", "16T", "32T"], 1), D("DEPTH", F.PCT, 0, 127, 127),
-    E("CHORD", ["OFF", "TRIAD", "7TH", "9TH", "SUS4", "POWER"], 0),
-    D("FILT", F.FILT, -64, 63, 0), D("STRUM", F.INT, -60, 60, 0), E("VLEAD", NONOFF, 0),
+    E("CHORD", ["OFF", "TRIAD", "7TH", "9TH", "SUS4", "POWER", "MAJOR", "MINOR", "DIM"], 0),
+    D("FILT", F.FILT, -64, 63, 0), D("STRUM", F.INT, -60, 60, 0), E("INVERT", ["ROOT", "AUTO", "+1", "+2", "+3"], 0),
     /* SLOOP 2.6 (after Felucca 1.4 / 1.5): INSERT, ANALOG's filter TYPE, ENV SYNC, LFO 2 */
     E("INSRT", ["OFF", "SOFT", "HARD", "FOLD", "FUZZ", "CRUSH", "PHASR", "FLANG", "CHOR"], 0),
     D("INS A", F.PCT, 0, 127, 64), D("INS B", F.PCT, 0, 127, 96), D("INS C", F.PCT, 0, 127, 96), D("MIX", F.PCT, 0, 127, 127),

@@ -420,6 +420,7 @@ static void apply_preset_to(track_t *t, uint32_t pi)
         }
         preset_extras(t->p, pr);                     /* glide, pitch / LFO modulation, voice mode */
     }
+    chord_mode_set(t, t->p[P_CHORD]);                /* JamBox chords survive loading a mono sound. */
     fm6_track_loaded(t);                             /* FM6: the preset's patch (its PTCH) */
 }
 

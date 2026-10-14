@@ -1,16 +1,30 @@
 # JamBoxFM build and validation plan
 
-Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md); no physical device has been flashed or tested.
+Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md). Since those milestones, the owner has reported a successful Chrome installation and a normal JamBox update with working BPM and SNAP lights. Complete hardware and recovery validation remains outstanding.
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
-The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds and update/persistence isolation, candidate identity/installer simulations and inventory, an experimental hardware trial, then versioned persistence. The next milestone is physical-trial preparation: owner-device inventory, private backups and an available recovery route. The temporary-session milestone does not require every future musical feature below.
+The October 14 [chord-builder increment](CHORD_BUILDER.md) needs focused checks
+for every black-key root in OFF/SNAP on Chords and Lead, exact scale-derived
+and fixed-shape pitches, WHITE modifier compatibility, duplicate snapped roots
+and overlapping chord tones in either release order, held setting changes,
+strum, arp, recording, panic and root-only live lights. Preserve old CHORD IDs
+and the existing single-note path. Check full POLY chords when enabled on
+Bass/Lead through the normal/held SEL, preview/editor and sound-loading paths;
+CHORD OFF must leave the selected voice mode unchanged. Check ROOT/AUTO/manual
+inversion pitches, old `P_VLEAD` values, SEL 2 controls and the triad +3 octave
+shift. Native/browser outcomes and target memory
+fit must be recorded for this build before publication; these are pending here.
+The owner's successful earlier installation and tempo/light update do not
+establish physical validation of the new chord behavior.
+
+The narrower [first-device build plan](FM1_DEVICE_PLAN.md) records the sequence: target builds and update/persistence isolation, candidate identity/installer simulations and inventory, an experimental hardware trial, then versioned persistence. The first trial and an update now have owner-reported success; the remaining physical checks and versioned persistence are still gates. The temporary-session milestone does not require every future musical feature below.
 
 ## Already done
 
 See [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) for pinned sources, actual outcomes, warning qualifications and logs. Completed work includes REA analysis of the checked-in Sloop web distribution, a five-scenario shipped-WASM probe, targeted upstream native tests, the earlier ChoralRoot installer simulation, and comparison of the three required SDK hashes.
 
-Those results justify proceeding to an implementation baseline. They do not certify new JamBox features or a physical update.
+Those initial research results justified the implementation baseline. They do not certify later JamBox features or a physical update.
 
 The target-build follow-up compiled the unchanged Sloop baseline and JamBox diagnostic target. Milestone 2 separates `FELUCCA_PERSIST=0` from enabled low-level flash/OTA, rejects app-data saves/restores, clears retained musical state and accepts only narrowly validated read-only panel calibration. Its simulated NOR, UI/editor, OTA, loader and USB/parser tests validate software contracts; they cannot certify recovery on the owner's device.
 

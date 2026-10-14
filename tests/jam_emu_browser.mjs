@@ -258,6 +258,75 @@ try {
   await snap.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held && globalThis.jamEmu.state.leds[24] !== 255 && globalThis.jamEmu.state.leds[25] !== 255);
   await snap.close();
 
+  // Chord roots follow the same physical keyboard on every melodic part.
+  // Configure the actual SEL page so this also covers access to fixed shapes.
+  for (const part of [1, 2]) {
+    const chords = await browser.newPage({ viewport: { width: 1280, height: 1060 } });
+    await start(chords, address);
+    if (part === 2) {
+      await turn(chords, 1);
+      await chords.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
+    }
+    await tap(chords, 1);
+    await chords.waitForFunction(() => !globalThis.jamEmu.state.home && globalThis.jamEmu.state.layer === 0);
+    for (let i = 0; i < 3; i++) await turn(chords, 3); // C -> D# root.
+    await turn(chords, 4, 'ArrowDown'); // Minor -> major; both parts default to SNAP.
+    const chordSetting = part === 1 ? 1 : 6; // Chords: TRIAD; Lead: fixed MAJOR.
+    if (part === 1) await turn(chords, 6, 'ArrowDown'); // Startup 7TH -> TRIAD.
+    else for (let i = 0; i < chordSetting; i++) await turn(chords, 6);
+    await idle(chords);
+    await tap(chords, 6);
+    await chords.waitForFunction(() => globalThis.jamEmu.state.home);
+
+    async function holdChordRoot(key, held, roots) {
+      await chords.evaluate(({ key, held }) => {
+        globalThis.chordLedSamples = [];
+        const receive = globalThis.jamEmu.node.port.onmessage;
+        globalThis.chordLedReceive = receive;
+        globalThis.jamEmu.node.port.onmessage = event => {
+          const current = event.data.state;
+          if (current?.keys === (1 << key) && current.held === held && current.leds[14 + key] === 255)
+            globalThis.chordLedSamples.push(current.leds.slice(14).flatMap((level, index) => level === 255 ? [index] : []));
+          receive(event);
+        };
+      }, { key, held });
+      await pointerDown(chords, chords.locator(`button[data-key="${key}"]`));
+      await chords.waitForFunction(({ key, held }) => globalThis.jamEmu.state.keys === (1 << key) && globalThis.jamEmu.state.held === held,
+        { key, held });
+      await chords.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
+      await chords.waitForTimeout(180); // Observe the note-hit flash and sustained chord.
+      const samples = await chords.evaluate(() => globalThis.chordLedSamples);
+      assert(samples.length > 1, `part ${part}: root LEDs are observed while ${held} notes sound`);
+      for (const sample of samples) assert.deepEqual(sample, roots, `part ${part}: only the pressed and corrected chord roots light`);
+      await chords.mouse.up();
+      await chords.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held && !globalThis.jamEmu.state.leds.slice(14).includes(255));
+      await chords.evaluate(() => { globalThis.jamEmu.node.port.onmessage = globalThis.chordLedReceive; });
+    }
+
+    await holdChordRoot(10, 3, [10]); // In-key D# forms a chord without advertising E or chord-tone aliases.
+    await holdChordRoot(11, 3, [10, 11]); // Out-of-key E snaps the chord root to D#.
+    await chords.screenshot({ path: resolve(evidence, `chord-builder-part-${part}.png`), fullPage: true });
+
+    // QNT OFF leaves chromatic roots available even while the builder is on.
+    await tap(chords, 1);
+    await chords.waitForFunction(() => !globalThis.jamEmu.state.home && globalThis.jamEmu.state.layer === 0);
+    await turn(chords, 5, 'ArrowDown'); // SNAP -> OFF.
+    await idle(chords);
+    await tap(chords, 6);
+    await chords.waitForFunction(() => globalThis.jamEmu.state.home);
+    await holdChordRoot(11, 3, [11]); // E now builds an E-root chord rather than snapping.
+
+    // Turning CHORD OFF restores one note through the same panel controls.
+    await tap(chords, 1);
+    await chords.waitForFunction(() => !globalThis.jamEmu.state.home && globalThis.jamEmu.state.layer === 0);
+    for (let i = 0; i < chordSetting; i++) await turn(chords, 6, 'ArrowDown');
+    await idle(chords);
+    await tap(chords, 6);
+    await chords.waitForFunction(() => globalThis.jamEmu.state.home);
+    await holdChordRoot(10, 1, [10]);
+    await chords.close();
+  }
+
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   await start(mobile, address);
   await button(mobile, 10).tap();
@@ -299,7 +368,7 @@ try {
     await offline.close();
   }
   assert.deepEqual(errors, [], 'no browser JavaScript errors');
-  console.log(`JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
+  console.log(`JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, root-only chord LEDs, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

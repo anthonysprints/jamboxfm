@@ -64,6 +64,8 @@ void preview_param(uint32_t k, uint32_t id, int32_t value)
     const param_desc_t *d = is_drum(t) && id == P_E0 ? &DRUM_KIT_DESC
         : id >= P_E0 ? &ENGINES[t->eng_req % NENGINES]->edit[id - P_E0] : &TP[id];
     t->p[id] = (int16_t)clamp(value, d->min, d->max);
+    if (id == P_CHORD)
+        chord_mode_set(t, t->p[id]);
     /* An edit made while a lock is active changes its base too. */
     for (uint32_t i = 0; i < t->lk_n; i++)
         if (t->lk_param[i] == id) t->lk_base[i] = t->p[id];

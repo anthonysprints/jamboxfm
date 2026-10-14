@@ -44,43 +44,61 @@ Current shortcut: hold SEQ to see its 4×4 step tiles. To keep this editor open,
 hold SEQ, tap HOME, then release SEQ. Tap HOME again to return. White keys now
 enter steps. A quick SEQ tap opens the remembered STEP/PATTERN/SONG page instead.
 
-## 3. Chords from the pressed root: diagnosis and proposed contract
+## 3. Chords from the pressed root: implemented
 
-The existing SEL page already has CHORD on knob 4: OFF, TRIAD, 7TH, 9TH,
-SUS4 and POWER. TRIAD/7TH/9TH/SUS4 build notes from the selected scale. In C
-major, TRIAD on successive scale degrees yields C major, D minor, and so on;
-the B triad is diminished. POWER uses fixed root-relative intervals.
+The owner confirmed that black keys stayed silent whenever CHORD was enabled,
+including on Lead. The cause was shared keyboard logic: any chord type forced
+the WHITE degree layout even when QNT said OFF or SNAP. D# was reserved for
+inverting a held white-key chord. This was a control mismatch, not a musical
+rule that forbids a D# chord in D# major.
 
-Currently any enabled chord type forces the white-key degree layout even when
-QNT says OFF or SNAP. Black keys are CHORD+ modifiers: D# inverts a held chord
-and is silent by itself. Thus the reported D# behavior is real and misleading.
-The owner's follow-up favors choosing the actual root and a chord shape,
-rather than treating the chord feature itself as snapping.
+The new shared implementation separates keyboard mapping from chord shape:
 
-Proposed implementation, kept separate from the tempo/light fixes:
+- **CHORD OFF** plays single notes. **MAJOR**, **MINOR** and **DIM** build fixed
+  major, minor and diminished triads on the root. **POWER** retains its fixed
+  root/fifth/octave shape.
+- **TRIAD**, **7TH**, **9TH** and **SUS4** retain their scale-derived choices.
+  With C major selected, TRIAD on C is major, on D minor, and on B diminished.
+  Selecting a major scale does not make every chord major.
+- **QNT OFF** uses the printed note as the root, with octave/transposition
+  applied. D# with MINOR produces D#–F#–A#.
+- **QNT SNAP** keeps in-scale roots and rounds other roots down to the next
+  note in the scale, then builds the chord. It does not snap individual chord
+  tones afterward. In D# major, D# with TRIAD produces D#–G–A# using the
+  instrument's note labels; E uses that same D# root.
+- **QNT WHITE** explicitly retains white-key scale degrees and black-key
+  chord modifiers. Chord mode no longer silently forces that layout.
 
-- **CHORD OFF:** play single notes.
-- Add explicit **MAJOR**, **MINOR** and **DIM** root-relative shapes; keep
-  POWER and the existing scale-built choices. A triad means three notes, while
-  major/minor/diminished describe how those notes are spaced.
-- **QNT OFF:** the printed key is the root. D# + MINOR gives D#–F#–A#.
-- **QNT SNAP:** optionally correct the root into the chosen scale, then build
-  the selected chord. Never snap its individual tones afterward: that would
-  change the chosen chord shape.
-- **QNT WHITE:** retain degree-based white keys and black-key modifiers as an
-  explicit alternate layout. Chord mode must no longer silently override QNT.
-- Keep the automatic scale-based triad/seventh choices for easy progressions;
-  preserve existing stored numeric IDs, append new shapes, and explain which
-  choices follow the scale. No new project parameter is necessary.
-- For the proposed chromatic/SNAP chord layout, root feedback should show the
-  pressed root and corrected root without lighting alternate input aliases.
-  Showing all chord tones would be a distinct display preference.
+Dusty now starts Chords in SNAP with 7TH selected; Lead keeps SNAP with CHORD
+OFF. The existing CHORD IDs 0–5 retain their meanings, and MAJOR/MINOR/DIM append
+IDs 6–8. No project field is added. Keyboard note ownership now preserves shared tones until their final local
+key releases. Checks cover duplicate snapped roots, overlapping chords, both
+release orders, arpeggiation and strum.
 
-Before changing chord behavior, verify exact output pitches, black-key roots,
-duplicate snapped roots and overlapping chord notes, both release orders,
-held setting changes, arpeggiator, strum and recording. The current release
-path is pitch-based; don't promise independent ownership without testing it.
-This proposal is not implemented by the current tempo/light update.
+The owner's follow-up confirms that enabling CHORD should produce the whole
+chord on Lead and Bass too. Enabling it now selects POLY voices across the
+normal/held SEL controls, preview/editor parameter paths and curated sound
+loads. Turning CHORD off leaves POLY rather than silently restoring an earlier
+voice setting. Fresh Dusty Bass and Lead retain their legato defaults until
+chords are enabled.
+
+To keep black keys available as roots, the CHORD selector provides the major,
+minor, seventh, ninth and suspended choices, while SEL 2 adds an explicit
+INVERT control: ROOT, AUTO, +1, +2 and +3. From SEL's first page, turn SELECT
+one click; knob 3 changes INVERT and knob 2 changes the existing STRUM setting.
+Each + step moves the lowest note up one octave. On a triad, +3 moves the
+whole chord up an octave. Occupied octaves are skipped to keep notes distinct
+(for example, in POWER chords). AUTO retains the old voice-leading behavior.
+INVERT reuses `P_VLEAD`: old values 0/1 become ROOT/AUTO and values 2–4 add
+the manual choices. WHITE's existing modifier combinations remain available.
+
+While playing live chords in OFF/SNAP, LEDs show the pressed keys and any
+corrected root, without lighting other possible inputs or every chord tone.
+The beginner controls and exact shape table are in [Chord builder](CHORD_BUILDER.md).
+Software validation and physical audition of this new build are separate from
+the owner's successful earlier tempo/light update; results are in the
+[chord build record](build-evidence/chord-builder.md). Sequencer Home layout, a master Assist switch, timing-correction
+strength and persistent sessions remain future work.
 
 ## 4. SNAP key lights: shared default corrected
 

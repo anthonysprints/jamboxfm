@@ -73,6 +73,199 @@ static void test_snap_lights(void)
     jam_emu_key(0, 0); jam_emu_panic(); jam_emu_render();
 }
 
+static uint32_t emu_key_lights(void)
+{
+    uint32_t k, mask = 0;
+    for (k = 0; k < 27u; k++)
+        if (jam_emu_leds()[14u + k] == 255)
+            mask |= 1u << k;
+    return mask;
+}
+
+static void test_chord_root_lights(void)
+{
+    uint32_t i;
+    track_t *t = &trk[1];
+    jam_emu_panic(); jam_emu_render();
+    assert(jam_new_dusty());
+    song.sel = 1;
+    t->p[P_ROOT] = 3; t->p[P_SCALE] = 1; /* D# major. */
+    t->p[P_QUANT] = 1; t->p[P_CHORD] = 1;
+    t->p[P_STRUM] = t->p[P_VLEAD] = t->p[P_AMODE] = 0;
+    t->p[P_VOICE] = V_POLY;
+    go_home(); blocks(400);
+
+    jam_emu_key(10, 1);
+    CHECK(kb_n[10] == 3 && kb_root[10] == 63,
+          "D# in D# major starts a chord from its printed root");
+    for (i = 0; i < 10u; i++) {
+        jam_emu_render(); jam_emu_frame();
+        assert(emu_key_lights() == (1u << 10));
+    }
+    CHECK(1, "live SNAP chord lights only D#, without aliases or third/fifth flashes");
+    jam_emu_key(10, 0); jam_emu_render(); jam_emu_frame();
+    CHECK(!keys_sounding(t) && !emu_key_lights(),
+          "chord root and tone flashes disappear on key-up");
+
+    jam_emu_key(11, 1);
+    for (i = 0; i < 10u; i++) {
+        jam_emu_render(); jam_emu_frame();
+        assert(emu_key_lights() == ((1u << 10) | (1u << 11)));
+    }
+    CHECK(kb_n[11] == 3 && kb_root[11] == 63,
+          "SNAP chord from E lights pressed E and corrected D# only");
+    /* Live root feedback temporarily owns the same part's pitch lights. */
+    trk_note_on(t, 65, 100); jam_emu_frame();
+    CHECK(emu_key_lights() == ((1u << 10) | (1u << 11)),
+          "simultaneous playback tones do not obscure live chord root feedback");
+    jam_emu_key(11, 0); jam_emu_frame();
+    CHECK(emu_key_lights() == (1u << 12),
+          "with local keys released, sustained playback lights its actual F pitch");
+    trk_note_off(t, 65); jam_emu_frame(); jam_emu_frame();
+    CHECK(!emu_key_lights(), "released playback leaves no residual chord-mode tone flash");
+
+    /* There is no UI frame to attribute these note_hits to a live source. */
+    jam_emu_key(10, 1); jam_emu_key(10, 0);
+    for (i = 0; i < 10u; i++) {
+        jam_emu_render(); jam_emu_frame();
+        assert(!emu_key_lights());
+    }
+    CHECK(1, "a chord tapped between UI frames leaves no third/fifth or alias flashes");
+
+    t->p[P_TRANS] = 2;
+    jam_emu_key(10, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_root[10] == 65 && emu_key_lights() == ((1u << 10) | (1u << 12)),
+          "transposed chord lights pressed D# plus corrected root F, not its chord tones");
+    t->p[P_TRANS] = 0;
+    jam_emu_frame();
+    CHECK(emu_key_lights() == ((1u << 10) | (1u << 12)),
+          "changing transpose while held keeps the original chord root feedback");
+    jam_emu_key(10, 0); jam_emu_frame();
+    song.octave = 1;
+    jam_emu_key(10, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_root[10] == 75 && emu_key_lights() == (1u << 10),
+          "chord root feedback follows the selected keyboard octave without aliases");
+    jam_emu_key(10, 0); song.octave = 0;
+
+    t->p[P_QUANT] = 0;
+    jam_emu_key(11, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_root[11] == 64 && emu_key_lights() == (1u << 11),
+          "QNT OFF chord lights only its uncorrected printed root E");
+    jam_emu_key(11, 0); jam_emu_frame();
+    t->p[P_QUANT] = 1; t->p[P_ROOT] = 4;
+    jam_emu_key(0, 1); jam_emu_render(); jam_emu_frame();
+    CHECK(kb_root[0] == 52 && emu_key_lights() == 1u && !keys_sounding(t),
+          "a chord root below the visible register does not wrap or light its upper tones");
+    jam_emu_key(0, 0); jam_emu_frame();
+
+    t->p[P_ROOT] = 3;
+    trk_note_on(t, 63, 100); trk_note_on(t, 67, 100); trk_note_on(t, 70, 100);
+    jam_emu_frame(); jam_emu_frame();
+    CHECK(emu_key_lights() == ((1u << 10) | (1u << 14) | (1u << 17)),
+          "sequencer-only chords show actual sounding pitches with no SNAP aliases");
+    trk_note_off(t, 63); trk_note_off(t, 67); trk_note_off(t, 70);
+    jam_emu_frame(); jam_emu_frame();
+    CHECK(!emu_key_lights(), "sequencer-only chord lights release without shared hit flashes");
+
+    t->p[P_QUANT] = 2;
+    jam_emu_key(10, 1); jam_emu_frame();
+    CHECK(kb_kind[10] == KS_MOD && !jam_emu_value(14, 0),
+          "explicit WHITE layout preserves D# as a held chord modifier");
+    jam_emu_key(10, 0);
+    trk_note_on(t, 63, 100); trk_note_off(t, 63);
+    jam_emu_frame(); jam_emu_frame();
+    CHECK(emu_key_lights() == (1u << 7),
+          "WHITE retains short-note flashes on its mapped white key");
+    for (i = 0; i < 8u; i++) jam_emu_frame();
+    CHECK(!emu_key_lights(), "WHITE short-note flashes expire normally");
+    jam_emu_panic(); jam_emu_render();
+}
+
+static uint32_t emu_gated_notes(const track_t *t, uint8_t *notes)
+{
+    uint32_t i, n = 0;
+    for (i = 0; i < NVOICE; i++)
+        if (t->v[i].active && t->v[i].gate)
+            notes[n++] = (uint8_t)t->v[i].note;
+    sort_notes(notes, n);
+    return n;
+}
+
+static void test_chord_panel_controls(void)
+{
+    uint32_t i;
+    static const uint32_t parts[2] = {0, 2}; /* Bass and Lead. */
+    uint8_t notes[NVOICE];
+    for (i = 0; i < 2u; i++) {
+        track_t *t = &trk[parts[i]];
+        uint8_t root = i ? 63 : 39; /* Dusty Bass sounds two octaves below Lead. */
+        jam_emu_panic(); jam_emu_render();
+        assert(jam_new_dusty());
+        go_home(); blocks(400);
+        jam_emu_encoder(EN_ALGO, i ? 1 : -1);
+        CHECK(song.sel == parts[i] && !t->p[P_CHORD] && t->p[P_VOICE] == V_LEGATO,
+              "Bass/Lead starts with chord building OFF and its legato sound");
+        tap_emu(B_SCL);
+        jam_emu_encoder(EN_SELECT, -1); /* First SEL page, even if SEL 2 was remembered. */
+        blocks(400); /* A tap leaves the held-layer knob quiet window. */
+        CHECK(!ui.home && cur_page()->id[3] == P_CHORD,
+              "physical SEL opens the chord control on knob 4");
+        jam_emu_encoder(EN_K1, 3); /* C -> D#. */
+        jam_emu_encoder(EN_K2, -1); /* Minor -> major. */
+        if (!t->p[P_QUANT]) jam_emu_encoder(EN_K3, 1); /* Bass OFF -> SNAP. */
+        jam_emu_encoder(EN_K4, 1); /* OFF -> TRIAD. */
+        CHECK(t->p[P_ROOT] == 3 && t->p[P_SCALE] == 1 && t->p[P_CHORD] == 1 &&
+              t->p[P_QUANT] == 1 && t->p[P_VOICE] == V_POLY,
+              "SEL chord knob enables POLY on Bass/Lead without an EDIT detour");
+        jam_emu_key(10, 1); blocks(16);
+        CHECK(emu_gated_notes(t, notes) == 3u && notes[0] == root && notes[1] == root + 4u && notes[2] == root + 7u,
+              "physical D# sounds three actual gated D# major voices on Bass/Lead");
+        jam_emu_key(10, 0); blocks(16);
+        CHECK(!emu_gated_notes(t, notes), "all three Bass/Lead chord voices release");
+
+        jam_emu_encoder(EN_K4, -1);
+        jam_emu_key(10, 1); blocks(16);
+        CHECK(!t->p[P_CHORD] && t->p[P_VOICE] == V_POLY && emu_gated_notes(t, notes) == 1u && notes[0] == root,
+              "CHORD OFF plays one note and does not silently restore a prior voice mode");
+        jam_emu_key(10, 0); blocks(16);
+
+        jam_emu_encoder(EN_K4, 6); /* OFF -> fixed MAJOR, appended ID 6. */
+        jam_emu_encoder(EN_SELECT, 1);
+        CHECK(cur_page()->id[2] == P_VLEAD && !strcmp(TP[P_VLEAD].label, "INVERT"),
+              "SELECT reaches SEL 2 with INVERT on knob 3");
+        jam_emu_encoder(EN_K3, 2); /* ROOT -> AUTO -> +1. */
+        jam_emu_key(10, 1); blocks(16);
+        CHECK(t->p[P_VLEAD] == 2 && emu_gated_notes(t, notes) == 3u &&
+              notes[0] == root + 4u && notes[1] == root + 7u && notes[2] == root + 12u,
+              "SEL 2 knob 3 first inversion sounds G, A# and D# above");
+        jam_emu_key(10, 0); blocks(16);
+
+        tap_emu(B_HOME); blocks(400);
+        jam_emu_encoder(EN_PRESET, 1); blocks(400);
+        CHECK(jam_sound_index(parts[i]) == 1u && t->p[P_CHORD] == 6 &&
+              t->p[P_VLEAD] == 2 && t->p[P_VOICE] == V_POLY,
+              "Home PRESETS preserves the Bass/Lead chord choice, inversion and POLY");
+        jam_emu_key(10, 1); blocks(16);
+        CHECK(emu_gated_notes(t, notes) == 3u && notes[0] == root + 4u && notes[1] == root + 7u && notes[2] == root + 12u,
+              "the next curated Bass/Lead sound still plays all inverted chord tones");
+        jam_emu_key(10, 0); blocks(16);
+    }
+
+    jam_emu_panic(); jam_emu_render();
+    assert(jam_new_dusty());
+    go_home(); blocks(400);
+    jam_emu_encoder(EN_ALGO, 1); /* Lead: CHORD OFF / LEGATO. */
+    jam_emu_button(B_SCL, 1);
+    jam_emu_encoder(EN_K1, 6); /* Held SEL uses its own chord knob. */
+    jam_emu_button(B_SCL, 0); blocks(400);
+    CHECK(trk[2].p[P_CHORD] == 6 && trk[2].p[P_VOICE] == V_POLY,
+          "held SEL plus knob 1 also enables full chord POLY on Lead");
+    jam_emu_key(10, 1); blocks(16);
+    CHECK(emu_gated_notes(&trk[2], notes) == 3u && notes[0] == 63 && notes[1] == 67 && notes[2] == 70,
+          "held-SEL chord control produces three actual voices from the black D# key");
+    jam_emu_key(10, 0); jam_emu_panic(); jam_emu_render();
+}
+
 int main(int argc, char **argv)
 {
     uint32_t i, nonblack = 0, before, k;
@@ -163,6 +356,8 @@ int main(int argc, char **argv)
     jam_emu_release();
     CHECK(jam_emu_value(18, 0) == 0, "all real LCD transfers stay within 240 by 240");
     test_snap_lights();
+    test_chord_root_lights();
+    test_chord_panel_controls();
     printf("jam-emu: %u checks passed\n", checks);
     return 0;
 }

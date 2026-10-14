@@ -1,5 +1,12 @@
 # JamBox software prototype and FM-1 update isolation
 
+The current chord update makes every black key playable in OFF/SNAP, adds
+MAJOR/MINOR/DIM and explicit inversion controls, and enables full polyphony
+when chords are selected on Bass or Lead. Fresh Bass/Lead defaults still have
+chords off. See the [chord guide](CHORD_BUILDER.md) and
+[build record](build-evidence/chord-builder.md). The hardware reports below
+refer to earlier builds; this new chord build awaits owner audition.
+
 The owner reports that a retry of the normal-JamBox UI update succeeded, with
 BPM control and SNAP lights working as expected on the FM-1. No intervening
 firmware fix was published; the earlier `noloader` failure remains unexplained
@@ -68,7 +75,7 @@ That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative 
 
 ## Remaining implementation boundaries
 
-The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo and JAM1 persistence/import are not implemented. First installation and a normal JamBox update have owner-reported success; complete hardware validation, including interrupted-update recovery, remains outstanding. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
+The new Assist master switch, Off/Gentle/Tight timing capture, complete ownership between live keyboard, external MIDI and sequencer notes, complete undo and JAM1 persistence/import are not implemented. First installation and a normal JamBox update have owner-reported success; complete hardware validation, including interrupted-update recovery, remains outstanding. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
 Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's original read-only report returned `FM-1_015`, and the factory interface was confirmed as the installation baseline. Its exact uploaded return file is verified; separate host simulations and native staging checks are recorded in [factory preparation](FM1_FACTORY_V15.md). The owner has since reported successful JamBox installation and an update; return to factory remains unverified. See the [factory follow-up](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline).
 
