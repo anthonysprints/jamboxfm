@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "33b15a3b11a10d3d9ce5b29e936aeb6268a8c765a29fed216e8f6149608d663c",
-      "size_bytes": 547256
+      "sha256": "e37fb9e0b58023c228ecaa4acc9c133e1fa85672c8df11f39a51c1a388f04883",
+      "size_bytes": 547964
     },
     "felucca.elf": {
-      "sha256": "602c5bccb36affb5c012bcef70a9e0783462ff8fa80dd52341af54e661439c31",
-      "size_bytes": 585272
+      "sha256": "a24f3a4a35709ed0a1c852be4606a472d7e621bc4d0206a901e49b0e5c5df125",
+      "size_bytes": 585452
     },
     "felucca.fwsc": {
-      "sha256": "fe9761b0bd2dedbb8ecd065bfd6f0dd66e1616d1b99bddf6c2a3500c4fc4ccbf",
+      "sha256": "feed5f35c47d36520c9f81090d4a46a6d077ea6542587412cfccc34cb92836b3",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -465,7 +465,7 @@
     "firmware/src/drum_synth.c": "6ff15d2820c1f4103f42dd56e89a66dddd7260ad7adc846df53f443b0946031a",
     "firmware/src/drums.c": "ad6367941c3a30f1db71d9483988eafb2bd18c45e1447c0877bf1f7005392963",
     "firmware/src/dsp.c": "927a3aa07d4f4b96daefdc8ad843452478f673e2b306f232ca86d3235ebdc1f0",
-    "firmware/src/editor.c": "c2597c33f5a5f428f2f0cd8458e6634ac209f23f8cb457a73b08fe619ba3ceb9",
+    "firmware/src/editor.c": "d8ffc1e4fc5c963fb99b40762d89f4e5adff51c51e3e8c5222ffe542f063163c",
     "firmware/src/editor_dsyn.c": "5392ffe9a8af94a360208e55298ce71a76e78a70ac36c8d81e009ef14d8d9692",
     "firmware/src/editor_fm6.c": "d38967218b6697dd1d1c6735e4006ca6fc7ec1b262a74ec1095e51005093dd1e",
     "firmware/src/eng_analog.c": "929ac03333ee1bfb1c6a23ccd9812b02e44fb9bdbce244545c04de864b69aeff",
@@ -490,7 +490,7 @@
     "firmware/src/instrument_init.c": "e5170fb7a47386b0f8fa0c67dd2a125900340719848d4d76ebaf753690e59676",
     "firmware/src/jam_calibration.h": "c5ae507d2edbe87dcec03db5d743bf26faa25cf265e41464e93cac17e29ec451",
     "firmware/src/jam_identity.h": "052bb9b5aca3e525dc37e56bcfc9c9f3d1839c0ed030c4625e33c404ceb4f92a",
-    "firmware/src/jam_palette.c": "3e99f4c70f17680efafc84f94ff705237a7be6cf0932d06e934c09c40e7abf62",
+    "firmware/src/jam_palette.c": "92f8799c43b6f87df4cb0846ef294a38922590ee153cb49b816b988315e96301",
     "firmware/src/jam_ui.c": "386b0df9dff037f3eb07659732750191018bdbb113975b520e0432ea7a4bc4de",
     "firmware/src/lcd.c": "b69f0c3d6a5b61c883a35b50ddd6582811bd620a45268543e923fb8849caaac4",
     "firmware/src/libc.c": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a",
@@ -499,25 +499,25 @@
     "firmware/src/ota.c": "dd9c7891e6cf43041ffb14cde34ee81f003de4e678b58e67c5b6ec4faa4fe5a9",
     "firmware/src/ota_flash_access.c": "83c16477c95e64e47f1e08cb70cb6551bb6bc2dc9e914679add8dd05d78b757c",
     "firmware/src/panel.c": "9b508565ca2ffe596e3a1b4533eef5f7e9659ab71ca777688aec72e523164633",
-    "firmware/src/params.c": "4da33b7d95ce0146257ca108bcd74ac02aeaad448ff4ae027b4edc86a3886388",
+    "firmware/src/params.c": "10d61ee446567681ff9cf5f0d8ed37f465862809cd1bff25a8bb1a154527369e",
     "firmware/src/phys_dsp.c": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c",
     "firmware/src/phys_symp.c": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47",
     "firmware/src/preset_trim.h": "84557efefd5479d383c731ff51a03547a81a78a784798e9acf96ea18979342db",
     "firmware/src/project.c": "3e1f64144f70406b5cd54d0dc8ae231dbdb73080eafdc5b89dba3a5630073f53",
     "firmware/src/punch.c": "3a32ea8fd8aadadb1eca3becafbd599ba79b668c1b7ad0b2a81111bfd3eccd0f",
     "firmware/src/recovery.c": "70c7049a946d50c5573a2d1360ad9e77b7ea4a93bfda27077efce0db0fc28a71",
-    "firmware/src/seq.c": "a4c612c06bed2dbe6f578e6c94953e777a8f1434a7b6d2ccf5b1f7639db9c328",
+    "firmware/src/seq.c": "0206db15ddf942b681adc8ef5d73ef20b97a25026b77c660178abc0bb262d79e",
     "firmware/src/slicer.c": "ceaefa1de87b143a8ea64d2916d52b2cbce31fd5fc548f128cd18670724409db",
     "firmware/src/splash.c": "6300f378af6fe0c3557d6719dcfc13801db92ac36c393fecf6847fa69b0212e3",
     "firmware/src/storage.c": "e06fe82bb9cc303ba24bb694729e368c3cda4897eafd2873045bec1954d0de5a",
     "firmware/src/uac_fir.h": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56",
-    "firmware/src/ui.c": "a5c7605d2eb2d8730e18acff1f20734faafc8e074fd4f1e34b390a3f103d47da",
+    "firmware/src/ui.c": "fb1f17fcd188c1146a7a3a8ccf7d656a639fdefc72ac2bb481bc20dea2f19efb",
     "firmware/src/ui_draw.c": "7d3d9d7b502092e7d03af010aac5ceb4599ecad8a8c1a4ab67d22a67f02069ce",
-    "firmware/src/ui_input.c": "8a218eae6cba92267b8ebe1b000c1955554eb547cdbff93e5f0c76dcad9dffa9",
-    "firmware/src/ui_layers.c": "e7a5d1b56dd288386096e34e2be17fb14e1fd759e058f9cef6d298f8be2acab0",
+    "firmware/src/ui_input.c": "823775bcf872990a65f5452e43f95f454661e386ec122dd355879ccce7329641",
+    "firmware/src/ui_layers.c": "42ac032bc06c4d7f92675e75193b77d6125ce6527d29955ff421159abbe8ed28",
     "firmware/src/ui_menu.c": "926dc2024bc0e5737ce81508e7eb011588a5de18d39d8986a204d8dec048b65c",
     "firmware/src/ui_song.c": "53fafd8ca8bda2c0ee8ecf37be2e51e60e2a3b991070feeb90b8dd025f529d3e",
-    "firmware/src/ui_studio.c": "f0776b79b143142d8cbd6b75ef9e02425c69967b04b84da9134443f049091756",
+    "firmware/src/ui_studio.c": "7d50b6874edbe8e995b4d2bbdb631b3f4b5a50e6a5b08bb9e55d78bf04bbd1fc",
     "firmware/src/ui_vis.c": "aab57d452245a1a758c660ff270de42db1ebd6ce7e3876c2f96ffaaf0a995049",
     "firmware/src/upreset.c": "873970da0a924727da63182f458c0dc22e758b8f065c8a13d596887ffcddbcbf",
     "firmware/src/usb.c": "50afa91200b28ba17537c4ea6a10bbb7d4a925c6dbdc8512e5f7441c2986dd2a",
@@ -569,7 +569,7 @@
   "source": {
     "dirty": true,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "0573ebfa5b2ce36123e607b75c495492f0dc0256"
+    "revision": "acd8336f8a182523900b92dd3ebc767276b90690"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
