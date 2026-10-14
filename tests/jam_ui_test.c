@@ -172,7 +172,7 @@ static void test_home_controls(uint32_t view)
     for (k = 0; k < 4u; k++) jam_macro_set(1, k, 0);
     ui.hot_t = ui.msg_t = 0; ui.force = 1; frame();
     macro_before = strip_hash(macro_y, macro_h); foot_before = strip_hash(foot_y, foot_h);
-    set_engine_of(&trk[1], 1);
+    set_engine_of(&trk[1], ENGI_NOISE);
     ui.force = 0; frame();
     check(!jam_home_macros_available(1), "other engines direct editing to their real sound pages");
     check((macro_before != strip_hash(macro_y, macro_h)) == (view == JAM_HOME_SOUND),
@@ -184,7 +184,7 @@ static void test_home_controls(uint32_t view)
     jam_sound_load(1, 0);
     ui_message("READY"); ui.force = 1; frame();
     foot_before = strip_hash(foot_y, foot_h); macro_before = strip_hash(macro_y, macro_h);
-    set_engine_of(&trk[1], 1);
+    set_engine_of(&trk[1], ENGI_NOISE);
     ui.force = 0; frame();
     if (view == JAM_HOME_SOUND)
         check(ui.msg_t && foot_before != strip_hash(foot_y, foot_h),
@@ -387,6 +387,46 @@ static void test_groove_controls(void)
     }
 }
 
+static void test_expanded_bank_controls(void)
+{
+    uint32_t track, index, macro, count, before;
+    char position[20], expected[20];
+    home_setup();
+    tap(B_HOME);
+    for (track = 0; track < NTRK; track++) {
+        track_select(track);
+        count = jam_sound_count(track);
+        check(count == (track == TRK_DRUM ? 8u : 12u), "the expanded bank is reachable on every role");
+        for (index = 0; index < count; index++) {
+            check(jam_sound_load(track, index), "every curated preset loads through the shared sound API");
+            frame();
+            jam_home_preset_position(position, track);
+            snprintf(expected, sizeof expected, "%u/%u", index + 1u, count);
+            check(!strcmp(position, expected), "Home shows the current preset's actual position");
+            check(jam_home_macros_available(track), "every curated engine exposes useful Sound controls");
+            for (macro = 0; macro < 4u; macro++) {
+                jam_macro_set(track, macro, 0);
+                turn(EN_K1 + macro, 1);
+                check(jam_macro_get(track, macro) > 0,
+                      "one physical detent moves every macro, including coarse organ speed");
+            }
+        }
+        turn(EN_PRESET, 1);
+        check(jam_sound_index(track) == 0, "forward browsing wraps from the last sound to the first");
+        turn(EN_PRESET, -1);
+        check(jam_sound_index(track) == count - 1u, "reverse browsing wraps through the complete bank");
+        check(song.sel == track && song.g[G_BPM] == 88, "browsing never changes the selected role or tempo");
+    }
+    track_select(1);
+    jam_sound_load(1, 0); frame();
+    before = strip_hash(40, 32);
+    turn(EN_PRESET, 1);
+    check(before != strip_hash(40, 32), "the Sound preset position refreshes when browsing");
+    set_engine_of(&trk[1], ENGI_NOISE); frame();
+    jam_home_preset_position(position, 1);
+    check(!strcmp(position, "--/12"), "a deep sound outside the curated bank never claims a false preset position");
+}
+
 int main(int argc, char **argv)
 {
     if (argc > 1) outdir = argv[1];
@@ -394,6 +434,7 @@ int main(int argc, char **argv)
     test_home_controls(JAM_HOME_SOUND);
     test_groove_rows();
     test_groove_controls();
+    test_expanded_bank_controls();
     puts(fails ? "jam-ui: FAILED" : "jam-ui: all checks passed");
     return fails ? 1 : 0;
 }

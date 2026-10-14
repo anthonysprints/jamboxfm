@@ -109,7 +109,7 @@ try {
   assert.equal(await page.evaluate(() => globalThis.testJam.state.armed), false);
   assert.equal(await page.evaluate(() => globalThis.testJam.state.octave), 2);
   assert.equal(await page.evaluate(() => globalThis.testJam.state.tracks.find(t => t.track === 1).muted), false);
-  assert.equal(await page.evaluate(() => globalThis.testJam.state.tracks.find(t => t.track === 1).soundIndex), 0);
+  assert.equal(await page.evaluate(() => globalThis.testJam.state.tracks.find(t => t.track === 1).soundIndex), 2);
   await page.evaluate(() => { document.getElementById('octave-down').click(); document.getElementById('octave-down').click(); });
   await page.waitForFunction(() => !globalThis.testJam.inFlight && !globalThis.testJam.pending.length);
   await page.locator('#audio-start').click();

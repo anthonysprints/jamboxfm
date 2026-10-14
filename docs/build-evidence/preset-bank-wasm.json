@@ -1,0 +1,361 @@
+{
+  "wasmSha256": "81b0c0f0a439bcf949d387a2b96f56af5347535f74e43c8b0cfd4714f6563f23",
+  "sampleRate": 44100,
+  "framesPerSound": 8192,
+  "checks": 1165,
+  "maxNativeWasmDelta": 0,
+  "sounds": [
+    {
+      "track": 0,
+      "preset": 0,
+      "name": "ROUND BASS",
+      "engine": 0,
+      "absoluteSampleSum": 912.1529541015625,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 1,
+      "name": "MUTED BASS",
+      "engine": 0,
+      "absoluteSampleSum": 509.338623046875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 2,
+      "name": "SUB BASS",
+      "engine": 0,
+      "absoluteSampleSum": 1128.2171630859375,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 3,
+      "name": "808 BOOM",
+      "engine": 0,
+      "absoluteSampleSum": 1412.0838623046875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 4,
+      "name": "808 DIRTY",
+      "engine": 0,
+      "absoluteSampleSum": 1314.566162109375,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 5,
+      "name": "FUNK BASS",
+      "engine": 0,
+      "absoluteSampleSum": 1442.2324523925781,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 6,
+      "name": "SAW BASS",
+      "engine": 0,
+      "absoluteSampleSum": 1344.1800231933594,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 7,
+      "name": "REESE",
+      "engine": 0,
+      "absoluteSampleSum": 1220.4997863769531,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 8,
+      "name": "ACID 303",
+      "engine": 0,
+      "absoluteSampleSum": 1097.3775939941406,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 9,
+      "name": "FM BASS",
+      "engine": 1,
+      "absoluteSampleSum": 1182.4009094238281,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 10,
+      "name": "FINGER BASS",
+      "engine": 1,
+      "absoluteSampleSum": 1910.5496826171875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 0,
+      "preset": 11,
+      "name": "CZ BASS",
+      "engine": 2,
+      "absoluteSampleSum": 1172.4806518554688,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 0,
+      "name": "DUST KEYS",
+      "engine": 0,
+      "absoluteSampleSum": 621.2109375,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 1,
+      "name": "SOFT STABS",
+      "engine": 0,
+      "absoluteSampleSum": 340.2826843261719,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 2,
+      "name": "RHODES",
+      "engine": 1,
+      "absoluteSampleSum": 1086.9693603515625,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 3,
+      "name": "WURLI",
+      "engine": 1,
+      "absoluteSampleSum": 1268.7202758789062,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 4,
+      "name": "CLAV",
+      "engine": 1,
+      "absoluteSampleSum": 899.1951904296875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 5,
+      "name": "DUSTY PNO",
+      "engine": 4,
+      "absoluteSampleSum": 1322.5122375488281,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 6,
+      "name": "ROCK ORGAN",
+      "engine": 7,
+      "absoluteSampleSum": 465.2383728027344,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 7,
+      "name": "SOUL ORGAN",
+      "engine": 7,
+      "absoluteSampleSum": 576.6102600097656,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 8,
+      "name": "WARM PAD",
+      "engine": 0,
+      "absoluteSampleSum": 108.98855590820312,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 9,
+      "name": "SYN BRASS",
+      "engine": 0,
+      "absoluteSampleSum": 918.4512634277344,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 10,
+      "name": "SOFT PAD",
+      "engine": 9,
+      "absoluteSampleSum": 46.94451904296875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 1,
+      "preset": 11,
+      "name": "NYLON PICK",
+      "engine": 9,
+      "absoluteSampleSum": 1489.8535766601562,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 0,
+      "name": "MELLOW LEAD",
+      "engine": 0,
+      "absoluteSampleSum": 1059.4865417480469,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 1,
+      "name": "DUST REED",
+      "engine": 0,
+      "absoluteSampleSum": 993.3517761230469,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 2,
+      "name": "FAT LEAD",
+      "engine": 0,
+      "absoluteSampleSum": 683.631591796875,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 3,
+      "name": "PWM LEAD",
+      "engine": 0,
+      "absoluteSampleSum": 1015.8302917480469,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 4,
+      "name": "G-FUNK LD",
+      "engine": 0,
+      "absoluteSampleSum": 874.8361511230469,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 5,
+      "name": "NEON SAW",
+      "engine": 0,
+      "absoluteSampleSum": 636.3515319824219,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 6,
+      "name": "CZ LEAD",
+      "engine": 2,
+      "absoluteSampleSum": 1238.3874816894531,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 7,
+      "name": "RESO PLUCK",
+      "engine": 2,
+      "absoluteSampleSum": 868.6985168457031,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 8,
+      "name": "MUSIC BOX",
+      "engine": 1,
+      "absoluteSampleSum": 1036.2265625,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 9,
+      "name": "LOFI FLUTE",
+      "engine": 4,
+      "absoluteSampleSum": 355.5502624511719,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 10,
+      "name": "VIBES",
+      "engine": 4,
+      "absoluteSampleSum": 1083.2933959960938,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 2,
+      "preset": 11,
+      "name": "GLASS BELL",
+      "engine": 9,
+      "absoluteSampleSum": 975.1598815917969,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 0,
+      "name": "DUST KIT",
+      "engine": -1,
+      "absoluteSampleSum": 2870.493865966797,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 1,
+      "name": "SOFT KIT",
+      "engine": -1,
+      "absoluteSampleSum": 3057.0684204101562,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 2,
+      "name": "ROCK KIT",
+      "engine": -1,
+      "absoluteSampleSum": 1438.704345703125,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 3,
+      "name": "TIGHT KIT",
+      "engine": -1,
+      "absoluteSampleSum": 808.52587890625,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 4,
+      "name": "808 KIT",
+      "engine": -1,
+      "absoluteSampleSum": 3606.120361328125,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 5,
+      "name": "909 KIT",
+      "engine": -1,
+      "absoluteSampleSum": 2910.6905212402344,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 6,
+      "name": "TRAP KIT",
+      "engine": -1,
+      "absoluteSampleSum": 3521.541534423828,
+      "maxNativeWasmDelta": 0
+    },
+    {
+      "track": 3,
+      "preset": 7,
+      "name": "NEON KIT",
+      "engine": -1,
+      "absoluteSampleSum": 2344.4916381835938,
+      "maxNativeWasmDelta": 0
+    }
+  ]
+}

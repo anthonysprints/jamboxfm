@@ -8,6 +8,7 @@ command -v "$CC" >/dev/null || { echo 'Native Clang is required; source tools/cl
 export CC
 python3 tools/build_jam_preview.py
 sh tests/run_jam_palette_tests.sh
+sh tests/run_jam_preset_bank_tests.sh
 python3 tools/gen_font.py build/gen/felucca_font.h
 python3 tools/gen_icons.py build/gen/felucca_icons.h
 python3 tools/gen_logo.py build/gen/sloop_logo.h

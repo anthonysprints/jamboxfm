@@ -82,9 +82,10 @@ static void test_preservation(void)
               t->p[P_STRUM] == 12 && t->p[P_VLEAD] == 1, "sound load preserves harmonic and playing choices");
         CHECK(t->p[P_SLEN] == 48 && t->p[P_SDIV] == 1 && t->p[P_SSWING] == 21 && t->p[P_SGATE] == 91,
               "sound load preserves sequencer settings");
-        CHECK(jam_sound_index(k) == 1 && jam_sound_count(k) == 2, "variant metadata follows selected sound");
+        CHECK(jam_sound_index(k) == 1 && jam_sound_count(k) == (k == TRK_DRUM ? 8u : 12u),
+              "expanded bank metadata follows selected sound");
     }
-    CHECK(!jam_sound_load(4, 0) && !jam_sound_load(0, 2), "invalid sound requests rejected");
+    CHECK(!jam_sound_load(4, 0) && !jam_sound_load(0, jam_sound_count(0)), "invalid sound requests rejected");
     jam_sound_invalidate(0);
     CHECK(str_eq(jam_sound_name(0), "ANALOG") && jam_sound_index(0) == 0,
           "generic analog load invalidates curated name and browser index");
@@ -92,8 +93,8 @@ static void test_preservation(void)
     trk[0].eng_req = 1;
     CHECK(str_eq(jam_sound_name(0), ENGINES[1]->name) && jam_sound_index(0) == 0,
           "foreign engine displays actual engine with safe browser index");
-    TDRUM->p[P_E0] = 0;
-    CHECK(str_eq(jam_sound_name(TRK_DRUM), DRUM_KIT_NAMES[0]), "deep KIT change displays actual kit");
+    TDRUM->p[P_E0] = 1; /* DEEP is outside the curated selection; ACOUSTIC is now ROCK KIT. */
+    CHECK(str_eq(jam_sound_name(TRK_DRUM), DRUM_KIT_NAMES[1]), "deep KIT change displays actual kit");
     jam_sound_invalidate(99); /* invalid requests do not shift out of range */
 }
 

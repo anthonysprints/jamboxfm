@@ -21,7 +21,8 @@ function command(engine, type, ...args) { engine.command({ type, args }); }
   const engine = new JamEngine(module), state = engine.snapshot();
   assert.equal(state.tempo, 88); assert.equal(state.playing, false); assert.equal(state.selected, 1);
   assert.deepEqual(state.tracks.map(t => t.track), [3, 0, 1, 2]);
-  assert(state.tracks.every(t => t.soundCount === 2 && t.macros.length === 4));
+  assert.deepEqual(state.tracks.map(t => t.soundCount), [8, 12, 12, 12]);
+  assert(state.tracks.every(t => t.macros.length === 4));
   assert(state.steps.some(bits => bits & 1) && state.steps.some(bits => bits & 4));
   command(engine, 'key', 7, 1);
   assert.equal(engine.value(17, 0, 7), 4, 'local key expands the actual C chord');
@@ -81,7 +82,10 @@ function command(engine, type, ...args) { engine.command({ type, args }); }
   command(engine, 'toggleRecord'); command(engine, 'toggleRecord'); assert.equal(engine.value(20), 0);
   command(engine, 'toggleMute', 0); command(engine, 'toggleMute', 0); assert.equal(engine.value(5, 0), 0);
   const sound = engine.w.jam_sound_index(0);
-  command(engine, 'soundStep', 0, 1); command(engine, 'soundStep', 0, 1); assert.equal(engine.w.jam_sound_index(0), sound);
+  command(engine, 'soundStep', 0, 1); command(engine, 'soundStep', 0, 1);
+  assert.equal(engine.w.jam_sound_index(0), (sound + 2) % engine.w.jam_sound_count(0));
+  command(engine, 'soundStep', 0, engine.w.jam_sound_count(0) - 2);
+  assert.equal(engine.w.jam_sound_index(0), sound, 'browsing wraps through the complete expanded bank');
   command(engine, 'octaveStep', 1); command(engine, 'octaveStep', 1); assert.equal(engine.value(4), 2);
   console.log('WASM: drum edits, macro bounds, sound browsing, ready beat and bounded event queue passed');
 }

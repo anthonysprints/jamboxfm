@@ -1,5 +1,12 @@
 # JamBox software prototype and FM-1 update isolation
 
+The [preset library](PRESET_LIBRARY.md) expands Home browsing to 12 Bass,
+12 Chords, 12 Lead and eight drum kits. All choices use existing licensed
+engines and samples; SOUND macros follow each engine. Both Home views show
+the selected preset's position. The four tracks and the Dusty startup remain
+unchanged. Software and publication evidence is recorded in the
+[preset build record](build-evidence/preset-bank.md).
+
 Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The initial Home increment implemented two views: **GROOVE** at startup
@@ -52,7 +59,7 @@ The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. 
 
 - Four roles: Drums, Bass, Chords and Lead, preserving Sloop's internal track IDs.
 - An 88 BPM, two-bar synthesized drum groove; empty melodic patterns ready for recording.
-- Two curated sounds per role. Melodic macros control brightness, movement, grit and space; drum macros control tone, level, echo and room.
+- Twelve curated sounds per melodic role and eight drum kits. Melodic macros control brightness, movement, grit and space across six supported engines; drum macros control tone, level, echo and room.
 - A 240×240 Home screen with real physical encoder/button handling and access to the existing deeper sound pages.
 - A browser AudioWorklet running the shared C DSP, keyboard mapping, chord generation and sequencer. Keyboard/touch pads, sound browsing, macros, mute, tempo, swing and drum-step editing work through C commands.
 - Chord and bass capture through the grid-snapped recorder. The independent-POLY follow-up adds separate per-note grid lengths for staggered holds; build and publication checks passed. Finishing a take leaves playback running. Browser part selection finishes the current take and releases its held input.

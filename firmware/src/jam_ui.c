@@ -41,7 +41,7 @@ static int jam_home_active(void)
 
 static int jam_home_macros_available(uint32_t track)
 {
-    return track == TRK_DRUM || (track < NPART && trk[track].eng_req == 0);
+    return jam_macro_supported(track);
 }
 
 /* GROOVE uses the existing sequencer/mixer parameters; SOUND edits the patch. */
@@ -100,6 +100,16 @@ static void jam_home_browse(int32_t steps)
     ui.force = 1;
 }
 
+static void jam_home_preset_position(char *b, uint32_t track)
+{
+    if (jam_sound_is_curated(track))
+        fmt_int(b, (int32_t)jam_sound_index(track) + 1);
+    else
+        str_cpy(b, "--", 3);
+    str_cpy(b + str_len(b), "/", 2);
+    fmt_int(b + str_len(b), (int32_t)jam_sound_count(track));
+}
+
 /* Called after ordinary button handling, before the generic encoder paths.
  * Returns 0 without reading an encoder when another screen owns the controls. */
 static int jam_home_input(void)
@@ -132,10 +142,11 @@ static int jam_home_input(void)
         }
         if (!jam_home_macros_available(song.sel))
             continue;
-        /* Five percent per detent also moves the narrow 12/16-value ranges;
-         * adding 1 to their rounded getter could otherwise remain stuck. */
+        /* Continuous macros use five percent; coarse engine choices such as
+         * organ rotary speed need a whole option per detent. */
         jam_macro_set(song.sel, k, (uint32_t)clamp(
-            (int32_t)jam_macro_get(song.sel, k) + clamp(s, -20, 20) * 5, 0, 100));
+            (int32_t)jam_macro_get(song.sel, k) + clamp(s, -20, 20) *
+                (int32_t)jam_macro_step(song.sel, k), 0, 100));
         ui.hot_col = (uint8_t)k;
         ui.hot_t = 40;
     }
@@ -169,6 +180,7 @@ static int jam_sound_home_draw(void)
     roles = selected;
     for (k = 0; k < NTRK; k++)
         roles = roles * 31u + (uint32_t)!!trk[k].p[P_MUTE] + ((song.rec >> k) & 1u) * 3u;
+    roles = roles * 31u + (jam_sound_is_curated(selected) ? jam_sound_index(selected) + 1u : 0u);
     sound = jam_home_hash(selected + 1u, jam_sound_name(selected));
     macro = (selected + 1u) * 2u + (uint32_t)jam_home_macros_available(selected);
     for (k = 0; k < 4u; k++) {
@@ -214,8 +226,10 @@ static int jam_sound_home_draw(void)
                 cv_text(x + 4, 16, &FONT_S, "mute", fg);
             else if ((song.rec >> t) & 1u)
                 cv_text(x + 4, 16, &FONT_S, "rec", fg);
-            else if (t == selected)
-                cv_rect(x + 5, 25, 46, 2, fg);
+            else if (t == selected) {
+                jam_home_preset_position(b, selected);
+                jam_home_text(x + 4, 16, 52, &FONT_S, b, fg);
+            }
         }
         cv_blit(0, 40);
     }
@@ -374,7 +388,9 @@ static int jam_groove_home_draw(void)
     if (force || sound != jam_groove_cache.sound) {
         jam_groove_cache.sound = sound;
         cv_begin(240, 32, C_BLACK);
-        jam_home_text(8, 0, 224, &FONT_S, jam_role_name(selected), colors[selected]);
+        jam_home_text(8, 0, 160, &FONT_S, jam_role_name(selected), colors[selected]);
+        jam_home_preset_position(b, selected);
+        cv_text(232 - text_w(&FONT_S, b), 0, &FONT_S, b, C_GRAY);
         jam_home_text(8, 16, 224, &FONT_S, jam_sound_name(selected), C_WHITE);
         cv_blit(0, 144);
     }

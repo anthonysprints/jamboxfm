@@ -1,5 +1,11 @@
 # JamBoxFM implementation plan
 
+The owner narrowed the next increment to [preset expansion](PRESET_LIBRARY.md):
+12 sounds per melodic role and eight drum kits, using the inherited sound
+library with engine-aware macros. Additional tracks are deferred. This
+increment changes neither track allocation nor the session format; its
+verification is recorded in the [preset build record](build-evidence/preset-bank.md).
+
 Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty palette, Home and shared-code browser slice are now implemented; see [README](../README.md) and [cloud setup](CLOUD_SETUP.md) for current scope and validation. The remaining sections describe intended work, not completed capabilities.

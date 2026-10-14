@@ -1,6 +1,6 @@
 # JamBoxFM
 
-Custom M-VAVE FM-1 instrument: scrappy band jams, dusty beats, and big synth hooks. The first software prototype has drums, bass, chords and lead, an 88 BPM Dusty groove, two curated sounds per part, and four sound-shaping controls.
+Custom M-VAVE FM-1 instrument: scrappy band jams, dusty beats, and big synth hooks. Drums, bass, chords and lead start with an 88 BPM Dusty groove. The [preset library](docs/PRESET_LIBRARY.md) offers 12 basses, 12 keys/chord sounds, 12 leads and eight drum kits, with four sound-shaping controls.
 
 Development continues in the public [anthonysprints/jamboxfm repository](https://github.com/anthonysprints/jamboxfm), on `main`. The website publishing target is `https://anthonysprints.github.io/jamboxfm/emu/`; check its deployment status before treating it as live.
 
@@ -27,6 +27,7 @@ The site has a read-only device check at `/device/` and a separately packaged ex
 ## Design and provenance
 
 - [Product brief](PRODUCT_BRIEF.md): agreed musical direction and user experience.
+- [Preset library](docs/PRESET_LIBRARY.md): all 44 Home sounds, controls and source material.
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md): selected firmware baseline, modules, control mapping, sound/voice budgets, recording, persistence, browser and installer architecture.
 - [First FM-1 device build plan](docs/FM1_DEVICE_PLAN.md): Dinghy/FM-1-RE findings, compiler path, update/recovery work, first hardware trial and release gates.
 - [Factory V15 preparation](docs/FM1_FACTORY_V15.md): verified original firmware, separate return simulations, backup limits and recovery work.
