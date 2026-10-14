@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "382c4527294d046383df486af1d5a18b201cc38fd29622e34ae606f6e4947a71",
-      "size_bytes": 557244
+      "sha256": "6ed5df6fbe2bb4c4e8111b300eec552d060e54650764bd5f4d7239ed6a5e7bf5",
+      "size_bytes": 558804
     },
     "felucca.elf": {
-      "sha256": "312b0732aaa240eb876290e64ed39c7da843cd6ea72cdc3ad2c6bb3293c3e295",
-      "size_bytes": 595428
+      "sha256": "3ce4acd369fbdf5f598da1486371541ba0ab2d59adf8d421182bdc88c101d3c6",
+      "size_bytes": 598260
     },
     "felucca.fwsc": {
-      "sha256": "9c5e78a303996ee91600ce0e7fa9434d667f0212dc4e5db7758f28689c6db148",
+      "sha256": "0989dff18b3217f0ccbb233812aa4ecb4222a465632c93d3ecec5323871ddebe",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -492,8 +492,8 @@
     "firmware/src/jam_duration_play.c": "6570014d89c3f71d87041e0d37fe065f0eafe3a329171d9a4edd0ff8e5e3b66f",
     "firmware/src/jam_duration_record.c": "1c3e6719bc6879e5e1f89c9994ed5827130ea2c7754571eca6d493eb4b596ced",
     "firmware/src/jam_identity.h": "052bb9b5aca3e525dc37e56bcfc9c9f3d1839c0ed030c4625e33c404ceb4f92a",
-    "firmware/src/jam_palette.c": "92f8799c43b6f87df4cb0846ef294a38922590ee153cb49b816b988315e96301",
-    "firmware/src/jam_ui.c": "642146324c426d5598cdba64dd832b9fdc11818fdef9f464c29a7b3e8fe24238",
+    "firmware/src/jam_palette.c": "bf91d134da034f341c4af637ff1ebfba45990d8ad275e2babdeecf2e4de90577",
+    "firmware/src/jam_ui.c": "b58c39b560be90444337d6e85da314e314937e9b9d3d8173211f5befeff3a084",
     "firmware/src/lcd.c": "b69f0c3d6a5b61c883a35b50ddd6582811bd620a45268543e923fb8849caaac4",
     "firmware/src/libc.c": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a",
     "firmware/src/main.c": "0745fe1b33a076b4de4c6f2269e02b258221154997d33ecccd320f4c09d2ca3f",
@@ -569,9 +569,9 @@
     }
   },
   "source": {
-    "dirty": true,
+    "dirty": false,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "73fe0ce2cc3fb63c628d37a0daafda168453d08b"
+    "revision": "962a8f7d9314a7c6613de3dcff70f65e87ffedeb"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",

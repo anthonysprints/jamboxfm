@@ -1,6 +1,6 @@
 # JamBoxFM browser instrument
 
-Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The browser instrument uses the FM-1's controls: 27 note keys, 14 buttons,
 seven encoders and a master level control. Its 240 × 240 screen is drawn by
@@ -72,7 +72,7 @@ remain. No extra overlap setting is required.
 
 The browser uses the same C recorder and release scheduling as the FM-1;
 JavaScript does not schedule a parallel performance. Shared C integration, native checks, actual WASM/AudioWorklet/browser checks
-and the FM-1 build passed. Publication remains pending. See the [follow-up build
+and the FM-1 build passed. Publication is verified; physical audition remains pending. See the [follow-up build
 record](build-evidence/independent-notes.md) for the finalized result before
 assuming the public emulator has changed. Browser reload and device power-off
 still lose the temporary session; permanent saving is disabled.
