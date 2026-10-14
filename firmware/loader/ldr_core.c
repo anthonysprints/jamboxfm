@@ -16,10 +16,12 @@
  *      was served (the head too, which it never writes; a mismatch: up to two
  *      more passes, rewriting what differs), asks 0xF0000000 ("success"), then
  *      invalidates the update record (RAM and flash) so the SPL boots the new
- *      app, and resets. A damaged package or no "success" leaves the record:
- *      the loader stays (also after a power cycle) and the host can resume.
- * Power loss during 3: the record is still there, the SPL runs the loader
- * again on the next power-on and the host can resume.
+ *      app, and resets. A damaged package or no "success" leaves the flash
+ *      record; retry can continue while the current loader remains reachable.
+ * A flash record does NOT prove recovery after a power cycle. An upstream
+ * hardware failure retained both a valid record and staged loader but did not
+ * resume on cold boot (ChoralRoot docs/BOOT-SAFETY.md, pinned in our research).
+ * Recovery before application code runs requires a separately verified path.
  *
  * Hooks from the platform (loader.c, tests/ldr_test.c):
  *   ldr_fread(off, p, n)  ldr_erase(off)  ldr_prog(off, p, n)   flash, 0 = ok
@@ -186,7 +188,7 @@ static int ldr_pass(void)
     if (crc != want)
         return LDR_EBADPKG;
     for (i = 0; i < 4u; i++)
-        if (!ota_read(0xF0000000u, sec, 8))
+        if (!ota_read(0xF0000000u, sec, 8) && ota_memeq(sec, (const uint8_t *)"success", 8))
             break;
     if (i == 4u)
         return LDR_ENOFIN;

@@ -1,0 +1,3 @@
+Recorded capture chain verified: FM-1 V16 -> OTA V15 -> flash complete -> FM-1 V15.
+Offline only: checks the supplied record and framing; does not authenticate a past flash or contact hardware.
+Payload replay: verified local stock package

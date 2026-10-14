@@ -17,6 +17,7 @@ static size_t logical_len;
 static uint8_t rx[1024];
 static uint32_t rx_len, rx_full, now_ms, requests, erases, programs, bad_range, record_cleared, f0_asked;
 static uint32_t corrupt_at, corrupt_once, no_finish;   /* the host serves a damaged byte / never says "success" */
+static uint32_t wrong_finish;                        /* a valid frame carrying the wrong completion text */
 static uint32_t record_reads, record_read_fail, record_erase_fail, record_erase_skip, cleanup_faults;
 
 static uint32_t pack7(const uint8_t *in, uint32_t n, uint8_t *out)
@@ -62,6 +63,8 @@ static int ota_wire_send(const uint8_t *p, uint32_t n)
         f0_asked += addr == 0xF0000000u;
         memset(m + 14, 0, len);
         memcpy(m + 14, "success", 8);
+        if (addr == 0xF0000000u && wrong_finish)
+            memcpy(m + 14, wrong_finish == 1 ? "failure" : "success!", 8);
     } else {
         if (addr + len > logical_len) { printf("read past the package %#x\n", addr); exit(1); }
         memcpy(m + 14, logical + addr, len);
@@ -249,6 +252,33 @@ int main(int argc, char **argv)
         rc = ldr_session();
         bad += check("... and the next session finishes", rc == 0 && record_cleared && nor[0xE4F06] == 0xFF);
     }
+    /* A valid FINISH_WRITE frame does not itself confirm success. A negative
+     * message or a missing NUL must preserve recovery records after the app
+     * transfer; the next correctly acknowledged session can finish cleanup. */
+    for (wrong_finish = 1; wrong_finish <= 2; wrong_finish++) {
+        uint32_t fault = wrong_finish;
+        memset(nor, 0xA5, sizeof nor);
+        memcpy(nor, old + ofo, 0x93000);
+        put_record();
+        memcpy(before, nor, sizeof nor);
+        record_cleared = erases = programs = bad_range = f0_asked = 0;
+        rc = ldr_session();
+        printf("  invalid completion body: %s\n", fault == 1 ? "failure with NUL" : "success without NUL");
+        bad += check("wrong completion text refused after bounded finish requests", rc == LDR_ENOFIN
+                     && f0_asked == 4 && !record_cleared);
+        bad += check("wrong completion preserves all recovery and protected bytes", !bad_range
+                     && protected_unchanged(before)
+                     && !memcmp(nor + 0xE4000u, before + 0xE4000u, 0x1000u)
+                     && !memcmp(nor + 0x4000, logical + nfo + 0x4000, 0x93000 - 0x4000));
+        wrong_finish = 0;
+        erases = programs = f0_asked = 0;
+        rc = ldr_session();
+        bad += check("exact success with NUL permits cleanup on the next session", rc == 0 && record_cleared
+                     && !programs && erases == 1 && f0_asked == 1 && nor[0xE4F06] == 0xFF
+                     && !bad_range && protected_unchanged(before));
+        wrong_finish = fault;
+    }
+    wrong_finish = 0;
     /* Missing/foreign flash: preserve every byte, including a valid SPL resume record.
      * An unchanged app alone misses record cleanup erasing a sector above the app. */
     {

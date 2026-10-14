@@ -238,6 +238,21 @@ try {
     assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot().sent)).map(packet => packet.bytes), [allowed[0], allowed[2]]);
     await noOpenLinks(page);
   });
+  await runCase('factory V15 report is explained without certifying capabilities or sending extra probes', { devices: [{ kind: 'unknown', identity: 'FM-1_015' }] }, async page => {
+    await enable(page); await select(page); await read(page);
+    const result = await report(page);
+    assert.equal(await page.locator('#result-title').textContent(), 'Factory V15 identity reported.');
+    assert.equal(await page.locator('#result-badge').textContent(), 'REPORTED');
+    assert.equal(await page.locator('#device-family').textContent(), 'Factory FM-1 (reported)');
+    assert.match(await page.locator('#result-guidance').textContent(), /not been independently verified/);
+    assert.match(await page.locator('#result-guidance').textContent(), /not a backup/);
+    assert.equal(result.family, 'unknown'); assert.equal(result.recognized, false);
+    assert.equal(result.hardwareValidated, false); assert.equal(result.installAllowed, false);
+    assert(Object.values(result.capabilities).every(value => value === false));
+    assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot().sent)).map(packet => packet.bytes), [allowed[0]]);
+    await noOpenLinks(page);
+    await page.screenshot({ path: resolve(evidence, 'factory-v15-reported.png'), fullPage: true });
+  });
   for (const mode of ['rescue', 'loader']) await runCase(`JamBox ${mode} mode`, { devices: [{ mode }] }, async page => {
     await enable(page); await select(page); await read(page);
     assert.equal((await report(page)).mode, mode);

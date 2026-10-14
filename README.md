@@ -29,6 +29,7 @@ Milestone 3 adds JamBox identity and splash, local candidate packaging with sour
 - [Product brief](PRODUCT_BRIEF.md): agreed musical direction and user experience.
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md): selected firmware baseline, modules, control mapping, sound/voice budgets, recording, persistence, browser and installer architecture.
 - [First FM-1 device build plan](docs/FM1_DEVICE_PLAN.md): Dinghy/FM-1-RE findings, compiler path, update/recovery work, first hardware trial and release gates.
+- [Factory V15 preparation](docs/FM1_FACTORY_V15.md): verified original firmware, separate return simulations, backup limits and recovery work.
 - [FM-1 software candidate](docs/FM1_CANDIDATE.md): identity, local package checks, simulated transitions and read-only device inventory.
 - [Research evidence](docs/RESEARCH_EVIDENCE.md): pinned source links, REA results, executed host checks and limitations.
 - [Validation plan](docs/VALIDATION_PLAN.md): reproducible build, software, browser, hardware and release gates.

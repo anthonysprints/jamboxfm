@@ -1,0 +1,36 @@
+Factory V15 fixture: 699956 bytes; SHA-256 db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a
+normal: actual JamBox normal/rescue identity and capability response       ok
+normal: exact factory V15 loader stages and commits once                   ok
+normal: all 32 factory-head blocks checked before staging                  ok
+normal: all 19,937 loader bytes staged, including final 481-byte block     ok
+normal: staged loader CRC matches pinned official 0x5881                   ok
+normal: LOADER.BIN header CRC, address and full length                     ok
+normal: resume record equals RAM record and retains SPL compatibility      ok
+normal: staging padding intact; only loader, header and resume written     ok
+normal: entire head, app, calibration and user regions unchanged           ok
+normal: boot cleanup confines erases to staging and is idempotent          ok
+normal: first factory-head byte differs: refuse before programming         ok
+normal: last factory-head byte differs: refuse before programming          ok
+normal: failed installed-head read: refuse before programming              ok
+normal: host disappears after partial staging: abort and erase             ok
+normal: corrupt final loader byte: CRC failure cleans staging              ok
+normal: staged readback failure: no resume record or commit                ok
+normal: missing host confirmation: no commit, all staging erased           ok
+rescue: actual JamBox normal/rescue identity and capability response       ok
+rescue: exact factory V15 loader stages and commits once                   ok
+rescue: all 32 factory-head blocks checked before staging                  ok
+rescue: all 19,937 loader bytes staged, including final 481-byte block     ok
+rescue: staged loader CRC matches pinned official 0x5881                   ok
+rescue: LOADER.BIN header CRC, address and full length                     ok
+rescue: resume record equals RAM record and retains SPL compatibility      ok
+rescue: staging padding intact; only loader, header and resume written     ok
+rescue: entire head, app, calibration and user regions unchanged           ok
+rescue: boot cleanup confines erases to staging and is idempotent          ok
+rescue: first factory-head byte differs: refuse before programming         ok
+rescue: last factory-head byte differs: refuse before programming          ok
+rescue: failed installed-head read: refuse before programming              ok
+rescue: host disappears after partial staging: abort and erase             ok
+rescue: corrupt final loader byte: CRC failure cleans staging              ok
+rescue: staged readback failure: no resume record or commit                ok
+rescue: missing host confirmation: no commit, all staging erased           ok
+Factory V15 JamBox stage-one: 34 checks passed; stock loader execution is not tested

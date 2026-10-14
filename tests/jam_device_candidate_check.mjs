@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Verify a real generated bundle and exercise its bytes against mock MIDI only.
-// Usage: node tests/jam_device_candidate_check.mjs [bundle-directory] [Sloop-2.6.fwsc]
+// Usage: node tests/jam_device_candidate_check.mjs [bundle-directory] [Sloop-2.6.fwsc] [FM-1-V15.fwsc]
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { prepareCandidate, prepareReturnPackage, validateManifest, SIMULATED_TRANSITIONS, JAM_IDENTITIES } from '../web/jam-device-policy.js';
+import { prepareCandidate, prepareReturnPackage, prepareStockReturnPackage, validateManifest,
+  SIMULATED_TRANSITIONS, FACTORY_SIMULATED_TRANSITIONS, JAM_IDENTITIES } from '../web/jam-device-policy.js';
 import { sha256hex } from '../web/fm1pkg.js';
 import { MockMIDIAccess, profile, simulateInstall } from './helpers/jam_install_simulator.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const directory = path.resolve(process.argv[2] || path.join(root, 'build/jambox-device'));
 const returnFile = path.resolve(process.argv[3] || '/workspace/deps/jambox-return/SLOOP-2.6.fwsc');
+const factoryFile = path.resolve(process.argv[4] || process.env.JAMBOX_FACTORY_PACKAGE || '/workspace/deps/jambox-return/FM-1-V15.fwsc');
 const manifest = validateManifest(JSON.parse(await fs.readFile(path.join(directory, 'manifest.json'), 'utf8')));
 async function artifact(name, sha256, size) {
   const filename = path.join(directory, name), stat = await fs.lstat(filename);
@@ -35,23 +37,32 @@ assert.deepEqual(receipt.configuration.app.flags, manifest.build.flags);
 assert.deepEqual(receipt.artifacts['felucca.fwsc'], { size_bytes: firmware.length, sha256: candidate.sha256 });
 assert.ok(memory.app && memory.loader, 'Expected app and loader memory evidence');
 const exactReturn = await prepareReturnPackage(new Uint8Array(await fs.readFile(returnFile)));
-const cases = [['jam', candidate], ['rescue', candidate], ['loader', candidate], ['sloop', candidate], ['jam', exactReturn], ['rescue', exactReturn]];
-const transitions = [], originalTimer = globalThis.setTimeout;
+const exactFactory = await prepareStockReturnPackage(new Uint8Array(await fs.readFile(factoryFile)));
+const cases = [['jam', candidate], ['rescue', candidate], ['loader', candidate], ['sloop', candidate], ['jam', exactReturn], ['rescue', exactReturn],
+  ['stock-v15', candidate], ['jam', exactFactory], ['rescue', exactFactory]];
+const transitions = [], coverage = [], originalTimer = globalThis.setTimeout;
 // Real updater control flow and wire codec; only delays are shortened. Every
 // port is a test-owned MockMIDIAccess port, with no Web MIDI or native backend.
 globalThis.setTimeout = (fn, ms, ...args) => originalTimer(fn, Math.min(ms, 1), ...args);
 try {
   for (const [source, prepared] of cases) {
-    const returning = prepared.family === 'sloop';
-    const access = new MockMIDIAccess({ source: profile(source), loader: profile(returning ? 'ota-FM-1_900' : 'loader'), final: profile(returning ? 'sloop' : 'jam') });
-    const result = await simulateInstall({ access, pair: access.pair(), candidate: prepared });
+    const returning = { sloop: ['ota-FM-1_900', 'sloop'], factory: ['ota-FM-1_015', 'stock-v15'] }[prepared.family];
+    const access = new MockMIDIAccess({ source: profile(source), loader: profile(returning?.[0] || 'loader'), final: profile(returning?.[1] || 'jam') });
+    const result = await simulateInstall({ access, pair: access.pair(), candidate: prepared, factoryBaseline: exactFactory });
     assert.equal(result.steps.at(-1)[0], 'done'); assert.equal(result.installAllowed, false);
+    assert.equal(result.deviceExecutionValidated, false); assert.equal(result.hostSimulationOnly, true);
+    assert.ok(result.coverage.every(stage => stage.verifiedBytes === prepared.image().length));
+    assert.equal(result.coverage.length, source === 'loader' ? 1 : 2);
     assert.ok(access.ports.every(port => port.listeners.size === 0 && port.opens === port.closes));
     transitions.push(result.transition);
+    coverage.push({ transition: result.transition, stages: result.coverage });
   }
 } finally { globalThis.setTimeout = originalTimer; }
-assert.deepEqual(transitions, SIMULATED_TRANSITIONS);
+assert.deepEqual(transitions, [...SIMULATED_TRANSITIONS, ...FACTORY_SIMULATED_TRANSITIONS]);
 console.log(JSON.stringify({ result: 'passed', family: candidate.family, version: candidate.version,
   firmware_size_bytes: firmware.length, firmware_sha256: candidate.sha256,
   bundle_descriptors_verified: 4 + manifest.licenses.length, simulated_transitions: transitions,
-  return_sha256: exactReturn.sha256, release_enabled: false, hardware_validated: false, install_allowed: false }, null, 2));
+  coverage, return_sha256: exactReturn.sha256, factory_return_sha256: exactFactory.sha256,
+  factory_baseline_assumed: true, host_simulation_only: true, device_execution_validated: false,
+  request_pattern: 'Generic contiguous host requests of at most 512 bytes; not a captured factory update transcript',
+  release_enabled: false, hardware_validated: false, install_allowed: false }, null, 2));

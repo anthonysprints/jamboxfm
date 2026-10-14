@@ -2,7 +2,7 @@
 
 Executed October 13, 2026 in the Debian 13 amd64 cloud environment. The source baseline is Sloop `8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e`; original import hashes are in [the import manifest](../upstream/import-manifest.json).
 
-The later FM-1-style web emulator has its own [test, package and source-rebuild record](emulator/README.md). The subsequent [physical-target build record](device-build/README.md) supersedes the compiler-absent observation below. The [update-isolation record](update-isolation/README.md) covers bounded firmware updating with temporary sessions. The latest [candidate record](candidate/README.md) covers JamBox identity, local packaging, simulated transitions and the read-only device page. The results below identify the original four-part browser workbench.
+The later FM-1-style web emulator has its own [test, package and source-rebuild record](emulator/README.md). The subsequent [physical-target build record](device-build/README.md) supersedes the compiler-absent observation below. The [update-isolation record](update-isolation/README.md) covers bounded firmware updating with temporary sessions. The latest [candidate record](candidate/README.md) covers JamBox identity, local packaging, simulated transitions and the read-only device page. The later [factory V15 follow-up](factory-v15/README.md) verifies the owner-supplied stock image, adds native/host return checks and corrects loader completion handling. The results below identify the original four-part browser workbench.
 
 | Check | Result | Log |
 | --- | --- | --- |

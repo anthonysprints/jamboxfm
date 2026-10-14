@@ -1,0 +1,52 @@
+  rc 0, 1180 requests, 144 sector erases
+install completes                                        ok
+app area == the new package's flash.bin                  ok
+flash head [0, 0x4000) untouched                         ok
+finish asked (0xF0000000)                                ok
+update record cleared (RAM + flash)                      ok
+no write outside the allowed windows                     ok
+re-run with the same package erases nothing              ok
+foreign key / damaged app head refused, nothing erased   ok
+a byte damaged once: caught by the CRC, fixed by a 2nd pass ok
+a damaged package: refused after 3 passes, the record stays ok
+... also when the damage is in the head                  ok
+no "success" from the host: the record stays             ok
+... and the next session finishes                        ok
+  refused flash JEDEC 0
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xef4014
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+known chip: retained update can complete on retry        ok
+update with record lookalikes installs app and completes ok
+cleanup erases only the selected policy's ranges         ok
+JamBox clears its known resume-record sector             ok
+JamBox preserves all bytes outside app + record sector   ok
+  cleanup fault: record read
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: record erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: erase readback
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: ignored erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+loader test passed

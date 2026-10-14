@@ -36,6 +36,8 @@ const manifest = {
 };
 const prepared = await policy.prepareCandidate(manifest, fixture);
 const pinnedReturn = await policy.prepareReturnPackage(baseline);
+const factoryBytes = new Uint8Array(await fs.readFile(process.env.JAMBOX_FACTORY_PACKAGE || '/workspace/deps/jambox-return/FM-1-V15.fwsc'));
+const pinnedFactory = await policy.prepareStockReturnPackage(factoryBytes);
 const copy = value => structuredClone(value);
 
 test('manifest strictly validates candidate gates, provenance, artifacts, target and evidence', () => {
@@ -164,7 +166,7 @@ async function fastTimers(run) {
   globalThis.setTimeout = (fn, ms, ...args) => original(fn, Math.min(ms, 1), ...args);
   try { return await run(); } finally { globalThis.setTimeout = original; }
 }
-test('all six approved simulated transitions use actual updater and explicitly selected mock pairs', async () => fastTimers(async () => {
+test('all six existing simulated transitions use actual updater and explicitly selected mock pairs', async () => fastTimers(async () => {
   const cases = [['jam', prepared], ['rescue', prepared], ['loader', prepared], ['sloop', prepared], ['jam', pinnedReturn], ['rescue', pinnedReturn]];
   const completed = [];
   for (const [source, candidate] of cases) {
@@ -175,7 +177,9 @@ test('all six approved simulated transitions use actual updater and explicitly s
     assert.deepEqual(access.upgrades, source === 'loader' ? ['loader'] : ['app', 'loader']);
     assert.equal(result.steps.at(-1)[0], 'done'); assert.equal(result.selected.at(-1).stage, 'final');
     assert.ok(access.ports.every(port => port.listeners.size === 0 && port.opens === port.closes));
-    assert.equal(access.responses.length, source === 'loader' ? 2 : 4);
+    assert.equal(result.coverage.length, source === 'loader' ? 1 : 2);
+    assert.ok(result.coverage.every(stage => stage.verifiedBytes === candidate.image().length));
+    assert.equal(access.responses.reduce((sum, item) => sum + item.length, 0), candidate.image().length * result.coverage.length);
   }
   assert.deepEqual(completed, policy.SIMULATED_TRANSITIONS);
 }));
@@ -224,4 +228,113 @@ test('stage faults, cancellation, identity mismatches and failed final acknowled
   assert.ok(cancelled.ports.every(port => port.listeners.size === 0));
   const wrongReturn = new MockMIDIAccess({ loader: profile('ota-FM-1_900'), final: profile('sloop', { info: sloopInfoFrame({ protocol: 9 }) }) });
   await assert.rejects(simulateInstall({ access: wrongReturn, candidate: pinnedReturn, pair: wrongReturn.pair() }));
+}));
+
+test('factory return preparation pins the complete uploaded V15 file and preserves existing manifest policy', async () => {
+  assert.equal(factoryBytes.length, policy.FACTORY_V15.size_bytes);
+  assert.equal(await sha256hex(factoryBytes), policy.FACTORY_V15.sha256);
+  assert.equal(pinnedFactory.product, 'FM-1_015');
+  assert.equal(pinnedFactory.family, 'factory');
+  assert.equal(pinnedFactory.version, '15');
+  assert.equal(pinnedFactory.installAllowed, false);
+  assert.equal(pinnedFactory.releaseEnabled, false);
+  assert.equal(pinnedFactory.hardwareValidated, false);
+  const original = pinnedFactory.image(), external = factoryBytes.slice();
+  const independent = await policy.prepareStockReturnPackage(external);
+  external.fill(0); independent.image().fill(0);
+  assert.deepEqual(independent.image(), original);
+  for (const bytes of [factoryBytes.subarray(1), new Uint8Array([...factoryBytes, 0]), fixture, baseline,
+    withProduct(factoryBytes, 'FM-1_700'), withProduct(factoryBytes, 'FM-1_016')])
+    await assert.rejects(policy.prepareStockReturnPackage(bytes), /unmodified official FM-1 V15/);
+  for (const position of [0, 47, 1000, factoryBytes.length - 1]) {
+    const bytes = factoryBytes.slice(); bytes[position] ^= 1;
+    await assert.rejects(policy.prepareStockReturnPackage(bytes), /unmodified official FM-1 V15/);
+  }
+  await assert.rejects(policy.prepareStockReturnPackage('FM-1.fwsc'), /package bytes/);
+  assert.throws(() => policy.simulationTransition({}, { ...pinnedFactory }), /validated prepared/);
+  const stock = policy.classifyDevice({ identity: identity('FM-1_015') });
+  assert.equal(stock.recognized, false);
+  assert.equal(stock.family, 'unknown');
+  assert.ok(Object.values(stock.capabilities).every(value => value === false));
+  assert.equal(policy.simulationTransition(stock, prepared).allowed, false);
+  assert.equal(policy.simulationTransition(policy.classifyDevice({ identity: identity('FM-1_700'),
+    familyProbe: policy.parseFamilyProbe(familyFrame()) }), pinnedFactory).allowed, false);
+  assert.equal(policy.validateManifest(manifest).transitions.simulated.length, 6);
+});
+
+test('all three factory transitions exercise every package byte only under an explicit mock factory assumption', async () => fastTimers(async () => {
+  const cases = [['stock-v15', prepared], ['jam', pinnedFactory], ['rescue', pinnedFactory]], completed = [];
+  for (const [source, candidate] of cases) {
+    const returning = candidate === pinnedFactory;
+    const access = new MockMIDIAccess({ source: profile(source), loader: profile(returning ? 'ota-FM-1_015' : 'loader'),
+      final: profile(returning ? 'stock-v15' : 'jam') });
+    const result = await simulateInstall({ access, candidate, pair: access.pair(), factoryBaseline: pinnedFactory });
+    completed.push(result.transition);
+    assert.equal(result.installAllowed, false); assert.equal(result.hardwareValidated, false);
+    assert.equal(result.deviceExecutionValidated, false); assert.equal(result.hostSimulationOnly, true);
+    assert.equal(result.factoryBaselineAssumed, true);
+    assert.deepEqual(result.guards, ['app', 'loader', 'final']);
+    assert.deepEqual(access.upgrades, ['app', 'loader']);
+    assert.equal(result.steps.at(-1)[0], 'done');
+    assert.deepEqual(result.coverage.map(stage => [stage.stage, stage.verifiedBytes]),
+      [['app', candidate.image().length], ['loader', candidate.image().length]]);
+    for (const stage of ['app', 'loader']) {
+      const responses = access.responses.filter(item => item.stage === stage);
+      assert.ok(responses.some(item => item.length === 512));
+      assert.ok(responses.some(item => item.length === 481));
+      assert.equal(responses.reduce((sum, item) => sum + item.length, 0), candidate.image().length);
+    }
+    const factoryStages = returning ? ['loader', 'final'] : ['app'];
+    assert.ok(access.transcript.filter(item => factoryStages.includes(item.stage)).every(item =>
+      String(item.packet) !== String(frame(0x12, [])) && String(item.packet) !== '240,125,70,76,1,247'),
+    'Factory identities must not receive unsupported JamBox/Sloop probes');
+    assert.ok(access.ports.every(port => port.listeners.size === 0 && port.opens === port.closes));
+  }
+  assert.deepEqual(completed, policy.FACTORY_SIMULATED_TRANSITIONS);
+}));
+
+test('factory simulation rejects absent or forged baseline evidence, other identities and standalone factory loaders', async () => {
+  for (const [source, candidate, factoryBaseline] of [
+    ['stock-v15', prepared, null], ['stock-v15', prepared, pinnedReturn], ['stock-v15', prepared, { ...pinnedFactory }],
+    ['FM-1_016', prepared, pinnedFactory], ['FM-1_15', prepared, pinnedFactory], ['OTHER_015', prepared, pinnedFactory],
+    ['FM-1_900', prepared, pinnedFactory], ['ota-FM-1_015', prepared, pinnedFactory],
+    ['ota-FM-1_015', pinnedFactory, pinnedFactory], ['loader', pinnedFactory, pinnedFactory],
+    ['sloop', pinnedFactory, pinnedFactory], ['stock-v15', pinnedFactory, pinnedFactory],
+  ]) {
+    const access = new MockMIDIAccess({ source: profile(source) });
+    await assert.rejects(simulateInstall({ access, candidate, pair: access.pair(), factoryBaseline }),
+      /outside the simulated policy|validated prepared/);
+    assert.deepEqual(access.upgrades, []);
+    assert.ok(access.ports.every(port => port.listeners.size === 0 && port.opens === port.closes));
+  }
+});
+
+test('factory stages reject changed identity, unexpected loader/final firmware, partial transfers and cancellation', async () => fastTimers(async () => {
+  for (const config of [
+    { source: profile('stock-v15'), candidate: prepared, loader: profile('ota-FM-1_015') },
+    { source: profile('stock-v15'), candidate: prepared, final: profile('stock-v15') },
+    { candidate: pinnedFactory, loader: profile('ota-FM-1_900') },
+    { candidate: pinnedFactory, loader: profile('loader') },
+    { candidate: pinnedFactory, loader: profile('ota-FM-1_016') },
+    { candidate: pinnedFactory, loader: profile('ota-FM-1_015'), final: profile('FM-1_016') },
+    { candidate: pinnedFactory, loader: profile('ota-FM-1_015'), final: profile('jam') },
+  ]) {
+    const { candidate, ...ports } = config, access = new MockMIDIAccess(ports);
+    await assert.rejects(simulateInstall({ access, candidate, pair: access.pair(), factoryBaseline: pinnedFactory }));
+    if (!config.final) assert.deepEqual(access.upgrades, ['app']);
+    assert.ok(access.ports.every(port => port.listeners.size === 0));
+  }
+  for (const stage of ['app', 'loader']) for (const type of ['mid-disconnect', 'bad-request', 'finish-send', 'abort']) {
+    const controller = new AbortController();
+    const access = new MockMIDIAccess({ loader: profile('ota-FM-1_015'), final: profile('stock-v15'), fault: { stage, type, controller } });
+    await assert.rejects(simulateInstall({ access, candidate: pinnedFactory, pair: access.pair(), signal: controller.signal }));
+    assert.notEqual(access.stage, 'final');
+    assert.ok(access.ports.every(port => port.listeners.size === 0));
+  }
+  const changed = new MockMIDIAccess({ fault: { stage: 'app', type: 'identity-change' } });
+  await assert.rejects(simulateInstall({ access: changed, candidate: pinnedFactory, pair: changed.pair() }));
+  assert.deepEqual(changed.upgrades, [], 'JamBox identity must remain verified before stock return stage one');
+  const factoryChanged = new MockMIDIAccess({ source: profile('stock-v15'), fault: { stage: 'app', type: 'identity-change', nextIdentity: 'FM-1_016' } });
+  await assert.rejects(simulateInstall({ access: factoryChanged, candidate: prepared, pair: factoryChanged.pair(), factoryBaseline: pinnedFactory }));
+  assert.deepEqual(factoryChanged.upgrades, [], 'Reported factory identity must match the explicit test assumption at stage one');
 }));

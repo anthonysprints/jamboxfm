@@ -2,7 +2,8 @@
 // Test-only transfer orchestration. Never imported by, or published with, the UI.
 import assert from 'node:assert/strict';
 import { Updater } from '../../web/fm1ota.js';
-import { inspectDevice, simulationTransition, JAM_VERSION, SLOOP_26 } from '../../web/jam-device-policy.js';
+import { inspectDevice, simulationTransition, JAM_VERSION, SLOOP_26, FACTORY_V15,
+  FACTORY_SIMULATED_TRANSITIONS } from '../../web/jam-device-policy.js';
 
 // Independent whole-integer wire codec, separate from the production stream codec.
 export function frame(command, body) {
@@ -41,6 +42,7 @@ export function profile(name, changes = {}) {
   if (name in modes) return { text: { jam: 'FM-1_700', rescue: 'FM-1_000', loader: 'ota-FM-1_700' }[name],
     family: familyFrame(modes[name]), ...changes };
   if (name === 'sloop') return { text: 'FM-1_900', info: sloopInfoFrame(), ...changes };
+  if (name === 'stock-v15') return { text: FACTORY_V15.product, ...changes };
   return { text: name, ...changes };
 }
 function request(address, length = 8) {
@@ -66,6 +68,7 @@ export class MockMIDIAccess {
     this.profiles = { app: source, loader, final }; this.stage = source.text.startsWith('ota-') ? 'loader' : 'app';
     if (this.stage === 'loader') this.profiles.loader = source;
     this.fault = fault; this.upgrades = []; this.responses = []; this.expectedImage = null;
+    this.transfers = []; this.transfer = null;
     this.handshakes = 0;
     this.attach(this.stage); mocks.add(this);
   }
@@ -76,13 +79,24 @@ export class MockMIDIAccess {
     this.ports.push(this.input, this.output); this.inputs.set(this.input.id, this.input); this.outputs.set(this.output.id, this.output);
   }
   pair() { return { inputId: this.input.id, outputId: this.output.id }; }
+  requestNext() {
+    const t = this.transfer;
+    if (t.verifiedBytes === this.expectedImage.length) {
+      this.input.emit(request(this.stage === 'app' ? 0xe0000000 : 0xf0000000)); return;
+    }
+    // This deliberately covers every byte with 512-byte and 481-byte responses.
+    // It is a generic host-protocol exercise, not a captured device transcript:
+    // the factory app, its loader, and the flash-writing code do not execute.
+    t.requestLength = Math.min(t.chunks === 1 ? 481 : 512, this.expectedImage.length - t.verifiedBytes);
+    this.input.emit(request(t.verifiedBytes, t.requestLength));
+  }
   send(packet) {
     this.transcript.push({ stage: this.stage, packet });
     const current = this.profiles[this.stage];
     if (String(packet) === '240,0,50,69,0,0,0,64,127,247') {
       this.handshakes++;
       if (this.fault?.stage === this.stage && this.fault.type === 'identity-change' && this.handshakes > 1)
-        this.profiles[this.stage] = profile('FM-1_015');
+        this.profiles[this.stage] = profile(this.fault.nextIdentity || 'FM-1_015');
       if (this.fault?.stage === this.stage && this.fault.type === 'abort-identify') this.fault.controller.abort();
       return this.input.emit(identityFrame(this.profiles[this.stage].text));
     }
@@ -94,8 +108,8 @@ export class MockMIDIAccess {
       if (this.fault?.stage === this.stage && this.fault.type === 'abort') { this.fault.controller.abort(); return; }
       if (this.fault?.stage === this.stage && this.fault.type === 'disconnect') { this.input.state = this.output.state = 'disconnected'; return; }
       if (this.fault?.stage === this.stage && this.fault.type === 'bad-request') return this.input.emit(request(this.expectedImage.length, 1));
-      this.input.emit(request(0, 512)); this.input.emit(request(this.expectedImage.length - 481, 481));
-      this.input.emit(request(this.stage === 'app' ? 0xe0000000 : 0xf0000000)); return;
+      this.transfer = { stage: this.stage, verifiedBytes: 0, chunks: 0, requestLength: 0 };
+      this.transfers.push(this.transfer); this.requestNext(); return;
     }
     const raw = unframe(packet), body = raw.slice(6, -1);
     assert.equal(raw[2], 0x30, 'Mock rejects any unexpected write command');
@@ -104,6 +118,7 @@ export class MockMIDIAccess {
     const length = body[5] | body[6] << 8 | body[7] << 16;
     assert.equal(length, body.length - 8);
     if (address >= 0xe0000000) {
+      assert.equal(this.transfer.verifiedBytes, this.expectedImage.length, 'Every image byte must be checked before completion');
       assert.deepEqual(body.slice(8), [...Buffer.from('success\0')]);
       if (this.fault?.stage === this.stage && this.fault.type === 'finish-send') throw new Error('Simulated failed terminal send');
       if (this.fault?.stage === this.stage && this.fault.type === 'missing-after-finish') {
@@ -111,34 +126,68 @@ export class MockMIDIAccess {
       }
       this.attach(this.stage === 'app' ? 'loader' : 'final');
     } else {
+      assert.equal(address, this.transfer.verifiedBytes, 'Responses must match the next contiguous request');
+      assert.equal(length, this.transfer.requestLength, 'Responses must match the requested length');
       assert.deepEqual(body.slice(8), [...this.expectedImage.subarray(address, address + length)]);
       this.responses.push({ stage: this.stage, address, length });
+      this.transfer.verifiedBytes += length; this.transfer.chunks++;
+      if (this.fault?.stage === this.stage && this.fault.type === 'mid-disconnect' && this.transfer.verifiedBytes >= 1024) {
+        this.input.state = this.output.state = 'disconnected'; return;
+      }
+      this.requestNext();
     }
   }
 }
 
-export async function simulateInstall({ access, pair, candidate, signal }) {
+function factoryIdentity(id, loader = false) {
+  return id?.text === `${loader ? 'ota-' : ''}${FACTORY_V15.product}` &&
+    id.model === (loader ? 'ota-FM-1' : 'FM-1') && id.version === 15;
+}
+function factoryPrepared(candidate) {
+  if (!candidate) return false;
+  // Reuse the private prepared-package membership check, without introducing
+  // factory identity recognition or factory installation into the public UI.
+  simulationTransition({}, candidate);
+  return candidate.family === FACTORY_V15.family && candidate.version === FACTORY_V15.version &&
+    candidate.product === FACTORY_V15.product && candidate.sha256 === FACTORY_V15.sha256;
+}
+function mockTransition(source, candidate, factoryBaseline) {
+  const standard = simulationTransition(source, candidate);
+  if (standard.allowed) return standard;
+  let transition = null;
+  if (factoryPrepared(factoryBaseline) && !source.recognized && factoryIdentity(source.identity) && candidate.family === 'jamboxfm')
+    transition = 'factory-v15-to-jambox';
+  else if (factoryPrepared(candidate) && source.recognized && source.family === 'jamboxfm' && ['normal', 'rescue'].includes(source.mode))
+    transition = `jambox-${source.mode}-to-factory-v15`;
+  return { allowed: FACTORY_SIMULATED_TRANSITIONS.includes(transition), transition, simulationOnly: true, installAllowed: false };
+}
+
+export async function simulateInstall({ access, pair, candidate, signal, factoryBaseline = null }) {
   assert.ok(mocks.has(access), 'Explicit MockMIDIAccess required; physical MIDI is not supported');
   assert.ok(pair?.inputId && pair?.outputId, 'Select a mock input/output pair');
   const updater = new Updater(access, () => {}), steps = [], selected = [], guards = [];
   const initial = await updater.identify({ pair, signal, query: (link, id) => inspectDevice(id, link, { signal, timeoutMs: 5 }) });
-  const source = initial.capabilities, permission = simulationTransition(source, candidate);
+  const source = initial.capabilities, permission = mockTransition(source, candidate, factoryBaseline);
   assert.ok(permission.allowed, 'Transition is outside the simulated policy');
+  const fromFactory = permission.transition === 'factory-v15-to-jambox', toFactory = factoryPrepared(candidate);
   access.expectedImage = candidate.image();
   let passedApp = false;
   const identityGuard = async (id, context) => {
     guards.push(context.stage);
     const observed = await inspectDevice(id, context.link, { signal, timeoutMs: 5 });
     if (context.stage === 'app') {
-      passedApp = observed.recognized && observed.family === source.family && observed.mode === source.mode && observed.release === source.release;
+      passedApp = fromFactory ? !observed.recognized && factoryIdentity(id) :
+        observed.recognized && observed.family === source.family && observed.mode === source.mode && observed.release === source.release;
       return passedApp;
     }
     if (context.stage === 'loader') {
       if (candidate.family === 'jamboxfm') return observed.recognized && observed.family === 'jamboxfm' && observed.mode === 'loader';
       // This foreign loader is trusted only after stage one of this exact pinned
       // return transaction. It never becomes a recognized standalone device.
-      return passedApp && source.family === 'jamboxfm' && candidate.sha256 === SLOOP_26.sha256 && id.text === 'ota-FM-1_900';
+      return passedApp && source.family === 'jamboxfm' && (toFactory ? factoryIdentity(id, true) :
+        candidate.sha256 === SLOOP_26.sha256 && id.text === 'ota-FM-1_900');
     }
+    if (context.stage === 'final' && toFactory) return passedApp && !observed.recognized && factoryIdentity(id);
     return context.stage === 'final' && observed.recognized && observed.family === candidate.family &&
       observed.release === candidate.version && observed.mode === 'normal';
   };
@@ -152,5 +201,7 @@ export async function simulateInstall({ access, pair, candidate, signal }) {
     assert.equal(await updater.resume(candidate.image(), onStep, options), true, 'Loader resume did not finish');
   } else await updater.install(candidate.image(), candidate.product, onStep, options);
   return { transition: permission.transition, simulationOnly: true, hardwareValidated: false,
-    installAllowed: false, steps, selected, guards, transcript: access.transcript };
+    hostSimulationOnly: true, deviceExecutionValidated: false, factoryBaselineAssumed: fromFactory || toFactory,
+    installAllowed: false, steps, selected, guards, transcript: access.transcript,
+    coverage: access.transfers.map(({ stage, verifiedBytes, chunks }) => ({ stage, verifiedBytes, chunks })) };
 }

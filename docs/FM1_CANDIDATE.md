@@ -13,7 +13,7 @@ Use the [device check](https://anthonysprints.github.io/jamboxfm/device/) in a d
 
 A known numeric ID alone does not establish firmware family. Unknown or inconsistent replies remain unrecognized. The report always says installation is unavailable at this stage. Use the current firmware's own backup tools before a future change; the read-only report is not a music backup.
 
-A report of `FM-1_015` matches the stock V15 identity. The current checker leaves it `unknown` because its audited profiles cover JamBox and exact Sloop 2.6. For unrecognized firmware, false capability fields mean **not established by this checker**, not proof those features are absent. The owner’s report and confirmation of the original interface establish factory V15 as the working baseline. The [device plan](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline) now requires a separately verified factory entry/return path; no firmware change is needed to complete identification.
+A report of `FM-1_015` matches the stock V15 identity. The page explains this as Factory V15 identity reported; its machine-readable classification stays `unknown` because its audited family profiles cover JamBox and exact Sloop 2.6. For unrecognized firmware, false capability fields mean **not established by this checker**, not proof those features are absent. The owner’s report and confirmation of the original interface establish factory V15 as the working baseline. The exact owner-supplied factory package now passes the recorded size/product/hash pin. [Factory V15 preparation](FM1_FACTORY_V15.md) records the separate host simulations, native return-staging checks and remaining physical gates; no firmware change is needed to complete identification.
 
 ## Identity contract
 

@@ -455,8 +455,8 @@ static int ota_session(void)
     return 1;
 #endif
 #ifndef FELUCCA_OTA_RAMONLY
-#define FELUCCA_OTA_RAMONLY 0                       /* 1: RAM record only, no power-loss resume (a power
-                                                     * cycle leaves a broken loader behind) */
+#define FELUCCA_OTA_RAMONLY 0                       /* 1 omits the flash record. Keeping it does not
+                                                     * establish cold-boot or power-loss recovery. */
 #endif
     if (!FELUCCA_OTA_RAMONLY && (ota_prog(OTA_RES, parm, sizeof parm) || ota_fread(OTA_RES, back, sizeof back) ||
         !ota_memeq(back, parm, sizeof parm))) {

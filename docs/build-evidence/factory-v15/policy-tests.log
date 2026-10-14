@@ -1,0 +1,21 @@
+✔ manifest strictly validates candidate gates, provenance, artifacts, target and evidence (4.910562ms)
+✔ preparation pins exact bytes and keeps prepared image immutable (79.583925ms)
+✔ full package validator rejects bounds, metadata and nested payload corruption even with valid outer CRCs (653.628296ms)
+✔ family probe requires exact framing, fields and matching identity (2.526032ms)
+✔ Sloop identification requires exact audited INFO and rejects numeric-only identities (1.142255ms)
+✔ inventory sends only identity-specific read-only query shapes and handles loss/abort (1.522846ms)
+✔ all six existing simulated transitions use actual updater and explicitly selected mock pairs (19362.608383ms)
+✔ unknown families, stock, standalone foreign loader and unsupported return paths refuse before any upgrade (14.049952ms)
+✔ stage faults, cancellation, identity mismatches and failed final acknowledgement cannot produce done (37623.941346ms)
+✔ factory return preparation pins the complete uploaded V15 file and preserves existing manifest policy (92.763277ms)
+✔ all three factory transitions exercise every package byte only under an explicit mock factory assumption (11951.820904ms)
+✔ factory simulation rejects absent or forged baseline evidence, other identities and standalone factory loaders (8.670166ms)
+✔ factory stages reject changed identity, unexpected loader/final firmware, partial transfers and cancellation (30939.5903ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 101043.677076

@@ -1,0 +1,25 @@
+SDK: three pinned binary hashes verified (/workspace/deps/ac79-sdk)
+Compiler: four required executables present (/workspace/toolchains/jieli/toolchain); compilation has not been tested by this check
+Device build prerequisites present; no firmware build or hardware validation was performed
+JIELI_TOOLCHAIN=/workspace/toolchains/jieli/toolchain
+clang version 4.0.1 () ()
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin
+archive SHA256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 0 of 86 (no icons.png), 0 B
+tables: /workspace/jamboxfm/build/gen/felucca_tables.h
+loader: image 8632 B at 0x1c0a800, bss end 0x1c0f5b0
+loader: ota.bin 7333 B
+generated waves into /workspace/jamboxfm/build/genwav
+samples: 8 sets, 51 zones, 303054 B ADPCM
+drum kits: 32 synthesised -> /workspace/jamboxfm/build/gen/felucca_drumkits.h
+fm6 patches: 8 -> /workspace/jamboxfm/build/gen/felucca_fm6.h
+  ok    .ram_text: 884 insns, no calls
+  ok    image 547552 B; RAM .data+.bss 80648 B of 98304; pool 324580 B of 344064
+  ok    register access: hal/ only (src/, loader/ clean)
+app      /workspace/jamboxfm/build/felucca.bin  547552 B
+loader   /workspace/jamboxfm/build/loader/ota.bin  7333 B
+package  /workspace/jamboxfm/build/felucca.fwsc  610489 B, identity FM-1_700

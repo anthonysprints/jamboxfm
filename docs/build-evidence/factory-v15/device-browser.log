@@ -1,0 +1,19 @@
+PASS unsupported browser
+PASS permission denied and retry
+PASS no ports and hotplug
+PASS explicit ports, JamBox report and private JSON export
+PASS mismatched port names
+PASS same-name ambiguity requires explicit selection
+PASS Sloop identification and backup guidance
+PASS factory V15 report is explained without certifying capabilities or sending extra probes
+PASS JamBox rescue mode
+PASS JamBox loader mode
+PASS unknown firmware
+PASS JamBox identity without family evidence
+PASS malformed family reply
+PASS malformed identity
+PASS cancel ignores late reply and waits for port cleanup
+PASS disconnect ignores stale read and requires new ports
+PASS page exit cancels an active read
+PASS mobile layout and result
+JamBox device page: 18 Chromium cases passed; every outgoing MIDI packet matched the read-only allowlist. Screenshots: /workspace/jamboxfm/build/jam-device-evidence

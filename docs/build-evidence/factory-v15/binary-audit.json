@@ -1,0 +1,732 @@
+{
+  "stock": {
+    "path": "/workspace/deps/jambox-return/FM-1-V15.fwsc",
+    "raw_size": 699956,
+    "logical_size": 699936,
+    "product": "FM-1_015",
+    "sha256": "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a",
+    "ufw_entries": [
+      {
+        "name": "flash.bin",
+        "type": 0,
+        "index": 0,
+        "offset": 1024,
+        "length": 602112,
+        "aligned_length": 602112,
+        "crc16": "0x9b24",
+        "stored_bytes_crc_matches": true,
+        "sha256": "c1068a403c04a6378a626afb66cc217f72d13f10aa200e983b7a9817cc1dac03"
+      },
+      {
+        "name": "info.log",
+        "type": 2,
+        "index": 1,
+        "offset": 603136,
+        "length": 0,
+        "aligned_length": 0,
+        "crc16": "0x0",
+        "stored_bytes_crc_matches": true,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "USR",
+        "type": 50,
+        "index": 2,
+        "offset": 603136,
+        "length": 73226,
+        "aligned_length": 73248,
+        "crc16": "0xe3bc",
+        "stored_bytes_crc_matches": false,
+        "sha256": "627c1ad2e56312f970edd94b4a706303538fd2125d90bfe9656b886691501831"
+      },
+      {
+        "name": "isd_config.ini",
+        "type": 52,
+        "index": 3,
+        "offset": 676384,
+        "length": 3296,
+        "aligned_length": 3296,
+        "crc16": "0xacef",
+        "stored_bytes_crc_matches": false,
+        "sha256": "cb5cc5994cd5efadcaa2712c909560d1df41a47a05f7f80c63a21a0f937900a8"
+      },
+      {
+        "name": "ota.bin",
+        "type": 100,
+        "index": 4,
+        "offset": 679680,
+        "length": 19969,
+        "aligned_length": 20000,
+        "crc16": "0xa1c9",
+        "stored_bytes_crc_matches": true,
+        "sha256": "ef1f2db89b011fa53e71df363f0122de0ea896618c53fb53e8da676322004541"
+      },
+      {
+        "name": "script.ver",
+        "type": 251,
+        "index": 5,
+        "offset": 699680,
+        "length": 27,
+        "aligned_length": 32,
+        "crc16": "0xaab7",
+        "stored_bytes_crc_matches": false,
+        "sha256": "f07497b6844bae44314748ab2368267792d3da810601c81e98059f9e9ad85742"
+      },
+      {
+        "name": "blimit.bin",
+        "type": 161,
+        "index": 6,
+        "offset": 699712,
+        "length": 144,
+        "aligned_length": 160,
+        "crc16": "0x33fe",
+        "stored_bytes_crc_matches": false,
+        "sha256": "6c59d72b341ab24e6e54466937c9587fbfcff1f72eec7525148e14ae4bc5f093"
+      },
+      {
+        "name": "tail.bin",
+        "type": 255,
+        "index": 7,
+        "offset": 699872,
+        "length": 64,
+        "aligned_length": 64,
+        "crc16": "0x8936",
+        "stored_bytes_crc_matches": true,
+        "sha256": "79d4bbc325be8b2f49492a9e8bf712e3cfe4e7c55e874dced1445ed65616843b"
+      }
+    ],
+    "flash_head_sha256": "d9f43191777656de01c7bed4f9e9ba2e34e94832c5d2ed02c3fc7ab7a6d9bd67",
+    "flash_head_top": [
+      {
+        "name": "uboot.boot",
+        "offset": 160,
+        "size": 14384,
+        "flags": "0x0",
+        "reserved": 0,
+        "index": 0,
+        "header_crc": "0x1b92",
+        "data_crc": "0x71c8",
+        "stored_bytes_crc_matches": false,
+        "sha256": "b5a0715940db344f951595e2d5a66050631c7721703cb06d33d8dc94eca3c861"
+      },
+      {
+        "name": "isd_config.ini",
+        "offset": 14544,
+        "size": 699,
+        "flags": "0x2",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0x18fc",
+        "data_crc": "0x70d5",
+        "stored_bytes_crc_matches": true,
+        "sha256": "0952afd96f533dd0fba72a8fab9cb4a4336f55424a1a89eecb13ff8a51a0eff0"
+      },
+      {
+        "name": "app_dir_head",
+        "offset": 16384,
+        "size": 4294967295,
+        "flags": "0x81",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0x7da6",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "key_mac",
+        "offset": 1044480,
+        "size": 4096,
+        "flags": "0x12",
+        "reserved": 1,
+        "index": 65535,
+        "header_crc": "0x6dd",
+        "data_crc": "0xffff"
+      }
+    ],
+    "chip_key": "0x980f",
+    "app_area_header": {
+      "name": "app_area_head",
+      "offset": 33554720,
+      "size": 582235,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 0,
+      "header_crc": "0xdf67",
+      "data_crc": "0xf399"
+    },
+    "app_entries": [
+      {
+        "name": "app.bin",
+        "offset": 288,
+        "size": 581564,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0xab78",
+        "data_crc": "0x5d48",
+        "sha256": "306e47065f35d7a7a05ada7f5dd092f6e770952054f33f0a86b75fd10ffe3203"
+      },
+      {
+        "name": "cfg_tool.bin",
+        "offset": 581852,
+        "size": 383,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0xf5ec",
+        "data_crc": "0x2e75",
+        "sha256": "276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b"
+      },
+      {
+        "name": "VM",
+        "offset": 602112,
+        "size": 352256,
+        "flags": "0x12",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xa5ca",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "PRCT",
+        "offset": 0,
+        "size": 602112,
+        "flags": "0x92",
+        "reserved": 130,
+        "index": 0,
+        "header_crc": "0xeb8",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "BTIF",
+        "offset": 954368,
+        "size": 4096,
+        "flags": "0x92",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xb093",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "USR",
+        "offset": 958464,
+        "size": 73728,
+        "flags": "0x92",
+        "reserved": 129,
+        "index": 1,
+        "header_crc": "0x5dc1",
+        "data_crc": "0xffff"
+      }
+    ],
+    "cfg_header": {
+      "name": "cfg",
+      "offset": 32,
+      "size": 2937,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x9d66",
+      "data_crc": "0xabbd"
+    },
+    "cfg_eq": {
+      "name": "eq_cfg_hw.bin",
+      "offset": 64,
+      "size": 2873,
+      "flags": "0x82",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x997e",
+      "data_crc": "0x17d"
+    },
+    "loader_outer": {
+      "name": "usb_hid_ota.bin",
+      "offset": 32,
+      "size": 19937,
+      "flags": "0x41",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0xebaa",
+      "data_crc": "0x5881"
+    },
+    "loader_inner": {
+      "name": "usb_hid_ota.bin",
+      "offset": 23324,
+      "size": 29403136,
+      "flags": "0x0",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0x569c",
+      "data_crc": "0xb295"
+    },
+    "loader_decompressed_size": 23324,
+    "loader_load_address": "0x1c0a800",
+    "loader_blocks": [
+      {
+        "offset": 64,
+        "compressed_length": 3213,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 3285,
+        "compressed_length": 3544,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 6837,
+        "compressed_length": 3575,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 10420,
+        "compressed_length": 3616,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 14044,
+        "compressed_length": 3467,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 17519,
+        "compressed_length": 2442,
+        "decoded_length": 2844
+      }
+    ],
+    "loader_decoded_sha256": "42798ffc24f385302f07865216726fbdd0bfeff1339bdd909edcc93f3b1bb53c",
+    "loader_structure_checked": true,
+    "jam_app_window_sha256": "6edf3c37fb5bbbc33607c89375ee024d5477c17914d72221c8c68e58a8255686",
+    "checked_crc_scope": "UFW header/list, flash.bin, ota.bin, info.log, tail.bin, nested loader, boot head entry headers and chip-key blob, app directory, app.bin, cfg_tool.bin, cfg/eq; opaque auxiliary UFW entries and encoded SPL payload not decoded"
+  },
+  "jambox": {
+    "path": "/workspace/jamboxfm/build/felucca.fwsc",
+    "raw_size": 610465,
+    "logical_size": 610445,
+    "product": "FM-1_700",
+    "sha256": "ab0c2071c2a3e18ce6c8ee7a55621af8f20aa1fe978c1784481352542fc2a0b2",
+    "ufw_entries": [
+      {
+        "name": "flash.bin",
+        "type": 0,
+        "index": 0,
+        "offset": 1024,
+        "length": 602112,
+        "aligned_length": 602112,
+        "crc16": "0xdcc",
+        "stored_bytes_crc_matches": true,
+        "sha256": "3e4ee0fe498bce2599eb7f4d1c9daf65cbdce7e017e02b66f0e7aebb39528585"
+      },
+      {
+        "name": "ota.bin",
+        "type": 100,
+        "index": 1,
+        "offset": 603136,
+        "length": 7309,
+        "aligned_length": 7328,
+        "crc16": "0x635",
+        "stored_bytes_crc_matches": true,
+        "sha256": "f69c275eb2e98c73e00d739e70f5331774073d2826ced936762c92b963bee571"
+      }
+    ],
+    "flash_head_sha256": "53144a0a192b505e30cbdba2477c9771a05564cd7b6441ca12e85f16ca88b077",
+    "flash_head_top": [
+      {
+        "name": "uboot.boot",
+        "offset": 160,
+        "size": 14536,
+        "flags": "0x0",
+        "reserved": 0,
+        "index": 0,
+        "header_crc": "0x659a",
+        "data_crc": "0xdafa",
+        "stored_bytes_crc_matches": true,
+        "sha256": "4e3b4c220dc96641cb5a723f41e68ce41d5261ae9434bb33fbd7f2c59976ded4"
+      },
+      {
+        "name": "isd_config.ini",
+        "offset": 14696,
+        "size": 45,
+        "flags": "0x2",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0x9d67",
+        "data_crc": "0x1adf",
+        "stored_bytes_crc_matches": true,
+        "sha256": "1fb1366805e74b2610a918d575545dd0a0a8180a4eb69c2d2cc7d4649dcafb1f"
+      },
+      {
+        "name": "app_dir_head",
+        "offset": 16384,
+        "size": 4294967295,
+        "flags": "0x81",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0x7da6",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "key_mac",
+        "offset": 1044480,
+        "size": 4096,
+        "flags": "0x12",
+        "reserved": 1,
+        "index": 65535,
+        "header_crc": "0x6dd",
+        "data_crc": "0xffff"
+      }
+    ],
+    "chip_key": "0x980f",
+    "app_area_header": {
+      "name": "app_area_head",
+      "offset": 33554720,
+      "size": 582235,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 0,
+      "header_crc": "0xf321",
+      "data_crc": "0x3d79"
+    },
+    "app_entries": [
+      {
+        "name": "app.bin",
+        "offset": 288,
+        "size": 581564,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0xd5f6",
+        "data_crc": "0x340f",
+        "sha256": "c70916c71f1c04f6d4ebb888bebfc88e8f8fb0006aa4e89f54f83046ff744c0f"
+      },
+      {
+        "name": "cfg_tool.bin",
+        "offset": 581852,
+        "size": 383,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0xf5ec",
+        "data_crc": "0x2e75",
+        "sha256": "276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b"
+      },
+      {
+        "name": "VM",
+        "offset": 602112,
+        "size": 352256,
+        "flags": "0x12",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xa5ca",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "PRCT",
+        "offset": 0,
+        "size": 602112,
+        "flags": "0x92",
+        "reserved": 130,
+        "index": 0,
+        "header_crc": "0xeb8",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "BTIF",
+        "offset": 954368,
+        "size": 4096,
+        "flags": "0x92",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xb093",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "USR",
+        "offset": 958464,
+        "size": 73728,
+        "flags": "0x92",
+        "reserved": 129,
+        "index": 1,
+        "header_crc": "0x5dc1",
+        "data_crc": "0xffff"
+      }
+    ],
+    "cfg_header": {
+      "name": "cfg",
+      "offset": 32,
+      "size": 719,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x5d17",
+      "data_crc": "0x3cb1"
+    },
+    "cfg_eq": {
+      "name": "eq_cfg_hw.bin",
+      "offset": 64,
+      "size": 655,
+      "flags": "0x82",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x1fbc",
+      "data_crc": "0x1fbc"
+    },
+    "loader_outer": {
+      "name": "usb_hid_ota.bin",
+      "offset": 32,
+      "size": 7277,
+      "flags": "0x41",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0x3122",
+      "data_crc": "0x1552"
+    },
+    "loader_inner": {
+      "name": "usb_hid_ota.bin",
+      "offset": 8600,
+      "size": 29403136,
+      "flags": "0x0",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0xd803",
+      "data_crc": "0x6925"
+    },
+    "loader_decompressed_size": 8600,
+    "loader_load_address": "0x1c0a800",
+    "loader_blocks": [
+      {
+        "offset": 64,
+        "compressed_length": 3940,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 4012,
+        "compressed_length": 2913,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 6933,
+        "compressed_length": 368,
+        "decoded_length": 408
+      }
+    ],
+    "loader_decoded_sha256": "aeca6f53ccb53c039e4ba68e3a5e52c547f4fdb6e481df89847bb7f4304b4ecd",
+    "loader_structure_checked": true,
+    "jam_app_window_sha256": "8cdb50e117de82abf2037bab06b067e7dd5a2d0f99997b0ea628b3c1ca859bbc",
+    "checked_crc_scope": "UFW header/list, flash.bin, ota.bin, info.log, tail.bin, nested loader, boot head entry headers and chip-key blob, app directory, app.bin, cfg_tool.bin, cfg/eq; opaque auxiliary UFW entries and encoded SPL payload not decoded"
+  },
+  "sloop": {
+    "path": "/workspace/deps/jambox-return/SLOOP-2.6.fwsc",
+    "raw_size": 610019,
+    "logical_size": 609999,
+    "product": "FM-1_900",
+    "sha256": "199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2",
+    "ufw_entries": [
+      {
+        "name": "flash.bin",
+        "type": 0,
+        "index": 0,
+        "offset": 1024,
+        "length": 602112,
+        "aligned_length": 602112,
+        "crc16": "0x26e6",
+        "stored_bytes_crc_matches": true,
+        "sha256": "edff54627ebef412eeb424777c977a4ffe84e553425ec1debd1d2e6e91c145d6"
+      },
+      {
+        "name": "ota.bin",
+        "type": 100,
+        "index": 1,
+        "offset": 603136,
+        "length": 6863,
+        "aligned_length": 6880,
+        "crc16": "0x2d",
+        "stored_bytes_crc_matches": true,
+        "sha256": "ffba642c23c5d6e4ad5a708c4d15d027bdfc6153da34e05e8052c8b4238aa3b5"
+      }
+    ],
+    "flash_head_sha256": "53144a0a192b505e30cbdba2477c9771a05564cd7b6441ca12e85f16ca88b077",
+    "flash_head_top": [
+      {
+        "name": "uboot.boot",
+        "offset": 160,
+        "size": 14536,
+        "flags": "0x0",
+        "reserved": 0,
+        "index": 0,
+        "header_crc": "0x659a",
+        "data_crc": "0xdafa",
+        "stored_bytes_crc_matches": true,
+        "sha256": "4e3b4c220dc96641cb5a723f41e68ce41d5261ae9434bb33fbd7f2c59976ded4"
+      },
+      {
+        "name": "isd_config.ini",
+        "offset": 14696,
+        "size": 45,
+        "flags": "0x2",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0x9d67",
+        "data_crc": "0x1adf",
+        "stored_bytes_crc_matches": true,
+        "sha256": "1fb1366805e74b2610a918d575545dd0a0a8180a4eb69c2d2cc7d4649dcafb1f"
+      },
+      {
+        "name": "app_dir_head",
+        "offset": 16384,
+        "size": 4294967295,
+        "flags": "0x81",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0x7da6",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "key_mac",
+        "offset": 1044480,
+        "size": 4096,
+        "flags": "0x12",
+        "reserved": 1,
+        "index": 65535,
+        "header_crc": "0x6dd",
+        "data_crc": "0xffff"
+      }
+    ],
+    "chip_key": "0x980f",
+    "app_area_header": {
+      "name": "app_area_head",
+      "offset": 33554720,
+      "size": 582235,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 0,
+      "header_crc": "0xef05",
+      "data_crc": "0x5d33"
+    },
+    "app_entries": [
+      {
+        "name": "app.bin",
+        "offset": 288,
+        "size": 581564,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0x71b1",
+        "data_crc": "0x253e",
+        "sha256": "5015351a3cd291190152242081258185de9c72735467ff11e39148f8ef155dcc"
+      },
+      {
+        "name": "cfg_tool.bin",
+        "offset": 581852,
+        "size": 383,
+        "flags": "0x82",
+        "reserved": 255,
+        "index": 0,
+        "header_crc": "0xf5ec",
+        "data_crc": "0x2e75",
+        "sha256": "276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b"
+      },
+      {
+        "name": "VM",
+        "offset": 602112,
+        "size": 352256,
+        "flags": "0x12",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xa5ca",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "PRCT",
+        "offset": 0,
+        "size": 602112,
+        "flags": "0x92",
+        "reserved": 130,
+        "index": 0,
+        "header_crc": "0xeb8",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "BTIF",
+        "offset": 954368,
+        "size": 4096,
+        "flags": "0x92",
+        "reserved": 128,
+        "index": 0,
+        "header_crc": "0xb093",
+        "data_crc": "0xffff"
+      },
+      {
+        "name": "USR",
+        "offset": 958464,
+        "size": 73728,
+        "flags": "0x92",
+        "reserved": 129,
+        "index": 1,
+        "header_crc": "0x5dc1",
+        "data_crc": "0xffff"
+      }
+    ],
+    "cfg_header": {
+      "name": "cfg",
+      "offset": 32,
+      "size": 719,
+      "flags": "0x83",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x5d17",
+      "data_crc": "0x3cb1"
+    },
+    "cfg_eq": {
+      "name": "eq_cfg_hw.bin",
+      "offset": 64,
+      "size": 655,
+      "flags": "0x82",
+      "reserved": 255,
+      "index": 1,
+      "header_crc": "0x1fbc",
+      "data_crc": "0x1fbc"
+    },
+    "loader_outer": {
+      "name": "usb_hid_ota.bin",
+      "offset": 32,
+      "size": 6831,
+      "flags": "0x41",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0x97ae",
+      "data_crc": "0xb620"
+    },
+    "loader_inner": {
+      "name": "usb_hid_ota.bin",
+      "offset": 8140,
+      "size": 29403136,
+      "flags": "0x0",
+      "reserved": 0,
+      "index": 0,
+      "header_crc": "0xef54",
+      "data_crc": "0x3e7e"
+    },
+    "loader_decompressed_size": 8140,
+    "loader_load_address": "0x1c0a800",
+    "loader_blocks": [
+      {
+        "offset": 64,
+        "compressed_length": 3956,
+        "decoded_length": 4096
+      },
+      {
+        "offset": 4028,
+        "compressed_length": 2827,
+        "decoded_length": 4044
+      }
+    ],
+    "loader_decoded_sha256": "1017ae5d7695cc11ca7ee58caa22d0616c442b9bff51f326fe5539580cbb75dc",
+    "loader_structure_checked": true,
+    "jam_app_window_sha256": "1982a711228e9c84e2c3ad423191beb8ce8bcbebdf9b8c743523661cfe3257fc",
+    "checked_crc_scope": "UFW header/list, flash.bin, ota.bin, info.log, tail.bin, nested loader, boot head entry headers and chip-key blob, app directory, app.bin, cfg_tool.bin, cfg/eq; opaque auxiliary UFW entries and encoded SPL payload not decoded"
+  },
+  "comparisons": {
+    "stock_vs_jam_head_equal": false,
+    "stock_vs_sloop_head_equal": false,
+    "stock_loader_equals_pinned_reverse_engineering": true,
+    "stock_head_preservation_required_for_current_official_return": true
+  }
+}

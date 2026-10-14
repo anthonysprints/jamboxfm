@@ -8,6 +8,8 @@ const FAMILIES = { jamboxfm: 'JamBoxFM', sloop: 'Sloop', unknown: 'Unrecognized 
 const MODES = { normal: 'Running normally', rescue: 'Recovery mode', loader: 'Update loader', unknown: 'Not confirmed' };
 const CAPABILITIES = ['updater', 'temporary', 'appRescue', 'boundedLoader', 'readOnlyCalibration'];
 const safeText = (value, length = 120) => typeof value === 'string' ? value.slice(0, length) : null;
+const reportsFactoryV15 = report => !report.recognized && report.identity.text === 'FM-1_015' &&
+  report.identity.model === 'FM-1' && report.identity.version === 15;
 
 export function deviceReport(observation, checkedAt = new Date()) {
   const classification = observation.capabilities || {};
@@ -29,6 +31,8 @@ export function deviceReport(observation, checkedAt = new Date()) {
 }
 
 function guidance(report) {
+  if (reportsFactoryV15(report))
+    return 'Your FM-1 reports the factory V15 identity. Its firmware and update capabilities have not been independently verified. “False” capability fields in the report mean this checker has not confirmed them. Keep your factory firmware file and any saved sounds/settings; this report is identification only, not a backup. JamBox installation remains unavailable.';
   if (report.mode === 'loader' || report.mode === 'rescue')
     return 'The device reports a recovery or update mode. Save this report and follow the recovery instructions for the firmware already on it. Backups may require that firmware to be running normally. This page leaves the current mode alone.';
   if (report.recognized && report.family === 'sloop')
@@ -142,12 +146,13 @@ export function mountDevicePage({
   }
   function renderResult(observation) {
     report = deviceReport(observation, now());
-    ui['device-family'].textContent = FAMILIES[report.family];
+    const factoryReported = reportsFactoryV15(report);
+    ui['device-family'].textContent = factoryReported ? 'Factory FM-1 (reported)' : FAMILIES[report.family];
     const reportedVersion = report.identity.text?.match(/_(\d+)$/)?.[1];
     ui['device-version'].textContent = report.release || (reportedVersion ? `${reportedVersion} (reported)` : 'Not confirmed');
     ui['device-mode'].textContent = MODES[report.mode];
-    ui['result-title'].textContent = report.recognized ? 'Here’s your FM-1.' : 'Firmware not confirmed.';
-    ui['result-badge'].textContent = report.recognized ? 'IDENTIFIED' : 'UNKNOWN';
+    ui['result-title'].textContent = factoryReported ? 'Factory V15 identity reported.' : report.recognized ? 'Here’s your FM-1.' : 'Firmware not confirmed.';
+    ui['result-badge'].textContent = factoryReported ? 'REPORTED' : report.recognized ? 'IDENTIFIED' : 'UNKNOWN';
     ui['result-guidance'].textContent = guidance(report);
     ui['report-details'].textContent = JSON.stringify(report, null, 2);
     ui.result.hidden = false;

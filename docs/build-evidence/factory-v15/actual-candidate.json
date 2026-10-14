@@ -1,0 +1,160 @@
+{
+  "result": "passed",
+  "family": "jamboxfm",
+  "version": "0.1.0-dev",
+  "firmware_size_bytes": 610489,
+  "firmware_sha256": "ef282f4b58476498813ad6e79d2590b86f703b53cc2212e719a1c5c1f95156ab",
+  "bundle_descriptors_verified": 15,
+  "simulated_transitions": [
+    "jambox-normal-to-jambox",
+    "jambox-rescue-to-jambox",
+    "jambox-loader-to-jambox",
+    "sloop-2.6-to-jambox",
+    "jambox-normal-to-sloop-2.6",
+    "jambox-rescue-to-sloop-2.6",
+    "factory-v15-to-jambox",
+    "jambox-normal-to-factory-v15",
+    "jambox-rescue-to-factory-v15"
+  ],
+  "coverage": [
+    {
+      "transition": "jambox-normal-to-jambox",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        }
+      ]
+    },
+    {
+      "transition": "jambox-rescue-to-jambox",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        }
+      ]
+    },
+    {
+      "transition": "jambox-loader-to-jambox",
+      "stages": [
+        {
+          "stage": "loader",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        }
+      ]
+    },
+    {
+      "transition": "sloop-2.6-to-jambox",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        }
+      ]
+    },
+    {
+      "transition": "jambox-normal-to-sloop-2.6",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 609999,
+          "chunks": 1192
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 609999,
+          "chunks": 1192
+        }
+      ]
+    },
+    {
+      "transition": "jambox-rescue-to-sloop-2.6",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 609999,
+          "chunks": 1192
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 609999,
+          "chunks": 1192
+        }
+      ]
+    },
+    {
+      "transition": "factory-v15-to-jambox",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 610469,
+          "chunks": 1193
+        }
+      ]
+    },
+    {
+      "transition": "jambox-normal-to-factory-v15",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 699936,
+          "chunks": 1368
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 699936,
+          "chunks": 1368
+        }
+      ]
+    },
+    {
+      "transition": "jambox-rescue-to-factory-v15",
+      "stages": [
+        {
+          "stage": "app",
+          "verifiedBytes": 699936,
+          "chunks": 1368
+        },
+        {
+          "stage": "loader",
+          "verifiedBytes": 699936,
+          "chunks": 1368
+        }
+      ]
+    }
+  ],
+  "return_sha256": "199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2",
+  "factory_return_sha256": "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a",
+  "factory_baseline_assumed": true,
+  "host_simulation_only": true,
+  "device_execution_validated": false,
+  "request_pattern": "Generic contiguous host requests of at most 512 bytes; not a captured factory update transcript",
+  "release_enabled": false,
+  "hardware_validated": false,
+  "install_allowed": false
+}
