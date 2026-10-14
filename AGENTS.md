@@ -1,8 +1,31 @@
 # JamBoxFM repository workflow
 
-The active public repository is `anthonysprints/jamboxfm`. Develop source on
-`main`; publish the generated website to `gh-pages` using
-`docs/GITHUB_PAGES.md`. Use the existing checkout for cloud tasks.
+The active public repository is `anthonysprints/jamboxfm`. Use the existing
+checkout for cloud tasks.
+
+## Stable version and development branch
+
+The owner requested isolation for the saving and usability cleanup because the
+current instrument is working well. Keep `main` as the stable source and do this
+work on `next/usability-and-saving`, starting from
+`99cbf62495d9f021be80ee3d20fcef739dd8c93e`. The live website is generated on
+`gh-pages`; its baseline for this work is
+`c4896b796312e8b26a9c01206d25bdc2d8b93589`.
+
+Follow [roadmap #10](https://github.com/anthonysprints/jamboxfm/issues/10) and make
+small, independently reviewable changes tied to its issues. Preserve
+the four-part starting jam and access to deeper sound editing. Check the relevant
+native/browser behavior and firmware resource budgets, and arrange a deliberate
+physical FM-1 trial before treating device behavior as verified. Saving also needs
+interrupted-write, corrupt-record and cold-boot recovery checks.
+
+A source branch does not isolate publication: `tools/publish_jam_web.py --publish`
+always targets the live `gh-pages`, even when run on a development branch. Do not
+publish development builds over the live site or installer. Use local checks;
+design a separate preview destination before sharing a development preview.
+Merge into `main` and publish only after validation and the owner is ready to adopt
+the changes. Follow `docs/GITHUB_PAGES.md` for an authorized production release;
+its older references to developing on `main` do not override this branch policy.
 
 ## Commit attribution
 
