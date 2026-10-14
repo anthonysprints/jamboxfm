@@ -5,8 +5,9 @@ BPM control and SNAP lights working as expected on the FM-1. No intervening
 firmware fix was published; the earlier `noloader` failure remains unexplained
 in the [handoff record](build-evidence/ui-update-handoff-failure.md). The next
 requested Home mapping is SELECT for tempo and ALGORITHM for part selection,
-with PRESETS still choosing sounds. This follow-up has separate build and
-publication checks; the owner's confirmation applies to the preceding update.
+with PRESETS still choosing sounds. This follow-up's [build and publication
+record](build-evidence/home-knob-swap.md) is separate; the owner's confirmation
+applies to the preceding update.
 
 October 14, 2026. The owner reports a successful Chrome installation and is playing JamBox on the FM-1. The four UI follow-ups, focused fixes and proposed chord/sequencer work are tracked in [First device feedback](FIRST_DEVICE_FEEDBACK.md). This remains experimental; the owner's report does not complete the hardware-validation or recovery checklist. Earlier milestones below describe their historical validation state.
 
