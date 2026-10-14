@@ -28,17 +28,34 @@ Held-button layers, record setup, menus and deeper pages keep their existing
 control ownership. The browser labels Home controls only while Home actually
 owns them, including when a held layer temporarily covers Home.
 
-## 2. Sequencer prominence: proposal, no layout change yet
+## 2. Sequencer prominence: two Home views planned
 
 The first Home prototype prioritized choosing a part and shaping its sound.
 The FM-1 can show a sequencer: the inherited TRACKS view already renders four
 16-step rows. JamBox's Home replaced that view with role tabs, a large sound
 name and four macros. This is a UI choice, not a hardware limitation.
 
-Proposed next layout: tempo/transport header (32px), four part/activity rows
-(96px), selected sound (28px), compact four macro columns (56px), and help
-line (28px). Review a 240×240 mockup before implementation. Home remains a
-playable keyboard; the separate SEQ view explicitly owns keys for editing.
+The owner's follow-up keeps the existing sound-focused view and adds a
+sequencer-focused view, instead of replacing the only Home layout:
+
+- **SOUND:** large selected sound name and four sound macros.
+- **GROOVE:** four literal 16-step rows, selected sound and compact versions
+  of the same macros. Each row identifies its displayed range and length.
+- **HOME while already on Home:** switch SOUND ↔ GROOVE.
+- **HOME from another normal page:** return to the Home view used last,
+  without switching it again.
+
+Both views keep SELECT as tempo, ALGORITHM as part, PRESETS as sound, and
+knobs 1–4 as the same sound macros. The keyboard stays playable; SEQ owns
+explicit step editing. Remember the Home view for the powered session, with
+GROOVE recommended as the initial view; power-cycle persistence is later work.
+HOME holds, recording overlays and held-layer shortcuts need explicit gesture
+priority so changing views never changes musical state or consumes an edit.
+
+The [two-Home-view plan](HOME_VIEWS_PLAN.md) includes the 240×240 wireframe,
+navigation exceptions, accurate long-pattern display, implementation seams
+and acceptance checks. It supersedes the earlier single-screen layout proposal.
+This is a planning update; the firmware still has one Home view.
 
 Current shortcut: hold SEQ to see its 4×4 step tiles. To keep this editor open,
 hold SEQ, tap HOME, then release SEQ. Tap HOME again to return. White keys now

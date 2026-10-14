@@ -198,7 +198,7 @@ that all proposed features are implemented:
 
 | Control/context | Planned action |
 | --- | --- |
-| HOME | Return to the four-part overview |
+| HOME | From another normal page, return to the remembered Home view; on Home, toggle SOUND/GROOVE (planned in [Two Home views](HOME_VIEWS_PLAN.md)) |
 | SELECT encoder on Home | Tempo, one BPM per detent, 40–240 BPM |
 | PRESETS encoder on Home | Browse curated sounds for the selected part |
 | ALGORITHM encoder on Home | Select Drums / Bass / Chords / Lead; display selected role clearly |
@@ -221,6 +221,12 @@ Modal handlers must consume a confirmation gesture so SAVE cannot both apply a p
 Key/scale rows in GLO and Assist edit the selected melodic part and show its name. A separate explicit `Apply key to all melodic parts` command can synchronize them; do not present per-track values as an unexplained global key. Palette initialization sets consistent defaults across the melodic parts. SAVE must distinguish a queued save from a completed flash commit and wait for the inherited stopped/quiet condition.
 
 Home shows the palette/project name, tempo, playing/recording state, four role/mute indicators, selected sound, Assist status and four macro labels. Use the existing drawing/font system first, short labels, strong selection contrast, and bounded redraw work. Colors and branding are still a design task; no artwork direction has been finalized.
+
+The owner's October 14 follow-up refines Home into two views rather than
+compressing everything into one layout. [Two Home views](HOME_VIEWS_PLAN.md)
+is the current plan for SOUND and GROOVE, remembered return navigation, shared
+controls and literal step windows. Implemented indicators should describe
+existing features; the planned Assist status above must wait for Assist itself.
 
 A performance shortcut for mute can be added after the first mapping is tried. Start with explicit per-part mute rows rather than inventing another unlabeled held-button layer.
 
