@@ -33,6 +33,7 @@ class EmuEngine {
       selected: value(0), playing: !!value(1), recording: value(2), armed: !!value(3),
       keys: value(4), buttons: value(5), home: !!value(6), homeControls: !!value(20), homeView: value(21), page: value(7), tempo: value(8),
       octave: value(9), frames: value(10), layer: value(11),
+      groove: [0, 1, 2, 3].map(i => value(22, i)),
       macros: [0, 1, 2, 3].map(i => value(12, i)), macroAvailable: !!value(13),
       held: value(14), engine: value(15), master: value(16), screenVersion: value(17), sound,
       events: [0, 1, 2, 3].map(track => value(19, track)),

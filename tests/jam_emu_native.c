@@ -304,6 +304,36 @@ static void test_chord_panel_controls(void)
     jam_emu_key(10, 0); jam_emu_panic(); jam_emu_render();
 }
 
+static void test_bass_voice_explanation(void)
+{
+    track_t *t = &trk[0];
+    uint8_t notes[NVOICE];
+    uint32_t page;
+    jam_emu_release(); jam_emu_panic(); blocks(40);
+    CHECK(jam_new_dusty(), "Bass behavior starts from a fresh session");
+    track_select(0); go_home(); blocks(400);
+    CHECK(t->p[P_VOICE] == V_LEGATO && !t->p[P_CHORD], "Bass defaults to LEGATO with automatic chords off");
+    jam_emu_key(7,1); jam_emu_key(14,1); blocks(4);
+    CHECK(emu_gated_notes(t,notes) == 1u, "default Bass sounds one voice when two keys are held");
+    jam_emu_release(); blocks(40);
+    step_clear(&t->step[0]);
+    step_add(t,0,60,100,LV_NORM,0); step_add(t,0,67,100,LV_NORM,0);
+    CHECK(t->step[0].n == 1 && t->step[0].note[0] == 67, "LEGATO recording replaces an existing note on the same step");
+    tap_emu(B_EDIT);
+    for (page=0; page<NPAGES; page++) if (PAGES[page].fam == FAM_EDIT && PAGES[page].id[0] == P_VOICE) break;
+    assert(page < NPAGES); ui.page = page; page_entered();
+    jam_emu_encoder(EN_K1,-2);
+    CHECK(t->p[P_VOICE] == V_POLY, "EDIT > VOICE > knob 1 selects POLY through the real page handler");
+    tap_emu(B_HOME); jam_emu_key(7,1); jam_emu_key(14,1); blocks(4);
+    CHECK(emu_gated_notes(t,notes) == 2u, "POLY Bass sounds two separately pressed keys together");
+    jam_emu_release(); blocks(40); step_clear(&t->step[0]);
+    step_add(t,0,60,100,LV_NORM,0); step_add(t,0,67,100,LV_NORM,0);
+    CHECK(t->step[0].n == 2, "POLY recording keeps two different notes on the same step");
+    jam_sound_load(0,1); blocks(40);
+    CHECK(t->p[P_VOICE] == V_LEGATO, "browsing a Bass sound currently restores LEGATO when chords are off");
+    CHECK(jam_new_dusty(), "voice investigation restores a fresh session");
+}
+
 static void test_home_views(void)
 {
     uint32_t view, before, selected, rec;
@@ -330,9 +360,10 @@ static void test_home_views(void)
         CHECK(jam_sound_index(song.sel) == 1u && ui.jam_home_view == view,
               "PRESETS browses the sound while preserving the Home view");
         jam_emu_encoder(EN_PRESET, -1); blocks(400);
-        before = jam_macro_get(song.sel, 0);
+        before = view == JAM_HOME_GROOVE ? song.g[G_SWING] : jam_macro_get(song.sel, 0);
         jam_emu_encoder(EN_K1, before == 100u ? -1 : 1);
-        CHECK(jam_macro_get(song.sel, 0) != before, "KNOB 1 shapes the sound in either Home view");
+        CHECK((view == JAM_HOME_GROOVE ? (uint32_t)song.g[G_SWING] : jam_macro_get(song.sel, 0)) != before,
+              "KNOB 1 edits Groove swing or Sound brightness according to the visible view");
 
         tap_emu(B_ENV);
         CHECK(!jam_emu_value(6, 0) && (uint32_t)jam_emu_value(21, 0) == view,
@@ -418,9 +449,9 @@ int main(int argc, char **argv)
     jam_emu_encoder(EN_ALGO, 1);
     CHECK(jam_emu_value(0, 0) == 2 && (uint32_t)jam_emu_value(8, 0) == before, "ALGORITHM chooses role through physical UI");
     jam_emu_encoder(EN_ALGO, -1);
-    before = jam_emu_value(12, 0);
+    before = jam_emu_value(22, 0);
     jam_emu_encoder(EN_K1, 1);
-    CHECK((uint32_t)jam_emu_value(12, 0) > before, "K1 reaches the real sound macro");
+    CHECK((uint32_t)jam_emu_value(22, 0) == before + 1u, "Groove K1 reaches global swing through the real panel");
     jam_emu_key(0, 1);
     CHECK(jam_emu_value(4, 0) == 1 && jam_emu_value(14, 0) > 1, "one physical key expands the startup chord");
     jam_emu_key(0, 0);
@@ -484,6 +515,7 @@ int main(int argc, char **argv)
     test_snap_lights();
     test_chord_tone_lights();
     test_chord_panel_controls();
+    test_bass_voice_explanation();
     test_home_views();
     printf("jam-emu: %u checks passed\n", checks);
     return 0;

@@ -92,7 +92,7 @@ static void test_home_controls(uint32_t view)
     for (k = 0; k < NTRK; k++) before &= !memcmp(patterns[k], trk[k].step, sizeof patterns[k]);
     check(before, "tempo changes preserve all four recorded patterns");
 
-    for (k = 0; k < 4u; k++) {
+    if (view == JAM_HOME_SOUND) for (k = 0; k < 4u; k++) {
         jam_macro_set(song.sel, k, 0);
         turn(EN_K1 + k, 1);
         check(jam_macro_get(song.sel, k) > 0, "one detent moves even a narrow-range macro");
@@ -175,8 +175,10 @@ static void test_home_controls(uint32_t view)
     set_engine_of(&trk[1], 1);
     ui.force = 0; frame();
     check(!jam_home_macros_available(1), "other engines direct editing to their real sound pages");
-    check(macro_before != strip_hash(macro_y, macro_h), "zero-valued macros redraw as unavailable without forcing");
-    check(foot_before != strip_hash(foot_y, foot_h), "the deep-edit footer hint refreshes without forcing");
+    check((macro_before != strip_hash(macro_y, macro_h)) == (view == JAM_HOME_SOUND),
+          "engine availability changes Sound macros but leaves Groove mixer controls available");
+    check((foot_before != strip_hash(foot_y, foot_h)) == (view == JAM_HOME_SOUND),
+          "only Sound needs an unavailable-engine edit hint");
     home_ppm(view, "other-engine");
 
     jam_sound_load(1, 0);
@@ -188,8 +190,8 @@ static void test_home_controls(uint32_t view)
         check(ui.msg_t && foot_before != strip_hash(foot_y, foot_h),
               "the engine hint refreshes while the first footer line shows a message");
     else
-        check(ui.msg_t && foot_before == strip_hash(foot_y, foot_h) && macro_before != strip_hash(macro_y, macro_h),
-              "Groove preserves a status message while unavailable macros redraw");
+        check(ui.msg_t && foot_before == strip_hash(foot_y, foot_h) && macro_before == strip_hash(macro_y, macro_h),
+              "Groove retains its controls and status message for every engine");
 }
 
 static uint32_t rect_hash(uint32_t x, uint32_t y, uint32_t w, uint32_t h)
@@ -328,12 +330,70 @@ static void test_groove_rows(void)
           "a replaced session resets all remembered pattern windows");
 }
 
+static void test_groove_controls(void)
+{
+    uint32_t r, k, j, before, old_macro[4];
+    step_t patterns[NTRK][NSTEP];
+    int16_t params[NTRK][P_COUNT];
+    char text[24];
+    home_setup();
+    for (r = 0; r < NTRK; r++) {
+        track_select(jam_role_track(r));
+        for (k = 0; k < 4; k++) old_macro[k] = jam_macro_get(song.sel,k);
+        for (j = 0; j < NTRK; j++) {
+            memcpy(patterns[j], trk[j].step, sizeof patterns[j]);
+            memcpy(params[j], trk[j].p, sizeof params[j]);
+        }
+        song.g[G_SWING] = 0;
+        turn(EN_K1, 1);
+        check(song.g[G_SWING] == 1, "Groove SWING changes the shared sequencer swing one unit per detent");
+        for (j = 0; j < NTRK; j++)
+            check(!memcmp(params[j], trk[j].p, sizeof params[j]), "global swing leaves all part parameters intact");
+        TSEL->p[P_MUTE] = 1;
+        *jam_groove_parameter(song.sel,1) = 63;
+        turn(EN_K2, 1);
+        check(jam_groove_value(song.sel,1) == 64 && TSEL->p[P_MUTE] == 1,
+              "Groove LEVEL uses the correct synth/drum level and retains explicit mute");
+        TSEL->p[P_SLEN] = 32;
+        turn(EN_K3, -1);
+        check(TSEL->p[P_SLEN] == 31, "STEPS moves one actual step with no encoder acceleration");
+        turn(EN_K3, 1);
+        check(TSEL->p[P_SLEN] == 32, "extending the loop restores its former length");
+        for (j = 0; j < NTRK; j++)
+            check(!memcmp(patterns[j], trk[j].step, sizeof patterns[j]), "length changes preserve every stored note including hidden steps");
+        TSEL->p[P_PAN] = 0; turn(EN_K4, -1);
+        check(TSEL->p[P_PAN] == -1, "Groove PAN changes only the selected part");
+        for (j = 0; j < NTRK; j++) if (j != song.sel) {
+            check(trk[j].p[P_PAN] == params[j][P_PAN] && trk[j].p[P_LEVEL] == params[j][P_LEVEL] &&
+                  trk[j].p[P_SLEN] == params[j][P_SLEN], "other parts retain their pan, level and length");
+        }
+        for (k = 0; k < 4; k++) {
+            if (song.sel == TRK_DRUM && k == 1u)
+                check(jam_macro_get(song.sel,k) == jam_percent(song.g[G_DRLVL],0,110),
+                      "drum LEVEL shares its existing mixer gain with the Sound view");
+            else
+                check(jam_macro_get(song.sel,k) == old_macro[k], "Groove controls preserve timbre and effect macros");
+            turn(EN_K1+k, -1000);
+            check(jam_groove_value(song.sel,k) == (k == 2 ? 1 : k == 3 ? -64 : 0), "Groove controls clamp at their lower limit");
+            turn(EN_K1+k, 1000);
+            check(jam_groove_value(song.sel,k) == (k == 0 ? 100 : k == 1 ? 127 : k == 2 ? 64 : 63), "Groove controls clamp at their upper limit");
+        }
+        jam_groove_text(text,song.sel,3); check(!strcmp(text,"R100"), "pan shows its right endpoint");
+        TSEL->p[P_PAN] = -64; jam_groove_text(text,song.sel,3); check(!strcmp(text,"L100"), "pan shows its left endpoint");
+        TSEL->p[P_PAN] = 0; jam_groove_text(text,song.sel,3); check(!strcmp(text,"CENTER"), "pan zero reads CENTER");
+        ui.hot_t = 0; ui.force = 1; frame(); before = strip_hash(176,40);
+        TSEL->p[P_PAN] = 32; frame();
+        check(before != strip_hash(176,40), "parameter changes invalidate the cached Groove control strip");
+    }
+}
+
 int main(int argc, char **argv)
 {
     if (argc > 1) outdir = argv[1];
     test_home_controls(JAM_HOME_GROOVE);
     test_home_controls(JAM_HOME_SOUND);
     test_groove_rows();
+    test_groove_controls();
     puts(fails ? "jam-ui: FAILED" : "jam-ui: all checks passed");
     return fails ? 1 : 0;
 }

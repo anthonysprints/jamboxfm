@@ -36,7 +36,7 @@ earlier mono/legato setting. A fresh Dusty session still starts Bass and Lead
 in their original legato mode until chords are enabled. Drum pads retain
 their drum assignments.
 
-Tap **HOME** to return to sound macros. From the first SEL page, turn the large
+Tap **HOME** to return to the remembered Home view; tap it again if needed for SOUND macros. From the first SEL page, turn the large
 **SELECT** knob one click to reach **SEL 2** for transpose, strum and inversion
 controls. Settings apply to the selected part. They are temporary in the
 current firmware.
@@ -159,3 +159,23 @@ switch, Gentle/Tight recording correction, broader source ownership, complete
 undo and saved sessions also remain future work. Current swing and deeper
 editing controls continue to use their existing paths. See [First device
 feedback](FIRST_DEVICE_FEEDBACK.md) and the [implementation roadmap](IMPLEMENTATION_PLAN.md).
+
+## Bass: one note or several?
+
+Bass and Lead start in **LEGATO**, a one-note mode. Overlapping presses select
+one note according to the voice priority, and live recording keeps only one
+note on a step. That is a common bass setup, not a musical rule.
+
+To play several notes yourself, choose the Bass sound first, tap **EDIT**, turn
+**SELECT** until **VOICE** appears (not VOICE 2), then set knob 1 to **POLY**.
+Leave **CHORD OFF** for individual keys; POLY is the number of simultaneous
+notes, while CHORD builds several notes from one key. Tap HOME to return.
+Choosing another curated Bass/Lead sound currently restores LEGATO when CHORD
+is off, so set POLY after choosing the sound. This follow-up does not change
+that existing behavior or the default.
+
+POLY recording can store up to four different notes on one step. This is still
+a step sequencer: a tie continues the preceding note/chord group. Starting a
+new note on a later step starts a new group, rather than storing independently
+overlapping note lengths as a piano roll would. POLY fixes simultaneous playing
+and same-step chords, but does not remove that recording limitation.

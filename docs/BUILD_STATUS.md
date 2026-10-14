@@ -1,11 +1,13 @@
 # JamBox software prototype and FM-1 update isolation
 
-The current Home increment implements two views: **GROOVE** at startup
+Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+
+The initial Home increment implemented two views: **GROOVE** at startup
 for four literal 16-step pattern rows, and **SOUND** for larger sound controls.
 HOME toggles while already on Home and returns to the remembered view from
 other pages; a short tap closes settings, while holds, layer locks and recorder
 overlays retain priority. Both views keep the same playable keyboard and
-selected-part macros. The [Home views specification](HOME_VIEWS_PLAN.md)
+view-specific controls. The [Home views specification](HOME_VIEWS_PLAN.md)
 defines the controls and per-part windows. Palette/Home UI/native-WASM checks,
 118 native emulator checks, 115 dedicated navigation checks and actual Chromium
 checks passed, including held chords, overdub, LEDs and the standalone page.

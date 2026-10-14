@@ -1,5 +1,7 @@
 # First FM-1 playing feedback — 2026-10-14
 
+Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+
 The owner reports that installation succeeded and most functions work on the
 physical FM-1. This establishes an owner-reported first boot and playing
 experience; it does not complete the hardware validation or recovery checklist.
@@ -34,14 +36,14 @@ sequencer overview, with **GROOVE at power-on**:
 
 - **SOUND:** large selected sound name and four sound macros.
 - **GROOVE:** four literal 16-step rows, selected sound and compact versions
-  of the same macros. Each row identifies its displayed range and length.
+  of the track controls. Each row identifies its displayed range and length.
 - **HOME while already on Home:** switch SOUND ↔ GROOVE.
 - **HOME from another normal page:** return to the Home view used last,
   without switching it again.
 - **A short HOME tap in settings:** close settings to the remembered Home view.
 
 Both views keep SELECT as tempo, ALGORITHM as part, PRESETS as sound, and
-knobs 1–4 as the same sound macros. The keyboard stays playable; SEQ owns
+knobs 1–4 as view-specific controls. The keyboard stays playable; SEQ owns
 explicit step editing. Remember the Home view for the powered session, with
 GROOVE confirmed by the owner as the power-on view; power-cycle persistence
 of subsequent view choices is later work. Holding HOME retains settings access.

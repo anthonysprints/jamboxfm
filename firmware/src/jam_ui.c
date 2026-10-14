@@ -44,6 +44,46 @@ static int jam_home_macros_available(uint32_t track)
     return track == TRK_DRUM || (track < NPART && trk[track].eng_req == 0);
 }
 
+/* GROOVE uses the existing sequencer/mixer parameters; SOUND edits the patch. */
+static const char *const JAM_GROOVE_LABELS[4] = {"SWING", "LEVEL", "STEPS", "PAN"};
+static int16_t *jam_groove_parameter(uint32_t track, uint32_t slot)
+{
+    track_t *t = &trk[track % NTRK];
+    switch (slot) {
+    case 0: return &song.g[G_SWING];
+    case 1: return is_drum(t) ? &song.g[G_DRLVL] : &t->p[P_LEVEL];
+    case 2: return &t->p[P_SLEN];
+    default: return &t->p[P_PAN];
+    }
+}
+static int32_t jam_groove_value(uint32_t track, uint32_t slot)
+{
+    return *jam_groove_parameter(track, slot);
+}
+static uint32_t jam_groove_percent(uint32_t track, uint32_t slot)
+{
+    int32_t v = jam_groove_value(track, slot);
+    return (uint32_t)(slot == 0 ? v : slot == 1 ? v * 100 / 127 :
+                      slot == 2 ? (v - 1) * 100 / 63 : (v + 64) * 100 / 127);
+}
+static void jam_groove_text(char *b, uint32_t track, uint32_t slot)
+{
+    int32_t v = jam_groove_value(track, slot);
+    if (slot != 3u) { fmt_int(b, slot == 1u ? v * 100 / 127 : v); return; }
+    if (!v) { str_cpy(b, "CENTER", 24); return; }
+    b[0] = v < 0 ? 'L' : 'R';
+    fmt_int(b + 1, v < 0 ? -v * 100 / 64 : v * 100 / 63);
+}
+static void jam_groove_edit(uint32_t slot, int32_t steps)
+{
+    int16_t *v = jam_groove_parameter(song.sel, slot);
+    int32_t lo = slot == 2u ? 1 : slot == 3u ? -64 : 0;
+    int32_t hi = slot == 0u ? 100 : slot == 1u ? 127 : slot == 2u ? NSTEP : 63;
+    /* One unit per detent, no acceleration. Length only changes the playback
+     * window, and level never clears an explicit mute. Hidden notes stay put. */
+    *v = (int16_t)clamp(*v + clamp(steps, -127, 127), lo, hi);
+}
+
 static void jam_home_browse(int32_t steps)
 {
     uint32_t count = jam_sound_count(song.sel), index;
@@ -84,6 +124,12 @@ static int jam_home_input(void)
     for (k = 0; k < 4u; k++) {
         if ((s = panel_enc(EN_K1 + k)) == 0)
             continue;
+        if (ui.jam_home_view == JAM_HOME_GROOVE) {
+            jam_groove_edit(k, s);
+            ui.hot_col = (uint8_t)k;
+            ui.hot_t = 40;
+            continue;
+        }
         if (!jam_home_macros_available(song.sel))
             continue;
         /* Five percent per detent also moves the narrow 12/16-value ranges;
@@ -332,36 +378,31 @@ static int jam_groove_home_draw(void)
         jam_home_text(8, 16, 224, &FONT_S, jam_sound_name(selected), C_WHITE);
         cv_blit(0, 144);
     }
-    macro = (selected + 1u) * 2u + (uint32_t)jam_home_macros_available(selected);
-    for (k = 0; k < 4u; k++) {
-        macro = jam_home_hash(macro, jam_macro_name(selected, k));
-        macro = macro * 131u + jam_macro_get(selected, k);
-    }
+    macro = selected + 1u;
+    for (k = 0; k < 4u; k++)
+        macro = macro * 131u + (uint32_t)(jam_groove_value(selected, k) + 64);
     macro = macro * 7u + (ui.hot_t ? (uint32_t)ui.hot_col + 1u : 0u);
     if (force || macro != jam_groove_cache.macro) {
-        int available = jam_home_macros_available(selected);
         jam_groove_cache.macro = macro;
         cv_begin(240, 40, C_BLACK);
         for (k = 0; k < 4u; k++) {
-            uint32_t v = jam_macro_get(selected, k);
+            uint32_t v = jam_groove_percent(selected, k);
             int32_t x = (int32_t)k * 60;
             uint16_t fg = ui.hot_t && ui.hot_col == k ? C_WHITE : C_HI;
-            jam_home_text(x + 4, 0, 52, &FONT_S, available ? jam_macro_name(selected, k) : "EDIT", C_GRAY);
-            if (available) fmt_int(b, (int32_t)v);
-            else str_cpy(b, "--", sizeof b);
+            jam_home_text(x + 4, 0, 52, &FONT_S, JAM_GROOVE_LABELS[k], C_GRAY);
+            jam_groove_text(b, selected, k);
             cv_text(x + 30 - text_w(&FONT_S, b) / 2, 16, &FONT_S, b, fg);
             cv_rect(x + 4, 36, 52, 3, C_LINE);
-            if (available && v) cv_rect(x + 4, 36, (int32_t)(v * 52u / 100u), 3, fg);
+            if (v) cv_rect(x + 4, 36, (int32_t)(v * 52u / 100u), 3, fg);
         }
         cv_blit(0, 176);
     }
-    foot = (uint32_t)!jam_home_macros_available(selected);
+    foot = 0;
     if (ui.msg_t) foot = jam_home_hash(foot + 1u, ui.msg);
     if (force || foot != jam_groove_cache.foot) {
         jam_groove_cache.foot = foot;
         cv_begin(240, 24, C_BLACK);
-        jam_home_text(8, 4, 224, &FONT_S, ui.msg_t ? ui.msg :
-                      jam_home_macros_available(selected) ? "HOME: SOUND  HOLD SEQ: EDIT" : "HOME: SOUND  EDIT: SOUND",
+        jam_home_text(8, 4, 224, &FONT_S, ui.msg_t ? ui.msg : "HOME: SOUND  HOLD SEQ: EDIT",
                       ui.msg_t ? C_HI : C_GRAY);
         cv_blit(0, 216);
     }

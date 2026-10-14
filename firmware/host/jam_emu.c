@@ -346,6 +346,7 @@ int32_t jam_emu_value(uint32_t field, uint32_t index)
         }
         return (int32_t)mask;
     case 20: return jam_home_active();
+    case 22: return index < 4u ? jam_groove_value(song.sel, index) : -1;
     case 21: return ui.jam_home_view; /* Appended ABI: GROOVE=0, SOUND=1; remembered off Home too. */
     default: return -1;
     }

@@ -3,8 +3,9 @@
 Status: implemented and software-verified, 2026-10-14. This document specifies the
 current two-view controls and display contract from [First device feedback](FIRST_DEVICE_FEEDBACK.md#2-sequencer-prominence-two-home-views).
 The shared native/browser checks and updater-enabled FM-1 build passed.
-Publication is verified; physical audition remains pending. Outcomes are tracked in the
-[Home views build record](build-evidence/home-views.md).
+The first two-view publication is recorded in the [Home views build record](build-evidence/home-views.md).
+The requested Sloop-style knob follow-up is specified in [Groove controls](GROOVE_CONTROLS.md);
+its new build/publication results belong in [the follow-up record](build-evidence/groove-controls.md).
 
 ## 1. Playing experience
 
@@ -13,10 +14,11 @@ Home has two views of the same session:
 | View | Main purpose | What stays visible |
 | --- | --- | --- |
 | SOUND | Choose a sound and shape it with the four macros. | Tempo, transport, part selection, large sound name and macro values. |
-| GROOVE | See how the four patterns fit together while playing. | Tempo, transport, four step rows, selected sound and compact versions of the same macros. |
+| GROOVE | See how the four patterns fit together while playing. | Tempo, transport, four step rows, selected sound and Swing/Level/Steps/Pan controls. |
 
 These are two views of the same live session. Switching does not change the
-selected part, notes, sound, pattern, tempo, recording, or knob assignments.
+selected part, notes, sound, pattern, tempo, or recording. Knobs 1–4 follow the
+visible view; the left encoder assignments stay the same.
 Both views keep the keyboard playable, including chord building and SNAP.
 
 Navigation:
@@ -45,16 +47,17 @@ in the HOME footer identify the current view and the next action.
 | SELECT | Tempo, one BPM per detent, 40–240 BPM. |
 | ALGORITHM | Select Drums, Bass, Chords or Lead. |
 | PRESETS | Change the selected part's sound, preserving its pattern. |
-| Knobs 1–4 | The same four named sound macros in both views. |
+| Knobs 1–4 | GROOVE: shared SWING, selected-part LEVEL/STEPS/PAN. SOUND: sound macros. |
 | Note keys | Play notes/chords or drum pads; GROOVE does not turn them into step switches. |
 | PLAY / REC | Existing transport and recording actions. |
 | OCT− / OCT+ | Existing octave/part-specific behavior. |
 | SEQ | Existing sequencer pages/layer; explicit editing remains separate. |
 
-The overview's compact macros show the selected part's macro labels and values.
-The knobs retain the same sound parameters as SOUND; they do not adopt the
-inherited TRACKS view's swing/level/steps/pan controls. Unsupported sound
-engines retain `EDIT` / `--` indications.
+GROOVE uses the Sloop-style SWING/LEVEL/STEPS/PAN layout. Swing is shared;
+the other three follow the selected part. Changes are one unit per detent,
+without acceleration. Level preserves explicit mute and shortening a loop
+preserves hidden notes. SOUND retains its patch macros and unavailable-engine
+`EDIT` / `--` indications. Groove controls work with all engines.
 
 HOME needs the following precedence, beyond the simple navigation rule:
 
@@ -82,7 +85,8 @@ SOUND retains its large controls while GROOVE gives patterns space.
 
 ![Conceptual Sound and Groove Home layouts](design/home-views.svg)
 
-The drawing remains a static design wireframe, not a screenshot of this build.
+The drawing remains the original static wireframe; its Groove macro labels
+predate the Swing/Level/Steps/Pan follow-up.
 Its typography budgets use the existing small font's 8×16 character cells.
 
 | GROOVE screen region | Height | Content |
@@ -90,7 +94,7 @@ Its typography budgets use the existing small font's 8×16 character cells.
 | Header, y 0–31 | 32 px | GROOVE, BPM, play/stop and recording state. |
 | Four rows, y 32–143 | 112 px | Drums, Bass, Chords, Lead; 28 px each. |
 | Selected sound, y 144–175 | 32 px | Selected role and readable sound name. |
-| Four macros, y 176–215 | 40 px | Four columns with labels, values and compact bars. |
+| Groove controls, y 176–215 | 40 px | Four columns with labels, values and compact bars. |
 | Footer, y 216–239 | 24 px | `HOME: SOUND  HOLD SEQ: EDIT`, or a temporary status message. |
 
 Each row has a 16 px text line and a small 16-cell step strip. Use the full
@@ -129,7 +133,7 @@ GROOVE is a performance overview. Chord names, individual note pitches,
 velocity editing and a second editing cursor are outside this increment.
 Holding SEQ shows the existing editing layer; holding SEQ and tapping HOME
 locks that layer. A quick SEQ tap opens the remembered STEP/PATTERN/SONG page.
-Both Home views continue to show the selected part's actual sound and macros.
+Both views show the selected sound; their four controls follow the visible view.
 
 ## 5. Implementation boundaries
 
@@ -161,8 +165,8 @@ through hashing, drawing or LCD transfer.
 2. Implement the view state and HOME navigation with the existing Sound screen
    retained. Verify ordinary taps, returns, menu exit, holds, layer locks and
    both release orders before adding the pattern renderer.
-3. Add GROOVE rows, compact macros, transport/recording states and truthful
-   16-step windows. Keep controls and the musical keyboard identical in both.
+3. Add GROOVE rows, compact track controls, transport/recording states and truthful
+   16-step windows. Keep left encoder assignments and the musical keyboard identical in both.
 4. Extend the existing Home/native/browser harnesses. Verify toggling while
    holding single notes/chords and during playback/overdub; compare musical
    state and recorded patterns before/after. Test all return routes, repeat
@@ -178,6 +182,6 @@ through hashing, drawing or LCD transfer.
 Native and browser checks and the updater-enabled target build passed;
 publication is verified and physical audition remains pending in the
 [Home views build record](build-evidence/home-views.md). Persistence, a redesigned
-step editor, arrangement tools, per-drum-lane Home rows and new knob modes remain
+step editor, arrangement tools, per-drum-lane Home rows remain
 separate later work. Switching views must preserve the musical session and
 continue audio and recording without interruption.

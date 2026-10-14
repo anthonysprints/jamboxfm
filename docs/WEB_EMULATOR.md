@@ -1,5 +1,7 @@
 # JamBoxFM browser instrument
 
+Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+
 The browser instrument uses the FM-1's controls: 27 note keys, 14 buttons,
 seven encoders and a master level control. Its 240 × 240 screen is drawn by
 the C firmware. One WebAssembly instance runs both the firmware UI and the
@@ -26,7 +28,7 @@ holding HOME retains settings access. Recording overlays and held-layer
 shortcuts keep their existing priority.
 
 Both Home views use SELECT for BPM, ALGORITHM for part, PRESETS for sound and
-knobs 1–4 for the same sound macros. The keyboard keeps playing notes/chords
+knobs 1–4 for GROOVE track controls or SOUND macros. The keyboard keeps playing notes/chords
 or drums. GROOVE's rows each show a literal 16-step window with that part's
 range and length; playback follows each part's own playhead, and stopping
 retains the displayed windows. The sound and macros belong to the selected

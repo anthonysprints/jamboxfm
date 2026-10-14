@@ -1,5 +1,7 @@
 # JamBoxFM build and validation plan
 
+Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+
 Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md). Since those milestones, the owner has reported a successful Chrome installation and a normal JamBox update with working BPM and SNAP lights. Complete hardware and recovery validation remains outstanding.
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
@@ -150,8 +152,8 @@ For the current SOUND/GROOVE increment, verify:
 - Held-layer locks and both release orders, simultaneous HOME/PLAY,
   armed-record/count-in/free-take/confirmation overlays, and ordinary playback
   and overdub. View changes must preserve notes, patterns, transport and audio.
-- Identical knob and keyboard behavior in both views, selected-part sound and
-  macro values, correct unavailable-macro labels and browser control ownership.
+- Identical left encoder and keyboard behavior in both views, with GROOVE
+  swing/level/steps/pan and SOUND macros, correct labels and browser ownership.
 - Literal 16-step rows for 1/15/16/17/32/64-step patterns, unequal part lengths
   and divisions, stored notes, ties, partial windows and disabled cells.
   Follow each part's playhead while playing; retain stopped windows, clamp

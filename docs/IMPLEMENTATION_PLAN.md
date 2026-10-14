@@ -1,5 +1,7 @@
 # JamBoxFM implementation plan
 
+Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+
 Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty palette, Home and shared-code browser slice are now implemented; see [README](../README.md) and [cloud setup](CLOUD_SETUP.md) for current scope and validation. The remaining sections describe intended work, not completed capabilities.
 
 The user-facing requirements are in [PRODUCT_BRIEF.md](../PRODUCT_BRIEF.md). Source evidence, executed checks, and remaining uncertainties are in [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md). Bring-up and release gates are in [VALIDATION_PLAN.md](VALIDATION_PLAN.md).
@@ -8,8 +10,8 @@ The current Home increment implements [SOUND and GROOVE views](HOME_VIEWS_PLAN.m
 GROOVE is the confirmed startup view. HOME toggles when already on Home and
 returns to the remembered view from other pages; a short HOME tap closes
 settings, while holds, layer locks and recorder overlays retain priority.
-Both views share the existing sound macros and musical keyboard. GROOVE shows
-literal per-part 16-step windows and the selected part's sound/macro data.
+Both views share the musical keyboard. GROOVE shows
+literal per-part 16-step windows and the selected part's sound and track controls.
 Native/browser checks and the updater-enabled FM-1 build passed. Publication is verified;
 physical audition remains pending in the
 [Home views build record](build-evidence/home-views.md).

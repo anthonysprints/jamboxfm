@@ -265,12 +265,23 @@ function renderState(state) {
     element.classList.toggle('is-on', led >= 128); element.classList.toggle('is-dim', led > 0 && led < 128);
   }
   for (let i = 0; i < 4; i++) {
-    const control = knobValues.get(3 + i), available = state.homeControls && state.macroAvailable;
-    const name = available ? (state.selected === 3 ? ['TONE', 'LEVEL', 'ECHO', 'ROOM'] : ['BRIGHT', 'MOVE', 'GRIT', 'SPACE'])[i] : `KNOB ${i + 1}`;
+    const control = knobValues.get(3 + i), groove = state.homeControls && state.homeView === 0;
+    const available = state.homeControls && (groove || state.macroAvailable);
+    const name = groove ? ['SWING', 'LEVEL', 'STEPS', 'PAN'][i] : available ? (state.selected === 3 ? ['TONE', 'LEVEL', 'ECHO', 'ROOM'] : ['BRIGHT', 'MOVE', 'GRIT', 'SPACE'])[i] : `KNOB ${i + 1}`;
+    const raw = groove ? state.groove[i] : available ? state.macros[i] : 50;
+    const min = groove ? [0, 0, 1, -64][i] : 0, max = groove ? [100, 127, 64, 63][i] : 100;
+    const percent = (raw - min) * 100 / (max - min);
+    const part = ['Bass', 'Chords', 'Lead', 'Drums'][state.selected];
+    const valueText = groove ? [
+      `Shared sequencer swing: ${raw}`,
+      `${part} level: ${Math.floor(raw * 100 / 127)} percent`,
+      `${part} loop length: ${raw} steps`,
+      `${part} pan: ${raw === 0 ? 'CENTER' : `${raw < 0 ? 'L' : 'R'}${Math.floor(Math.abs(raw) * 100 / (raw < 0 ? 64 : 63))}`}`,
+    ][i] : available ? `${name} ${raw} percent` : 'Turn to change the parameter shown on the screen';
     control.querySelector('.control-label').textContent = name; control.setAttribute('aria-label', name);
-    control.setAttribute('aria-valuenow', String(available ? state.macros[i] : 50));
-    control.setAttribute('aria-valuetext', available ? `${name} ${state.macros[i]} percent` : 'Turn to change the parameter shown on the screen');
-    if (available) control.querySelector('.knob').style.setProperty('--rotation', `${-135 + state.macros[i] * 2.7}deg`);
+    control.setAttribute('aria-valuemin', String(min)); control.setAttribute('aria-valuemax', String(max));
+    control.setAttribute('aria-valuenow', String(raw)); control.setAttribute('aria-valuetext', valueText);
+    control.querySelector('.knob').style.setProperty('--rotation', `${-135 + percent * 2.7}deg`);
   }
   knobValues.get(1).setAttribute('aria-valuetext', `Selected part: ${['Bass', 'Chords', 'Lead', 'Drums'][state.selected]}`);
   const tempoKnob = knobValues.get(0);

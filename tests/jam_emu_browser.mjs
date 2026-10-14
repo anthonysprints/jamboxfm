@@ -142,20 +142,38 @@ try {
   assert.equal(await encoder(page, 0).getAttribute('aria-valuetext'), 'Tempo: 89 BPM');
   await turn(page, 0, 'ArrowDown');
   await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
-  const macroBefore = (await state(page)).macros[0];
+  assert.equal(await encoder(page, 3).getAttribute('aria-label'), 'SWING');
+  assert.equal(await encoder(page, 4).getAttribute('aria-label'), 'LEVEL');
+  assert.equal(await encoder(page, 5).getAttribute('aria-label'), 'STEPS');
+  assert.equal(await encoder(page, 6).getAttribute('aria-label'), 'PAN');
+  const patchBeforeGroove = (await state(page)).macros;
+  const macroBefore = (await state(page)).groove[0];
   await turn(page, 3);
-  await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] !== previous, macroBefore);
-  const macroAfter = (await state(page)).macros[0];
+  await page.waitForFunction(previous => globalThis.jamEmu.state.groove[0] !== previous, macroBefore);
+  const macroAfter = (await state(page)).groove[0];
   await encoder(page, 3).hover();
   await page.mouse.wheel(0, -100);
-  await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] !== previous, macroAfter);
-  const moveBefore = (await state(page)).macros[1];
+  await page.waitForFunction(previous => globalThis.jamEmu.state.groove[0] !== previous, macroAfter);
+  const moveBefore = (await state(page)).groove[1];
   const moveKnob = encoder(page, 4);
   await pointerDown(page, moveKnob);
   const moveBounds = await moveKnob.boundingBox();
   await page.mouse.move(moveBounds.x + moveBounds.width / 2, moveBounds.y + moveBounds.height / 2 - 35, { steps: 5 });
   await page.mouse.up();
-  await page.waitForFunction(previous => globalThis.jamEmu.state.macros[1] !== previous, moveBefore);
+  await page.waitForFunction(previous => globalThis.jamEmu.state.groove[1] !== previous, moveBefore);
+  const stepsBefore = (await state(page)).groove[2];
+  await turn(page, 5, 'ArrowDown');
+  await page.waitForFunction(n => globalThis.jamEmu.state.groove[2] === n - 1, stepsBefore);
+  assert.match(await encoder(page, 5).getAttribute('aria-valuetext'), /loop length: .* steps/);
+  await turn(page, 5);
+  await page.waitForFunction(n => globalThis.jamEmu.state.groove[2] === n, stepsBefore);
+  assert.match(await encoder(page, 6).getAttribute('aria-valuetext'), /CENTER/);
+  await turn(page, 6, 'ArrowDown');
+  await page.waitForFunction(() => globalThis.jamEmu.state.groove[3] === -1);
+  assert.match(await encoder(page, 6).getAttribute('aria-valuetext'), /pan: L/);
+  await turn(page, 6);
+  await page.waitForFunction(() => globalThis.jamEmu.state.groove[3] === 0);
+  assert.deepEqual((await state(page)).macros, patchBeforeGroove, 'all four Groove controls preserve the sound macros');
   const masterBefore = (await state(page)).master;
   await page.locator('[role="slider"][data-master]').focus();
   await page.evaluate(() => {
@@ -169,7 +187,7 @@ try {
   await page.waitForFunction(previous => globalThis.jamEmu.state.master !== previous, masterBefore);
   assert.equal((await state(page)).master, masterBefore - 1, 'the next master detent moves exactly once after cancellation');
 
-  // Sound uses the same tempo, part, sound and macro assignments as Groove.
+  // Sound restores patch macros while the left encoder assignments stay the same.
   await tap(page, 6);
   await page.waitForFunction(() => globalThis.jamEmu.state.homeView === 1 && globalThis.jamEmu.state.homeControls);
   await turn(page, 0);
@@ -185,6 +203,7 @@ try {
   await page.waitForFunction(previous => globalThis.jamEmu.state.sound !== previous, soundViewBefore.sound);
   await turn(page, 2, 'ArrowDown');
   await page.waitForFunction(previous => globalThis.jamEmu.state.sound === previous, soundViewBefore.sound);
+  assert.equal(await encoder(page, 3).getAttribute('aria-label'), 'BRIGHT');
   const soundMacroBefore = (await state(page)).macros[0];
   await turn(page, 3);
   await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] !== previous, soundMacroBefore);
