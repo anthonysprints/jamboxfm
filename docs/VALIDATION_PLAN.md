@@ -4,6 +4,12 @@ Status: implementation gates, with completed checks identified separately. JamBo
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
+The [two-Home-view implementation](HOME_VIEWS_PLAN.md) passed its native/browser
+checks and updater-enabled target build. Results belong in the
+[Home views build record](build-evidence/home-views.md); publication and physical
+audition remain pending. Its specific acceptance requirements are listed under
+Gate 4 below, separately from earlier UI builds.
+
 The October 14 [chord-builder increment](CHORD_BUILDER.md) needs focused checks
 for every black-key root in OFF/SNAP on Chords and Lead, exact scale-derived
 and fixed-shape pitches, WHITE modifier compatibility, duplicate snapped roots
@@ -135,6 +141,27 @@ JAM1 remains future implementation. Its separate acceptance cases are:
 Keep user data out of committed fixtures; construct synthetic fixtures or use consented, sanitized backups.
 
 ## Gate 4: browser parity and usable controls
+
+For the current SOUND/GROOVE increment, verify:
+
+- GROOVE at startup; HOME toggles only while ordinary Home owns the gesture;
+  return routes preserve the remembered view. Short HOME closes settings,
+  a hold keeps its settings behavior, and release cannot add an unwanted toggle.
+- Held-layer locks and both release orders, simultaneous HOME/PLAY,
+  armed-record/count-in/free-take/confirmation overlays, and ordinary playback
+  and overdub. View changes must preserve notes, patterns, transport and audio.
+- Identical knob and keyboard behavior in both views, selected-part sound and
+  macro values, correct unavailable-macro labels and browser control ownership.
+- Literal 16-step rows for 1/15/16/17/32/64-step patterns, unequal part lengths
+  and divisions, stored notes, ties, partial windows and disabled cells.
+  Follow each part's playhead while playing; retain stopped windows, clamp
+  length changes and reset genuinely replaced patterns without moving the
+  editor cursor.
+- Mute/solo/record distinctions, selected rows, zero-level/solo-excluded parts,
+  cache invalidation, no stopped playhead, no stale fragments, readable actual
+  renders and bounded LCD transfers using the existing strip buffer.
+- Native/browser parity, updater-enabled target memory fit, package consistency
+  and deployed byte checks. Owner audition remains a separate hardware check.
 
 Compile the same C Assist/session/recording paths for native tests and WASM. Drive identical event sequences and compare recorded event bytes and audio within the existing fixed-point tolerance. Run the existing native/WASM test first, then add the JamBox cases; do not rely only on the checked-in upstream WASM.
 

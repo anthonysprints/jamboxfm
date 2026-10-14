@@ -39,6 +39,10 @@ static const uint16_t SCALE_MASK[] = {
 };
 #define NSCALES (sizeof SCALE_MASK / sizeof SCALE_MASK[0])
 #define SEQ_NONE 0xFFFFFFFFu
+#if JAMBOX_PROTO
+/* Whole-pattern replacement resets the overview window; sound browsing does not. */
+static volatile uint32_t jam_pattern_generation[NTRK];
+#endif
 
 #define KB_SILENT 255u
 static uint32_t kb_prev;
@@ -859,6 +863,9 @@ static void steps_clear(track_t *t)           /* an empty pattern (synth: REST s
             t->step[k].time = ST_REST;
     locks_clear(t);
     memset(t->fill, 0, sizeof t->fill);
+#if JAMBOX_PROTO
+    jam_pattern_generation[trk_index(t)]++;
+#endif
 }
 
 /* tempo x 10 of a loop of T blocks holding n bars of 4/4 */

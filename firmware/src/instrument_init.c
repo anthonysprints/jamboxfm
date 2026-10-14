@@ -31,6 +31,9 @@ static void felucca_init(void)
     song.g[G_CH1] = midi_set[0], song.g[G_CH2] = midi_set[1], song.g[G_CH3] = midi_set[2];   /* (2.6: GLO > MIDI, */
     song.g[G_DRCH] = midi_set[3], song.g[G_CHOTH] = midi_set[4], song.g[G_BEND] = midi_set[5];   /* settings of the FM-1) */
     layers_init();                            /* the panel's layer buttons for the keys (ui_layers.c) */
+#if JAMBOX_PROTO
+    ui.jam_home_view = JAM_HOME_GROOVE;
+#endif
     go_home();
     ui.force = 1;
 }

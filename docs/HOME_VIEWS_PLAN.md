@@ -1,12 +1,14 @@
 # Two Home views: Sound and Groove
 
-Status: design proposal, 2026-10-14. This document develops part 2 of
-[First device feedback](FIRST_DEVICE_FEEDBACK.md#2-sequencer-prominence-two-home-views-planned).
-No firmware or installer change is included in this planning update.
+Status: implemented and software-verified, 2026-10-14. This document specifies the
+current two-view controls and display contract from [First device feedback](FIRST_DEVICE_FEEDBACK.md#2-sequencer-prominence-two-home-views).
+The shared native/browser checks and updater-enabled FM-1 build passed.
+Publication and physical audition remain pending. Outcomes are tracked in the
+[Home views build record](build-evidence/home-views.md).
 
 ## 1. Playing experience
 
-Keep the existing sound-focused Home and add a sequencer-focused Home:
+Home has two views of the same session:
 
 | View | Main purpose | What stays visible |
 | --- | --- | --- |
@@ -17,7 +19,7 @@ These are two views of the same live session. Switching does not change the
 selected part, notes, sound, pattern, tempo, recording, or knob assignments.
 Both views keep the keyboard playable, including chord building and SNAP.
 
-The owner's navigation rule is the central decision:
+Navigation:
 
 - Tap HOME on SOUND: show GROOVE.
 - Tap HOME on GROOVE: show SOUND.
@@ -26,15 +28,14 @@ The owner's navigation rule is the central decision:
 - Returning Home through another action, such as leaving the drum editor,
   also restores that remembered view.
 
-The owner chose **GROOVE at power-on** on October 14, 2026, so the beat and
-recording are immediately in view. This startup decision is agreed; firmware
-implementation is still pending. Remember subsequent choices for the current powered session. Changing
-sounds or starting a fresh musical session should not reset the Home view.
+**GROOVE is the confirmed power-on view**, so the beat and recording are
+immediately in view. Subsequent choices are remembered for the current powered
+session. Changing sounds or starting a fresh musical session keeps that choice.
 Remembering it across power cycles belongs to the later settings-storage work.
 
 Example: GROOVE → HOME → SOUND → ENV → HOME returns to SOUND; the next
-HOME tap switches to GROOVE. A small SOUND/GROOVE heading and a footer such
-as `HOME: SOUND` make both the current view and the next action discoverable.
+HOME tap switches to GROOVE. A SOUND/GROOVE heading and the opposite-view name
+in the HOME footer identify the current view and the next action.
 
 ## 2. Controls and gesture priority
 
@@ -50,18 +51,17 @@ as `HOME: SOUND` make both the current view and the next action discoverable.
 | OCT− / OCT+ | Existing octave/part-specific behavior. |
 | SEQ | Existing sequencer pages/layer; explicit editing remains separate. |
 
-The overview's compact macros must still have labels and values. Do not show
-the inherited TRACKS footer's swing/level/steps/pan controls while the knobs
-actually operate sound macros. Unsupported sound engines retain the current
-`EDIT` / `--` indication instead of presenting working macros that do nothing.
+The overview's compact macros show the selected part's macro labels and values.
+The knobs retain the same sound parameters as SOUND; they do not adopt the
+inherited TRACKS view's swing/level/steps/pan controls. Unsupported sound
+engines retain `EDIT` / `--` indications.
 
 HOME needs the following precedence, beyond the simple navigation rule:
 
 1. A hold still opens/closes settings after the existing approximately 700 ms
    threshold. Its release must never count as a view-switch tap.
-2. For consistent navigation, propose a short HOME tap in the settings menu
-   closing it to the remembered Home view. Today that short tap does nothing.
-   Route it through `menu_close()` and consume it; do not toggle afterward.
+2. A short HOME tap in settings closes the menu to the remembered Home view.
+   This uses `menu_close()` and consumes the gesture without toggling afterward.
 3. Held SEQ + HOME retains its existing layer-lock action. HOME used to
    unlock a held layer is consumed by that action, without switching Home
    views. Preserve the other held-button combinations and release orders.
@@ -78,12 +78,11 @@ layer handler intentionally lets PLAY continue through some early returns.
 
 ## 3. A readable 240×240 layout
 
-The earlier proposal squeezed the sequencer into the only Home screen. Two
-views let SOUND retain its large controls while GROOVE gives patterns space.
+SOUND retains its large controls while GROOVE gives patterns space.
 
 ![Conceptual Sound and Groove Home layouts](design/home-views.svg)
 
-The drawing is a static planning wireframe, not a screenshot or working UI.
+The drawing remains a static design wireframe, not a screenshot of this build.
 Its typography budgets use the existing small font's 8×16 character cells.
 
 | GROOVE screen region | Height | Content |
@@ -126,15 +125,15 @@ needed for the first version.
   input can change what is heard. Existing keyboard LEDs show playing notes;
   a full audio-event visualization is outside this first layout increment.
 
-The first GROOVE screen is a performance overview, not a piano roll. It does
-not need chord names, individual note pitches, velocity editing or a second
-editing cursor. Holding SEQ shows the existing editing layer; holding SEQ and
-tapping HOME locks that layer, as today. A quick SEQ tap still opens the
-remembered STEP/PATTERN/SONG page. Show these differences in the help text.
+GROOVE is a performance overview. Chord names, individual note pitches,
+velocity editing and a second editing cursor are outside this increment.
+Holding SEQ shows the existing editing layer; holding SEQ and tapping HOME
+locks that layer. A quick SEQ tap opens the remembered STEP/PATTERN/SONG page.
+Both Home views continue to show the selected part's actual sound and macros.
 
 ## 5. Implementation boundaries
 
-| Area | Planned change |
+| Area | Implementation change |
 | --- | --- |
 | [UI state and `go_home`](../firmware/src/ui.c) | Add a small RAM-only Home-view enum. Both views keep `ui.home == 1`; `go_home()` returns without toggling. Preserve its ordinary exit cleanup. |
 | [HOME input](../firmware/src/ui_input.c) | Handle deliberate view switches only in the JamBox ordinary-tap path, with press/release ownership and consumed-gesture checks. Add the explicit menu-return behavior above. |
@@ -154,11 +153,11 @@ length/window, playback position, division, mute/solo/record state, note/tie
 occupancy and displayed macro/sound values. Do not keep interrupts disabled
 through hashing, drawing or LCD transfer.
 
-## 6. Delivery order and acceptance
+## 6. Delivery and acceptance
 
-1. Review the two-view wireframe and navigation contract. Set the agreed
-   GROOVE startup view explicitly, rather than relying on enum numbering.
-   Use native-size and enlarged previews to assess legibility.
+1. Set the agreed GROOVE startup view explicitly, rather than relying on enum
+   numbering. Check the rendered views at native size and enlarged against
+   the wireframe and navigation contract.
 2. Implement the view state and HOME navigation with the existing Sound screen
    retained. Verify ordinary taps, returns, menu exit, holds, layer locks and
    both release orders before adding the pattern renderer.
@@ -176,7 +175,9 @@ through hashing, drawing or LCD transfer.
    verify memory fit, installer packaging and published bytes. Then audition
    both views and HOME gestures on the physical unit.
 
-This planning change does not deploy new firmware. Persistence, a redesigned
-step editor, arrangement tools, per-drum-lane Home rows and new knob modes are
-separate later work. The first useful result is being able to watch the band,
-tap HOME to shape its sound, and return without interrupting the jam.
+Native and browser checks and the updater-enabled target build passed;
+publication and physical audition remain pending in the
+[Home views build record](build-evidence/home-views.md). Persistence, a redesigned
+step editor, arrangement tools, per-drum-lane Home rows and new knob modes remain
+separate later work. Switching views must preserve the musical session and
+continue audio and recording without interruption.

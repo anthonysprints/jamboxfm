@@ -10,6 +10,13 @@ static struct {
     uint8_t valid;
 } jam_home_cache;
 
+static struct {
+    uint32_t head, row[NTRK], sound, macro, foot;
+    uint32_t generation[NTRK];
+    uint8_t bank[NTRK], valid;
+} jam_groove_cache;
+static uint8_t jam_home_drawn_view = 0xFF;
+
 static uint32_t jam_home_hash(uint32_t h, const char *s)
 {
     while (*s)
@@ -102,7 +109,7 @@ static void jam_home_text(int32_t x, int32_t y, int32_t width,
 
 /* Five short strips; no full-screen RAM buffer or unconditional 60 Hz redraw.
  * The caller runs ui_timers() and clears ui.force after this returns 1. */
-static int jam_home_draw(void)
+static int jam_sound_home_draw(void)
 {
     uint32_t k, r, head, roles, sound, macro, foot;
     uint32_t selected = song.sel % NTRK;
@@ -136,7 +143,7 @@ static int jam_home_draw(void)
         const char *state = song.playing ? (song.rec ? "REC" : "PLAY") : (song.rec ? "ARM" : "STOP");
         jam_home_cache.head = head;
         cv_begin(240, 36, C_BLACK);
-        cv_text(8, 1, &FONT_S, "JAMBOXFM", C_WHITE);
+        cv_text(8, 1, &FONT_S, "SOUND", C_WHITE);
         fmt_int(b, song.g[G_BPM]);
         str_cpy(b + str_len(b), " BPM", sizeof b - str_len(b));
         cv_text(232 - text_w(&FONT_S, b), 1, &FONT_S, b, C_HI);
@@ -198,10 +205,178 @@ static int jam_home_draw(void)
         jam_home_cache.foot = foot;
         cv_begin(240, 32, C_BLACK);
         jam_home_text(8, 0, 224, &FONT_S,
-                      ui.msg_t ? ui.msg : "ALGO part  PRESET sound", ui.msg_t ? C_HI : C_GRAY);
+                      ui.msg_t ? ui.msg : "HOME: GROOVE  PRESET sound", ui.msg_t ? C_HI : C_GRAY);
         jam_home_text(8, 16, 224, &FONT_S,
                       jam_home_macros_available(selected) ? "SELECT tempo / SEL scale" : "SELECT tempo / EDIT sound", C_GRAY);
         cv_blit(0, 208);
     }
     return 1;
+}
+
+enum { JAM_CELL_DISABLED, JAM_CELL_EMPTY, JAM_CELL_NOTE, JAM_CELL_TIE };
+/* Every Groove cell is one stored step. Ties are not new note attacks, and the
+ * drum row combines all lanes without pretending to show a selected drum lane. */
+static uint32_t jam_groove_cell(const track_t *t, uint32_t step, uint32_t len)
+{
+    if (step >= len || step >= NSTEP)
+        return JAM_CELL_DISABLED;
+    if (is_drum(t))
+        return dstep_mask(&t->dstep[step]) ? JAM_CELL_NOTE : JAM_CELL_EMPTY;
+    if (t->step[step].time == ST_TIE)
+        return JAM_CELL_TIE;
+    return step_on(&t->step[step]) ? JAM_CELL_NOTE : JAM_CELL_EMPTY;
+}
+static void jam_groove_range(char *b, uint32_t bank, uint32_t len)
+{
+    uint32_t a = bank * 16u + 1u, z = (bank + 1u) * 16u;
+    if (z > len) z = len;
+    b[0] = (char)('0' + a / 10u); b[1] = (char)('0' + a % 10u);
+    b[2] = '-';
+    b[3] = (char)('0' + z / 10u); b[4] = (char)('0' + z % 10u);
+    b[5] = '/';
+    b[6] = (char)('0' + len / 10u); b[7] = (char)('0' + len % 10u); b[8] = 0;
+}
+
+static int jam_groove_home_draw(void)
+{
+    static const uint16_t colors[NTRK] = {
+        RGB(40, 124, 255), RGB(30, 204, 112), RGB(255, 198, 24), RGB(255, 98, 26)
+    };
+    uint32_t selected = song.sel % NTRK, playing = !!song.playing;
+    uint32_t head, sound, macro, foot, r, k;
+    int force = ui.force || !jam_groove_cache.valid;
+    char b[24];
+    if (force) {
+        lcd_fill(0, 0, 240, 240, C_BLACK);
+        jam_groove_cache.valid = 1;
+    }
+    head = (uint32_t)song.g[G_BPM] * 131u + playing * 17u + song.rec * 29u +
+           (playing ? (clk_beat & 3u) + 1u : 0u);
+    if (force || head != jam_groove_cache.head) {
+        const char *state = playing ? (song.rec ? "REC" : "PLAY") : (song.rec ? "ARM" : "STOP");
+        jam_groove_cache.head = head;
+        cv_begin(240, 32, C_BLACK);
+        cv_text(8, 0, &FONT_S, "GROOVE", C_WHITE);
+        fmt_int(b, song.g[G_BPM]);
+        str_cpy(b + str_len(b), " BPM", sizeof b - str_len(b));
+        cv_text(232 - text_w(&FONT_S, b), 0, &FONT_S, b, C_HI);
+        cv_text(8, 16, &FONT_S, state, song.rec ? RGB(255, 90, 70) : C_HI);
+        for (k = 0; k < 4u; k++)
+            cv_rect(190 + (int32_t)k * 11, 22, 7, 7,
+                    playing && (clk_beat & 3u) == k ? C_HI : C_LINE);
+        cv_blit(0, 0);
+    }
+    for (r = 0; r < NTRK; r++) {
+        uint32_t tno = jam_role_track(r), j, sig, bank;
+        const track_t *t = &trk[tno];
+        uint32_t len = (uint32_t)clamp(t->p[P_SLEN], 1, NSTEP);
+        uint32_t pos = t->seq_idx % len, div = (uint32_t)t->p[P_SDIV] % NDIV_STEP;
+        uint32_t mute = !!t->p[P_MUTE], solo = (song.solo >> tno) & 1u;
+        uint32_t rec = (song.rec >> tno) & 1u, chosen = selected == tno;
+        uint32_t level = is_drum(t) ? song.g[G_DRLVL] : t->p[P_LEVEL];
+        uint32_t silent = trk_silent(t) || !level;
+        uint32_t generation = jam_pattern_generation[tno];
+        uint8_t cells[16];
+        uint16_t col = colors[tno], ink = silent ? C_DIM : chosen ? col : C_GRAY;
+        /* A sound change does not replace a pattern. Only the shared pattern
+         * generation resets this independent display window; editing cursors
+         * are never read or moved. A shorter pattern clamps its last window. */
+        if (generation != jam_groove_cache.generation[tno]) {
+            jam_groove_cache.generation[tno] = generation;
+            jam_groove_cache.bank[tno] = 0;
+        }
+        bank = playing ? pos / 16u : jam_groove_cache.bank[tno];
+        if (bank > (len - 1u) / 16u) bank = (len - 1u) / 16u;
+        jam_groove_cache.bank[tno] = (uint8_t)bank;
+        sig = len + bank * 67u + div * 277u;
+        sig = sig * 31u + chosen + mute * 2u + solo * 4u + rec * 8u + silent * 16u;
+        sig = sig * 71u + (playing ? pos + 1u : 0u);
+        for (j = 0; j < 16u; j++) {
+            cells[j] = (uint8_t)jam_groove_cell(t, bank * 16u + j, len);
+            sig = sig * 31u + cells[j];
+        }
+        if (!force && sig == jam_groove_cache.row[tno])
+            continue;
+        jam_groove_cache.row[tno] = sig;
+        cv_begin(240, 28, C_BLACK);
+        if (chosen) cv_rect(2, 1, 3, 26, col);
+        jam_home_text(8, 0, 48, &FONT_S, jam_role_name(tno), chosen ? C_WHITE : C_GRAY);
+        jam_groove_range(b, bank, len);
+        cv_text(64, 0, &FONT_S, b, chosen ? C_WHITE : C_GRAY);
+        if (div != 2u)
+            jam_home_text(136, 0, 32, &FONT_S, N_SDIV[div], C_GRAY);
+        /* Independent marks: recording a muted or soloed part shows all states. */
+        if (mute) cv_text(176, 0, &FONT_S, "M", C_WHITE);
+        if (solo) cv_text(192, 0, &FONT_S, "S", C_HI);
+        if (rec) cv_text(208, 0, &FONT_S, "R", RGB(255, 90, 70));
+        for (j = 0; j < 16u; j++) {
+            int32_t x = 8 + (int32_t)j * 14;
+            if (!cells[j])
+                continue;
+            cv_rect(x, 17, 12, 7, RGB(26, 26, 30));
+            if (!(j & 3u)) cv_rect(x, 16, 2, 1, C_GRAY);
+            if (cells[j] == JAM_CELL_NOTE)
+                cv_rect(x, 17, 12, 7, ink);
+            else if (cells[j] == JAM_CELL_TIE)
+                cv_rect(x, 20, 12, 2, ink);
+            if (playing && bank * 16u + j == pos)
+                cv_rect(x, 25, 12, 2, C_WHITE);
+        }
+        cv_blit(0, 32u + r * 28u);
+    }
+    sound = jam_home_hash(selected + 1u, jam_sound_name(selected));
+    if (force || sound != jam_groove_cache.sound) {
+        jam_groove_cache.sound = sound;
+        cv_begin(240, 32, C_BLACK);
+        jam_home_text(8, 0, 224, &FONT_S, jam_role_name(selected), colors[selected]);
+        jam_home_text(8, 16, 224, &FONT_S, jam_sound_name(selected), C_WHITE);
+        cv_blit(0, 144);
+    }
+    macro = (selected + 1u) * 2u + (uint32_t)jam_home_macros_available(selected);
+    for (k = 0; k < 4u; k++) {
+        macro = jam_home_hash(macro, jam_macro_name(selected, k));
+        macro = macro * 131u + jam_macro_get(selected, k);
+    }
+    macro = macro * 7u + (ui.hot_t ? (uint32_t)ui.hot_col + 1u : 0u);
+    if (force || macro != jam_groove_cache.macro) {
+        int available = jam_home_macros_available(selected);
+        jam_groove_cache.macro = macro;
+        cv_begin(240, 40, C_BLACK);
+        for (k = 0; k < 4u; k++) {
+            uint32_t v = jam_macro_get(selected, k);
+            int32_t x = (int32_t)k * 60;
+            uint16_t fg = ui.hot_t && ui.hot_col == k ? C_WHITE : C_HI;
+            jam_home_text(x + 4, 0, 52, &FONT_S, available ? jam_macro_name(selected, k) : "EDIT", C_GRAY);
+            if (available) fmt_int(b, (int32_t)v);
+            else str_cpy(b, "--", sizeof b);
+            cv_text(x + 30 - text_w(&FONT_S, b) / 2, 16, &FONT_S, b, fg);
+            cv_rect(x + 4, 36, 52, 3, C_LINE);
+            if (available && v) cv_rect(x + 4, 36, (int32_t)(v * 52u / 100u), 3, fg);
+        }
+        cv_blit(0, 176);
+    }
+    foot = (uint32_t)!jam_home_macros_available(selected);
+    if (ui.msg_t) foot = jam_home_hash(foot + 1u, ui.msg);
+    if (force || foot != jam_groove_cache.foot) {
+        jam_groove_cache.foot = foot;
+        cv_begin(240, 24, C_BLACK);
+        jam_home_text(8, 4, 224, &FONT_S, ui.msg_t ? ui.msg :
+                      jam_home_macros_available(selected) ? "HOME: SOUND  HOLD SEQ: EDIT" : "HOME: SOUND  EDIT: SOUND",
+                      ui.msg_t ? C_HI : C_GRAY);
+        cv_blit(0, 216);
+    }
+    return 1;
+}
+
+static int jam_home_draw(void)
+{
+    uint32_t view;
+    if (!jam_home_active())
+        return 0;
+    view = ui.jam_home_view == JAM_HOME_SOUND ? JAM_HOME_SOUND : JAM_HOME_GROOVE;
+    if (view != jam_home_drawn_view) {
+        jam_home_cache.valid = jam_groove_cache.valid = 0;
+        jam_home_drawn_view = (uint8_t)view;
+    }
+    return view == JAM_HOME_SOUND ? jam_sound_home_draw() : jam_groove_home_draw();
 }

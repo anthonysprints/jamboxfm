@@ -83,6 +83,10 @@ async function start(page, url) {
   assert.equal(initial.tempo, 88);
   assert.equal(initial.selected, 1, 'boot selects Chords');
   assert(initial.home, 'actual firmware starts at JamBox Home');
+  assert.equal(initial.homeView, 0, 'the shared firmware boots on Groove Home');
+  assert(initial.homeControls, 'Groove Home owns the normal panel controls');
+  assert.equal(await page.locator('#home-view').textContent(), 'GROOVE HOME');
+  assert.match(await button(page, 6).getAttribute('aria-label'), /show Sound view/);
   assert(!initial.playing, 'the transport waits for PLAY');
   assert.equal(pixels.width, 240); assert.equal(pixels.height, 240);
   assert(pixels.lit > 100, 'firmware drew a nonempty LCD framebuffer');
@@ -96,6 +100,28 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 1060 } });
   const initialScreen = await start(page, address);
   await page.screenshot({ path: resolve(evidence, 'desktop-home.png'), fullPage: true });
+
+  // HOME changes the real C screen while an ordinary chord keeps sounding.
+  await pointerDown(page, page.locator('button[data-key="10"]'));
+  await page.waitForFunction(() => globalThis.jamEmu.state.held > 1);
+  const heldBeforeHome = await state(page);
+  await page.keyboard.press('7', { delay: 70 });
+  await page.waitForFunction(() => globalThis.jamEmu.state.home && globalThis.jamEmu.state.homeView === 1 && globalThis.jamEmu.state.homeControls);
+  await waitForScreenChange(page, initialScreen.hash);
+  assert.equal(await page.locator('#home-view').textContent(), 'SOUND HOME');
+  assert.match(await page.locator('#screen').getAttribute('aria-label'), /Sound Home/);
+  assert.match(await button(page, 6).getAttribute('aria-label'), /show Groove view/);
+  const heldOnSound = await state(page);
+  for (const field of ['selected', 'sound', 'tempo', 'keys', 'held', 'playing', 'recording'])
+    assert.equal(heldOnSound[field], heldBeforeHome[field], `switching to Sound preserves ${field}`);
+  assert.deepEqual(heldOnSound.macros, heldBeforeHome.macros, 'switching Home views preserves sound macros');
+  assert.deepEqual(heldOnSound.events, heldBeforeHome.events, 'switching Home views preserves all stored events');
+  await page.screenshot({ path: resolve(evidence, 'desktop-sound-home.png'), fullPage: true });
+  await page.keyboard.press('7', { delay: 70 });
+  await page.waitForFunction(() => globalThis.jamEmu.state.homeView === 0 && globalThis.jamEmu.state.held > 1);
+  assert.equal((await state(page)).held, heldBeforeHome.held, 'returning to Groove preserves the held chord');
+  await page.mouse.up();
+  await page.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held);
 
   // Encoder events go through the firmware panel roles, not a browser patch editor.
   await turn(page, 1);
@@ -143,6 +169,27 @@ try {
   await page.waitForFunction(previous => globalThis.jamEmu.state.master !== previous, masterBefore);
   assert.equal((await state(page)).master, masterBefore - 1, 'the next master detent moves exactly once after cancellation');
 
+  // Sound uses the same tempo, part, sound and macro assignments as Groove.
+  await tap(page, 6);
+  await page.waitForFunction(() => globalThis.jamEmu.state.homeView === 1 && globalThis.jamEmu.state.homeControls);
+  await turn(page, 0);
+  await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
+  assert.equal(await encoder(page, 0).getAttribute('aria-valuetext'), 'Tempo: 89 BPM');
+  await turn(page, 0, 'ArrowDown');
+  await turn(page, 1);
+  await page.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
+  await turn(page, 1, 'ArrowDown');
+  await page.waitForFunction(() => globalThis.jamEmu.state.selected === 1);
+  const soundViewBefore = await state(page);
+  await turn(page, 2);
+  await page.waitForFunction(previous => globalThis.jamEmu.state.sound !== previous, soundViewBefore.sound);
+  await turn(page, 2, 'ArrowDown');
+  await page.waitForFunction(previous => globalThis.jamEmu.state.sound === previous, soundViewBefore.sound);
+  const soundMacroBefore = (await state(page)).macros[0];
+  await turn(page, 3);
+  await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] !== previous, soundMacroBefore);
+  assert.equal((await state(page)).homeView, 1, 'Sound control edits retain the chosen Home view');
+
   // The held layers and deep pages are firmware screens with distinct pixels.
   const homeScreen = await screen(page);
   await pointerDown(page, button(page, 0));
@@ -162,7 +209,19 @@ try {
   await waitForScreenChange(page, homeScreen.hash);
   assert.notEqual((await screen(page)).hash, homeScreen.hash, 'ENV opens a real deep screen');
   await tap(page, 6);
-  await page.waitForFunction(() => globalThis.jamEmu.state.home);
+  await page.waitForFunction(() => globalThis.jamEmu.state.home && globalThis.jamEmu.state.homeControls);
+  assert.equal((await state(page)).homeView, 1, 'HOME from ENV returns to remembered Sound without toggling');
+
+  await pointerDown(page, button(page, 6));
+  await page.waitForTimeout(800); // Pass the physical HOME hold threshold before releasing it.
+  await page.waitForFunction(() => !globalThis.jamEmu.state.homeControls);
+  await page.mouse.up();
+  await idle(page);
+  assert.equal((await state(page)).homeView, 1, 'holding and releasing HOME opens settings without switching views');
+  assert.equal(await page.locator('#home-view').textContent(), 'LIVE SCREEN', 'settings do not advertise hidden Home controls');
+  await tap(page, 6);
+  await page.waitForFunction(() => globalThis.jamEmu.state.homeControls);
+  assert.equal((await state(page)).homeView, 1, 'a quick HOME tap closes settings to remembered Sound');
 
   // Real momentary PLAY / REC and local key events exercise the shared recorder.
   await tap(page, 10);
@@ -173,6 +232,15 @@ try {
   const note = page.locator('button[data-key="12"]');
   await pointerDown(page, note);
   await page.waitForFunction(() => globalThis.jamEmu.state.keys !== 0);
+  const overdubBeforeHome = await state(page);
+  await page.keyboard.press('7', { delay: 70 });
+  await page.waitForFunction(() => globalThis.jamEmu.state.homeView === 0);
+  const overdubOnGroove = await state(page);
+  for (const field of ['selected', 'sound', 'tempo', 'keys', 'held', 'playing', 'recording'])
+    assert.equal(overdubOnGroove[field], overdubBeforeHome[field], `HOME during overdubbing preserves ${field}`);
+  await page.keyboard.press('7', { delay: 70 });
+  await page.waitForFunction(() => globalThis.jamEmu.state.homeView === 1);
+  assert.equal((await state(page)).recording, overdubBeforeHome.recording, 'recording continues through both Home views');
   await page.waitForTimeout(330);
   await page.mouse.move(3, 3); await page.mouse.up();
   await page.waitForFunction(() => globalThis.jamEmu.state.keys === 0);
@@ -217,6 +285,7 @@ try {
   assert.equal((await state(page)).held, 0, 'no physical pitch ownership survives the pause race');
   await page.evaluate(() => window.dispatchEvent(new KeyboardEvent('keyup', { key: 'z', code: 'KeyZ', bubbles: true })));
   assert.equal((await state(page)).sound, beforePause.sound, 'pause/resume preserves the selected sound');
+  assert.equal((await state(page)).homeView, beforePause.homeView, 'pause/resume preserves the chosen Home view');
   assert.deepEqual((await state(page)).events, beforePause.events, 'pause/resume preserves the captured notes');
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'desktop emulator fits the viewport');
 
@@ -369,7 +438,7 @@ try {
     await offline.close();
   }
   assert.deepEqual(errors, [], 'no browser JavaScript errors');
-  console.log(`JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, sounding chord-tone LEDs without SNAP aliases, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
+  console.log(`JamBox physical emulator: real LCD, Groove/Sound Home with shared controls and uninterrupted chords/overdub, seven encoders, layers/deep pages/settings returns, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, sounding chord-tone LEDs without SNAP aliases, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

@@ -11,5 +11,6 @@ mkdir -p build/jam-emu-evidence
 "$CC" -O2 -fwrapv -fno-strict-aliasing -w -Ibuild/jam-emu-gen -Ifirmware/src \
     tests/jam_emu_native.c -o build/jam-emu-evidence/native -lm
 build/jam-emu-evidence/native
+sh tests/run_jam_home_nav_tests.sh
 node tests/jam_emu_browser.mjs
 echo 'JamBox emulator package, native controls, and real browser tests passed.'

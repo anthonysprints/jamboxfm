@@ -1,5 +1,18 @@
 # JamBox software prototype and FM-1 update isolation
 
+The current Home increment implements two views: **GROOVE** at startup
+for four literal 16-step pattern rows, and **SOUND** for larger sound controls.
+HOME toggles while already on Home and returns to the remembered view from
+other pages; a short tap closes settings, while holds, layer locks and recorder
+overlays retain priority. Both views keep the same playable keyboard and
+selected-part macros. The [Home views specification](HOME_VIEWS_PLAN.md)
+defines the controls and per-part windows. Palette/Home UI/native-WASM checks,
+118 native emulator checks, 115 dedicated navigation checks and actual Chromium
+checks passed, including held chords, overdub, LEDs and the standalone page.
+The updater-enabled target uses 551,160 of 581,564 app bytes, 80,744 of 98,304
+ordinary RAM bytes and 324,580 of 344,064 pool bytes. Publication and physical
+audition remain pending in the [Home views build record](build-evidence/home-views.md).
+
 October 14, 2026 lighting follow-up: the owner now wants every sounding chord
 note visible alongside pressed keys. The current change maps all melodic
 sounding-note LEDs to printed note positions in the selected octave, across

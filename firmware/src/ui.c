@@ -51,8 +51,16 @@ static uint8_t sync_reload;                  /* engine / preset / project / user
 #define Y_FOOT 202
 #define H_FOOT 38
 
+#if JAMBOX_PROTO
+enum { JAM_HOME_GROOVE, JAM_HOME_SOUND };
+enum { JAM_HOME_ORIGIN_NONE, JAM_HOME_ORIGIN_HOME, JAM_HOME_ORIGIN_PAGE, JAM_HOME_ORIGIN_MENU };
+#endif
 static struct {
     uint8_t home;
+#if JAMBOX_PROTO
+    uint8_t jam_home_view;       /* remembered for this powered session; go_home never toggles it */
+    uint8_t jam_home_origin;     /* which screen owned this HOME gesture when it began */
+#endif
     uint8_t page;                /* index into PAGES */
     uint8_t fam_last[FAM_COUNT]; /* last page used per family */
     uint8_t bank;                /* SEQ: 16-step bank (follows the cursor) */
@@ -254,6 +262,9 @@ static int undo_swap(int redo)
     t->p[P_SLEN] = undo.len;
     undo.len = len;
     undo.undone = (uint8_t)!redo;
+#if JAMBOX_PROTO
+    jam_pattern_generation[trk_index(t)]++;
+#endif
     fm1_irq_on();
     sync_reload = 1;
     ui.force = 1;

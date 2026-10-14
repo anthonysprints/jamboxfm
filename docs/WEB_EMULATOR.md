@@ -15,6 +15,24 @@ shortcuts. **All notes off** releases notes and stops playback. Browser
 sessions are temporary: reloading loses edits and recorded notes. This
 page does not install firmware or access an attached FM-1.
 
+The two-view Home update is implemented, with native/browser checks and the
+updater-enabled FM-1 build passing. Publication and physical audition remain
+pending in the [Home views build record](build-evidence/home-views.md).
+It starts in **GROOVE**, with four rows of actual pattern steps. Tap **HOME**
+while already on Home to switch to **SOUND**, with larger sound controls; tap
+again to return. From a sound, scale or sequencer page, HOME returns to the
+view you last used. A short HOME tap closes settings to that remembered view;
+holding HOME retains settings access. Recording overlays and held-layer
+shortcuts keep their existing priority.
+
+Both Home views use SELECT for BPM, ALGORITHM for part, PRESETS for sound and
+knobs 1–4 for the same sound macros. The keyboard keeps playing notes/chords
+or drums. GROOVE's rows each show a literal 16-step window with that part's
+range and length; playback follows each part's own playhead, and stopping
+retains the displayed windows. The sound and macros belong to the selected
+part. For step editing, hold SEQ; hold SEQ and tap HOME to lock its editor.
+See [Two Home views](HOME_VIEWS_PLAN.md) for the display and navigation rules.
+
 The Dusty session starts Chords and Lead in **SNAP** mode: every key works,
 including the black keys. Chords starts with **7TH** chord building; Lead
 starts with **CHORD OFF** for single notes. Neighboring keys can share a root.

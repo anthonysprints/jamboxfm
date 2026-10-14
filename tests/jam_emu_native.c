@@ -304,6 +304,93 @@ static void test_chord_panel_controls(void)
     jam_emu_key(10, 0); jam_emu_panic(); jam_emu_render();
 }
 
+static void test_home_views(void)
+{
+    uint32_t view, before, selected, rec;
+    uint8_t notes[4], held;
+    step_t pattern[NSTEP];
+    jam_emu_panic(); jam_emu_render();
+    assert(jam_new_dusty());
+    go_home(); blocks(400);
+    if (ui.jam_home_view != JAM_HOME_GROOVE) tap_emu(B_HOME);
+
+    for (view = JAM_HOME_GROOVE; view <= JAM_HOME_SOUND; view++) {
+        CHECK(jam_emu_value(6, 0) && jam_emu_value(20, 0) && (uint32_t)jam_emu_value(21, 0) == view,
+              "both Home views retain the Home flag and normal control ownership");
+        before = (uint32_t)song.g[G_BPM];
+        jam_emu_encoder(EN_SELECT, 1);
+        CHECK((uint32_t)song.g[G_BPM] == before + 1u, "SELECT changes one BPM in either Home view");
+        jam_emu_encoder(EN_SELECT, -1);
+        selected = song.sel;
+        jam_emu_encoder(EN_ALGO, 1);
+        CHECK(song.sel == 2u && ui.jam_home_view == view, "ALGORITHM selects Lead without switching Home views");
+        jam_emu_encoder(EN_ALGO, -1);
+        CHECK(song.sel == selected, "ALGORITHM returns to the same Chords part in either view");
+        jam_emu_encoder(EN_PRESET, 1); blocks(400);
+        CHECK(jam_sound_index(song.sel) == 1u && ui.jam_home_view == view,
+              "PRESETS browses the sound while preserving the Home view");
+        jam_emu_encoder(EN_PRESET, -1); blocks(400);
+        before = jam_macro_get(song.sel, 0);
+        jam_emu_encoder(EN_K1, before == 100u ? -1 : 1);
+        CHECK(jam_macro_get(song.sel, 0) != before, "KNOB 1 shapes the sound in either Home view");
+
+        tap_emu(B_ENV);
+        CHECK(!jam_emu_value(6, 0) && (uint32_t)jam_emu_value(21, 0) == view,
+              "opening ENV retains the remembered Home view in the appended ABI");
+        tap_emu(B_HOME);
+        CHECK(jam_emu_value(6, 0) && (uint32_t)jam_emu_value(21, 0) == view,
+              "HOME from ENV returns to the remembered view without toggling");
+        if (view == JAM_HOME_GROOVE) tap_emu(B_HOME);
+    }
+
+    /* A menu owns the complete HOME hold/release; its short close is consumed. */
+    jam_emu_button(B_HOME, 1); blocks((FS * 800u / 1000u + CTL - 1u) / CTL);
+    CHECK(ui.menu && !jam_emu_value(20, 0) && ui.jam_home_view == JAM_HOME_SOUND,
+          "holding HOME opens settings without secretly switching Home views");
+    jam_emu_button(B_HOME, 0); jam_emu_frame();
+    CHECK(ui.menu && ui.jam_home_view == JAM_HOME_SOUND, "releasing the HOME hold leaves settings open");
+    tap_emu(B_HOME);
+    CHECK(!ui.menu && jam_emu_value(20, 0) && ui.jam_home_view == JAM_HOME_SOUND,
+          "a short HOME tap closes settings to remembered Sound without toggling");
+
+    jam_emu_button(B_SEQ, 1); tap_emu(B_HOME); jam_emu_button(B_SEQ, 0); jam_emu_frame();
+    CHECK(jam_emu_value(11, 0) == LY_STEP && !jam_emu_value(20, 0) && ui.jam_home_view == JAM_HOME_SOUND,
+          "held SEQ plus HOME locks the editing layer without switching Home views");
+    tap_emu(B_HOME); blocks(400);
+    CHECK(jam_emu_value(11, 0) == LY_PLAY && jam_emu_value(20, 0) && ui.jam_home_view == JAM_HOME_SOUND,
+          "HOME unlocking the editing layer is consumed without toggling");
+    CHECK(jam_new_dusty() && ui.jam_home_view == JAM_HOME_SOUND,
+          "a fresh musical session preserves the chosen Home view");
+    go_home(); blocks(400);
+
+    /* Sound, record ownership and the captured pitches survive ordinary toggles. */
+    tap_emu(B_PLAY); tap_emu(B_REC);
+    CHECK(song.playing && song.rec && jam_emu_value(20, 0), "overdubbing keeps ordinary Home controls available");
+    jam_emu_key(10, 1); blocks(16);
+    rec = song.rec; held = kb_n[10]; memcpy(notes, kb_nt[10], sizeof notes);
+    memcpy(pattern, TSEL->step, sizeof pattern);
+    before = song.g[G_BPM];
+    tap_emu(B_HOME);
+    CHECK(ui.jam_home_view == JAM_HOME_GROOVE && song.playing && song.rec == rec && song.g[G_BPM] == before &&
+          kb_n[10] == held && !memcmp(kb_nt[10], notes, sizeof notes) && !memcmp(TSEL->step, pattern, sizeof pattern),
+          "Sound to Groove preserves a held chord, tempo, overdub state and captured pattern");
+    tap_emu(B_HOME);
+    CHECK(ui.jam_home_view == JAM_HOME_SOUND && song.playing && song.rec == rec &&
+          kb_n[10] == held && !memcmp(kb_nt[10], notes, sizeof notes) && !memcmp(TSEL->step, pattern, sizeof pattern),
+          "Groove to Sound preserves the same held chord and recording");
+    jam_emu_key(10, 0); blocks(16);
+    CHECK(!jam_emu_value(14, 0) && jam_emu_value(19, song.sel) >= held,
+          "the chord releases and its recorded notes remain after both view switches");
+    jam_emu_panic(); jam_emu_render();
+    tap_emu(B_REC);
+    CHECK(rec_wait && !jam_emu_value(20, 0), "armed recorder owns its overlay above either Home view");
+    tap_emu(B_HOME);
+    CHECK(rec_wait && ui.jam_home_view == JAM_HOME_SOUND,
+          "HOME on the armed overlay neither cancels recording nor switches the hidden view");
+    jam_emu_panic(); jam_emu_render();
+    CHECK(jam_emu_value(18, 0) == 0, "both Home views and overlays keep LCD transfers within the physical screen");
+}
+
 int main(int argc, char **argv)
 {
     uint32_t i, nonblack = 0, before, k;
@@ -312,6 +399,7 @@ int main(int argc, char **argv)
     jam_emu_init();
     CHECK(jam_emu_frames() == CTL && jam_emu_rate() == FS, "fixed audio ABI");
     CHECK(jam_emu_value(6, 0) == 1 && jam_emu_value(0, 0) == 1, "real JamBox Home starts on chords");
+    CHECK(jam_emu_value(21, 0) == JAM_HOME_GROOVE, "appended Home-view ABI explicitly starts on Groove");
     CHECK(jam_emu_value(20, 0), "browser knob hints follow the actual Home control owner");
     CHECK(jam_emu_screen_version() > 0, "boot LCD snapshot exists before audio starts");
     rgba = jam_emu_screen();
@@ -396,6 +484,7 @@ int main(int argc, char **argv)
     test_snap_lights();
     test_chord_tone_lights();
     test_chord_panel_controls();
+    test_home_views();
     printf("jam-emu: %u checks passed\n", checks);
     return 0;
 }

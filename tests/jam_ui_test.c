@@ -34,16 +34,32 @@ static uint32_t strip_hash(uint32_t y, uint32_t h)
     return hash;
 }
 
-int main(int argc, char **argv)
+static void home_ppm(uint32_t view, const char *name)
+{
+    char path[80];
+    if (!outdir) return;
+    snprintf(path, sizeof path, "jam-%s-%s", view == JAM_HOME_SOUND ? "sound" : "groove", name);
+    ppm(path);
+}
+
+static void test_home_controls(uint32_t view)
 {
     uint32_t k, old_index, old_track, before, macro_before, foot_before;
+    uint32_t sound_y = view == JAM_HOME_SOUND ? 76u : 144u;
+    uint32_t sound_h = view == JAM_HOME_SOUND ? 44u : 32u;
+    uint32_t macro_y = view == JAM_HOME_SOUND ? 124u : 176u;
+    uint32_t macro_h = view == JAM_HOME_SOUND ? 80u : 40u;
+    uint32_t foot_y = view == JAM_HOME_SOUND ? 208u : 216u;
+    uint32_t foot_h = view == JAM_HOME_SOUND ? 32u : 24u;
     int16_t bpm;
     step_t patterns[NTRK][NSTEP];
     home_setup();
-    if (argc > 1) outdir = argv[1];
+    check(ui.jam_home_view == JAM_HOME_GROOVE, "the Home view starts on GROOVE");
+    if (view == JAM_HOME_SOUND) tap(B_HOME);
+    check(ui.jam_home_view == view, "both Home views are reachable with the physical HOME button");
     check(ui.home && jam_home_active(), "startup uses the JamBox Home");
     check(song.sel == 1 && jam_home_role(song.sel) == 2, "startup selects the chord role");
-    if (outdir) ppm("jam-home-chords");
+    home_ppm(view, "chords");
 
     bpm = song.g[G_BPM];
     turn(EN_ALGO, 1);
@@ -90,7 +106,7 @@ int main(int argc, char **argv)
     tap(B_ENV);
     check(!ui.home && cur_page()->fam == FAM_ENV, "ENV still reaches the deep envelope page");
     tap(B_HOME);
-    check(ui.home && !vis_on, "HOME returns to overview instead of opening the visualizer");
+    check(ui.home && ui.jam_home_view == view && !vis_on, "HOME restores the remembered view from a deep page");
     tap(B_EDIT);
     check(!ui.home && cur_page()->fam == FAM_EDIT, "EDIT tap still reaches deep sound controls");
     tap(B_HOME);
@@ -123,13 +139,13 @@ int main(int argc, char **argv)
     check(song.playing && song.g[G_BPM] == bpm + 1, "tempo changes while the groove keeps playing");
     turn(EN_SELECT, -1);
     frames(12);
-    if (outdir) ppm("jam-home-playing");
+    home_ppm(view, "playing");
     tap(B_PLAY); frame();
     check(!song.playing, "PLAY stops the shared transport from Home");
 
     track_select(1); trk[1].p[P_MUTE] = 1; song.rec = 1u << 1;
     ui.force = 1; frame();
-    if (outdir) ppm("jam-home-muted-armed");
+    home_ppm(view, "muted-armed");
     song.rec = 0; trk[1].p[P_MUTE] = 0;
     for (k = 0; k < 4u; k++) {
         track_select(jam_role_track(k));
@@ -140,13 +156,13 @@ int main(int argc, char **argv)
      * including when the engine remains ANALOG. Home then browses back in. */
     track_select(1);
     jam_sound_load(1, 0); ui.force = 1; frame();
-    before = strip_hash(76, 44);
+    before = strip_hash(sound_y, sound_h);
     apply_preset_to(&trk[1], 0);
     ui.force = 0; frame();
     check(strcmp(jam_sound_name(1), "DUST KEYS") != 0 &&
           strcmp(jam_sound_name(1), ENGINES[0]->name) == 0,
           "an upstream ANALOG preset no longer carries the curated name");
-    check(before != strip_hash(76, 44), "the sound title refreshes without a forced redraw");
+    check(before != strip_hash(sound_y, sound_h), "the sound title refreshes without a forced redraw");
     turn(EN_PRESET, 1);
     check(strcmp(jam_sound_name(1), "SOFT STABS") == 0,
           "curated browsing restores its own sound label after a deep preset load");
@@ -155,21 +171,169 @@ int main(int argc, char **argv)
      * editability changes on engine switch. Verify the rendered strips. */
     for (k = 0; k < 4u; k++) jam_macro_set(1, k, 0);
     ui.hot_t = ui.msg_t = 0; ui.force = 1; frame();
-    macro_before = strip_hash(124, 80); foot_before = strip_hash(208, 32);
+    macro_before = strip_hash(macro_y, macro_h); foot_before = strip_hash(foot_y, foot_h);
     set_engine_of(&trk[1], 1);
     ui.force = 0; frame();
     check(!jam_home_macros_available(1), "other engines direct editing to their real sound pages");
-    check(macro_before != strip_hash(124, 80), "zero-valued macros redraw as unavailable without forcing");
-    check(foot_before != strip_hash(208, 32), "the deep-edit footer hint refreshes without forcing");
-    if (outdir) ppm("jam-home-other-engine");
+    check(macro_before != strip_hash(macro_y, macro_h), "zero-valued macros redraw as unavailable without forcing");
+    check(foot_before != strip_hash(foot_y, foot_h), "the deep-edit footer hint refreshes without forcing");
+    home_ppm(view, "other-engine");
 
     jam_sound_load(1, 0);
     ui_message("READY"); ui.force = 1; frame();
-    foot_before = strip_hash(208, 32);
+    foot_before = strip_hash(foot_y, foot_h); macro_before = strip_hash(macro_y, macro_h);
     set_engine_of(&trk[1], 1);
     ui.force = 0; frame();
-    check(ui.msg_t && foot_before != strip_hash(208, 32),
-          "the engine hint refreshes while the first footer line shows a message");
+    if (view == JAM_HOME_SOUND)
+        check(ui.msg_t && foot_before != strip_hash(foot_y, foot_h),
+              "the engine hint refreshes while the first footer line shows a message");
+    else
+        check(ui.msg_t && foot_before == strip_hash(foot_y, foot_h) && macro_before != strip_hash(macro_y, macro_h),
+              "Groove preserves a status message while unavailable macros redraw");
+}
+
+static uint32_t rect_hash(uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+{
+    uint32_t a, b, hash = 2166136261u;
+    for (b = y; b < y + h; b++)
+        for (a = x; a < x + w; a++) hash = (hash ^ screen[b * 240u + a]) * 16777619u;
+    return hash;
+}
+static void draw_home(void)
+{
+    check(jam_home_draw(), "the ordinary Home renderer owns this frame");
+    ui.force = 0;
+}
+static void note_step(track_t *t, uint32_t i)
+{
+    if (is_drum(t)) dstep_set(&t->dstep[i], 0, LV_NORM, 0);
+    else {
+        t->step[i].time = ST_NOTE; t->step[i].n = 1; t->step[i].note[0] = 60;
+    }
+}
+static void test_groove_rows(void)
+{
+    static const uint8_t lengths[] = {1,15,16,17,32,64};
+    static const char *const ranges[] = {"01-01/01","01-15/15","01-16/16","17-17/17","17-32/32","49-64/64"};
+    uint32_t a, i, r, j, before, m_before, s_before, r_before, saved_bank;
+    const uint32_t chord_y = 32u + 2u * 28u;
+    char range[9];
+    home_setup();
+    ui.msg_t = ui.hot_t = 0;
+    for (a = 0; a < sizeof lengths / sizeof lengths[0]; a++) {
+        uint32_t len = lengths[a], last = len - 1u;
+        for (i = 0; i < NTRK; i++) {
+            steps_clear(&trk[i]); trk[i].p[P_SLEN] = len;
+            trk[i].p[P_SDIV] = 2; trk[i].seq_idx = last;
+            note_step(&trk[i], last);
+            if (len > 2 && i != TRK_DRUM) trk[i].step[1].time = ST_TIE;
+        }
+        song.playing = 1; draw_home();
+        for (r = 0; r < NTRK; r++) {
+            uint32_t tno = jam_role_track(r), y = 32u + r * 28u;
+            check(jam_groove_cache.bank[tno] == last / 16u, "each row follows its literal 16-step playback window");
+            jam_groove_range(range, jam_groove_cache.bank[tno], len);
+            check(!strcmp(range, ranges[a]), "row range labels represent exact steps and total length");
+            check(screen[(y + 25u) * 240u + 8u + last % 16u * 14u] == swap16(C_WHITE),
+                  "the playhead marks the final actual step, including a partial window");
+            check(jam_groove_cell(&trk[tno], last, len) == JAM_CELL_NOTE &&
+                  jam_groove_cell(&trk[tno], len, len) == JAM_CELL_DISABLED,
+                  "stored final steps remain visible and out-of-length cells are disabled");
+            for (j = last % 16u + 1u; j < 16u; j++)
+                check(screen[(y + 20u) * 240u + 8u + j * 14u] == swap16(C_BLACK),
+                      "partial final windows do not invent extra stored steps");
+        }
+        song.playing = 0; draw_home();
+        for (r = 0; r < NTRK; r++) {
+            uint32_t tno = jam_role_track(r), y = 32u + r * 28u;
+            check(jam_groove_cache.bank[tno] == last / 16u, "stopping retains each row's last displayed window");
+            check(screen[(y + 25u) * 240u + 8u + last % 16u * 14u] == swap16(C_BLACK),
+                  "stopped rows have no fake playhead");
+        }
+    }
+    /* Browsing sounds and ordinary edits do not reset the independent overview. */
+    saved_bank = jam_groove_cache.bank[1];
+    check(saved_bank == 3, "the 64-step fixture ends in its fourth display window");
+    check(jam_sound_load(1, 1), "a different curated sound can be loaded"); ui.force = 1; draw_home();
+    check(jam_groove_cache.bank[1] == saved_bank, "sound browsing preserves the stopped pattern window");
+    trk[1].step[48].time = ST_NOTE; trk[1].step[48].n = 1; trk[1].step[48].note[0] = 65;
+    draw_home(); check(jam_groove_cache.bank[1] == saved_bank, "ordinary note edits preserve the stopped window");
+    trk[1].p[P_SLEN] = 17; draw_home();
+    check(jam_groove_cache.bank[1] == 1, "shortening a pattern clamps its stopped window");
+    steps_clear(&trk[1]); draw_home();
+    check(jam_groove_cache.bank[1] == 0 && jam_groove_cache.bank[2] == 3,
+          "replacing one pattern resets only its display window");
+
+    for (i = 0; i < NTRK; i++) {
+        steps_clear(&trk[i]); trk[i].p[P_SLEN] = 16; note_step(&trk[i],0);
+        trk[i].p[P_MUTE] = 0; trk[i].p[P_LEVEL] = 94; trk[i].p[P_SDIV] = 2;
+    }
+    track_select(1); song.solo = song.rec = 0; draw_home();
+    before = strip_hash(chord_y,28);
+    trk[1].step[0].time = ST_TIE; draw_home();
+    check(before != strip_hash(chord_y,28) && jam_groove_cell(&trk[1],0,16) == JAM_CELL_TIE,
+          "changing a note to a tie changes its distinct stored-step mark");
+    check(screen[(chord_y + 17u) * 240u + 8u] == swap16(RGB(26,26,30)) &&
+          screen[(chord_y + 20u) * 240u + 8u] != swap16(RGB(26,26,30)),
+          "a tie draws a line instead of a filled note cell");
+    before = strip_hash(chord_y,28); trk[1].step[0].time = ST_REST; draw_home();
+    check(before != strip_hash(chord_y,28), "changing a tie to empty invalidates the row cache");
+    note_step(&trk[1],0); draw_home();
+    before = rect_hash(136,chord_y,32,16); trk[1].p[P_SDIV] = 7; draw_home();
+    check(before != rect_hash(136,chord_y,32,16), "non-sixteenth divisions are explicitly labelled");
+    m_before = rect_hash(176,chord_y,8,16);
+    s_before = rect_hash(192,chord_y,8,16);
+    r_before = rect_hash(208,chord_y,8,16);
+    trk[1].p[P_MUTE] = 1; song.solo = song.rec = 1u << 1; draw_home();
+    check(m_before != rect_hash(176,chord_y,8,16) && s_before != rect_hash(192,chord_y,8,16) &&
+          r_before != rect_hash(208,chord_y,8,16), "mute, solo and recording each have a simultaneous indicator");
+    check(screen[(chord_y + 18u) * 240u + 8u] == swap16(C_DIM), "stored cells remain visible while muted");
+    check(screen[(32u + 28u + 18u) * 240u + 8u] == swap16(C_DIM) &&
+          rect_hash(176,32u+28u,8,16) == m_before,
+          "solo-excluded rows are dimmed without a false manual-mute mark");
+    trk[1].p[P_MUTE] = 0; song.solo = song.rec = 0; trk[1].p[P_LEVEL] = 0; draw_home();
+    check(screen[(chord_y + 18u) * 240u + 8u] == swap16(C_DIM) &&
+          rect_hash(176,chord_y,8,16) == m_before, "zero-level rows are dimmed without a false manual-mute mark");
+    trk[1].p[P_LEVEL] = 94; draw_home();
+    /* Put a marker in unused row padding. An unchanged cached row must leave it alone. */
+    screen[(chord_y + 27u) * 240u + 239u] = swap16(0x1234);
+    draw_home();
+    check(screen[(chord_y + 27u) * 240u + 239u] == swap16(0x1234), "unchanged rows do not redraw every UI frame");
+    trk[1].step[0].time = ST_TIE; draw_home();
+    check(screen[(chord_y + 27u) * 240u + 239u] == swap16(C_BLACK), "a visible row change redraws its bounded strip");
+
+    /* One screenshot demonstrates independent rows, divisions, ties and status. */
+    trk[TRK_DRUM].p[P_SLEN] = 16; trk[TRK_DRUM].seq_idx = 5;
+    trk[0].p[P_SLEN] = 15; trk[0].seq_idx = 14; trk[0].p[P_MUTE] = 1;
+    trk[1].p[P_SLEN] = 32; trk[1].seq_idx = 23; trk[1].p[P_SDIV] = 2;
+    note_step(&trk[1],16); trk[1].step[17].time = ST_TIE;
+    trk[2].p[P_SLEN] = 64; trk[2].seq_idx = 49; trk[2].p[P_SDIV] = 1; note_step(&trk[2],48);
+    song.playing = 1; song.rec = 1u << 1; draw_home(); home_ppm(JAM_HOME_GROOVE,"mixed-lengths");
+    check(jam_groove_cache.bank[TRK_DRUM] == 0 && jam_groove_cache.bank[0] == 0 &&
+          jam_groove_cache.bank[1] == 1 && jam_groove_cache.bank[2] == 3,
+          "unequal track lengths use their own actual playhead windows");
+    song.playing = song.rec = 0; ui.msg_t = ui.hot_t = 0; draw_home();
+    before = strip_hash(0,240);
+    ui.jam_home_view = JAM_HOME_SOUND; draw_home(); home_ppm(JAM_HOME_SOUND,"overview-return");
+    ui.jam_home_view = JAM_HOME_GROOVE; draw_home();
+    check(before == strip_hash(0,240), "a view round trip restores every Groove pixel without stale Sound fragments");
+    before = strip_hash(0,240); ui.force = 1; draw_home();
+    check(before == strip_hash(0,240), "forced redraw matches the incrementally cached Groove frame");
+    ui.jam_home_view = JAM_HOME_SOUND;
+    check(jam_new_dusty(), "a fresh musical session can replace these patterns");
+    check(ui.jam_home_view == JAM_HOME_SOUND, "a fresh musical session preserves the remembered Home view");
+    ui.jam_home_view = JAM_HOME_GROOVE; draw_home();
+    check(jam_groove_cache.bank[0] == 0 && jam_groove_cache.bank[1] == 0 &&
+          jam_groove_cache.bank[2] == 0 && jam_groove_cache.bank[TRK_DRUM] == 0,
+          "a replaced session resets all remembered pattern windows");
+}
+
+int main(int argc, char **argv)
+{
+    if (argc > 1) outdir = argv[1];
+    test_home_controls(JAM_HOME_GROOVE);
+    test_home_controls(JAM_HOME_SOUND);
+    test_groove_rows();
     puts(fails ? "jam-ui: FAILED" : "jam-ui: all checks passed");
     return fails ? 1 : 0;
 }

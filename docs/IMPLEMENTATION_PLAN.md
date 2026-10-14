@@ -4,6 +4,16 @@ Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty
 
 The user-facing requirements are in [PRODUCT_BRIEF.md](../PRODUCT_BRIEF.md). Source evidence, executed checks, and remaining uncertainties are in [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md). Bring-up and release gates are in [VALIDATION_PLAN.md](VALIDATION_PLAN.md).
 
+The current Home increment implements [SOUND and GROOVE views](HOME_VIEWS_PLAN.md).
+GROOVE is the confirmed startup view. HOME toggles when already on Home and
+returns to the remembered view from other pages; a short HOME tap closes
+settings, while holds, layer locks and recorder overlays retain priority.
+Both views share the existing sound macros and musical keyboard. GROOVE shows
+literal per-part 16-step windows and the selected part's sound/macro data.
+Native/browser checks and the updater-enabled FM-1 build passed. Publication
+and physical audition remain pending in the
+[Home views build record](build-evidence/home-views.md).
+
 The October 14 chord-builder follow-up implements a narrower part of section 4:
 QNT controls OFF/SNAP/WHITE independently of CHORD, MAJOR/MINOR/DIM add fixed shapes,
 and local keyboard chords retain their resolved notes through release. Enabling
@@ -12,7 +22,7 @@ inversions beside the existing STRUM control. Dusty Chords now defaults to SNAP.
 The [current chord controls](CHORD_BUILDER.md)
 and [first-device feedback](FIRST_DEVICE_FEEDBACK.md) distinguish this work from
 the remaining master Assist, external-MIDI/playback ownership, new-input-only
-setting changes, timing correction, sequencer Home and persistence proposals.
+setting changes, timing correction and persistence proposals.
 The original chord build's software results are in its
 [build record](build-evidence/chord-builder.md). The later October 14 lighting
 request replaces root-only chord feedback with pressed keys plus all sounding
@@ -188,17 +198,17 @@ Extend existing single-track undo. The current snapshot keeps steps and length b
 
 Keep one reliable undo/redo level initially. A small variation operation can change velocities or selected drum hits within a bounded rule and must use the same snapshot path. A whole-session palette replacement is a separate stopped-transport operation with confirmation; do not claim a single-track snapshot can undo it.
 
-## 6. Physical controls and screen proposal
+## 6. Home controls and remaining screen plan
 
 The source maps 27 note keys, 14 labeled buttons, seven endless encoders, LEDs and a 240×240 screen. Encoders are not assumed to have push switches. The button Sloop calls `SEL` is `B_SCL` internally. Keep raw scanning, debouncing, encoder calibration, LED multiplexing and display drivers. [H1]
 
-The Home encoder rows incorporate the owner's 2026-10-14 follow-up request.
-The remaining rows describe the broader planned controls; they do not imply
-that all proposed features are implemented:
+The Home rows incorporate the current two-view implementation. The remaining
+rows describe the broader planned controls; they do not imply that all proposed
+features are implemented:
 
 | Control/context | Planned action |
 | --- | --- |
-| HOME | From another normal page, return to the remembered Home view; on Home, toggle SOUND/GROOVE (planned in [Two Home views](HOME_VIEWS_PLAN.md)) |
+| HOME | From another normal page, return to the remembered Home view; on Home, toggle SOUND/GROOVE; a short tap closes settings without toggling ([priority rules](HOME_VIEWS_PLAN.md#2-controls-and-gesture-priority)) |
 | SELECT encoder on Home | Tempo, one BPM per detent, 40–240 BPM |
 | PRESETS encoder on Home | Browse curated sounds for the selected part |
 | ALGORITHM encoder on Home | Select Drums / Bass / Chords / Lead; display selected role clearly |
@@ -220,13 +230,12 @@ Modal handlers must consume a confirmation gesture so SAVE cannot both apply a p
 
 Key/scale rows in GLO and Assist edit the selected melodic part and show its name. A separate explicit `Apply key to all melodic parts` command can synchronize them; do not present per-track values as an unexplained global key. Palette initialization sets consistent defaults across the melodic parts. SAVE must distinguish a queued save from a completed flash commit and wait for the inherited stopped/quiet condition.
 
-Home shows the palette/project name, tempo, playing/recording state, four role/mute indicators, selected sound, Assist status and four macro labels. Use the existing drawing/font system first, short labels, strong selection contrast, and bounded redraw work. Colors and branding are still a design task; no artwork direction has been finalized.
-
-The owner's October 14 follow-up refines Home into two views rather than
-compressing everything into one layout. [Two Home views](HOME_VIEWS_PLAN.md)
-is the current plan for SOUND and GROOVE, remembered return navigation, shared
-controls and literal step windows. Implemented indicators should describe
-existing features; the planned Assist status above must wait for Assist itself.
+SOUND shows the selected sound and large macros; GROOVE shows four literal
+16-step rows plus the selected sound and compact versions of those same macros.
+Both show tempo and transport state. Per-part row windows follow each part's
+playhead, expose their range/length and preserve stopped windows. The current
+[two-view specification](HOME_VIEWS_PLAN.md) defines gesture priority and
+bounded redraw work. Future Assist status must wait for Assist itself.
 
 A performance shortcut for mute can be added after the first mapping is tried. Start with explicit per-part mute rows rather than inventing another unlabeled held-button layer.
 

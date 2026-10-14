@@ -514,6 +514,9 @@ static void proj_apply(const project_t *p, int all)
                     st->note[j] &= 127u;
             }
         fm6_track_loaded(t);                            /* FM6: the project keeps PTCH, not the patch: its slot's */
+#if JAMBOX_PROTO
+        jam_pattern_generation[k]++;
+#endif
     }
 }
 

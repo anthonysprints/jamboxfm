@@ -952,9 +952,34 @@ static void holds_input(uint32_t pressed, uint32_t now_ms)
     (void)sb, (void)save_down, (void)save_on, (void)save_t0;   /* (SAVE is a layer now: ui_layers.c) */
 }
 
+#if JAMBOX_PROTO
+/* Raw held buttons matter before a layer has appeared on screen. Once a layer
+ * or recorder owns any part of a HOME gesture, its eventual release cannot
+ * become an ordinary Home-view toggle. PLAY and held musical keys remain live. */
+static int jam_home_navigation_free(void)
+{
+    uint32_t held = ly_bit[LY_FX] | ly_bit[LY_ERASE] | ly_bit[LY_ROLL] | ly_bit[LY_STEP] |
+                    ly_bit[LY_SCALE] | ly_bit[LY_MIX] | ly_bit[LY_SONG] | (1u << panel.btn[B_REC]);
+    return !ui.menu && ui.layer == LY_PLAY && ly_lock == LY_PLAY && !ui.hold_kind &&
+           !rec_wait && !ft_on && !ci_on && !(fm1_in.buttons & held);
+}
+#endif
+
 static void ui_input(void)
 {
     uint32_t pressed = fm1_input_edges(0), notes = fm1_input_note_edges(), now = fm1_ticks(), id, b, k;
+#if JAMBOX_PROTO
+    uint32_t home_down = (fm1_in.buttons >> panel.btn[B_HOME]) & 1u;
+    uint32_t home_origin;
+    if (home_down && !ui.home_t0)
+        ui.jam_home_origin = ui.menu ? JAM_HOME_ORIGIN_MENU :
+            jam_home_navigation_free() ? (ui.home ? JAM_HOME_ORIGIN_HOME : JAM_HOME_ORIGIN_PAGE) : JAM_HOME_ORIGIN_NONE;
+    if (ui.jam_home_origin != JAM_HOME_ORIGIN_MENU && !jam_home_navigation_free())
+        ui.jam_home_origin = JAM_HOME_ORIGIN_NONE;
+    home_origin = ui.jam_home_origin;
+    if (!home_down)
+        ui.jam_home_origin = JAM_HOME_ORIGIN_NONE;
+#endif
     uint32_t home = btn_hold(&ui.home_t0, B_HOME, now, 1);
     int32_t s;
     int layered;
@@ -980,9 +1005,16 @@ static void ui_input(void)
         }
     }
     kb_grid = (uint8_t)grid_keys_on();                  /* (seq.c: the keys are the grid's steps) */
-    if (ui.menu) {                                      /* HOME / REC taps do nothing here */
+    if (ui.menu) {
         punch.hold = 0;
         thr_req = 0;
+#if JAMBOX_PROTO
+        if (home == BT_TAP && home_origin == JAM_HOME_ORIGIN_MENU) {
+            menu_close();                              /* consumes the tap: return, without toggling */
+            home_eat = 0;                              /* no stale layer-unlock tap may eat the next gesture */
+            return;
+        }
+#endif
         if (!ui.home_t0)
             menu_input(pressed);
         return;
@@ -996,6 +1028,14 @@ static void ui_input(void)
     pressed &= ~(ly_bit[LY_FX] | ly_bit[LY_ERASE] | ly_bit[LY_ROLL] | ly_bit[LY_STEP] | ly_bit[LY_SCALE] | ly_bit[LY_MIX] |
                  ly_bit[LY_SONG]);
     holds_input(pressed, fm1_ms);
+#if JAMBOX_PROTO
+    if (!jam_home_navigation_free() || layered) {
+        ui.jam_home_origin = JAM_HOME_ORIGIN_NONE;
+        home_origin = JAM_HOME_ORIGIN_NONE;
+    }
+    if (home == BT_TAP && home_origin != JAM_HOME_ORIGIN_HOME && home_origin != JAM_HOME_ORIGIN_PAGE)
+        home = BT_NONE;                                 /* layer locking already had its chance above */
+#endif
     pressed &= ~((on_song_page() ? 0u : 1u << panel.btn[B_REC]) | (1u << panel.btn[B_SAVE]));
     if (layered || ui.hold_kind) {                      /* a layer / a hold: the rest waits */
         if ((s = panel_enc(EN_SELECT)) != 0) {           /* (the tempo always) */
@@ -1037,6 +1077,8 @@ static void ui_input(void)
     if (home == BT_TAP) {                               /* HOME acts on release: a hold opens the menu */
 #if JAMBOX_PROTO
         vis_on = 0;
+        if (home_origin == JAM_HOME_ORIGIN_HOME && ui.home)
+            ui.jam_home_view = ui.jam_home_view == JAM_HOME_GROOVE ? JAM_HOME_SOUND : JAM_HOME_GROOVE;
         go_home();
 #else
         if (!ui.home && cur_page()->scope == SC_TRK && !vis_on)

@@ -22,21 +22,15 @@ tempo to ALGORITHM. After confirming that update on the FM-1, the owner asked
 to swap the Home roles: SELECT now controls tempo and ALGORITHM selects parts.
 Tempo changes keep
 playback running and preserve the selected part, sound and all recorded steps.
-The screen already shows BPM; its footer identifies SELECT as tempo and ALGO
-as part selection.
+Both Home views show BPM and retain these same encoder assignments.
 Held-button layers, record setup, menus and deeper pages keep their existing
 control ownership. The browser labels Home controls only while Home actually
 owns them, including when a held layer temporarily covers Home.
 
-## 2. Sequencer prominence: two Home views planned
+## 2. Sequencer prominence: two Home views
 
-The first Home prototype prioritized choosing a part and shaping its sound.
-The FM-1 can show a sequencer: the inherited TRACKS view already renders four
-16-step rows. JamBox's Home replaced that view with role tabs, a large sound
-name and four macros. This is a UI choice, not a hardware limitation.
-
-The owner's follow-up keeps the existing sound-focused view and adds a
-sequencer-focused view, instead of replacing the only Home layout:
+Implemented and software-verified. Home provides a sound-focused view and a
+sequencer overview, with **GROOVE at power-on**:
 
 - **SOUND:** large selected sound name and four sound macros.
 - **GROOVE:** four literal 16-step rows, selected sound and compact versions
@@ -44,19 +38,24 @@ sequencer-focused view, instead of replacing the only Home layout:
 - **HOME while already on Home:** switch SOUND ↔ GROOVE.
 - **HOME from another normal page:** return to the Home view used last,
   without switching it again.
+- **A short HOME tap in settings:** close settings to the remembered Home view.
 
 Both views keep SELECT as tempo, ALGORITHM as part, PRESETS as sound, and
 knobs 1–4 as the same sound macros. The keyboard stays playable; SEQ owns
 explicit step editing. Remember the Home view for the powered session, with
 GROOVE confirmed by the owner as the power-on view; power-cycle persistence
-of subsequent view choices is later work.
-HOME holds, recording overlays and held-layer shortcuts need explicit gesture
-priority so changing views never changes musical state or consumes an edit.
+of subsequent view choices is later work. Holding HOME retains settings access.
+Recording overlays, confirmation gestures and held-layer shortcuts keep input
+priority, so their HOME gestures do not secretly toggle the remembered view.
+Ordinary playback and overdubbing can continue while the visible Home switches.
 
-The [two-Home-view plan](HOME_VIEWS_PLAN.md) includes the 240×240 wireframe,
-navigation exceptions, accurate long-pattern display, implementation seams
-and acceptance checks. It supersedes the earlier single-screen layout proposal.
-This is a planning update; the firmware still has one Home view.
+GROOVE shows each part's own literal 16-step window and range/length, following
+that part's playhead. Stopping retains each displayed window; a cell represents
+one stored step. The selected sound and macros follow the selected part.
+The [two-Home-view specification](HOME_VIEWS_PLAN.md) contains the layout,
+navigation priorities and acceptance checks. Native/browser checks and the
+updater-enabled FM-1 build passed. Publication and physical audition remain
+pending in the [Home views build record](build-evidence/home-views.md).
 
 Current shortcut: hold SEQ to see its 4×4 step tiles. To keep this editor open,
 hold SEQ, tap HOME, then release SEQ. Tap HOME again to return. White keys now
@@ -123,8 +122,9 @@ chord build record remains historical evidence for the preceding behavior.
 The beginner controls and exact shape table are in [Chord builder](CHORD_BUILDER.md).
 Software validation and physical audition of this new build are separate from
 the owner's successful earlier tempo/light update; results are in the
-[chord build record](build-evidence/chord-builder.md). Sequencer Home layout, a master Assist switch, timing-correction
-strength and persistent sessions remain future work.
+[chord build record](build-evidence/chord-builder.md). The two Home views are
+the current implementation increment above; a master Assist switch,
+timing-correction strength and persistent sessions remain future work.
 
 ## 4. SNAP key lights: shared default corrected
 

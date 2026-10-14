@@ -233,6 +233,7 @@ void jam_emu_init(void)
      * user key. This boot block is silent and is not returned to the browser. */
     fm6_poll();
     mix_block(emu_audio, CTL);
+    ui.jam_home_view = JAM_HOME_GROOVE;
     go_home();
     emu_initialized = 1;
     jam_emu_frame();
@@ -345,6 +346,7 @@ int32_t jam_emu_value(uint32_t field, uint32_t index)
         }
         return (int32_t)mask;
     case 20: return jam_home_active();
+    case 21: return ui.jam_home_view; /* Appended ABI: GROOVE=0, SOUND=1; remembered off Home too. */
     default: return -1;
     }
 }
