@@ -10,7 +10,8 @@ const MAXDATA = 512;
 const IS_OTA = (id) => /^ota-/i.test(id.model);
 export const OUR_LOADER = (id) => /^ota-FM-1_(?:9\d\d|700)$/i.test(id.text);
 export const FM1_PORT = /fm-1|felucca|sloop|clipper|jamboxfm|ota|composite|sinco|usb-midi/i;
-const pendingOpenCleanup = new WeakMap();
+const pendingPortCleanup = new WeakMap();
+const PORT_CLEANUP_WAIT_MS = 1000;
 
 function fail(code, msg, detail = "") { const e = new Error(msg); e.code = code; e.detail = detail; return e; }
 function aborted(signal) {
@@ -37,6 +38,33 @@ async function sleep(ms, signal) {
   let timer;
   try { await abortable(new Promise((r) => { timer = setTimeout(r, ms); }), signal); }
   finally { clearTimeout(timer); }
+}
+
+// WebMIDI open/close promises cannot be cancelled. Keep the actual cleanup
+// promise after our bounded wait expires, so a late close cannot race a retry.
+function closePort(port, after = Promise.resolve()) {
+  if (pendingPortCleanup.has(port)) return pendingPortCleanup.get(port);
+  const cleanup = Promise.resolve(after).catch(() => {}).then(() => port.close?.()).catch(() => {}).finally(() => {
+    if (pendingPortCleanup.get(port) === cleanup) pendingPortCleanup.delete(port);
+  });
+  pendingPortCleanup.set(port, cleanup);
+  return cleanup;
+}
+async function closePorts(ports) {
+  const cleanup = Promise.all([...new Set(ports)].map((port) => closePort(port)));
+  // Cleanup must not replace a verified result or the original transfer error.
+  // A disconnected driver's rejected/stalled close is still tracked for retry.
+  await abortable(cleanup, null, Date.now() + PORT_CLEANUP_WAIT_MS).catch(() => {});
+}
+async function openPort(port, signal, deadline = Infinity, started) {
+  const end = Math.min(deadline, Date.now() + PORT_CLEANUP_WAIT_MS);
+  while (pendingPortCleanup.has(port))
+    await abortable(pendingPortCleanup.get(port), signal, end);
+  aborted(signal);
+  if (Date.now() >= deadline) throw fail("timeout", "The selected MIDI operation timed out");
+  // No await between the last cleanup check and opening the port.
+  started();
+  return port.open();
 }
 
 export function pack7(data) {
@@ -146,7 +174,7 @@ class Link {
     else if (this.input.onmidimessage === this.listener) this.input.onmidimessage = this.previous || null;
     for (const port of [this.input, this.output]) port.removeEventListener?.("statechange", this.stateListener);
     this.waiter?.(); this.q.length = 0;
-    await Promise.allSettled([this.input, this.output].map((p) => Promise.resolve().then(() => p.close?.())));
+    await closePorts([this.input, this.output]);
   }
 }
 
@@ -201,20 +229,18 @@ export class Updater {
       if (Date.now() >= (o.deadline ?? Infinity)) break;
       const selected = this.resolvePair(pair);
       let link, accepted = false;
+      const opened = [];
       try {
         for (const port of [selected.input, selected.output]) {
-          // A cancelled open from another Updater may still complete later.
-          // Await its cleanup before reopening this same WebMIDI port.
-          if (pendingOpenCleanup.has(port)) await abortable(pendingOpenCleanup.get(port), o.signal, o.deadline);
-          const opening = Promise.resolve().then(() => { aborted(o.signal); return port.open(); });
-          try { await abortable(opening, o.signal, o.deadline); }
+          // Another Updater may still be closing this port, including cleanup
+          // after a cancelled open. Never start a new open until it settles.
+          let started = false;
+          const opening = openPort(port, o.signal, o.deadline, () => { started = true; });
+          try { await abortable(opening, o.signal, o.deadline); opened.push(port); }
           catch (error) {
             // An in-flight WebMIDI open cannot be cancelled. Close it again if
             // it eventually resolves after cancellation or the deadline.
-            const cleanup = opening.then(() => port.close?.(), () => {}).catch(() => {}).finally(() => {
-              if (pendingOpenCleanup.get(port) === cleanup) pendingOpenCleanup.delete(port);
-            });
-            pendingOpenCleanup.set(port, cleanup);
+            if (started) closePort(port, opening);
             throw error;
           }
         }
@@ -230,7 +256,7 @@ export class Updater {
       } finally {
         if (!accepted) {
           if (link) await link.close();
-          else await Promise.allSettled([selected.input, selected.output].map((p) => Promise.resolve().then(() => p.close?.())));
+          else await closePorts(opened);
         }
       }
     }

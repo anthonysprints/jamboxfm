@@ -1,0 +1,8 @@
+{
+  "firmware_sha256": "8bc79f41770b54de2af863aa1dcfd6ed7c80ddb962c92cd582178697038f5c42",
+  "hardware_validated": false,
+  "kind": "experimental-first-install",
+  "manifest_sha256": "5cd7e0ed5bd910b44321e3059da2f0105b6ee2f47f7485c5ec8fdd08e8204965",
+  "schema_version": 1,
+  "transition": "factory-v15-to-jambox"
+}

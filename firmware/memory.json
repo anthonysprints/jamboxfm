@@ -1,0 +1,139 @@
+{
+  "app": {
+    "flash_slot_bytes": 581564,
+    "flash_spare_bytes": 34012,
+    "image_bytes": 547552,
+    "regions": {
+      "NOINIT": {
+        "capacity_bytes": 15696,
+        "minimum_spare_bytes": 0,
+        "origin": 29868032,
+        "span_bytes": 15464,
+        "spare_bytes": 232,
+        "used_bytes": 15464
+      },
+      "POOL": {
+        "capacity_bytes": 344064,
+        "minimum_spare_bytes": 8192,
+        "origin": 29491200,
+        "span_bytes": 324580,
+        "spare_bytes": 19484,
+        "used_bytes": 324580
+      },
+      "RAM": {
+        "capacity_bytes": 98304,
+        "minimum_spare_bytes": 4096,
+        "origin": 29392896,
+        "span_bytes": 80648,
+        "spare_bytes": 17656,
+        "used_bytes": 80648
+      },
+      "RAMTEXT": {
+        "capacity_bytes": 24576,
+        "minimum_spare_bytes": 0,
+        "origin": 29360128,
+        "span_bytes": 2784,
+        "spare_bytes": 21792,
+        "used_bytes": 2784
+      },
+      "XIP": {
+        "capacity_bytes": 581564,
+        "minimum_spare_bytes": 0,
+        "origin": 33554720,
+        "span_bytes": 547552,
+        "spare_bytes": 34012,
+        "used_bytes": 547552
+      }
+    },
+    "sections": [
+      {
+        "address": 33554720,
+        "bytes": 541872,
+        "name": ".text",
+        "region": "XIP"
+      },
+      {
+        "address": 29360128,
+        "bytes": 2784,
+        "name": ".ram_text",
+        "region": "RAMTEXT"
+      },
+      {
+        "address": 29392896,
+        "bytes": 2896,
+        "name": ".data",
+        "region": "RAM"
+      },
+      {
+        "address": 29395792,
+        "bytes": 77752,
+        "name": ".bss",
+        "region": "RAM"
+      },
+      {
+        "address": 29491200,
+        "bytes": 324580,
+        "name": ".pool",
+        "region": "POOL"
+      },
+      {
+        "address": 29868032,
+        "bytes": 15464,
+        "name": ".noinit",
+        "region": "NOINIT"
+      }
+    ],
+    "undefined_symbols": 0,
+    "unsupported_runtime_symbols": 0
+  },
+  "build_dir": "build",
+  "errors": [],
+  "loader": {
+    "image_bytes": 9368,
+    "regions": {
+      "LDR": {
+        "capacity_bytes": 81920,
+        "minimum_spare_bytes": 0,
+        "origin": 29403136,
+        "span_bytes": 20624,
+        "spare_bytes": 61296,
+        "stack_gap_bytes": 395120,
+        "used_bytes": 20616
+      }
+    },
+    "sections": [
+      {
+        "address": 29403136,
+        "bytes": 9368,
+        "name": ".text",
+        "region": "LDR"
+      },
+      {
+        "address": 29412512,
+        "bytes": 11248,
+        "name": ".bss",
+        "region": "LDR"
+      }
+    ],
+    "undefined_symbols": 0,
+    "unsupported_runtime_symbols": 0
+  },
+  "ok": true,
+  "ota": {
+    "blocks": 3,
+    "body_limit_bytes": 19968,
+    "body_spare_bytes": 11901,
+    "bytes": 8099,
+    "decoded_bytes": 9368,
+    "headers_crc_body_crc_and_loader_match": true,
+    "outer_body_bytes": 8067
+  },
+  "schema_version": 1,
+  "sha256": {
+    "app_bin": "26910f2176be67e70fc00c9d44d89422c2c9453cb405989e283258558e8d399e",
+    "app_elf": "123f1b7f9890f5a3cd8db0558d7b36e97f37e131fe563ecaa9f4af70ec7074e9",
+    "loader_bin": "061e2f1db1ccfe75c3d5ad9f5b7348a66f384d08897f88d8db9beace2d3b92eb",
+    "loader_elf": "640272884cd9856337fdb6703290b2ec8587c2197a047042d23274ec5921d447",
+    "ota_bin": "ab1e368dd10ffe8dd1ccfdc03bc235df8992ee5961b20e056ae55079b7659d7e"
+  }
+}

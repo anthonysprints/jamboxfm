@@ -1,0 +1,188 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// One experimental factory-V15 -> JamBox installation, using real Web MIDI.
+// Candidate software evidence remains separate from physical validation.
+import { Updater, FM1_PORT } from './fm1ota.js';
+import { prepareCandidate, validateManifest, inspectDevice, JAM_IDENTITIES } from './jam-device-policy.js';
+import { sha256hex } from './fm1pkg.js';
+
+const TRANSITION = 'factory-v15-to-jambox';
+const OPEN_TIMEOUT = 10000, LOAD_TIMEOUT = 30000, INSTALL_TIMEOUT = 10 * 60 * 1000;
+const loadedBundles = new WeakMap();
+const hash = value => typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
+
+function failure(code, message) { const error = new Error(message); error.code = code; return error; }
+function insist(condition, message, code = 'package') { if (!condition) throw failure(code, message); }
+function cancelled(signal) { if (signal?.aborted) throw failure('aborted', 'Cancelled before installation began.'); }
+function stockIdentity(identity) {
+  return identity?.text === 'FM-1_015' && identity.model === 'FM-1' && identity.version === 15;
+}
+function extraCandidates(access) {
+  // listPairs omits ambiguous same-name groups, so count raw candidates too.
+  const count = ports => [...ports.values()].filter(port => port.state !== 'disconnected' && FM1_PORT.test(port.name || '')).length;
+  return count(access.inputs) > 1 || count(access.outputs) > 1;
+}
+function oneDevice(access) {
+  insist(!extraCandidates(access), 'Connect only one FM-1 MIDI device before starting this trial. Disconnect other matching MIDI devices and check again.', 'ambiguous');
+}
+function scope(parent, timeout, canCancel = () => true) {
+  const controller = new AbortController(); let timedOut = false;
+  const stop = () => { if (canCancel()) controller.abort(); };
+  parent?.addEventListener('abort', stop, { once: true });
+  if (parent?.aborted) stop();
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeout);
+  return { signal: controller.signal, get timedOut() { return timedOut; },
+    close() { clearTimeout(timer); parent?.removeEventListener('abort', stop); } };
+}
+function scopedError(error, operation, started = false) {
+  if (operation.timedOut) error = failure('timeout', started ?
+    'The installation exceeded its time limit. Firmware may be partially written; keep the device connected and identify its current mode.' :
+    'The operation timed out before installation began.');
+  else if (operation.signal.aborted) error = failure('aborted', 'Cancelled before installation began.');
+  if (!(error instanceof Error)) error = failure('operation', String(error));
+  error.started = started;
+  return error;
+}
+
+async function fetchBytes(url, limit, fetchImpl, signal) {
+  cancelled(signal);
+  const response = await fetchImpl(url.href, { signal, cache: 'no-store', credentials: 'omit', redirect: 'error' });
+  insist(response.ok, `${url.pathname}: HTTP ${response.status}`);
+  const length = response.headers?.get('content-length');
+  insist(length === null || length === undefined || (/^\d+$/.test(length) && Number(length) <= limit), 'Artifact exceeds its size limit');
+  let bytes;
+  if (response.body?.getReader) {
+    const reader = response.body.getReader(), parts = []; let size = 0;
+    try {
+      for (;;) {
+        cancelled(signal);
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.length;
+        if (size > limit) { await reader.cancel(); throw failure('package', 'Artifact exceeds its size limit'); }
+        parts.push(value);
+      }
+      bytes = new Uint8Array(size); let offset = 0;
+      for (const part of parts) { bytes.set(part, offset); offset += part.length; }
+    } finally { reader.releaseLock(); }
+  } else {
+    bytes = new Uint8Array(await response.arrayBuffer());
+    insist(bytes.length <= limit, 'Artifact exceeds its size limit');
+  }
+  cancelled(signal);
+  return bytes;
+}
+function json(bytes) {
+  try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
+  catch { throw failure('package', 'Trial metadata is not valid UTF-8 JSON'); }
+}
+
+export async function loadTrialBundle({ baseURL = new URL('./firmware/', import.meta.url), fetchImpl = fetch, signal } = {}) {
+  const base = new URL(baseURL, import.meta.url), operation = scope(signal, LOAD_TIMEOUT);
+  if (!base.pathname.endsWith('/')) base.pathname += '/';
+  base.search = ''; base.hash = '';
+  try {
+    const trial = json(await fetchBytes(new URL('trial.json', base), 4096, fetchImpl, operation.signal));
+    const fields = ['schema_version', 'kind', 'hardware_validated', 'transition', 'manifest_sha256', 'firmware_sha256'];
+    insist(trial && typeof trial === 'object' && !Array.isArray(trial) &&
+      Object.keys(trial).sort().join('|') === fields.sort().join('|'), 'Invalid trial descriptor fields');
+    insist(trial.schema_version === 1 && trial.kind === 'experimental-first-install' && trial.hardware_validated === false &&
+      trial.transition === TRANSITION && hash(trial.manifest_sha256) && hash(trial.firmware_sha256), 'Unsupported experimental trial descriptor');
+    const manifestBytes = await fetchBytes(new URL('manifest.json', base), 128 * 1024, fetchImpl, operation.signal);
+    insist(await sha256hex(manifestBytes) === trial.manifest_sha256, 'Trial manifest SHA-256 mismatch');
+    const manifest = json(manifestBytes);
+    // Validate before using the manifest's filename, and before any MIDI access.
+    const checked = validateManifest(manifest);
+    insist(checked.firmware.sha256 === trial.firmware_sha256, 'Trial firmware binding mismatch');
+    const bytes = await fetchBytes(new URL(checked.firmware.file, base), checked.firmware.size_bytes, fetchImpl, operation.signal);
+    const candidate = await prepareCandidate(checked, bytes);
+    cancelled(operation.signal);
+    const bundle = Object.freeze({ version: candidate.version, firmwareSHA256: candidate.sha256,
+      firmwareSizeBytes: bytes.length, manifest: candidate.manifest, trial: Object.freeze(trial), hardwareValidated: false });
+    loadedBundles.set(bundle, candidate);
+    return bundle;
+  } catch (error) { throw scopedError(error, operation); }
+  finally { operation.close(); }
+}
+
+export class TrialInstaller {
+  #busy = false;
+  #started = false;
+  constructor(access, { onStep = () => {}, onLog = () => {} } = {}) {
+    insist(access?.inputs && access?.outputs && typeof onStep === 'function' && typeof onLog === 'function', 'Web MIDI access and callbacks are required', 'configuration');
+    this.access = access; this.onStep = onStep; this.onLog = onLog;
+  }
+  get busy() { return this.#busy; }
+  get started() { return this.#started; }
+  listPairs() { return new Updater(this.access).listPairs(); }
+  log(message) { try { this.onLog(message); } catch { /* UI logging cannot stop a flash transfer. */ } }
+  step(stage, detail) { try { this.onStep(stage, detail); } catch { /* Likewise for progress rendering. */ } }
+  available() { if (this.busy) throw failure('busy', 'Another device operation is still running.'); }
+
+  async inspect(pair, { signal } = {}) {
+    this.available(); this.#busy = true;
+    const operation = scope(signal, OPEN_TIMEOUT);
+    try {
+      const updater = new Updater(this.access);
+      const observation = await updater.identify({ pair, signal: operation.signal, deadline: Date.now() + OPEN_TIMEOUT,
+        query: (link, identity) => inspectDevice(identity, link, { signal: operation.signal }) });
+      const ambiguous = extraCandidates(this.access), eligible = stockIdentity(observation.identity) && !ambiguous;
+      return { identity: observation.identity, capabilities: observation.capabilities, eligible, uniqueDevice: !ambiguous, hardwareValidated: false,
+        reason: ambiguous ? 'Connect only one FM-1 MIDI device before starting this trial. Disconnect other matching MIDI devices and check again.' :
+          eligible ? 'Factory V15 identity reported. Eligible for this experimental first-install trial; physical behavior remains unvalidated.' :
+          'This first-install trial requires the exact reported factory V15 identity FM-1_015.' };
+    } catch (error) { throw scopedError(error, operation); }
+    finally { operation.close(); this.#busy = false; }
+  }
+
+  async install(bundle, pair, { signal } = {}) {
+    this.available();
+    insist(loadedBundles.has(bundle), 'Load and verify the trial bundle before installation');
+    this.#busy = true; this.#started = false;
+    // External UI cancellation stops preparation only. Once staging may have
+    // started, neither a cancelled UI task nor a rendering error aborts a write.
+    const operation = scope(signal, INSTALL_TIMEOUT, () => !this.started);
+    const candidate = loadedBundles.get(bundle), updater = new Updater(this.access);
+    let passedApp = false, passedLoader = false, finalIdentity = null;
+    try {
+      cancelled(operation.signal);
+      oneDevice(this.access);
+      this.step('checking');
+      const identityGuard = async (identity, context) => {
+        if (context.stage === 'app') {
+          oneDevice(this.access); // Recheck immediately before staging, not only at inspection.
+          passedApp = stockIdentity(identity);
+          if (passedApp) this.log('Fresh factory V15 identity checked.');
+          return passedApp;
+        }
+        const observed = await inspectDevice(identity, context.link, { signal: operation.signal });
+        const jambox = observed.recognized && observed.family === 'jamboxfm' && observed.release === candidate.version;
+        if (context.stage === 'loader') {
+          passedLoader = passedApp && jambox && observed.mode === 'loader' && identity.text === JAM_IDENTITIES.loader;
+          if (passedLoader) this.log('Expected JamBox update loader identified.');
+          return passedLoader;
+        }
+        if (context.stage === 'final' && passedApp && passedLoader && jambox && observed.mode === 'normal' && identity.text === JAM_IDENTITIES.app) {
+          finalIdentity = { ...identity }; this.log('JamBox application identity and release checked.'); return true;
+        }
+        return false;
+      };
+      await updater.install(candidate.image(), candidate.product, (stage, detail) => {
+        if (stage === 'start') this.#started = true; // Conservative: immediately before the first upgrade send attempt.
+        this.step(stage, detail);
+      }, { pair, requireSelection: true, signal: operation.signal, deadline: Date.now() + OPEN_TIMEOUT, identityGuard,
+        selectPair: ({ stage, pairs }) => {
+          insist(stage === 'loader' || stage === 'final', 'Unexpected reconnect stage', 'identity');
+          insist(pairs.length <= 1 && !extraCandidates(this.access),
+            'Multiple MIDI candidates are available. Keep the FM-1 connected and identify its current mode before retrying.', 'ambiguous');
+          // No arbitrary scan: open only the sole current pair, then require
+          // the exact expected stage identity before either writing or success.
+          return pairs[0] || null;
+        } });
+      insist(finalIdentity, 'The expected JamBox application did not identify itself', 'identity');
+      return { identity: finalIdentity, version: candidate.version, firmwareSHA256: candidate.sha256,
+        hardwareValidated: false, experimental: true, transition: TRANSITION, started: true,
+        verification: 'reported-family-and-release' };
+    } catch (error) { throw scopedError(error, operation, this.started); }
+    finally { operation.close(); this.#busy = false; }
+  }
+}
