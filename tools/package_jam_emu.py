@@ -13,6 +13,7 @@ import hashlib
 import html
 import io
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -25,8 +26,8 @@ BUILD = ROOT / "build"
 EMU = BUILD / "jam-emu"
 SITE = BUILD / "jambox-web"
 RUNTIME_FILES = ("index.html", "style.css", "app.js", "worklet.js", "jam-emu.wasm")
-# The public device tool only identifies firmware. Candidate bundles and
-# installation simulations are separate, unpublished build/test outputs.
+# The device tool remains read-only. A separate experimental installer is
+# packaged only with --with-trial, after verifying the device build again.
 DEVICE_FILES = {
     "device/index.html": "web/device/index.html",
     "device/style.css": "web/device/style.css",
@@ -109,7 +110,7 @@ def replace_one(pattern: str, replacement: str, text: str, name: str) -> str:
     return updated
 
 
-def add_source_footer(page: str, standalone: bool, notices: dict[str, bytes]) -> str:
+def add_source_footer(page: str, standalone: bool, notices: dict[str, bytes], with_trial: bool = False) -> str:
     source_link = "#" if standalone else "../jambox-source.zip"
     if standalone:
         licenses = "".join(f"<details><summary>{html.escape(name)}</summary><pre style=\"white-space:pre-wrap\">"
@@ -118,9 +119,11 @@ def add_source_footer(page: str, standalone: bool, notices: dict[str, bytes]) ->
     else:
         license_link = '<a href="../LICENSES.html">Licenses and credits</a>'
     device_link = '' if standalone else ' <span aria-hidden="true">·</span> <a href="../device/">Check your FM-1</a>'
+    trial_link = (' <span aria-hidden="true">·</span> <a href="../install/">Install experimental JamBoxFM</a>'
+                  if with_trial and not standalone else '')
     footer = (f'<aside aria-label="Source and licenses" style="max-width:70rem;margin:0 auto;padding:0 1rem 2rem;font:12px/1.5 Arial,sans-serif">'
               f'<a id="source-download" href="{source_link}" download="jambox-source.zip">Download corresponding source</a>'
-              f' <span aria-hidden="true">·</span> {license_link}{device_link}</aside>\n')
+              f' <span aria-hidden="true">·</span> {license_link}{device_link}{trial_link}</aside>\n')
     return replace_one(r"</body\s*>", footer + "</body>", page, "closing body")
 
 
@@ -155,6 +158,9 @@ def standalone_html(runtime: dict[str, bytes], source_zip: bytes, notices: dict[
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--no-build", action="store_true", help="package existing emulator build (for validation only)")
+    parser.add_argument("--with-trial", action="store_true", help="include the experimental first-install page and verified device candidate")
+    parser.add_argument("--toolchain", type=Path, default=Path(os.environ.get("JIELI_TOOLCHAIN", "/workspace/toolchains/jieli/toolchain")))
+    parser.add_argument("--sdk", type=Path, default=Path(os.environ.get("AC79_SDK", "/workspace/deps/ac79-sdk")))
     args = parser.parse_args()
     if not args.no_build:
         subprocess.run([sys.executable, str(ROOT / "tools/build_jam_emu.py")], cwd=ROOT, check=True)
@@ -165,6 +171,21 @@ def main() -> None:
     for name in RUNTIME_FILES[:-1]:
         if runtime[name] != (ROOT / "web/emu" / name).read_bytes():
             raise RuntimeError(f"Built {name} is stale; rebuild without --no-build.")
+    trial_entries = {}
+    if args.with_trial:
+        # This repeats the canonical ELF/package/toolchain checks and exports
+        # source from today's checkout. Never trust a stale candidate directory.
+        import package_jam_device
+        from publish_jam_web import TRIAL_BUNDLE_FILES, TRIAL_RUNTIME_FILES, validate_trial
+        candidate = package_jam_device.package(toolchain=args.toolchain.resolve(), sdk=args.sdk.resolve())
+        trial_entries = {"firmware/" + name: (package_jam_device.OUTPUT / name).read_bytes()
+                         for name in TRIAL_BUNDLE_FILES}
+        trial = {"schema_version": 1, "kind": "experimental-first-install", "hardware_validated": False,
+            "transition": "factory-v15-to-jambox", "manifest_sha256": sha(trial_entries["firmware/manifest.json"]),
+            "firmware_sha256": candidate["firmware"]["sha256"]}
+        trial_entries["firmware/trial.json"] = (json.dumps(trial, indent=2, sort_keys=True) + "\n").encode()
+        trial_entries.update({name: (ROOT / "web" / name).read_bytes() for name in TRIAL_RUNTIME_FILES})
+        validate_trial(trial_entries)
     source_entries = {"jamboxfm-source/" + path.relative_to(ROOT).as_posix(): path.read_bytes()
                       for path in source_files()}
     source_hashes = {name.removeprefix("jamboxfm-source/"): sha(data) for name, data in source_entries.items()}
@@ -177,9 +198,10 @@ def main() -> None:
         notices["licenses/" + name + "-notice.txt"] = (text[:text.index("*/") + 2] + "\n").encode()
     standalone = standalone_html(runtime, source_zip, notices)
     site_entries = {"emu/" + name: data for name, data in runtime.items()}
-    site_entries["emu/index.html"] = add_source_footer(runtime["index.html"].decode(), False, notices).encode()
+    site_entries["emu/index.html"] = add_source_footer(runtime["index.html"].decode(), False, notices, args.with_trial).encode()
     site_entries.update({target: (ROOT / source).read_bytes() for target, source in DEVICE_FILES.items()})
     site_entries.update(notices)
+    site_entries.update(trial_entries)
     site_entries["index.html"] = ("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\">"
                                   "<meta http-equiv=\"refresh\" content=\"0;url=emu/\"><title>JamBoxFM</title>"
                                   "<a href=\"emu/\">Open the JamBoxFM instrument</a></html>\n").encode()
@@ -194,9 +216,22 @@ def main() -> None:
                     '<a href="jambox-source.zip" download>Download the corresponding source</a>.</p>' +
                     "".join(f"<h2>{html.escape(name)}</h2><pre style=\"white-space:pre-wrap\">{html.escape(data.decode())}</pre>"
                             for name, data in sorted(notices.items())) + "</body></html>\n")
+    if args.with_trial:
+        trial_credits = ('<h2>Experimental FM-1 firmware</h2><p>The device firmware also contains '
+            'JieLi AC79 SDK components under Apache-2.0. '
+            '<a href="firmware/licenses/AC79-SDK-LICENSE.txt">SDK license</a> · '
+            '<a href="firmware/licenses/AC79-SDK-README.md">SDK source and component notes</a> · '
+            '<a href="firmware/jamboxfm-source.zip" download>Corresponding firmware source</a>.</p>')
+        license_page = license_page.replace("</body>", trial_credits + "</body>")
     site_entries["LICENSES.html"] = license_page.encode()
     manifest = {name: sha(data) for name, data in sorted(site_entries.items())}
     site_entries["SHA256SUMS"] = "".join(f"{digest}  {name}\n" for name, digest in manifest.items()).encode()
+    # Validate before replacing the previous site. The publisher also performs
+    # these checks independently before constructing any deployment commit.
+    from publish_jam_web import EXPECTED_FILES, TRIAL_FILES, validate_source
+    if set(site_entries) != (TRIAL_FILES if args.with_trial else EXPECTED_FILES):
+        raise RuntimeError("Generated site differs from the explicit publication allowlist.")
+    validate_source(source_zip, site_entries)
     # This fixed output directory is generated solely by this packaging command.
     if SITE.exists():
         shutil.rmtree(SITE)

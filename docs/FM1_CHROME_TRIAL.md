@@ -1,0 +1,86 @@
+# First JamBoxFM installation in Chrome
+
+This is an experimental first installation from original factory V15
+(`FM-1_015`). It is a real firmware write. JamBox has not yet been tested on
+this owner's instrument, and musical sessions in this build are temporary.
+The separate `/device/` page remains read-only.
+
+## Owner workflow
+
+1. Keep the verified backup folder. Close other MIDI applications and FM-1
+   browser tabs, and connect one powered FM-1 by USB.
+2. Open the site's `/install/` page in desktop Chrome or Edge. Connect and
+   allow MIDI access. The page checks the selected device and downloads and
+   verifies the exact experimental build.
+3. Select **Install experimental JamBoxFM**. Keep USB and power connected and
+   the page open. Progress follows preparing, writing and reconnecting stages;
+   a transfer count is not a measured flash percentage.
+4. Success requires the final JamBox identity and its matching family response.
+   Download the installation report and check that the screen shows JamBox.
+   Start at low listening volume, play the starter groove, then try chords,
+   bass, lead and the sound controls. Report any resets, silence, stuck notes,
+   incorrect controls or audible dropouts.
+
+If installation stops, keep the device connected, save the report and share
+the result before retrying or resetting. The app may be partly written. A
+verified backup is useful for recovery but does not guarantee that ROM entry
+will remain available after an interruption. Recovery can require additional
+hardware. This first-install page does not offer automatic retry, loader
+resume, factory restoration or general firmware selection.
+
+## What permits this first experiment
+
+The owner requested actual installation. Their private double-read backup
+has been independently checked: all boot-head and application bytes match
+factory V15, the chip key and flash ID match, and the Windows RAM-loader read
+path ran successfully. See [backup evidence](build-evidence/factory-v15/owner-backup-validation.md).
+No raw backup, retained RAM, manufacturer package or user report is published.
+
+The candidate manifest retains `release_enabled: false`,
+`hardware_validated: false` and its existing simulation record. An additional
+`trial.json` binds the exact manifest and firmware digests to the single
+`factory-v15-to-jambox` experimental workflow. This is distinct from a stable
+release or completed hardware validation.
+
+A [bounded stock-record correction](build-evidence/factory-v15/stock-record-cleanup.md) handles the factory updater’s distinct handoff location without a broad scan or erase of data sectors.
+
+The production controller uses the shared updater directly. It accepts only
+the exact factory identity at entry, rechecks immediately before starting,
+and requires exact JamBox family responses at loader and final stages. It
+refuses ambiguous re-enumeration, foreign loaders and mismatched downloads.
+No test simulator is imported by the page. Firmware, corresponding source,
+licenses and build evidence are packaged together.
+
+## Remaining hardware work
+
+The first successful transfer must still establish real stock-to-JamBox
+handover, boot, display, buttons, encoders and audio. A later return-to-factory
+trial is separate. App rescue relies on executable application code and is
+not a protected bootloader or a promise of power-loss recovery.
+
+The inherited static IRQ estimate remains **256 versus its 174 budget**.
+The published Sloop 2.6 ISR matches its unchanged rebuild, which scores 268;
+none of the 18 compared metrics increased in JamBox. The threshold has not
+been relaxed. This heuristic does not demonstrate a JamBox regression, and
+physical audio timing is an outcome of the trial rather than a circular
+requirement to have already run it. The earlier full Sloop test run also had
+an unrelated Chromium PWA assertion failure; neither is reported as passing.
+
+## Build and package
+
+```sh
+. tools/cloud/activate.sh
+bash tools/cloud/build_device.sh --with-updater
+python3 tools/package_jam_device.py --no-build
+python3 tools/package_jam_emu.py --with-trial
+node --test tests/jam_trial_install_test.mjs tests/jam_web_transport_test.mjs
+JAM_INSTALL_SITE_ROOT="$PWD/build/jambox-web" node tests/jam_install_browser.mjs
+python3 tests/test_publish_jam_web.py
+python3 tools/publish_jam_web.py
+```
+
+The site packager's explicit `--with-trial` option includes the installer and
+verified candidate. Without that option the base package remains the emulator
+and read-only checker. Publication requires the separate `--publish` command
+described in [Pages instructions](GITHUB_PAGES.md). A successful Git push alone
+does not establish that the new files are live.

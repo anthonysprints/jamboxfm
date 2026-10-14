@@ -23,7 +23,8 @@
 #include "fm1_sys.h"
 /* the loader may write the app area and erase update records; never the head */
 #if JAMBOX_PROTO
-#define FL_RANGE_OK(off, n) (FL_IN(off, n, 0x4000u, 0x93000u) || FL_IN(off, n, 0xE4000u, 0xE5000u))
+#define FL_RANGE_OK(off, n) (FL_IN(off, n, 0x4000u, 0x93000u) || \
+                           FL_IN(off, n, 0xE4000u, 0xE5000u) || FL_IN(off, n, 0xE8000u, 0xE9000u))
 #else
 #define FL_RANGE_OK(off, n) (FL_IN(off, n, 0x4000u, 0x93000u) || FL_IN(off, n, 0x93000u, 0xFC000u))
 #endif
@@ -74,6 +75,8 @@ static int ldr_erase(uint32_t off)
 static int ldr_prog(uint32_t off, const void *p, uint32_t n)
 {
     uint32_t took;
+    if (!FL_IN(off, n, 0x4000u, 0x93000u))
+        return -1;                                  /* record sectors may only be erased */
     return fl_prog_ram(off, p, n, &took);
 }
 static void ldr_record_clear(void)
@@ -117,8 +120,8 @@ void ldr_main(void)
 void ldr_cstart(void)
 {
     uint32_t *p;
-    ldr_record_clear();                             /* first thing: a crash below cannot loop through a
-                                                     * warm reset; resume after power loss uses the flash record */
+    ldr_record_clear();                             /* avoid a warm-reset loop; a flash record alone does
+                                                     * not establish recovery after a power cycle */
     for (p = _bss_start; p < _bss_end; p++)
         *p = 0;
     ldr_main();

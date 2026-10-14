@@ -158,7 +158,10 @@ def package(root=ROOT, build=BUILD, output=OUTPUT, toolchain=None, sdk=None):
     files = {FIRMWARE: firmware, SOURCE: source_zip, "manifest.json": receipt.json_bytes(manifest),
              "build-receipt.json": receipt_bytes, "memory.json": memory_bytes, **licenses}
     files["README.txt"] = ("JamBoxFM local software candidate " + receipt.VERSION + "\n\n"
-        "Hardware installation is disabled. No physical transitions are approved.\n"
+        "This candidate manifest records software validation only; hardware_validated remains false.\n"
+        "It does not itself authorize an installation. A separately packaged trial.json can bind\n"
+        "these exact bytes to the experimental factory-V15 first-install workflow.\n"
+        "That experiment does not establish hardware reliability or interrupted-update recovery.\n"
         "manifest.json identifies the firmware, source, build evidence and pinned return package.\n"
         "The return Sloop package is identified by hash only and is not included.\n"
         "Source/toolchain hashes are reproducibility records, not digital signatures.\n"

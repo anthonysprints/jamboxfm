@@ -10,6 +10,7 @@ The source checkout, its index and its branches are never changed.
 from __future__ import annotations
 
 import argparse
+import base64
 from contextlib import contextmanager
 from dataclasses import dataclass
 import hashlib
@@ -39,6 +40,15 @@ EXPECTED_FILES = frozenset({
     "fm1ota.js", "fm1pkg.js", "jam-device-policy.js",
 })
 EXPECTED_DIRECTORIES = frozenset({"emu", "licenses", "device"})
+TRIAL_RUNTIME_FILES = frozenset({"install/index.html", "install/style.css", "install/app.js", "jam-trial-install.js"})
+TRIAL_LICENSE_FILES = frozenset({"LICENSE", "LICENSING.md", "licenses/Apache-2.0-msfa.txt",
+    "licenses/Terminus-LICENSE.txt", "licenses/CC0-ATTRIBUTION.txt", "licenses/CC0-CREDITS.txt",
+    "licenses/FUKIAI-LICENSE.txt", "licenses/phys_dsp.c-notice.txt", "licenses/phys_symp.c-notice.txt",
+    "licenses/AC79-SDK-LICENSE.txt", "licenses/AC79-SDK-README.md"})
+TRIAL_BUNDLE_FILES = TRIAL_LICENSE_FILES | {"jamboxfm-0.1.0-dev.fwsc", "jamboxfm-source.zip",
+    "manifest.json", "build-receipt.json", "memory.json", "README.txt", "SHA256SUMS"}
+TRIAL_FILES = EXPECTED_FILES | TRIAL_RUNTIME_FILES | {"firmware/" + name for name in TRIAL_BUNDLE_FILES | {"trial.json"}}
+TRIAL_DIRECTORIES = EXPECTED_DIRECTORIES | {"install", "firmware", "firmware/licenses"}
 SOURCE_PREFIX = "jamboxfm-source/"
 SOURCE_REQUIRED = frozenset({
     "LICENSE", "LICENSING.md", "firmware/host/jam_emu.c", "firmware/src/jam_ui.c",
@@ -92,13 +102,11 @@ def json_object(data: bytes, description: str) -> dict:
     return result
 
 
-def validate_source(data: bytes, files: dict[str, bytes]) -> int:
+def source_contents(data: bytes) -> dict[str, bytes]:
     """Check corresponding source without extracting it or executing its tools.
 
-    Historical installer *source* remains inside this downloadable archive for
-    source completeness. No installer page or firmware binary is a publish-root
-    entry. Archive paths, checksums, source presence and shared runtime text are
-    checked; this is not a claim of independently rebuilding the WASM.
+    Archive paths, checksums and source presence are checked. No archive code is
+    executed. This is not a claim of independently rebuilding its binary.
     """
     try:
         with zipfile.ZipFile(io.BytesIO(data)) as archive:
@@ -147,6 +155,11 @@ def validate_source(data: bytes, files: dict[str, bytes]) -> int:
     for name, body in content.items():
         if manifest[name] != sha(body):
             raise DeploymentError(f"Source checksum mismatch: {name}")
+    return content
+
+
+def validate_source(data: bytes, files: dict[str, bytes]) -> int:
+    content = source_contents(data)
     for name in ("style.css", "app.js", "worklet.js"):
         if content[f"web/emu/{name}"] != files[f"emu/{name}"]:
             raise DeploymentError(f"Published {name} differs from its corresponding source.")
@@ -156,7 +169,110 @@ def validate_source(data: bytes, files: dict[str, bytes]) -> int:
             raise DeploymentError(f"Published {name} differs from its corresponding source.")
     if content["LICENSE"] != files["LICENSE"]:
         raise DeploymentError("Published LICENSE differs from corresponding source.")
+    if "firmware/trial.json" in files:
+        for name in TRIAL_RUNTIME_FILES:
+            if content.get("web/" + name) != files[name]:
+                raise DeploymentError(f"Published {name} differs from its corresponding source.")
     return len(content)
+
+
+def validate_hashes(files: dict[str, bytes], label: str = "Publish") -> None:
+    try:
+        lines = files["SHA256SUMS"].decode("ascii").splitlines()
+    except UnicodeError as error:
+        raise DeploymentError(f"{label} SHA256SUMS is not ASCII.") from error
+    hashes = {}
+    for line in lines:
+        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
+        if not match or match[2] in hashes:
+            raise DeploymentError(f"{label} SHA256SUMS has an invalid or duplicate entry.")
+        hashes[match[2]] = match[1]
+    if set(hashes) != files.keys() - {"SHA256SUMS"}:
+        raise DeploymentError(f"{label} SHA256SUMS must cover exactly the other packaged files.")
+    for name, digest in hashes.items():
+        if sha(files[name]) != digest:
+            raise DeploymentError(f"{label} checksum mismatch: {name}; rebuild the package.")
+
+
+def validate_trial(files: dict[str, bytes]) -> None:
+    """Validate the opt-in first trial without promoting a simulated candidate.
+
+    The packager independently verifies the local ELF and pinned SDK/compiler.
+    Publication rechecks the immutable package, source, receipt and their links;
+    it does not claim a second independent target rebuild or hardware execution.
+    """
+    bundle = {name: files["firmware/" + name] for name in TRIAL_BUNDLE_FILES}
+    validate_hashes(bundle, "Candidate")
+    manifest = json_object(bundle["manifest.json"], "candidate manifest")
+    trial = json_object(files["firmware/trial.json"], "experimental trial descriptor")
+    expected_trial = {"schema_version": 1, "kind": "experimental-first-install", "hardware_validated": False,
+        "transition": "factory-v15-to-jambox", "manifest_sha256": sha(bundle["manifest.json"]),
+        "firmware_sha256": sha(bundle["jamboxfm-0.1.0-dev.fwsc"])}
+    if trial != expected_trial or type(trial.get("schema_version")) is not int or trial.get("hardware_validated") is not False:
+        raise DeploymentError("Experimental trial descriptor or candidate binding is invalid.")
+    # Run the reviewed validator in the checkout, never JavaScript from a ZIP or
+    # the proposed publication directory. Input is JSON through stdin only.
+    script = """import fs from 'node:fs';
+import { prepareCandidate } from './web/jam-device-policy.js';
+const input = JSON.parse(fs.readFileSync(0, 'utf8'));
+await prepareCandidate(input.manifest, new Uint8Array(Buffer.from(input.firmware, 'base64')));
+"""
+    try:
+        result = subprocess.run(["node", "--input-type=module", "--eval", script], cwd=ROOT,
+            input=json.dumps({"manifest": manifest, "firmware": base64.b64encode(bundle["jamboxfm-0.1.0-dev.fwsc"]).decode("ascii")}),
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise DeploymentError(f"Cannot run the candidate format validator: {error}") from error
+    if result.returncode:
+        raise DeploymentError("Candidate format validation failed: " + result.stderr.strip())
+
+    def artifact(name, digest, size=None):
+        if name not in bundle or sha(bundle[name]) != digest or (size is not None and len(bundle[name]) != size):
+            raise DeploymentError(f"Candidate artifact descriptor mismatch: {name}")
+        return bundle[name]
+
+    for item in (manifest["firmware"], manifest["source"], *manifest["licenses"]):
+        artifact(item["file"], item["sha256"], item["size_bytes"])
+    if {item["file"] for item in manifest["licenses"]} != TRIAL_LICENSE_FILES:
+        raise DeploymentError("Candidate licenses must match the exact publication allowlist.")
+    evidence = manifest["build"]
+    record = json_object(artifact(evidence["receipt_file"], evidence["receipt_sha256"]), "build receipt")
+    memory = json_object(artifact(evidence["memory_report_file"], evidence["memory_report_sha256"]), "memory report")
+    config = record.get("configuration", {})
+    if (record.get("schema_version") != 1 or record.get("kind") != "jambox-device-build" or
+            config.get("app", {}).get("identity") != "FM-1_700" or
+            config.get("app", {}).get("version") != "JamBoxFM " + manifest["version"] or
+            config.get("loader", {}).get("identity") != "ota-FM-1_700" or
+            config.get("package_identity") != "FM-1_700" or
+            config.get("app", {}).get("flags") != evidence["flags"] or
+            record.get("artifacts", {}).get("felucca.fwsc") != {
+                "sha256": manifest["firmware"]["sha256"], "size_bytes": manifest["firmware"]["size_bytes"]}):
+        raise DeploymentError("Candidate build receipt does not describe this firmware/configuration.")
+    loader_flags = config.get("loader", {}).get("flags", {})
+    if any(loader_flags.get(name) != value for name, value in {"JAMBOX_PROTO": 1, "FELUCCA_OTA": 1,
+            "FELUCCA_OTA_DRYRUN": 0, "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_PERSIST": 0}.items()):
+        raise DeploymentError("Candidate loader flags differ from the experimental build.")
+    if (memory.get("schema_version") != 1 or memory.get("ok") is not True or memory.get("errors") != [] or
+            not memory.get("app") or not memory.get("loader") or
+            memory.get("ota", {}).get("headers_crc_body_crc_and_loader_match") is not True):
+        raise DeploymentError("Candidate memory/ELF evidence is incomplete or failed.")
+    for field, name in {"app_bin": "felucca.bin", "app_elf": "felucca.elf", "loader_bin": "loader/loader.bin",
+                        "loader_elf": "loader/loader.elf", "ota_bin": "loader/ota.bin"}.items():
+        if memory.get("sha256", {}).get(field) != record.get("artifacts", {}).get(name, {}).get("sha256"):
+            raise DeploymentError(f"Candidate memory report and build receipt disagree: {name}")
+    source = source_contents(bundle["jamboxfm-source.zip"])
+    required = {"firmware/src/jam_identity.h", "firmware/loader/loader.c", "firmware/loader/ldr_core.c",
+        "tools/package_jam_device.py", "tools/device_build_receipt.py", "tools/cloud/build_device.sh"}
+    if not required <= source.keys() or not record.get("inputs_sha256"):
+        raise DeploymentError("Candidate corresponding device source is missing.")
+    for name, digest in record["inputs_sha256"].items():
+        if name not in source or sha(source[name]) != digest:
+            raise DeploymentError(f"Candidate source differs from the build receipt: {name}")
+    if any(manifest["source"][field] != record.get("source", {}).get(field) for field in ("revision", "dirty")):
+        raise DeploymentError("Candidate source revision differs from the build receipt.")
+    for name in ("LICENSE", "LICENSING.md"):
+        if source.get(name) != bundle[name]:
+            raise DeploymentError(f"Candidate {name} differs from its corresponding source.")
 
 
 def validate_site(site: Path) -> dict[str, bytes]:
@@ -180,28 +296,17 @@ def validate_site(site: Path) -> dict[str, bytes]:
             found.add(name)
         else:
             raise DeploymentError(f"Publish root contains a non-regular file: {name}")
-    if found != EXPECTED_FILES or directories != EXPECTED_DIRECTORIES:
-        unexpected = sorted((found - EXPECTED_FILES) | (directories - EXPECTED_DIRECTORIES))
-        missing = sorted(EXPECTED_FILES - found)
-        raise DeploymentError(f"Publish root must contain exactly its {len(EXPECTED_FILES)} packaged files. Missing: {missing}; unexpected: {unexpected}")
+    with_trial = "firmware/trial.json" in found
+    expected = TRIAL_FILES if with_trial else EXPECTED_FILES
+    expected_directories = TRIAL_DIRECTORIES if with_trial else EXPECTED_DIRECTORIES
+    if found != expected or directories != expected_directories:
+        unexpected = sorted((found - expected) | (directories - expected_directories))
+        missing = sorted(expected - found)
+        raise DeploymentError(f"Publish root must contain exactly its {len(expected)} packaged files. Missing: {missing}; unexpected: {unexpected}")
     if any((site / name).stat().st_size > 64 * 1024 * 1024 for name in found):
         raise DeploymentError("A publish file exceeds the supported 64 MiB limit.")
-    files = {name: (site / name).read_bytes() for name in sorted(EXPECTED_FILES)}
-    try:
-        lines = files["SHA256SUMS"].decode("ascii").splitlines()
-    except UnicodeError as error:
-        raise DeploymentError("SHA256SUMS is not ASCII.") from error
-    hashes = {}
-    for line in lines:
-        match = re.fullmatch(r"([0-9a-f]{64})  (.+)", line)
-        if not match or match[2] in hashes:
-            raise DeploymentError("SHA256SUMS has an invalid or duplicate entry.")
-        hashes[match[2]] = match[1]
-    if set(hashes) != EXPECTED_FILES - {"SHA256SUMS"}:
-        raise DeploymentError(f"SHA256SUMS must cover exactly the other {len(EXPECTED_FILES) - 1} publish files.")
-    for name, digest in hashes.items():
-        if sha(files[name]) != digest:
-            raise DeploymentError(f"Publish checksum mismatch: {name}; rebuild the package.")
+    files = {name: (site / name).read_bytes() for name in sorted(expected)}
+    validate_hashes(files)
     if files[".nojekyll"] or not files["emu/jam-emu.wasm"].startswith(b"\x00asm\x01\x00\x00\x00"):
         raise DeploymentError("Invalid .nojekyll marker or WebAssembly header.")
     if b"jambox-source.zip" not in files["emu/index.html"] or b"jambox-source.zip" not in files["LICENSES.html"]:
@@ -209,6 +314,13 @@ def validate_site(site: Path) -> dict[str, bytes]:
     if b"jambox-source.zip" not in files["device/index.html"]:
         raise DeploymentError("Published device check must link corresponding source.")
     validate_source(files["jambox-source.zip"], files)
+    if with_trial:
+        if b"jamboxfm-source.zip" not in files["install/index.html"]:
+            raise DeploymentError("Published experimental installer must link corresponding firmware source.")
+        if any(name.encode() not in files["LICENSES.html"] for name in (
+                "firmware/licenses/AC79-SDK-LICENSE.txt", "firmware/licenses/AC79-SDK-README.md", "firmware/jamboxfm-source.zip")):
+            raise DeploymentError("Published licenses page must link device SDK notices and corresponding source.")
+        validate_trial(files)
     return files
 
 
@@ -276,7 +388,7 @@ def prepare_deployment(files: dict[str, bytes], remote: str, identity: tuple[str
     The public CLI has no remote/site/branch override and always uses DESTINATION.
     Remote history is fetched as Git objects, never checked out as executable files.
     """
-    if set(files) != EXPECTED_FILES:
+    if set(files) not in (EXPECTED_FILES, TRIAL_FILES):
         raise DeploymentError("Refusing to stage anything other than the fixed packaged file set.")
     if scratch:
         scratch.mkdir(parents=True, exist_ok=True)
@@ -302,7 +414,8 @@ def prepare_deployment(files: dict[str, bytes], remote: str, identity: tuple[str
         changed = not parent or git(directory, "rev-parse", f"{parent}^{{tree}}").stdout.strip() != tree
         if changed:
             parents = ["-p", parent] if parent else []
-            message = f"Publish JamBox browser instrument and device check\n\nPackage manifest SHA256: {sha(files['SHA256SUMS'])}\n"
+            feature = "experimental FM-1 installer" if "firmware/trial.json" in files else "device check"
+            message = f"Publish JamBox browser instrument and {feature}\n\nPackage manifest SHA256: {sha(files['SHA256SUMS'])}\n"
             commit = git(directory, "-c", "commit.gpgsign=false", "commit-tree", tree, *parents,
                          input_text=message).stdout.strip()
         else:

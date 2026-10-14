@@ -2,7 +2,7 @@
 
 October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. Milestone 2 adds FM-1 update/rescue support while keeping musical sessions temporary. The owner-supplied compiler builds the device targets. This remains a software prototype, with no physical-device test or firmware release.
 
-The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper still builds the OTA-disabled diagnostic target; `--with-updater` selects the update-enabled software bring-up target. Neither output is ready for owner installation. Milestone 3 adds JamBox identity/splash, a verified local candidate bundle, six simulated update/return transitions and a public read-only device check. See [candidate preparation](FM1_CANDIDATE.md) and its [software evidence](build-evidence/candidate/README.md). Physical transitions remain unapproved, and no device firmware is published.
+The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper builds the OTA-disabled diagnostic target; `--with-updater` selects the experimental update-enabled target. The owner’s factory backup is verified. The [Chrome first-trial workflow](FM1_CHROME_TRIAL.md) adds a separate exact-build installer at `/install/`, while `/device/` remains read-only and the candidate’s hardware/release flags remain false. Actual JamBox device behavior is still untested.
 
 ## Implemented
 
@@ -61,7 +61,7 @@ That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative 
 
 The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and physically validated installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
-Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's read-only report now returns `FM-1_015`, and the original factory interface is confirmed. Factory V15 is the current baseline. Its exact uploaded return file is verified; separate host simulations and native staging checks are recorded in [factory preparation](FM1_FACTORY_V15.md). Stock staging placement and physical entry/return remain unverified. See the [factory follow-up](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline).
+Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's read-only report now returns `FM-1_015`, and the original factory interface is confirmed. Factory V15 is the current baseline. Its exact uploaded return file is verified; separate host simulations and native staging checks are recorded in [factory preparation](FM1_FACTORY_V15.md). The current stock staging/record audit is separate from these earlier software checks; actual JamBox handover and return remain unverified. See the [factory follow-up](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline).
 
 ## Environment
 
@@ -74,8 +74,7 @@ handling in the local backup tool. These are host software changes, with
 Those software checks establish no owner-device operation. Subsequent
 [owner-provided Windows evidence](build-evidence/factory-v15/owner-windows-roundtrip.md)
 shows stock MIDI identity, ROM disk enumeration, and a return to factory MIDI
-identity. Full backup, Windows SCSI transfer and JamBox firmware installation
-remain pending. The public checker remains read-only.
+identity. The subsequent [full backup validation](build-evidence/factory-v15/owner-backup-validation.md) establishes Windows RAM-loader startup and full reads, the expected chip/key, and exact factory boot-head/application bytes. JamBox firmware installation remains pending. The public checker remains read-only.
 
 Cloud setup, setup replay, pinned SDK download into a fresh destination, and local serving of HTML/JavaScript/WASM passed. Python, browser/native compilers, SDK and Playwright dependencies are installed outside the checkout. Reusable installation and startup instructions have been saved to the environment draft.
 

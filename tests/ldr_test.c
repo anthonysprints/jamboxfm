@@ -19,6 +19,8 @@ static uint32_t rx_len, rx_full, now_ms, requests, erases, programs, bad_range, 
 static uint32_t corrupt_at, corrupt_once, no_finish;   /* the host serves a damaged byte / never says "success" */
 static uint32_t wrong_finish;                        /* a valid frame carrying the wrong completion text */
 static uint32_t record_reads, record_read_fail, record_erase_fail, record_erase_skip, cleanup_faults;
+static uint32_t record_fault_addr = 0xE4F00u, record_fault_n = 80u, record_fault_sector = 0xE4000u;
+static uint32_t stage_read_fail;
 
 static uint32_t pack7(const uint8_t *in, uint32_t n, uint8_t *out)
 {
@@ -93,7 +95,9 @@ static void ota_commit(const uint8_t *parm) { (void)parm; }
 
 static int ldr_fread(uint32_t off, void *p, uint32_t n)
 {
-    if (off == 0xE4F00u && n == 80u && ++record_reads == record_read_fail) {
+    if (off > sizeof nor || n > sizeof nor - off) { bad_range++; return -1; }
+    if ((off == record_fault_addr && n == record_fault_n && ++record_reads == record_read_fail)
+        || (stage_read_fail && off == stage_read_fail)) {
         cleanup_faults++;
         return -1;
     }
@@ -103,13 +107,13 @@ static int ldr_fread(uint32_t off, void *p, uint32_t n)
 static int ldr_erase(uint32_t off)
 {
 #if JAMBOX_PROTO
-    if (!((off >= 0x4000u && off < 0x93000u) || off == 0xE4000u) || (off & 0xFFFu)) bad_range++;
+    if (!((off >= 0x4000u && off < 0x93000u) || off == 0xE4000u || off == 0xE8000u) || (off & 0xFFFu)) bad_range++;
 #else
     if (off < 0x4000u || off >= 0xFC000u || (off & 0xFFFu)) bad_range++;
 #endif
     if (off < 0x4000u) { printf("ERASE IN THE HEAD %#x\n", off); exit(1); }
     erases++;
-    if (off == 0xE4000u && (record_erase_fail || record_erase_skip)) {
+    if (off == record_fault_sector && (record_erase_fail || record_erase_skip)) {
         cleanup_faults++;
         return record_erase_fail ? -1 : 0;
     }
@@ -147,7 +151,7 @@ static uint8_t *load_logical(const char *path, size_t *len)
     return lg;
 }
 
-static uint32_t flash_off(const uint8_t *lg)        /* flash.bin offset in the logical image */
+static uint32_t entry_off(const uint8_t *lg, uint32_t type)
 {
     uint8_t h[0x400];
     uint32_t i, n;
@@ -157,10 +161,11 @@ static uint32_t flash_off(const uint8_t *lg)        /* flash.bin offset in the l
     for (i = 0; i < n; i++) {
         uint8_t *e = h + 0x40 + i * 0x50u;
         ota_jl_enc(e, 0x50);
-        if (ota_rd16(e) == 0) return ota_rd32(e + 8);
+        if (ota_rd16(e) == type) return ota_rd32(e + 8);
     }
     return 0;
 }
+static uint32_t flash_off(const uint8_t *lg) { return entry_off(lg, 0); }
 
 static int check(const char *what, int ok) { printf("%-56s %s\n", what, ok ? "ok" : "FAIL"); return ok ? 0 : 1; }
 
@@ -180,6 +185,57 @@ static void put_record_at(uint32_t off)
 }
 
 static void put_record(void) { put_record_at(0xE4F00u); } /* the known Sloop/JamBox staging record */
+
+#if JAMBOX_PROTO
+static int protected_stock_unchanged(const uint8_t *before)
+{
+    return !memcmp(nor, before, 0x4000u)
+        && !memcmp(nor + 0x93000u, before + 0x93000u, 0xE4000u - 0x93000u)
+        && !memcmp(nor + 0xE5000u, before + 0xE5000u, 0xE8000u - 0xE5000u)
+        && !memcmp(nor + 0xE9000u, before + 0xE9000u, sizeof nor - 0xE9000u);
+}
+
+/* Use the actual candidate's compressed loader body. Reproduce V15's outer
+ * descriptor, including address at +4 and nonzero bytes after the name's NUL.
+ * Migration fields and the 32 bytes outside the record CRC are nonzero too. */
+static void put_stock_record(uint32_t addr, int stock_padding)
+{
+    uint32_t off = entry_off(logical, 100), len;
+    uint8_t *h = nor + addr, *r = nor + 0xE8F00u;
+    if (!off || off + 32u > logical_len) { puts("candidate loader missing"); exit(2); }
+    len = ota_rd32(logical + off + 8);
+    if (off + 32u + len > logical_len || len + 32u > 0xE8F00u - addr) {
+        puts("candidate loader does not fit stock fixture"); exit(2);
+    }
+    memcpy(h + 32, logical + off + 32, len);
+    memset(h, 0, 32);
+    ota_wr16(h + 2, 0xFFFFu);
+    ota_wr32(h + 4, addr);
+    ota_wr32(h + 8, len + 32u);
+    h[12] = 0x41; h[13] = 0xFF;
+    ota_wr16(h + 14, 0xFFFFu);
+    memcpy(h + 16, stock_padding ? "LOADER.BIN\0SHA-2" : "LOADER.BIN\0\0\0\0\0", 16);
+    ota_wr16(h, ota_crc16(h + 2, 30, 0));
+    memset(r, 0, 80);
+    memset(r + 80, 0xC7, 32);
+    ota_wr16(r + 2, 0x5A0Du); ota_wr16(r + 4, 0x5A01u); ota_wr16(r + 6, 0x5441u);
+    memcpy(r + 8, "ota-FM-1_015", 12);
+    ota_wr32(r + 40, 0x97000u); ota_wr32(r + 44, 0xE0000u);
+    ota_wr32(r + 72, addr);
+    ota_wr16(r, ota_crc16(r + 2, 78, 0));
+}
+
+static void fix_stock_crc(void)
+{
+    uint8_t *r = nor + 0xE8F00u;
+    ota_wr16(r, ota_crc16(r + 2, 78, 0));
+}
+
+static void fix_stage_crc(uint32_t addr)
+{
+    ota_wr16(nor + addr, ota_crc16(nor + addr + 2, 30, 0));
+}
+#endif
 
 int main(int argc, char **argv)
 {
@@ -364,6 +420,154 @@ int main(int argc, char **argv)
             bad += check("cleanup retry preserves all protected bytes", !bad_range && protected_unchanged(before));
         }
     }
+#if JAMBOX_PROTO
+    /* Both records can coexist, and the stock loader may start in E4000.
+     * Ownership must be established before either record sector is erased. */
+    {
+        const uint32_t locations[] = {0xE6000u, 0xE4000u, 0x93100u};
+        uint32_t loc, custom;
+        for (loc = 0; loc < sizeof locations / sizeof locations[0]; loc++) {
+            for (custom = 0; custom < 2; custom++) {
+                memset(nor, 0xA5, sizeof nor);
+                memcpy(nor, old + ofo, 0x93000);
+                put_stock_record(locations[loc], !custom);
+                put_record();
+                memcpy(before, nor, sizeof nor);
+                record_cleared = erases = programs = bad_range = 0;
+                rc = ldr_session();
+                printf("  stock staging %#x, %s filename padding\n", locations[loc], custom ? "zero" : "V15");
+                bad += check("stock handoff installs app and clears both record slots", rc == 0 && record_cleared
+                             && nor[0xE4F06u] == 0xFF && nor[0xE8F06u] == 0xFF
+                             && !memcmp(nor + 0x4000, logical + nfo + 0x4000, 0x93000 - 0x4000));
+                bad += check("stock cleanup preserves every other flash byte", !bad_range && protected_stock_unchanged(before));
+                erases = programs = 0;
+                rc = ldr_session();
+                bad += check("stock cleanup is idempotent", rc == 0 && !erases && !programs);
+            }
+        }
+    }
+    /* Malformed but SPL-live stock candidates must fail BEFORE app writes.
+     * None of these cases may erase the record or read outside NOR. */
+    {
+        const char *faults[] = {"mode", "result", "identity", "head pointer", "app pointer", "unaligned pointer",
+            "pointer at record", "pointer past flash", "wrapped pointer", "outer CRC", "outer name",
+            "outer attr", "outer offset", "short length", "oversize length", "overlapping length",
+            "inner CRC", "inner name", "inner load address", "zero decoded length", "oversize decoded length", "loader marker",
+            "extended identity", "wrapped length", "length in address field"};
+        uint32_t fault;
+        for (fault = 0; fault < sizeof faults / sizeof faults[0]; fault++) {
+            uint8_t *r = nor + 0xE8F00u, *h = nor + 0xE6000u;
+            memset(nor, 0xA5, sizeof nor);
+            memcpy(nor, old + ofo, 0x93000);
+            put_stock_record(0xE6000u, 1);
+            put_record();
+            switch (fault) {
+            case 0: r[2] ^= 1; break;
+            case 1: r[4] ^= 1; break;
+            case 2: r[8] ^= 1; break;
+            case 3: ota_wr32(r + 72, 0); break;
+            case 4: ota_wr32(r + 72, 0x92000u); break;
+            case 5: ota_wr32(r + 72, 0xE6001u); break;
+            case 6: ota_wr32(r + 72, 0xE8F00u); break;
+            case 7: ota_wr32(r + 72, 0x100000u); break;
+            case 8: ota_wr32(r + 72, 0xFFFFFF00u); break;
+            case 9: h[0] ^= 1; break;
+            case 10: h[16] ^= 1; break;
+            case 11: h[12] ^= 1; break;
+            case 12: ota_wr32(h + 4, 0x20u); break;
+            case 13: ota_wr32(h + 8, 64u); break;
+            case 14: ota_wr32(h + 8, 0x5000u); break;
+            case 15: ota_wr32(h + 8, 0x3000u); break;
+            case 16: h[32] ^= 1; break;
+            case 17: h[48] ^= 1; break;
+            case 18: ota_wr32(h + 40, 0x01C0A900u); break;
+            case 19: ota_wr32(h + 36, 0); break;
+            case 20: ota_wr32(h + 36, 0x14001u); break;
+            case 21: memset(h + 72, 0, 64); break;
+            case 22: r[20] = 'x'; break;
+            case 23: ota_wr32(h + 8, 0xFFFFFFFFu); fix_stage_crc(0xE6000u); break;
+            case 24: ota_wr32(h + 4, ota_rd32(h + 8)); fix_stage_crc(0xE6000u); break;
+            }
+            fix_stock_crc();
+            if (fault >= 10 && fault <= 15) fix_stage_crc(0xE6000u);
+            if (fault >= 17 && fault <= 20) fix_stage_crc(0xE6020u);
+            memcpy(before, nor, sizeof nor);
+            record_cleared = erases = programs = bad_range = f0_asked = 0;
+            rc = ldr_session();
+            printf("  malformed stock handoff: %s\n", faults[fault]);
+            bad += check("unowned live stock record refused before any flash change", rc == LDR_ERECORD && !record_cleared
+                         && !erases && !programs && !bad_range && !f0_asked && !memcmp(nor, before, sizeof nor));
+        }
+    }
+    /* A stock record remains intact until the verified transfer receives the
+     * exact completion body, even when both record slots are present. */
+    {
+        uint32_t fault;
+        for (fault = 0; fault < 3; fault++) {
+            memset(nor, 0xA5, sizeof nor);
+            memcpy(nor, old + ofo, 0x93000);
+            put_stock_record(0xE6000u, 1);
+            put_record();
+            memcpy(before, nor, sizeof nor);
+            record_cleared = erases = programs = bad_range = 0;
+            no_finish = fault == 0;
+            wrong_finish = fault;
+            rc = ldr_session();
+            bad += check("stock handoff preserves both slots without exact finish", rc == LDR_ENOFIN && !record_cleared
+                         && !bad_range && protected_unchanged(before)
+                         && !memcmp(nor + 0xE4000u, before + 0xE4000u, 0x1000u));
+            no_finish = wrong_finish = 0;
+        }
+    }
+    /* An AT lookalike whose CRC is invalid is not a live SPL record. It is
+     * preserved, as are valid-looking patterns outside the two known slots. */
+    {
+        memset(nor, 0xA5, sizeof nor);
+        memcpy(nor, old + ofo, 0x93000);
+        put_stock_record(0xE6000u, 1);
+        nor[0xE8F00u] ^= 1;
+        put_record();
+        memcpy(before, nor, sizeof nor);
+        record_cleared = bad_range = 0;
+        rc = ldr_session();
+        bad += check("invalid-CRC stock-slot data is preserved byte for byte", rc == 0 && record_cleared && !bad_range
+                     && protected_unchanged(before));
+    }
+    /* Preflight/readback faults and NOR refusing an erase must never permit a
+     * success reset. After clearing the fault, the same session can finish. */
+    {
+        const char *faults[] = {"preflight record read", "preflight staged header read", "final record read",
+            "record erase", "erase readback", "ignored erase"};
+        uint32_t fault;
+        record_fault_addr = 0xE8F00u; record_fault_n = 112u; record_fault_sector = 0xE8000u;
+        for (fault = 0; fault < sizeof faults / sizeof faults[0]; fault++) {
+            memset(nor, 0xA5, sizeof nor);
+            memcpy(nor, old + ofo, 0x93000);
+            put_stock_record(0xE4000u, 1);
+            put_record();
+            memcpy(before, nor, sizeof nor);
+            record_cleared = erases = programs = bad_range = f0_asked = 0;
+            record_reads = cleanup_faults = 0;
+            record_read_fail = fault == 0 ? 1u : fault == 2 ? 2u : fault == 4 ? 3u : 0u;
+            stage_read_fail = fault == 1 ? 0xE4000u : 0;
+            record_erase_fail = fault == 3;
+            record_erase_skip = fault == 5;
+            rc = ldr_session();
+            printf("  stock cleanup fault: %s\n", faults[fault]);
+            bad += check("stock fault returns error and preserves RAM + E4 record", rc == LDR_ERECORD
+                         && cleanup_faults == 1 && !record_cleared && !bad_range && nor[0xE4F06u] == 0x41
+                         && protected_stock_unchanged(before)
+                         && (fault >= 2 || (!erases && !programs && !memcmp(nor, before, sizeof nor))));
+            record_read_fail = stage_read_fail = record_erase_fail = record_erase_skip = record_reads = 0;
+            rc = ldr_session();
+            bad += check("stock fault retry completes both slots without damage", rc == 0 && record_cleared && !bad_range
+                         && nor[0xE4F06u] == 0xFF && nor[0xE8F06u] == 0xFF && protected_stock_unchanged(before)
+                         && !memcmp(nor + 0x4000, logical + nfo + 0x4000, 0x93000 - 0x4000));
+        }
+    }
+#endif
+    free(old);
+    free(logical);
     printf("%s\n", bad ? "LOADER TEST FAILED" : "loader test passed");
     return bad != 0;
 }

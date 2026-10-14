@@ -2,7 +2,7 @@
 
 The owner's identity report returned `FM-1_015`, and they confirmed the original factory screen. The uploaded `FM-1.fwsc` exactly matches the independently recorded V15 pin: **699,956 bytes**, SHA-256 `db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a`. It is retained outside the public repository at `/workspace/deps/jambox-return/FM-1-V15.fwsc`. Manufacturer firmware is not redistributed.
 
-This establishes the expected factory return **file**. It does not read the installed firmware byte for byte, identify the physical flash chip, or back up this unit's saved sounds/settings. The intended first hardware trial remains factory V15 → JamBox → factory V15, with installation disabled until its remaining gates are met.
+The later [owner backup validation](build-evidence/factory-v15/owner-backup-validation.md) now establishes this unit's actual factory boot/application bytes and expected chip identity as well. The [experimental Chrome workflow](FM1_CHROME_TRIAL.md) prepares factory V15 → JamBox; a physical return-to-factory trial is separate work. Hardware validation remains false until actual device results are collected.
 
 ## Software checks
 
@@ -12,7 +12,7 @@ Host simulations now compare every byte of the logical package in each transfer 
 
 Separate native tests execute the real JamBox OTA staging code against the uploaded factory file and simulated flash. Before staging the official loader, it compares **all 16 KiB of the installed boot head** with the return package. A mismatch is refused. A stock-origin JamBox fixture must preserve that head: the synthetic boot head in our generated JamBox package is different, and our loader intentionally never writes it. Native loader tests separately check the actual JamBox app-only write path from the stock-image fixture.
 
-Results and exact commands are in [factory V15 evidence](build-evidence/factory-v15/README.md). All transfer orchestration remains test-only; no firmware or installer is published.
+Results and exact commands for that software-only milestone are in [factory V15 evidence](build-evidence/factory-v15/README.md). The newer first-trial controller is separate production code and does not alter the original simulated transition manifest.
 
 ## What the read-only page means
 
@@ -20,8 +20,8 @@ The page now explains `FM-1_015` as **Factory V15 identity reported**. Its saved
 
 ## Remaining before a physical trial
 
-1. **Stock entry behavior:** the file layout and key match JamBox, but stock V15's actual loader acceptance, staging location and reset handover have not been demonstrated for JamBox. The native fixture supplies an E4F00 resume record as an explicit assumption. JamBox's bounded cleanup must not be broadened to erase arbitrary record-shaped data in foreign storage.
-2. **Boot-head and device backup:** confirm the actual unit's head/chip details through an appropriate private backup route. The factory update file is not that backup. Stock does not implement Sloop/ChoralRoot backup commands; no complete factory-editor export workflow has been verified. Photos/notes and original imported DX7 files can preserve useful information, but they are not a full flash backup.
+1. **Stock entry behavior:** the [stock record audit](build-evidence/factory-v15/stock-record-cleanup.md) found that V15 uses `E8F00`, whereas custom firmware uses `E4F00`. JamBox now validates the stock record and staged-loader metadata before app writes, then clears only these two explicit record sectors after a verified transfer. Arbitrary record-shaped data elsewhere stays protected. Native tests cover this distinction; actual stock loader acceptance and USB handover remain outcomes of the first device trial.
+2. **Boot-head and device backup — completed:** the uploaded full flash image matches both logged reads; all boot-head and app bytes equal the exact V15 file. The expected chip key, flash ID and Windows RAM-loader read path are demonstrated. The factory update file alone was not that backup. Stock does not implement Sloop/ChoralRoot backup commands; no complete factory-editor export workflow has been verified. Photos/notes and original imported DX7 files can preserve useful information, but they are not a full flash backup.
 3. **Recovery:** a valid staged loader and flash resume record do not guarantee cold-boot recovery. Pinned ChoralRoot hardware evidence documents a failed interrupted update with both intact. JamBox's app rescue also requires application code to remain executable. The inherited unconditional power-cycle-resume comments have been corrected; no boot stub or automatic unbrick guarantee was added.
 4. **Physical validation:** USB handover, controls, audio deadlines, flash behavior and the existing static IRQ-budget failure still require separate work. Passing host tests does not pass these gates.
 
@@ -31,6 +31,6 @@ The reviewed [MvaveFM1Unbricker source](https://github.com/Quixotic7/MvaveFM1Unb
 
 The owner confirmed **Windows, Python 3.12.7, and no saved sounds/settings they need to keep**. No separate personal sound export is needed. A unit-specific backup still records the actual boot head, flash identity and device data. Windows amd64 dependency installation and the prepared source check passed on the owner's PC; the exact Windows release and host CPU architecture have not been independently established.
 
-The [Windows workflow](FM1_WINDOWS_BACKUP.md) separates computer preparation, a factory-to-ROM-and-back test, and a later double-read backup. The owner's screenshots now show the [successful MIDI/ROM/factory identity sequence](build-evidence/factory-v15/owner-windows-roundtrip.md). A ROM backup runs temporary loader code in RAM; its host path does not request persistent flash programming, but it is a different device operation from the completed identity/mode-entry steps. A real backup and RAM-loader session remain pending.
+The [Windows workflow](FM1_WINDOWS_BACKUP.md) separates computer preparation, a factory-to-ROM-and-back test, and a later double-read backup. The owner's screenshots now show the [successful MIDI/ROM/factory identity sequence](build-evidence/factory-v15/owner-windows-roundtrip.md). A ROM backup runs temporary loader code in RAM; its host path does not request persistent flash programming, but it is a different device operation from the completed identity/mode-entry steps. The later real backup and RAM-loader session are now complete and independently checked in the linked owner backup evidence. No JamBox install or recovery write has yet been demonstrated.
 
 No additional electronics are needed to continue software preparation. External Transporter hardware is an alternative for a unit that cannot otherwise enter ROM; that choice belongs to a concrete recovery plan. Current source includes Windows-capable tooling, while the pinned physical recovery evidence used Mac. [Detailed Windows audit](build-evidence/factory-v15/windows-recovery-prep.md) distinguishes source review from hardware proof.

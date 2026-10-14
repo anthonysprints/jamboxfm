@@ -30,7 +30,11 @@ key/JEDEC details, installation or recovery after damaged application code.
 The working-stock entry route depends on executable stock firmware. No global
 firmware `hardwareValidated` or installation flag is enabled by this record.
 
-## Next step
+## Backup follow-up
+
+The subsequent real backup is now complete and has been independently checked;
+see [owner backup validation](owner-backup-validation.md). The instructions
+below record the procedure used, rather than a request to repeat it.
 
 Run the prepared backup route from Administrator PowerShell after another
 guarded ROM entry. `backup backups` needs no `--package`: both full 1 MiB reads,

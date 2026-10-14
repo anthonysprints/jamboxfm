@@ -41,10 +41,28 @@ def write_site(site, files):
         path.write_bytes(body)
 
 
+def source_zip_with(data, replacements):
+    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        entries = {info.filename: archive.read(info) for info in archive.infolist()}
+    entries.update({publish.SOURCE_PREFIX + name: body for name, body in replacements.items()})
+    manifest_name = publish.SOURCE_PREFIX + "SOURCE-MANIFEST.json"
+    entries[manifest_name] = json.dumps({name.removeprefix(publish.SOURCE_PREFIX): publish.sha(body)
+        for name, body in entries.items() if name != manifest_name}, sort_keys=True).encode()
+    output = io.BytesIO()
+    with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name, body in entries.items():
+            archive.writestr(name, body)
+    return output.getvalue()
+
+
 class DeploymentTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.payload = publish.validate_site(ROOT / "build/jambox-web")
+        # Existing deployment tests exercise the base site even if the current
+        # local package explicitly includes the experimental extension.
+        cls.packaged = publish.validate_site(ROOT / "build/jambox-web")
+        cls.payload = {name: cls.packaged[name] for name in publish.EXPECTED_FILES}
+        hashes(cls.payload)
 
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix="jambox-publish-test-")
@@ -189,6 +207,120 @@ class DeploymentTests(unittest.TestCase):
         write_site(site, payload)
         with self.assertRaisesRegex(publish.DeploymentError, "exactly"):
             publish.validate_site(site)
+
+
+class ExperimentalPublicationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        base = publish.validate_site(ROOT / "build/jambox-web")
+        cls.payload = {name: base[name] for name in publish.EXPECTED_FILES}
+        # Use the real candidate's CRCs, build receipt and corresponding source;
+        # mocked bytes would miss the checks that protect the first install.
+        bundle = ROOT / "build/jambox-device"
+        for name in publish.TRIAL_BUNDLE_FILES:
+            cls.payload["firmware/" + name] = (bundle / name).read_bytes()
+        runtime = {name: (ROOT / "web" / name).read_bytes() if (ROOT / "web" / name).exists()
+                   else b'<a href="../firmware/jamboxfm-source.zip">Source</a>'
+                   for name in publish.TRIAL_RUNTIME_FILES}
+        cls.payload.update(runtime)
+        cls.payload["LICENSES.html"] += (b'<a href="firmware/licenses/AC79-SDK-LICENSE.txt">SDK license</a>'
+            b'<a href="firmware/licenses/AC79-SDK-README.md">SDK notes</a>'
+            b'<a href="firmware/jamboxfm-source.zip">Firmware source</a>')
+        cls.payload["jambox-source.zip"] = source_zip_with(cls.payload["jambox-source.zip"],
+            {"web/" + name: body for name, body in runtime.items()})
+        cls.bind(cls.payload)
+
+    @staticmethod
+    def bind(files):
+        bundle = {name: files["firmware/" + name] for name in publish.TRIAL_BUNDLE_FILES}
+        hashes(bundle)
+        files["firmware/SHA256SUMS"] = bundle["SHA256SUMS"]
+        files["firmware/trial.json"] = json.dumps({"schema_version": 1,
+            "kind": "experimental-first-install", "hardware_validated": False,
+            "transition": "factory-v15-to-jambox", "manifest_sha256": publish.sha(bundle["manifest.json"]),
+            "firmware_sha256": publish.sha(bundle["jamboxfm-0.1.0-dev.fwsc"])}).encode()
+        hashes(files)
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory(prefix="jambox-trial-publish-test-")
+        self.addCleanup(self.temporary.cleanup)
+        self.site = Path(self.temporary.name) / "site"
+
+    def verify(self, payload):
+        write_site(self.site, payload)
+        return publish.validate_site(self.site)
+
+    def test_exact_experimental_bundle_validates_without_promoting_candidate(self):
+        files = self.verify(self.payload)
+        self.assertEqual(set(files), publish.TRIAL_FILES)
+        manifest = json.loads(files["firmware/manifest.json"])
+        self.assertIs(manifest["hardware_validated"], False)
+        self.assertIs(manifest["release_enabled"], False)
+        self.assertEqual(manifest["transitions"]["approved"], [])
+
+    def test_descriptor_binding_and_unearned_hardware_claim_are_rejected(self):
+        for field, value in (("firmware_sha256", "0" * 64), ("manifest_sha256", "0" * 64),
+                             ("hardware_validated", True), ("schema_version", True),
+                             ("transition", "sloop-2.6-to-jambox"), ("extra", False)):
+            with self.subTest(field=field):
+                payload = dict(self.payload)
+                trial = json.loads(payload["firmware/trial.json"])
+                trial[field] = value
+                payload["firmware/trial.json"] = json.dumps(trial).encode()
+                hashes(payload)
+                with self.assertRaisesRegex(publish.DeploymentError, "descriptor or candidate binding"):
+                    self.verify(payload)
+
+    def test_rehashed_firmware_corruption_fails_package_crc(self):
+        payload = dict(self.payload)
+        filename = "firmware/jamboxfm-0.1.0-dev.fwsc"
+        data = bytearray(payload[filename])
+        data[-1] ^= 1
+        payload[filename] = bytes(data)
+        manifest = json.loads(payload["firmware/manifest.json"])
+        manifest["firmware"]["sha256"] = publish.sha(payload[filename])
+        payload["firmware/manifest.json"] = json.dumps(manifest).encode()
+        self.bind(payload)
+        with self.assertRaisesRegex(publish.DeploymentError, "Candidate format validation failed"):
+            self.verify(payload)
+
+    def test_rehashed_device_source_must_match_receipt(self):
+        payload = dict(self.payload)
+        filename = "firmware/jamboxfm-source.zip"
+        payload[filename] = source_zip_with(payload[filename], {"firmware/src/jam_identity.h": b"wrong source"})
+        manifest = json.loads(payload["firmware/manifest.json"])
+        manifest["source"].update(sha256=publish.sha(payload[filename]), size_bytes=len(payload[filename]))
+        payload["firmware/manifest.json"] = json.dumps(manifest).encode()
+        self.bind(payload)
+        with self.assertRaisesRegex(publish.DeploymentError, "source differs from the build receipt"):
+            self.verify(payload)
+
+    def test_trial_cannot_smuggle_backup_or_manufacturer_package(self):
+        for name in ("firmware/full-flash-before.bin", "firmware/FM-1.fwsc", "firmware/retained-ram.bin"):
+            with self.subTest(name=name):
+                payload = dict(self.payload)
+                payload[name] = b"private fixture"
+                hashes(payload)
+                with self.assertRaisesRegex(publish.DeploymentError, "exactly"):
+                    self.verify(payload)
+                (self.site / name).unlink()
+
+    def test_trial_controller_must_match_published_source(self):
+        payload = dict(self.payload)
+        payload["jam-trial-install.js"] += b"\n// changed after source export"
+        hashes(payload)
+        with self.assertRaisesRegex(publish.DeploymentError, "differs from its corresponding source"):
+            self.verify(payload)
+
+    def test_candidate_requires_exact_trial_descriptor_and_license_set(self):
+        for name in ("firmware/trial.json", "firmware/licenses/AC79-SDK-LICENSE.txt"):
+            with self.subTest(name=name), tempfile.TemporaryDirectory(prefix="jambox-missing-trial-") as directory:
+                payload = dict(self.payload)
+                del payload[name]
+                hashes(payload)
+                write_site(Path(directory), payload)
+                with self.assertRaisesRegex(publish.DeploymentError, "exactly"):
+                    publish.validate_site(Path(directory))
 
 
 if __name__ == "__main__":

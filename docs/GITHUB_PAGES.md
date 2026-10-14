@@ -61,7 +61,7 @@ The first publisher invocation performs a Git push dry-run; the second
 publishes the same validated package. Use `--publish` when the user requests
 a website deployment or update. Publishing is not a startup action.
 
-The public package includes the browser instrument at `/emu/` and the read-only device check at `/device/`. The exact 27-file allowlist excludes device firmware, candidate manifests and installation pages. Device-page modules must match their corresponding source archive.
+The default public package includes the browser instrument at `/emu/` and the read-only device check at `/device/`. Its exact 27-file allowlist excludes firmware and installation pages. To include the experimental factory-V15 installer, build the updater target, then run `python3 tools/package_jam_emu.py --with-trial` (add `--no-build` only when the emulator is already current). This creates a separate exact expanded file set, including `/install/`, the bound candidate, corresponding source and licenses. The publisher checks both forms and rejects unexpected files. See [Chrome trial checks](FM1_CHROME_TRIAL.md); keep raw backups and manufacturer firmware out of both forms.
 
 The publisher validates the exact static-site file list, hashes and included
 source archive, creates a temporary deployment checkout, and commits the

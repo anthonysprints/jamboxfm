@@ -3,6 +3,7 @@
 // Run: node --test tests/jam_web_transport_test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { getEventListeners } from 'node:events';
 import { Updater, pack7, unpack7, encodeMessage, decodeMessage, parseIdentity, parseRequest, OUR_LOADER } from '../web/fm1ota.js';
 
 const HS = [0xf0, 0, 0x32, 0x45, 0, 0, 0, 0x40, 0x7f, 0xf7];
@@ -144,6 +145,89 @@ test('abort during port open is prompt and late cleanup cannot close a newer rea
   assert.equal(mock.input.opens, 1, 'new read waits for the pending open cleanup');
   completeOpen(); await nextRead;
   assert.deepEqual(order.slice(0, 2), ['close', 'new-open']);
+});
+
+test('stalled closes are bounded, detach listeners immediately, and prevent premature reopen', { timeout: 4000 }, async () => {
+  const mock = await connected(), order = [];
+  let finishClose;
+  mock.input.close = () => {
+    mock.input.closes++; order.push('old-close-start');
+    return new Promise(resolve => { finishClose = () => { order.push('old-close-complete'); resolve(); }; });
+  };
+  const start = Date.now(), closing = mock.link.close();
+  await tick();
+  assert.equal(mock.link.closed, true);
+  assert.equal(getEventListeners(mock.input, 'midimessage').length, 0);
+  for (const port of [mock.input, mock.output]) assert.equal(getEventListeners(port, 'statechange').length, 0);
+  mock.input.receive(identity());
+  assert.equal(mock.link.q.length, 0, 'late packets cannot refill a detached link');
+  const retry = new Updater(mock.access);
+  await assert.rejects(retry.identify({ pair: mock.selected, deadline: Date.now() + 35 }), { code: 'timeout' });
+  assert.equal(mock.input.opens, 1); assert.equal(mock.output.opens, 1);
+  assert.equal(mock.input.closes, 1, 'a cleanup-wait timeout must not schedule another close');
+  await closing;
+  assert.ok(Date.now() - start < 1800, 'close itself must have a finite wait');
+  const retryStart = Date.now();
+  await assert.rejects(retry.identify({ pair: mock.selected }), { code: 'timeout' });
+  assert.ok(Date.now() - retryStart < 1800, 'retry is bounded even without a caller deadline');
+  assert.equal(mock.input.opens, 1); assert.equal(mock.input.closes, 1);
+  mock.input.open = async () => { order.push('new-open'); mock.input.opens++; };
+  mock.input.close = async () => { order.push('new-close'); mock.input.closes++; };
+  const pending = retry.identify({ pair: mock.selected });
+  await tick(); assert.equal(mock.input.opens, 1, 'timing out cleanup does not release the port');
+  finishClose();
+  assert.equal((await pending).identity.text, 'FM-1_700');
+  assert.deepEqual(order, ['old-close-start', 'old-close-complete', 'new-open', 'new-close']);
+});
+
+test('failed closes settle without masking an observation or racing the next open', async () => {
+  const mock = device(); let rejectClose;
+  mock.input.close = () => { mock.input.closes++; return new Promise((_, reject) => { rejectClose = reject; }); };
+  mock.output.close = async () => { mock.output.closes++; throw new Error('disconnected during close'); };
+  const first = mock.updater.identify(); await tick();
+  const second = new Updater(mock.access).identify({ pair: mock.selected }); await tick();
+  assert.equal(mock.input.opens, 1);
+  mock.input.close = async () => { mock.input.closes++; };
+  rejectClose(new Error('close failed'));
+  assert.equal((await first).identity.text, 'FM-1_700');
+  assert.equal((await second).identity.text, 'FM-1_700');
+  assert.equal(mock.input.opens, 2); assert.equal(mock.input.closes, 2); assert.equal(mock.output.closes, 2);
+});
+
+test('partial-open cleanup cannot hang an error or close a port owned by a pending retry', { timeout: 2500 }, async () => {
+  const mock = device(); let finishClose;
+  mock.output.open = async () => { mock.output.opens++; throw new Error('open refused'); };
+  mock.input.close = () => { mock.input.closes++; return new Promise(resolve => { finishClose = resolve; }); };
+  const start = Date.now();
+  await assert.rejects(mock.updater.identify(), { code: 'permission' });
+  assert.ok(Date.now() - start < 1800);
+  assert.equal(mock.input.closes, 1); assert.equal(mock.output.closes, 1);
+  await assert.rejects(new Updater(mock.access).identify({ pair: mock.selected, deadline: Date.now() + 35 }), { code: 'timeout' });
+  assert.equal(mock.input.opens, 1); assert.equal(mock.output.opens, 1);
+  assert.equal(mock.input.closes, 1, 'failed retry owns no ports to close');
+  finishClose(); await tick();
+});
+
+test('cancelled late open tracks its stalled close until cleanup actually settles', async () => {
+  const mock = device(), controller = new AbortController(); let finishOpen, finishClose;
+  mock.input.open = () => { mock.input.opens++; return new Promise(resolve => { finishOpen = resolve; }); };
+  mock.input.close = () => { mock.input.closes++; return new Promise(resolve => { finishClose = resolve; }); };
+  const start = Date.now(), first = mock.updater.identify({ signal: controller.signal });
+  await tick(); controller.abort();
+  await assert.rejects(first, { code: 'aborted' });
+  assert.ok(Date.now() - start < 300); assert.equal(mock.input.closes, 0);
+  mock.input.open = async () => { mock.input.opens++; };
+  finishOpen(); await tick();
+  assert.equal(mock.input.closes, 1);
+  await assert.rejects(new Updater(mock.access).identify({ pair: mock.selected, deadline: Date.now() + 35 }), { code: 'timeout' });
+  assert.equal(mock.input.opens, 1); assert.equal(mock.output.opens, 0);
+  assert.equal(mock.input.closes, 1);
+  mock.input.close = async () => { mock.input.closes++; };
+  const next = new Updater(mock.access).identify({ pair: mock.selected });
+  await tick(); assert.equal(mock.input.opens, 1);
+  finishClose();
+  assert.equal((await next).identity.text, 'FM-1_700');
+  assert.equal(mock.input.opens, 2); assert.equal(mock.input.closes, 2);
 });
 
 test('abort during handshake send and receive removes listeners and closes ports', async () => {
@@ -290,4 +374,15 @@ test('final family guard is required before success even when numeric identity m
   }), { code: 'identity' });
   assert.deepEqual(steps, ['reboot']); assert.deepEqual(seen, [['FM-1_700', 'final']]);
   assert.deepEqual(mock.output.sent, [HS]); assert.equal(mock.input.closes, 1); assert.equal(mock.output.closes, 1);
+});
+
+test('verified final return remains successful when disconnected port closes reject', async () => {
+  const mock = device(), steps = [];
+  for (const port of [mock.input, mock.output]) port.close = async () => { port.closes++; throw new Error('port already disconnected'); };
+  const result = await mock.updater.returned('FM-1_700', name => steps.push(name), {
+    pair: mock.selected, product: 'FM-1_700', identityGuard: () => true,
+  });
+  assert.equal(result, 'FM-1_700'); assert.deepEqual(steps, ['reboot', 'done']);
+  assert.equal(mock.input.closes, 1); assert.equal(mock.output.closes, 1);
+  assert.equal(getEventListeners(mock.input, 'midimessage').length, 0);
 });

@@ -33,13 +33,13 @@
 #define LDR_APP_LO 0x4000u
 #define LDR_APP_HI 0x93000u
 #if JAMBOX_PROTO
-/* Restricted staging contract: the inspected Sloop/JamBox updater puts its
- * resume record at 0xE4F00, in the last sector of [0xE0000, 0xE5000).
- * Never infer ownership of project/bank/sample sectors from an AT+CRC match.
- * This policy does not approve a firmware transition: milestone 3 must gate
- * exact source/target versions that use this staging location. */
+/* Two explicit staging contracts, never a scan of project/sample storage:
+ * Sloop/JamBox uses E4F00; stock V15 uses E8F00. The latter requires the
+ * additional record + staged-loader validation below before its sector may
+ * be erased. See docs/build-evidence/factory-v15/stock-record-cleanup.md. */
 #define LDR_REC_LO 0xE4000u
 #define LDR_REC_HI 0xE5000u
+#define LDR_STOCK_REC 0xE8F00u
 #else
 #define LDR_REC_LO 0x93000u                     /* update records live above the app ... */
 #define LDR_REC_HI 0xFC000u                     /* ... and below Felucca's globals */
@@ -101,6 +101,49 @@ static int ldr_chip_key(uint32_t *key)
 #define LDR_EFLASH (-14)                        /* unsupported/missing flash: no writes, records preserved */
 #define LDR_ERECORD (-15)                       /* resume-record cleanup could not be read/erased/verified */
 
+#if JAMBOX_PROTO
+/* Return 1 only for the known V15 handoff of our loader, 0 for no SPL-valid
+ * record, or an error for a live record whose ownership cannot be established.
+ * Stock writes 112 bytes but CRCs only the first 80. Its migration fields and
+ * final 32 allocation bytes are not required to be zero. */
+static int ldr_stock_record(void)
+{
+    uint8_t r[112], h[136];
+    uint32_t addr, len, i, own = 0;
+    if (ldr_fread(LDR_STOCK_REC, r, sizeof r))
+        return LDR_ERECORD;
+    if (ota_rd16(r + 6) != 0x5441u || !ota_rd16(r) || ota_rd16(r) != ota_crc16(r + 2, 78, 0))
+        return 0;
+    if (ota_rd16(r + 2) != 0x5A0Du || ota_rd16(r + 4) != 0x5A01u ||
+        !ota_memeq(r + 8, (const uint8_t *)"ota-FM-1_015", 13))
+        return LDR_ERECORD;
+    addr = ota_rd32(r + 72);
+    /* The stock allocator may move staging within VM space. Bound every read
+     * above the app and below the record; do not assume one loader address. */
+    if ((addr & 0xFFu) || addr < LDR_APP_HI || addr > LDR_STOCK_REC - sizeof h)
+        return LDR_ERECORD;
+    if (ldr_fread(addr, h, sizeof h))
+        return LDR_ERECORD;
+    len = ota_rd32(h + 8);
+    if (len < sizeof h || len > 0x4F00u || len > LDR_STOCK_REC - addr ||
+        ota_rd16(h) != ota_crc16(h + 2, 30, 0) || h[12] != 0x41u ||
+        !ota_memeq(h + 16, (const uint8_t *)"LOADER.BIN", 11) || ota_rd32(h + 4) != addr)
+        return LDR_ERECORD;
+    /* Both V15 and our updater put addr at +4 and total length at +8.
+     * Stock copies adjacent literal bytes after LOADER.BIN's NUL, so those
+     * filename padding bytes are deliberately not compared. */
+    if (ota_rd16(h + 32) != ota_crc16(h + 34, 30, 0) ||
+        !ota_memeq(h + 48, (const uint8_t *)"usb_hid_ota.bin", 15) ||
+        !ota_rd32(h + 36) || ota_rd32(h + 36) > 0x14000u || ota_rd32(h + 40) != 0x01C0A800u)
+        return LDR_ERECORD;
+    /* Same ownership marker in the first LZ4 literals as ota_stage(). This is
+     * structural validation, not a second decompression/body-integrity test. */
+    for (i = 0x48u; i + 16u <= sizeof h && !own; i++)
+        own = ota_memeq(h + i, (const uint8_t *)"FELUCCA-LOADER-1", 16);
+    return own ? 1 : LDR_ERECORD;
+}
+#endif
+
 /* Clear flash records before clearing RAM state or permitting a success reset.
  * A failed cleanup stays in the current loader session for host retry. Startup's
  * separate RAM-record clearing policy is unchanged; this does not promise that
@@ -108,6 +151,21 @@ static int ldr_chip_key(uint32_t *key)
 static int ldr_records_drop(void)
 {
     uint32_t s, i;
+#if JAMBOX_PROTO
+    int stock = ldr_stock_record();
+    if (stock < 0)
+        return stock;
+    if (stock) {
+        uint8_t r[112];
+        /* Do this first: a stock-staged loader header may itself be in E4000.
+         * Never erase E4 and only then try to establish E8's ownership. */
+        if (ldr_erase(0xE8000u) || ldr_fread(LDR_STOCK_REC, r, sizeof r))
+            return LDR_ERECORD;
+        for (i = 0; i < sizeof r; i++)
+            if (r[i] != 0xFFu)
+                return LDR_ERECORD;
+    }
+#endif
     for (s = LDR_REC_HI; s > LDR_REC_LO; s -= 0x1000u) {
         uint8_t r[80];
         if (ldr_fread(s - 0x100u, r, 80))
@@ -144,6 +202,12 @@ static int ldr_pass(void)
         return -6;                                       /* package for another chip key */
     if (!ldr_flash_known())                              /* never erase even a valid record on an unknown chip */
         return LDR_EFLASH;
+#if JAMBOX_PROTO
+    /* Discover an unreadable or unowned live stock record before changing the
+     * app. Cleanup revalidates it after the complete transfer and host finish. */
+    if ((rc = ldr_stock_record()) < 0)
+        return rc;
+#endif
     /* the head of flash.bin is never written, but it is part of the package's CRC */
     for (s = 0; s < LDR_APP_LO; s += 512u) {
         if (ota_read(fl_off + s, sec, 512))

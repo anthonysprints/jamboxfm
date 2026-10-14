@@ -22,7 +22,7 @@ For repeatable public updates, use the [GitHub Pages publishing instructions](do
 
 The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. The FM-1 build supports updating and application rescue while rejecting app-data writes; [update-isolation evidence](docs/build-evidence/update-isolation/README.md) records those software checks.
 
-Milestone 3 adds JamBox identity and splash, local candidate packaging with source/build evidence, simulated firmware transitions, and a read-only device check at the packaged site's `/device/` path. The page identifies firmware and saves a private report; it has no Install control or firmware download. See [candidate workflow and limits](docs/FM1_CANDIDATE.md) and [candidate evidence](docs/build-evidence/candidate/README.md). Hardware timing, physical installation and recovery remain untested. The next milestone is owner-device inventory, backup and recovery preparation before any physical trial.
+The site has a read-only device check at `/device/` and a separately packaged experimental first-install page at `/install/`. The latter supports original factory V15 to one exact JamBox candidate. The owner's private factory backup has been verified; actual JamBox installation, hardware timing and interrupted-update recovery remain untested. See the [Chrome trial workflow](docs/FM1_CHROME_TRIAL.md), [candidate checks](docs/FM1_CANDIDATE.md) and [backup evidence](docs/build-evidence/factory-v15/owner-backup-validation.md). This is a first device experiment, not a stable firmware release.
 
 ## Design and provenance
 
@@ -37,4 +37,4 @@ Milestone 3 adds JamBox identity and splash, local candidate packaging with sour
 
 Sloop's source is imported at `8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e`, with its licenses and notices retained. The original README is in [docs/upstream/SLOOP_README.md](docs/upstream/SLOOP_README.md); [the import manifest](docs/upstream/import-manifest.json) records original file hashes. Research is retained under `docs/research/`; current build evidence is under `docs/build-evidence/`.
 
-The FM-1 prototype is selected with `JAMBOX_PROTO=1`; invoking the inherited builder directly without that flag selects Sloop. Use the documented JamBox wrapper or candidate packager. The local candidate is not approved for owner installation, and no JamBox firmware release or operational installer is published by these build commands.
+The FM-1 prototype is selected with `JAMBOX_PROTO=1`; invoking the inherited builder directly without that flag selects Sloop. Use the documented JamBox wrapper or candidate packager. Candidate packaging retains the software-only manifest. `package_jam_emu.py --with-trial` separately adds the exact-build experimental installer; publication is a separate command.
