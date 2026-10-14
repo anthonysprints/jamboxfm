@@ -71,8 +71,11 @@ preserve. The helper verifies the factory identity before a one-shot ROM-mode
 request; source preparation pins upstream archives and fixes short-transfer/status
 handling in the local backup tool. These are host software changes, with
 [mock/source-check evidence](build-evidence/factory-v15/windows-backup-validation.md).
-No owner-device mode change, full backup, Windows SCSI transfer or firmware
-installation is established by them. The public checker remains read-only.
+Those software checks establish no owner-device operation. Subsequent
+[owner-provided Windows evidence](build-evidence/factory-v15/owner-windows-roundtrip.md)
+shows stock MIDI identity, ROM disk enumeration, and a return to factory MIDI
+identity. Full backup, Windows SCSI transfer and JamBox firmware installation
+remain pending. The public checker remains read-only.
 
 Cloud setup, setup replay, pinned SDK download into a fresh destination, and local serving of HTML/JavaScript/WASM passed. Python, browser/native compilers, SDK and Playwright dependencies are installed outside the checkout. Reusable installation and startup instructions have been saved to the environment draft.
 

@@ -4,10 +4,11 @@ The owner has Windows, Python **3.12.7**, factory **FM-1_015**, and no personal
 sounds/settings to preserve. The next device work is to establish recovery-mode
 access and obtain a private full backup. **This does not install JamBox.**
 
-The software checks described below run in the cloud with simulated devices.
-Windows MIDI delivery, Windows disk access, and the owner's physical round trip
-remain untested. A working stock soft key also does not establish recovery after
-an interrupted firmware write: that entry route depends on working app code.
+Cloud checks used simulated devices. The owner subsequently demonstrated
+[Windows MIDI identity, ROM disk enumeration and a return to factory identity](build-evidence/factory-v15/owner-windows-roundtrip.md).
+Windows SCSI access, RAM-loader execution and the full backup remain pending.
+A working stock soft key does not establish recovery after an interrupted
+firmware write: that entry route depends on working app code.
 
 ## 1. Prepare the computer with the FM-1 disconnected
 
@@ -112,6 +113,31 @@ state; do not try a restore or erase to investigate a mode-only test.
 
 ## 4. Backup after a successful mode-only round trip
 
+For the next owner step, a local factory file is optional. The simpler command
+`backup backups` retains all device and double-read verification checks and
+saves the full flash. `--package FM-1.fwsc` only adds comparison with that file;
+the exact factory file is already held privately in the cloud for later review.
+After another guarded ROM entry, open PowerShell **as Administrator** and run:
+
+```powershell
+& {
+    $ErrorActionPreference = "Stop"
+    Set-Location "$env:USERPROFILE\JamBoxFM-backup" -ErrorAction Stop
+    .\.venv\Scripts\python.exe -B prepare_fm1_backup.py --unbricker unbricker --jl-dir unbricker\jl-uboot-tool --check
+    if ($LASTEXITCODE -ne 0) { throw "Backup source verification failed. Stop here." }
+    .\.venv\Scripts\python.exe -B unbricker\fm1_unbrick.py find
+    if ($LASTEXITCODE -ne 0) { throw "ROM discovery failed. Stop here." }
+    .\.venv\Scripts\python.exe -B unbricker\fm1_unbrick.py backup backups
+    if ($LASTEXITCODE -ne 0) { throw "Backup failed. Preserve the log; do not use a partial dump." }
+}
+```
+
+Wait for the process to finish and the PowerShell prompt to return. `Backup OK`
+is printed before the JSON report is completed. `packages: []` is expected
+without the optional package comparison. Use one backup variant per session.
+
+### Optional variant: compare with the factory file during backup
+
 Keep the owner's original `FM-1.fwsc` in the private preparation folder. Before
 using it, verify it in PowerShell:
 
@@ -144,6 +170,8 @@ chosen):
     if ($LASTEXITCODE -ne 0) { throw "Backup failed. Preserve the log; do not use a partial dump." }
 }
 ```
+
+### Backup completion and return (both variants)
 
 **Stop if either check fails.** Do not supply a guessed `PhysicalDrive` number
 or an override flag. The backup tool requires the expected ROM device and chip

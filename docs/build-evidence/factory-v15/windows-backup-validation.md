@@ -1,5 +1,10 @@
 # Windows backup preparation: software validation
 
+This records the cloud checks at preparation time. The owner's subsequent
+[Windows ROM round trip](owner-windows-roundtrip.md) establishes MIDI access,
+ROM enumeration and a return to factory identity. Actual SCSI backup and
+firmware installation remain pending.
+
 Starting JamBox source: `d422ef7`. Owner-confirmed baseline: original factory
 FM-1 V15, Windows, Python 3.12.7, no saved personal sounds/settings to keep.
 The host's Windows release/architecture and physical recovery behavior remain
