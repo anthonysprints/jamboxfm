@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-// One experimental factory-V15 -> JamBox installation, using real Web MIDI.
+// Experimental factory-V15 installation or normal JamBox update over Web MIDI.
 // Candidate software evidence remains separate from physical validation.
 import { Updater, FM1_PORT } from './fm1ota.js';
 import { prepareCandidate, validateManifest, inspectDevice, JAM_IDENTITIES } from './jam-device-policy.js';
 import { sha256hex } from './fm1pkg.js';
 
-const TRANSITION = 'factory-v15-to-jambox';
+const TRANSITIONS = Object.freeze(['factory-v15-to-jambox', 'jambox-normal-to-jambox']);
 const OPEN_TIMEOUT = 10000, LOAD_TIMEOUT = 30000, INSTALL_TIMEOUT = 10 * 60 * 1000;
 const loadedBundles = new WeakMap();
 const hash = value => typeof value === 'string' && /^[0-9a-f]{64}$/.test(value);
@@ -15,6 +15,14 @@ function insist(condition, message, code = 'package') { if (!condition) throw fa
 function cancelled(signal) { if (signal?.aborted) throw failure('aborted', 'Cancelled before installation began.'); }
 function stockIdentity(identity) {
   return identity?.text === 'FM-1_015' && identity.model === 'FM-1' && identity.version === 15;
+}
+function sourceTransition(identity, capabilities) {
+  if (stockIdentity(identity)) return TRANSITIONS[0];
+  // Recognition requires the exact schema, release, mode, identity and mask
+  // in the read-only family probe. A numeric transport identity is not enough.
+  if (identity?.text === JAM_IDENTITIES.app && capabilities?.recognized &&
+      capabilities.family === 'jamboxfm' && capabilities.mode === 'normal') return TRANSITIONS[1];
+  return null;
 }
 function extraCandidates(access) {
   // listPairs omits ambiguous same-name groups, so count raw candidates too.
@@ -82,11 +90,12 @@ export async function loadTrialBundle({ baseURL = new URL('./firmware/', import.
   base.search = ''; base.hash = '';
   try {
     const trial = json(await fetchBytes(new URL('trial.json', base), 4096, fetchImpl, operation.signal));
-    const fields = ['schema_version', 'kind', 'hardware_validated', 'transition', 'manifest_sha256', 'firmware_sha256'];
+    const fields = ['schema_version', 'kind', 'hardware_validated', 'transitions', 'manifest_sha256', 'firmware_sha256'];
     insist(trial && typeof trial === 'object' && !Array.isArray(trial) &&
       Object.keys(trial).sort().join('|') === fields.sort().join('|'), 'Invalid trial descriptor fields');
-    insist(trial.schema_version === 1 && trial.kind === 'experimental-first-install' && trial.hardware_validated === false &&
-      trial.transition === TRANSITION && hash(trial.manifest_sha256) && hash(trial.firmware_sha256), 'Unsupported experimental trial descriptor');
+    insist(trial.schema_version === 2 && trial.kind === 'experimental-install' && trial.hardware_validated === false &&
+      JSON.stringify(trial.transitions) === JSON.stringify(TRANSITIONS) && hash(trial.manifest_sha256) && hash(trial.firmware_sha256),
+    'Unsupported experimental trial descriptor');
     const manifestBytes = await fetchBytes(new URL('manifest.json', base), 128 * 1024, fetchImpl, operation.signal);
     insist(await sha256hex(manifestBytes) === trial.manifest_sha256, 'Trial manifest SHA-256 mismatch');
     const manifest = json(manifestBytes);
@@ -96,6 +105,7 @@ export async function loadTrialBundle({ baseURL = new URL('./firmware/', import.
     const bytes = await fetchBytes(new URL(checked.firmware.file, base), checked.firmware.size_bytes, fetchImpl, operation.signal);
     const candidate = await prepareCandidate(checked, bytes);
     cancelled(operation.signal);
+    Object.freeze(trial.transitions);
     const bundle = Object.freeze({ version: candidate.version, firmwareSHA256: candidate.sha256,
       firmwareSizeBytes: bytes.length, manifest: candidate.manifest, trial: Object.freeze(trial), hardwareValidated: false });
     loadedBundles.set(bundle, candidate);
@@ -125,11 +135,13 @@ export class TrialInstaller {
       const updater = new Updater(this.access);
       const observation = await updater.identify({ pair, signal: operation.signal, deadline: Date.now() + OPEN_TIMEOUT,
         query: (link, identity) => inspectDevice(identity, link, { signal: operation.signal }) });
-      const ambiguous = extraCandidates(this.access), eligible = stockIdentity(observation.identity) && !ambiguous;
-      return { identity: observation.identity, capabilities: observation.capabilities, eligible, uniqueDevice: !ambiguous, hardwareValidated: false,
+      const ambiguous = extraCandidates(this.access), transition = sourceTransition(observation.identity, observation.capabilities);
+      const eligible = !!transition && !ambiguous;
+      return { identity: observation.identity, capabilities: observation.capabilities, eligible, transition,
+        uniqueDevice: !ambiguous, hardwareValidated: false,
         reason: ambiguous ? 'Connect only one FM-1 MIDI device before starting this trial. Disconnect other matching MIDI devices and check again.' :
-          eligible ? 'Factory V15 identity reported. Eligible for this experimental first-install trial; physical behavior remains unvalidated.' :
-          'This first-install trial requires the exact reported factory V15 identity FM-1_015.' };
+          eligible ? (transition === TRANSITIONS[1] ? 'JamBox is ready for an experimental update.' : 'Factory V15 is ready for an experimental installation.') :
+          'Start from factory V15 or a running JamBox build with the matching family response.' };
     } catch (error) { throw scopedError(error, operation); }
     finally { operation.close(); this.#busy = false; }
   }
@@ -142,7 +154,7 @@ export class TrialInstaller {
     // started, neither a cancelled UI task nor a rendering error aborts a write.
     const operation = scope(signal, INSTALL_TIMEOUT, () => !this.started);
     const candidate = loadedBundles.get(bundle), updater = new Updater(this.access);
-    let passedApp = false, passedLoader = false, finalIdentity = null;
+    let passedApp = false, passedLoader = false, finalIdentity = null, sourceIdentity = null, transition = null;
     try {
       cancelled(operation.signal);
       oneDevice(this.access);
@@ -150,11 +162,18 @@ export class TrialInstaller {
       const identityGuard = async (identity, context) => {
         if (context.stage === 'app') {
           oneDevice(this.access); // Recheck immediately before staging, not only at inspection.
-          passedApp = stockIdentity(identity);
-          if (passedApp) this.log('Fresh factory V15 identity checked.');
+          const observed = await inspectDevice(identity, context.link, { signal: operation.signal });
+          oneDevice(this.access); // A device can appear while the family query is pending.
+          transition = sourceTransition(identity, observed);
+          passedApp = !!transition;
+          if (passedApp) {
+            sourceIdentity = { ...identity };
+            this.log(transition === TRANSITIONS[1] ? 'Fresh JamBox application identity and family response checked.' : 'Fresh factory V15 identity checked.');
+          }
           return passedApp;
         }
         const observed = await inspectDevice(identity, context.link, { signal: operation.signal });
+        oneDevice(this.access); // Re-enumeration can change during a family query too.
         const jambox = observed.recognized && observed.family === 'jamboxfm' && observed.release === candidate.version;
         if (context.stage === 'loader') {
           passedLoader = passedApp && jambox && observed.mode === 'loader' && identity.text === JAM_IDENTITIES.loader;
@@ -179,10 +198,19 @@ export class TrialInstaller {
           return pairs[0] || null;
         } });
       insist(finalIdentity, 'The expected JamBox application did not identify itself', 'identity');
-      return { identity: finalIdentity, version: candidate.version, firmwareSHA256: candidate.sha256,
-        hardwareValidated: false, experimental: true, transition: TRANSITION, started: true,
+      return { identity: finalIdentity, sourceIdentity, version: candidate.version, firmwareSHA256: candidate.sha256,
+        hardwareValidated: false, experimental: true, transition, started: true,
         verification: 'reported-family-and-release' };
-    } catch (error) { throw scopedError(error, operation, this.started); }
+    } catch (error) {
+      const scoped = scopedError(error, operation, this.started);
+      // A fresh, eligible source can differ from the earlier inspection. Keep
+      // failed-transfer reports tied to the source we actually checked.
+      if (sourceIdentity && transition) {
+        scoped.sourceIdentity = sourceIdentity;
+        scoped.transition = transition;
+      }
+      throw scoped;
+    }
     finally { operation.close(); this.#busy = false; }
   }
 }

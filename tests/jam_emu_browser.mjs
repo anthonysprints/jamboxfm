@@ -108,6 +108,14 @@ try {
   const soundBefore = (await state(page)).sound;
   await turn(page, 2);
   await page.waitForFunction(previous => globalThis.jamEmu.state.sound !== previous, soundBefore);
+  const tempoSound = (await state(page)).sound;
+  await turn(page, 1);
+  await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
+  assert.equal((await state(page)).selected, 1, 'bottom-right Home knob preserves part');
+  assert.equal((await state(page)).sound, tempoSound, 'bottom-right Home knob preserves sound');
+  assert.equal(await encoder(page, 1).getAttribute('aria-valuetext'), 'Tempo: 89 BPM');
+  await turn(page, 1, 'ArrowDown');
+  await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
   const macroBefore = (await state(page)).macros[0];
   await turn(page, 3);
   await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] !== previous, macroBefore);

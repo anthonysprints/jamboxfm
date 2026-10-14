@@ -60,9 +60,21 @@ int main(int argc, char **argv)
     for (k = 0; k < NTRK; k++) before &= !memcmp(patterns[k], trk[k].step, sizeof patterns[k]);
     check(before, "curated sound browsing preserves all four patterns");
     old_index = jam_sound_index(song.sel); old_track = song.sel;
+    before = strip_hash(0, 36);
     turn(EN_ALGO, 1);
-    check(song.sel == old_track && jam_sound_index(song.sel) != old_index,
-          "ALGORITHM browses sound and never selects a different part");
+    check(song.g[G_BPM] == bpm + 1 && song.sel == old_track && jam_sound_index(song.sel) == old_index,
+          "ALGORITHM raises tempo one BPM without changing part or sound");
+    check(before != strip_hash(0, 36), "the Home BPM display follows the tempo knob");
+    turn(EN_ALGO, -1);
+    check(song.g[G_BPM] == bpm, "ALGORITHM lowers tempo one BPM");
+    turn(EN_ALGO, 1000);
+    check(song.g[G_BPM] == GP[G_BPM].max, "tempo clamps at 240 BPM");
+    turn(EN_ALGO, -1000);
+    check(song.g[G_BPM] == GP[G_BPM].min, "tempo clamps at 40 BPM");
+    song.g[G_BPM] = bpm;
+    before = 1;
+    for (k = 0; k < NTRK; k++) before &= !memcmp(patterns[k], trk[k].step, sizeof patterns[k]);
+    check(before, "tempo changes preserve all four recorded patterns");
 
     for (k = 0; k < 4u; k++) {
         jam_macro_set(song.sel, k, 0);
@@ -73,7 +85,7 @@ int main(int argc, char **argv)
         turn(EN_K1 + k, -1000);
         check(jam_macro_get(song.sel, k) == 0, "macro turns clamp at zero");
     }
-    check(song.g[G_BPM] == bpm, "the Home knobs leave the transport tempo alone");
+    check(song.g[G_BPM] == bpm, "the four sound macros leave tempo alone");
 
     tap(B_ENV);
     check(!ui.home && cur_page()->fam == FAM_ENV, "ENV still reaches the deep envelope page");
@@ -107,6 +119,9 @@ int main(int argc, char **argv)
     /* Real transport buttons still execute before the Home encoder hook. */
     tap(B_PLAY); frame();
     check(song.playing, "PLAY starts the shared transport from Home");
+    turn(EN_ALGO, 1);
+    check(song.playing && song.g[G_BPM] == bpm + 1, "tempo changes while the groove keeps playing");
+    turn(EN_ALGO, -1);
     frames(12);
     if (outdir) ppm("jam-home-playing");
     tap(B_PLAY); frame();

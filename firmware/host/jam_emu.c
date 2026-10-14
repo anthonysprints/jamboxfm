@@ -227,7 +227,6 @@ void jam_emu_init(void)
     settings_init();
     lights_lvl = LIGHTS_MID;
     lights_keys = KEYS_C;
-    lights_notes = 1;
     layers_init();
     jam_new_dusty();
     /* Apply initial engine changes and their panic requests before the first
@@ -345,6 +344,7 @@ int32_t jam_emu_value(uint32_t field, uint32_t index)
             else if (trk[index].step[i].time == ST_NOTE) mask += trk[index].step[i].n;
         }
         return (int32_t)mask;
+    case 20: return jam_home_active();
     default: return -1;
     }
 }

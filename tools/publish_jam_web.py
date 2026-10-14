@@ -195,7 +195,7 @@ def validate_hashes(files: dict[str, bytes], label: str = "Publish") -> None:
 
 
 def validate_trial(files: dict[str, bytes]) -> None:
-    """Validate the opt-in first trial without promoting a simulated candidate.
+    """Validate the opt-in install/update trial without promoting the candidate.
 
     The packager independently verifies the local ELF and pinned SDK/compiler.
     Publication rechecks the immutable package, source, receipt and their links;
@@ -205,8 +205,9 @@ def validate_trial(files: dict[str, bytes]) -> None:
     validate_hashes(bundle, "Candidate")
     manifest = json_object(bundle["manifest.json"], "candidate manifest")
     trial = json_object(files["firmware/trial.json"], "experimental trial descriptor")
-    expected_trial = {"schema_version": 1, "kind": "experimental-first-install", "hardware_validated": False,
-        "transition": "factory-v15-to-jambox", "manifest_sha256": sha(bundle["manifest.json"]),
+    expected_trial = {"schema_version": 2, "kind": "experimental-install", "hardware_validated": False,
+        "transitions": ["factory-v15-to-jambox", "jambox-normal-to-jambox"],
+        "manifest_sha256": sha(bundle["manifest.json"]),
         "firmware_sha256": sha(bundle["jamboxfm-0.1.0-dev.fwsc"])}
     if trial != expected_trial or type(trial.get("schema_version")) is not int or trial.get("hardware_validated") is not False:
         raise DeploymentError("Experimental trial descriptor or candidate binding is invalid.")

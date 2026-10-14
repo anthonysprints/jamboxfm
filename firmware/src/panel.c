@@ -78,7 +78,13 @@ struct { uint32_t magic, palette, lowcut, zoom; } settings __attribute__((sectio
 enum { LIGHTS_OFF, LIGHTS_LOW, LIGHTS_MID, LIGHTS_HIGH, LIGHTS_N };
 enum { KEYS_OFF, KEYS_C, KEYS_WHITE, KEYS_ALL, KEYS_N };   /* (ALL: SLOOP 2.4; an older SLOOP reads it as OFF) */
 static uint8_t lights_lvl, lights_keys;
+/* Shared device/browser default: SNAP must show the pitch it corrected to.
+ * The NOTES menu can still turn sounding-note feedback off for this session. */
+#if JAMBOX_PROTO
+static uint8_t lights_notes = 1;
+#else
 static uint8_t lights_notes;                   /* 1: on a synth track the sounding notes light their keys */
+#endif
 static uint8_t lights_sync;                    /* GLO > SYSTEM > SYNC (G_SYNC), kept here: 0 INT, 1 USB, 2 TRS */
 static uint8_t lights_mout;                    /* GLO > SYSTEM > MIDI (G_MIDI): 1 = the sequencer goes to MIDI OUT too */
 static uint8_t lights_min;                     /* GLO > SYSTEM > IN (G_ROUTE): 0 NOTES, 1 CLOCK only, 2..17 (2.6) CH 1..16 only */

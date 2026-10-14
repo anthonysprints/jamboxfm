@@ -158,7 +158,7 @@ def standalone_html(runtime: dict[str, bytes], source_zip: bytes, notices: dict[
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--no-build", action="store_true", help="package existing emulator build (for validation only)")
-    parser.add_argument("--with-trial", action="store_true", help="include the experimental first-install page and verified device candidate")
+    parser.add_argument("--with-trial", action="store_true", help="include the experimental install/update page and verified device candidate")
     parser.add_argument("--toolchain", type=Path, default=Path(os.environ.get("JIELI_TOOLCHAIN", "/workspace/toolchains/jieli/toolchain")))
     parser.add_argument("--sdk", type=Path, default=Path(os.environ.get("AC79_SDK", "/workspace/deps/ac79-sdk")))
     args = parser.parse_args()
@@ -180,8 +180,9 @@ def main() -> None:
         candidate = package_jam_device.package(toolchain=args.toolchain.resolve(), sdk=args.sdk.resolve())
         trial_entries = {"firmware/" + name: (package_jam_device.OUTPUT / name).read_bytes()
                          for name in TRIAL_BUNDLE_FILES}
-        trial = {"schema_version": 1, "kind": "experimental-first-install", "hardware_validated": False,
-            "transition": "factory-v15-to-jambox", "manifest_sha256": sha(trial_entries["firmware/manifest.json"]),
+        trial = {"schema_version": 2, "kind": "experimental-install", "hardware_validated": False,
+            "transitions": ["factory-v15-to-jambox", "jambox-normal-to-jambox"],
+            "manifest_sha256": sha(trial_entries["firmware/manifest.json"]),
             "firmware_sha256": candidate["firmware"]["sha256"]}
         trial_entries["firmware/trial.json"] = (json.dumps(trial, indent=2, sort_keys=True) + "\n").encode()
         trial_entries.update({name: (ROOT / "web" / name).read_bytes() for name in TRIAL_RUNTIME_FILES})

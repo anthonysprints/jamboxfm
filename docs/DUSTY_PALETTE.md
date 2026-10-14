@@ -4,7 +4,7 @@ Shared implementation: `/workspace/jamboxfm/firmware/src/jam_palette.c`, include
 
 ## Session and role routing
 
-`jam_new_dusty()` returns 1 only when transport, count-in, and first-take capture are stopped; it never starts playback. It produces 88 BPM, straight timing, 32 sixteenth-note steps per track (two bars), root C/minor, a ready drumbeat, and empty playable melodic patterns. Selected internal track 1 is CHORDS. Existing Sloop seventh-chord and WHITE scale helpers are enabled on chords; WHITE scale helper is enabled on lead. Arpeggiators and inserts are off. These are existing helpers, not the planned JamBox Assist/ownership contract.
+`jam_new_dusty()` returns 1 only when transport, count-in, and first-take capture are stopped; it never starts playback. It produces 88 BPM, straight timing, 32 sixteenth-note steps per track (two bars), root C/minor, a ready drumbeat, and empty playable melodic patterns. Selected internal track 1 is CHORDS. Existing Sloop seventh-chord and WHITE scale helpers are enabled on chords; SNAP scale helper is enabled on lead. Arpeggiators and inserts are off. These are existing helpers, not the planned JamBox Assist/ownership contract. The proposed root/chord-shape changes are recorded in [First device feedback](FIRST_DEVICE_FEEDBACK.md).
 
 Display order DRUMS/BASS/CHORDS/LEAD maps to internal track 3/0/1/2. Track 0 bass and track 2 lead use V_LEGATO; track 1 chords uses V_POLY. Every melodic track uses ANALOG engine 0. Synth voice sharing remains the upstream eight-voice allocator. The audition phrase reached six busy synth voices; that is an observed phrase result, not a new six-voice cap. Six dedicated drum voices remain upstream behavior.
 

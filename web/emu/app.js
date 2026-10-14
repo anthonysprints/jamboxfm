@@ -258,7 +258,7 @@ function renderState(state) {
     element.classList.toggle('is-on', led >= 128); element.classList.toggle('is-dim', led > 0 && led < 128);
   }
   for (let i = 0; i < 4; i++) {
-    const control = knobValues.get(3 + i), available = state.home && state.macroAvailable;
+    const control = knobValues.get(3 + i), available = state.homeControls && state.macroAvailable;
     const name = available ? (state.selected === 3 ? ['TONE', 'LEVEL', 'ECHO', 'ROOM'] : ['BRIGHT', 'MOVE', 'GRIT', 'SPACE'])[i] : `KNOB ${i + 1}`;
     control.querySelector('.control-label').textContent = name; control.setAttribute('aria-label', name);
     control.setAttribute('aria-valuenow', String(available ? state.macros[i] : 50));
@@ -266,7 +266,13 @@ function renderState(state) {
     if (available) control.querySelector('.knob').style.setProperty('--rotation', `${-135 + state.macros[i] * 2.7}deg`);
   }
   knobValues.get(0).setAttribute('aria-valuetext', `Selected part: ${['Bass', 'Chords', 'Lead', 'Drums'][state.selected]}`);
-  for (const role of [1, 2]) knobValues.get(role).setAttribute('aria-valuetext', state.sound);
+  const tempoKnob = knobValues.get(1);
+  tempoKnob.querySelector('.keyhint').textContent = state.homeControls ? 'HOME: BPM' : 'DRAG / SCROLL';
+  tempoKnob.setAttribute('aria-valuemin', state.homeControls ? '40' : '0');
+  tempoKnob.setAttribute('aria-valuemax', state.homeControls ? '240' : '100');
+  tempoKnob.setAttribute('aria-valuenow', state.homeControls ? String(state.tempo) : '50');
+  tempoKnob.setAttribute('aria-valuetext', state.homeControls ? `Tempo: ${state.tempo} BPM` : 'Controls follow the current screen');
+  knobValues.get(2).setAttribute('aria-valuetext', state.sound);
   knobValues.get('master').setAttribute('aria-valuenow', String(state.master));
   knobValues.get('master').querySelector('.knob').style.setProperty('--rotation', `${-135 + state.master * 2.7}deg`);
 }

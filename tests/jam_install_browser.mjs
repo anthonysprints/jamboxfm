@@ -22,8 +22,8 @@ const logicalImage = Buffer.from((await prepareCandidate(manifest, firmware)).im
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 // The unbundled source-page fixture binds its real candidate exactly like the
 // publisher. Packaged-site runs must use the actual published trial descriptor.
-const trial = Buffer.from(JSON.stringify({ schema_version: 1, kind: 'experimental-first-install', hardware_validated: false,
-  transition: 'factory-v15-to-jambox', manifest_sha256: digest(manifestBytes), firmware_sha256: digest(firmware) }));
+const trial = Buffer.from(JSON.stringify({ schema_version: 2, kind: 'experimental-install', hardware_validated: false,
+  transitions: ['factory-v15-to-jambox', 'jambox-normal-to-jambox'], manifest_sha256: digest(manifestBytes), firmware_sha256: digest(firmware) }));
 const evidence = resolve('build/jam-install-evidence');
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
 const server = createServer(async (request, response) => {
@@ -120,7 +120,9 @@ function fakeWebMIDI({ config, image }) {
     }
     if (equal(packet, frame(0x12, []))) {
       const stage = device.stage === 'loader' ? 2 : 0;
-      const family = config.badLoaderFamily && stage === 2 ? 'FOREIGN!' : 'JAMBOXFM';
+      if (device.stage === 'app' && config.missingAppProbe) return;
+      const badApp = device.stage === 'app' && (config.badAppFamily || config.changedAppFamily && device.handshakes > 1);
+      const family = (config.badLoaderFamily && stage === 2 || badApp) ? 'FOREIGN!' : 'JAMBOXFM';
       const release = config.badFinalRelease && device.stage === 'final' ? '0.0.0' : '0.1.0-dev';
       reply(device, frame(0x12, [...text(family), 1, stage, stage === 2 ? 9 : 23, 0, ...pad(release, 20), ...pad(identity(device), 16)])); return;
     }
@@ -246,13 +248,27 @@ try {
   await runCase('late MIDI connection events do not invalidate a checked device', { lateCloseEvents: true }, async page => {
     await ready(page); await page.waitForTimeout(100);
     assert(await page.locator('#install-device').isEnabled());
-    assert.match(await page.locator('#device-label').textContent(), /ready for this trial/);
+    assert.match(await page.locator('#device-label').textContent(), /ready to install/);
     await noOpenLinks(page);
   });
   await runCase('unapproved starting firmware', { identity: 'FM-1_014' }, async page => {
     await connect(page); assert(await page.locator('#install-device').isDisabled());
     assert.match(await page.locator('#device-label').textContent(), /requires factory V15/); await noOpenLinks(page);
   });
+  for (const fault of ['badAppFamily', 'missingAppProbe']) await runCase(`JamBox identity with ${fault} refuses update`,
+    { identity: 'FM-1_700', [fault]: true }, async page => {
+      await connect(page); assert(await page.locator('#install-device').isDisabled());
+      assert.match(await page.locator('#device-label').textContent(), /requires factory V15 or supported JamBox/);
+      assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot())).upgrades, []); await noOpenLinks(page);
+    });
+  await runCase('fresh JamBox family check rejects changed capabilities before update',
+    { identity: 'FM-1_700', changedAppFamily: true }, async page => {
+      await ready(page); assert.match(await page.locator('#install-device').textContent(), /^Update/);
+      await page.locator('#install-device').click();
+      const report = await result(page); assert.equal(report.updateStarted, false); assert.equal(report.outcome, 'error');
+      assert.equal(report.transition, 'jambox-normal-to-jambox');
+      assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot())).upgrades, []); await noOpenLinks(page);
+    });
   await runCase('damaged trial descriptor blocks install', { badBundle: true }, async page => {
     await connect(page); assert(await page.locator('#install-device').isDisabled());
     assert(await page.locator('#reload-firmware').isVisible());
@@ -285,6 +301,13 @@ try {
     assert(await page.evaluate(() => { const event = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(event); return event.defaultPrevented; }));
     await noOpenLinks(page);
   });
+  await runCase('failed report uses the freshly checked eligible source', { changedIdentity: 'FM-1_700', disconnectAtStart: true }, async page => {
+    await ready(page); assert.match(await page.locator('#install-device').textContent(), /^Install/);
+    await page.locator('#install-device').click();
+    const report = await result(page); assert.equal(report.outcome, 'error'); assert.equal(report.updateStarted, true);
+    assert.equal(report.sourceIdentity, 'FM-1_700'); assert.equal(report.transition, 'jambox-normal-to-jambox');
+    assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot())).upgrades, ['app']); await noOpenLinks(page);
+  });
   await runCase('foreign loader is rejected before its upgrade command', { badLoaderFamily: true }, async page => {
     await ready(page); await page.locator('#install-device').click();
     const report = await result(page); assert.equal(report.outcome, 'error'); assert.equal(report.updateStarted, true);
@@ -305,6 +328,7 @@ try {
     await page.locator('#install-device').click();
     const report = await result(page); assert.equal(report.outcome, 'completed'); assert.equal(report.finalIdentity, 'FM-1_700');
     assert.equal(report.hardwareValidated, false); assert.equal(report.firmwareSHA256, digest(firmware));
+    assert.equal(report.transition, 'factory-v15-to-jambox'); assert.equal(report.sourceIdentity, 'FM-1_015');
     assert(report.stages.some(entry => entry.stage === 'done'));
     const snapshot = await page.evaluate(() => fakeMIDI.snapshot());
     assert.deepEqual(snapshot.upgrades, ['app', 'loader']);
@@ -329,6 +353,20 @@ try {
     await page.setViewportSize({ width: 320, height: 740 });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   }, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await runCase('installed JamBox updates through both stages and reports its actual transition', { identity: 'FM-1_700' }, async page => {
+    await ready(page); assert.match(await page.locator('#device-label').textContent(), /ready to update/);
+    assert.match(await page.locator('#install-device').textContent(), /^Update experimental JamBoxFM/);
+    await page.locator('#install-device').click();
+    const report = await result(page); assert.equal(report.outcome, 'completed');
+    assert.equal(report.transition, 'jambox-normal-to-jambox');
+    assert.equal(report.sourceIdentity, 'FM-1_700'); assert.equal(report.finalIdentity, 'FM-1_700');
+    assert.equal(report.hardwareValidated, false); assert.equal(report.firmwareSHA256, digest(firmware));
+    assert.match(await page.locator('#result-title').textContent(), /JamBox is updated/);
+    const snapshot = await page.evaluate(() => fakeMIDI.snapshot());
+    assert.deepEqual(snapshot.upgrades, ['app', 'loader']);
+    assert.deepEqual(snapshot.transfers.map(t => t.bytes), [logicalImage.length, logicalImage.length]);
+    await noOpenLinks(page);
+  });
   assert.deepEqual(errors, [], 'no browser JavaScript errors');
   assert(network.every(request => request.method === 'GET' && request.url.startsWith(address + '/')), 'no uploads or external requests');
   console.log(`JamBox installer: ${passed} Chromium cases passed. These verify browser behavior and host transfers, not physical flashing. Screenshots: ${evidence}`);

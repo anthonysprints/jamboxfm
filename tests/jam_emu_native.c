@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     jam_emu_init();
     CHECK(jam_emu_frames() == CTL && jam_emu_rate() == FS, "fixed audio ABI");
     CHECK(jam_emu_value(6, 0) == 1 && jam_emu_value(0, 0) == 1, "real JamBox Home starts on chords");
+    CHECK(jam_emu_value(20, 0), "browser knob hints follow the actual Home control owner");
     CHECK(jam_emu_screen_version() > 0, "boot LCD snapshot exists before audio starts");
     rgba = jam_emu_screen();
     for (i = 0; i < 240u * 240u; i++) {
@@ -109,6 +110,7 @@ int main(int argc, char **argv)
     jam_emu_button(B_FX, 1);
     jam_emu_key(0, 1);
     CHECK(jam_emu_value(11, 0) == LY_FX && jam_emu_value(14, 0) == 0, "held FX owns its key before the keyboard can play it");
+    CHECK(!jam_emu_value(20, 0), "held FX hides Home-only knob hints");
     jam_emu_frame();
     CHECK(jam_emu_leds()[B_FX] == 255, "logical button LEDs follow the firmware matrix");
     jam_emu_release();

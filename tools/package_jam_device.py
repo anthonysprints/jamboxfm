@@ -160,7 +160,7 @@ def package(root=ROOT, build=BUILD, output=OUTPUT, toolchain=None, sdk=None):
     files["README.txt"] = ("JamBoxFM local software candidate " + receipt.VERSION + "\n\n"
         "This candidate manifest records software validation only; hardware_validated remains false.\n"
         "It does not itself authorize an installation. A separately packaged trial.json can bind\n"
-        "these exact bytes to the experimental factory-V15 first-install workflow.\n"
+        "these exact bytes to the experimental factory-V15 install or normal JamBox update workflow.\n"
         "That experiment does not establish hardware reliability or interrupted-update recovery.\n"
         "manifest.json identifies the firmware, source, build evidence and pinned return package.\n"
         "The return Sloop package is identified by hash only and is not included.\n"

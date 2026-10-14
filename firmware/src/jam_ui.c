@@ -68,8 +68,12 @@ static int jam_home_input(void)
         track_select(jam_role_track((uint32_t)r));
     }
     jam_home_browse(panel_enc(EN_PRESET));
-    /* A useful alias until the curated library has distinct sound categories. */
-    jam_home_browse(panel_enc(EN_ALGO));
+    /* Bottom-right left encoder: one BPM per detent on Home. */
+    if ((s = panel_enc(EN_ALGO)) != 0) {
+        song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + clamp(s, -200, 200),
+                                      GP[G_BPM].min, GP[G_BPM].max);
+        ui.bpm_t = 40;
+    }
     for (k = 0; k < 4u; k++) {
         if ((s = panel_enc(EN_K1 + k)) == 0)
             continue;
@@ -196,7 +200,7 @@ static int jam_home_draw(void)
         jam_home_text(8, 0, 224, &FONT_S,
                       ui.msg_t ? ui.msg : "SELECT part  PRESET sound", ui.msg_t ? C_HI : C_GRAY);
         jam_home_text(8, 16, 224, &FONT_S,
-                      jam_home_macros_available(selected) ? "SEL chords / scale" : "EDIT: sound controls", C_GRAY);
+                      jam_home_macros_available(selected) ? "ALGO tempo / SEL scale" : "ALGO tempo / EDIT sound", C_GRAY);
         cv_blit(0, 208);
     }
     return 1;

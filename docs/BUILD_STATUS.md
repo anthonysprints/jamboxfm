@@ -1,8 +1,8 @@
 # JamBox software prototype and FM-1 update isolation
 
-October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. Milestone 2 adds FM-1 update/rescue support while keeping musical sessions temporary. The owner-supplied compiler builds the device targets. This remains a software prototype, with no physical-device test or firmware release.
+October 14, 2026. The owner reports a successful Chrome installation and is playing JamBox on the FM-1. The four UI follow-ups, focused fixes and proposed chord/sequencer work are tracked in [First device feedback](FIRST_DEVICE_FEEDBACK.md). This remains experimental; the owner's report does not complete the hardware-validation or recovery checklist. Earlier milestones below describe their historical validation state.
 
-The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper builds the OTA-disabled diagnostic target; `--with-updater` selects the experimental update-enabled target. The owner’s factory backup is verified. The [Chrome first-trial workflow](FM1_CHROME_TRIAL.md) adds a separate exact-build installer at `/install/`, while `/device/` remains read-only and the candidate’s hardware/release flags remain false. Actual JamBox device behavior is still untested.
+The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper builds the OTA-disabled diagnostic target; `--with-updater` selects the experimental update-enabled target. The owner’s factory backup is verified. The [Chrome trial workflow](FM1_CHROME_TRIAL.md) provides installation and normal JamBox updates at `/install/`, while `/device/` remains read-only and the candidate’s hardware/release flags remain false.
 
 ## Implemented
 
@@ -14,7 +14,7 @@ The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. 
 - Chord and bass capture through the existing grid-snapped recorder. Finishing a take leaves playback running. Browser part selection finishes the current take and releases its held input.
 - Bounded browser commands, panic on overflow/focus loss, and explicit audio start.
 
-Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). The default application remains Sloop; `JAMBOX_PROTO=1` selects JamBox. `FELUCCA_PERSIST=0` disables app-data persistence independently of `FELUCCA_FLASH` and `FELUCCA_OTA`. No JamBox package has been flashed or published.
+Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). The default application remains Sloop; `JAMBOX_PROTO=1` selects JamBox. `FELUCCA_PERSIST=0` disables app-data persistence independently of `FELUCCA_FLASH` and `FELUCCA_OTA`. The experimental Chrome installer and candidate are now published; the owner reports successful installation.
 
 ## Milestone 2: update support with temporary sessions
 

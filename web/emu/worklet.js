@@ -31,7 +31,7 @@ class EmuEngine {
     for (let i = 0; i < 80 && bytes[pointer + i]; i++) sound += String.fromCharCode(bytes[pointer + i]);
     return {
       selected: value(0), playing: !!value(1), recording: value(2), armed: !!value(3),
-      keys: value(4), buttons: value(5), home: !!value(6), page: value(7), tempo: value(8),
+      keys: value(4), buttons: value(5), home: !!value(6), homeControls: !!value(20), page: value(7), tempo: value(8),
       octave: value(9), frames: value(10), layer: value(11),
       macros: [0, 1, 2, 3].map(i => value(12, i)), macroAvailable: !!value(13),
       held: value(14), engine: value(15), master: value(16), screenVersion: value(17), sound,

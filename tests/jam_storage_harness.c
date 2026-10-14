@@ -167,6 +167,7 @@ static void test_boot(void)
     check(flash_ok && plain_inits == 1, "ordinary boot detects flash independently of persistence");
     check(all_zero(proj_slot, sizeof proj_slot) && !sec_dirty && !song_dirty, "ordinary boot clears retained slots and dirty state");
     check(settings.palette == 4 && !settings.lowcut && !settings.zoom, "ordinary boot applies JamBox display defaults");
+    check(lights_notes == 1, "ordinary device boot enables sounding-note lights without browser overrides");
     check(!memcmp(&panel, &PANEL_DEFAULT, sizeof panel), "ordinary boot uses default panel when flash has no calibration");
     check(song.g[G_BPM] == 88 && TDRUM->p[P_SLEN] == 32 && song.sel == jam_role_track(2), "real instrument initializer creates the playable Dusty session");
     unchanged("ordinary boot does not modify any NOR byte");
@@ -245,6 +246,32 @@ static void test_boot(void)
     check(!flash_ok && !memcmp(&panel, &PANEL_DEFAULT, sizeof panel), "unrecognized flash identity falls back to default calibration");
     unchanged("unrecognized flash identity cannot enable app storage");
     jedec = 0x856014u; ordinary_boot();
+}
+static void test_device_snap_lights(void)
+{
+    track_t *t = &trk[2];
+    snapshot();
+    song.sel = 2; ui.layer = LY_PLAY;
+    t->p[P_ROOT] = 3; t->p[P_SCALE] = 1; /* D# major. */
+    t->p[P_QUANT] = 1; t->p[P_CHORD] = 0;
+    t->engine = t->eng_req;
+    fm1_in.notes = 1u << 10; keyboard_block(); pads_tick(); /* D#4. */
+    check(kb_nt[10][0] == 63 && keys_lit() == (1u << 10),
+          "device SNAP lights only the pressed D# when it is already in scale");
+    fm1_in.notes = 0; keyboard_block();
+    for (uint32_t i = 0; i < 8; ++i) pads_tick();
+    check(!keys_lit(), "device SNAP lights release after the short note-hit flash");
+    fm1_in.notes = 1u << 11; keyboard_block(); pads_tick(); /* E4 -> D#4. */
+    check(kb_nt[11][0] == 63 && keys_lit() == ((1u << 10) | (1u << 11)),
+          "device SNAP lights pressed E and sounding D# when the note is corrected");
+    mi_set(MI_NOTES, -1);
+    check(keys_lit() == (1u << 11), "NOTES off still allows pressed-key feedback");
+    mi_set(MI_NOTES, 1);
+    check(keys_lit() == ((1u << 10) | (1u << 11)), "NOTES on restores sounding-key feedback immediately");
+    fm1_in.notes = 0; keyboard_block();
+    for (uint32_t i = 0; i < 8; ++i) pads_tick();
+    check(!keys_lit(), "both corrected-key lights release cleanly");
+    unchanged("device note lighting and its menu setting leave NOR untouched");
 }
 static void test_calibration(void)
 {
@@ -425,7 +452,7 @@ static void test_ota_hooks(void)
 }
 int main(void)
 {
-    test_boot(); test_calibration(); test_writers(); test_editor(); test_ui(); test_ota_hooks();
+    test_boot(); test_device_snap_lights(); test_calibration(); test_writers(); test_editor(); test_ui(); test_ota_hooks();
     printf("JamBox temporary-session storage: %u checks, %u failures\n",checks,failures);
     return failures ? 1 : 0;
 }

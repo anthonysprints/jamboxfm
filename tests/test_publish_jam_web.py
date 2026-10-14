@@ -215,7 +215,7 @@ class ExperimentalPublicationTests(unittest.TestCase):
         base = publish.validate_site(ROOT / "build/jambox-web")
         cls.payload = {name: base[name] for name in publish.EXPECTED_FILES}
         # Use the real candidate's CRCs, build receipt and corresponding source;
-        # mocked bytes would miss the checks that protect the first install.
+        # mocked bytes would miss the checks that protect installs and updates.
         bundle = ROOT / "build/jambox-device"
         for name in publish.TRIAL_BUNDLE_FILES:
             cls.payload["firmware/" + name] = (bundle / name).read_bytes()
@@ -235,9 +235,10 @@ class ExperimentalPublicationTests(unittest.TestCase):
         bundle = {name: files["firmware/" + name] for name in publish.TRIAL_BUNDLE_FILES}
         hashes(bundle)
         files["firmware/SHA256SUMS"] = bundle["SHA256SUMS"]
-        files["firmware/trial.json"] = json.dumps({"schema_version": 1,
-            "kind": "experimental-first-install", "hardware_validated": False,
-            "transition": "factory-v15-to-jambox", "manifest_sha256": publish.sha(bundle["manifest.json"]),
+        files["firmware/trial.json"] = json.dumps({"schema_version": 2,
+            "kind": "experimental-install", "hardware_validated": False,
+            "transitions": ["factory-v15-to-jambox", "jambox-normal-to-jambox"],
+            "manifest_sha256": publish.sha(bundle["manifest.json"]),
             "firmware_sha256": publish.sha(bundle["jamboxfm-0.1.0-dev.fwsc"])}).encode()
         hashes(files)
 
@@ -261,11 +262,31 @@ class ExperimentalPublicationTests(unittest.TestCase):
     def test_descriptor_binding_and_unearned_hardware_claim_are_rejected(self):
         for field, value in (("firmware_sha256", "0" * 64), ("manifest_sha256", "0" * 64),
                              ("hardware_validated", True), ("schema_version", True),
-                             ("transition", "sloop-2.6-to-jambox"), ("extra", False)):
+                             ("schema_version", 1), ("kind", "experimental-first-install"),
+                             ("transition", "factory-v15-to-jambox"), ("extra", False)):
             with self.subTest(field=field):
                 payload = dict(self.payload)
                 trial = json.loads(payload["firmware/trial.json"])
                 trial[field] = value
+                payload["firmware/trial.json"] = json.dumps(trial).encode()
+                hashes(payload)
+                with self.assertRaisesRegex(publish.DeploymentError, "descriptor or candidate binding"):
+                    self.verify(payload)
+
+    def test_only_exact_normal_update_and_factory_transition_list_is_publishable(self):
+        expected = ["factory-v15-to-jambox", "jambox-normal-to-jambox"]
+        for transitions in (None, [], expected[:1], expected[1:], expected[::-1],
+                            expected + ["jambox-rescue-to-jambox"],
+                            [expected[0], "jambox-rescue-to-jambox"],
+                            [expected[0], "sloop-2.6-to-jambox"],
+                            expected + [expected[1]], "factory-v15-to-jambox"):
+            with self.subTest(transitions=transitions):
+                payload = dict(self.payload)
+                trial = json.loads(payload["firmware/trial.json"])
+                if transitions is None:
+                    del trial["transitions"]
+                else:
+                    trial["transitions"] = transitions
                 payload["firmware/trial.json"] = json.dumps(trial).encode()
                 hashes(payload)
                 with self.assertRaisesRegex(publish.DeploymentError, "descriptor or candidate binding"):

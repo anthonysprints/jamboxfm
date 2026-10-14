@@ -8,15 +8,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadTrialBundle, TrialInstaller } from '../web/jam-trial-install.js';
 import { logicalImage, sha256hex } from '../web/fm1pkg.js';
-import { MockMIDIAccess, profile, familyFrame } from './helpers/jam_install_simulator.mjs';
+import { MockMIDIAccess, profile, familyFrame, frame } from './helpers/jam_install_simulator.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const directory = process.env.JAMBOX_TRIAL_BUNDLE || path.join(root, 'build/jambox-device');
 const manifestBytes = new Uint8Array(await fs.readFile(path.join(directory, 'manifest.json')));
 const manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
 const firmware = new Uint8Array(await fs.readFile(path.join(directory, manifest.firmware.file)));
-const descriptor = { schema_version: 1, kind: 'experimental-first-install', hardware_validated: false,
-  transition: 'factory-v15-to-jambox', manifest_sha256: await sha256hex(manifestBytes), firmware_sha256: await sha256hex(firmware) };
+const descriptor = { schema_version: 2, kind: 'experimental-install', hardware_validated: false,
+  transitions: ['factory-v15-to-jambox', 'jambox-normal-to-jambox'], manifest_sha256: await sha256hex(manifestBytes), firmware_sha256: await sha256hex(firmware) };
 const jsonBytes = object => new TextEncoder().encode(JSON.stringify(object));
 function files(trial = descriptor, metadata = manifestBytes, image = firmware) {
   return new Map([['trial.json', jsonBytes(trial)], ['manifest.json', metadata], [manifest.firmware.file, image]]);
@@ -56,14 +56,18 @@ test('trial descriptor binds the exact candidate and retains unvalidated hardwar
   assert.equal(loaded.manifest.release_enabled, false);
   assert.deepEqual(loaded.manifest.transitions.approved, []);
   assert.ok(Object.isFrozen(loaded)); assert.ok(Object.isFrozen(loaded.trial));
+  assert.ok(Object.isFrozen(loaded.trial.transitions));
   assert.ok(Object.isFrozen(loaded.manifest.build.flags));
   assert.deepEqual(calls.map(call => new URL(call.url).pathname), ['/jamboxfm/firmware/trial.json',
     '/jamboxfm/firmware/manifest.json', `/jamboxfm/firmware/${manifest.firmware.file}`]);
 });
 
 test('unknown trial fields, enabled release claims, wrong transitions and corrupt bindings fail before MIDI', async () => {
-  const changes = [x => x.schema_version = 2, x => x.kind = 'release', x => x.hardware_validated = true,
-    x => x.transition = 'sloop-2.6-to-jambox', x => x.extra = true, x => delete x.manifest_sha256,
+  const changes = [x => x.schema_version = 1, x => x.kind = 'release', x => x.hardware_validated = true,
+    x => x.transitions = ['sloop-2.6-to-jambox'], x => x.transitions.reverse(),
+    x => x.transitions.pop(), x => x.transitions.push('jambox-rescue-to-jambox'),
+    x => x.transitions = [], x => x.transitions = 'jambox-normal-to-jambox',
+    x => x.transition = 'factory-v15-to-jambox', x => x.extra = true, x => delete x.manifest_sha256,
     x => x.manifest_sha256 = 'f'.repeat(64), x => x.firmware_sha256 = 'f'.repeat(64), x => x.firmware_sha256 = 'ABC'];
   for (const change of changes) {
     const trial = structuredClone(descriptor); change(trial);
@@ -94,19 +98,22 @@ test('loading rejects HTTP errors, oversized bodies, malformed metadata and canc
 });
 
 test('inspection stays read-only and distinguishes reported stock eligibility from hardware validation', async () => {
-  for (const [source, eligible] of [['stock-v15', true], ['jam', false], ['loader', false], ['FM-1_016', false], ['sloop', false]]) {
+  for (const [source, eligible] of [['stock-v15', true], ['jam', true], ['loader', false], ['FM-1_016', false], ['sloop', false]]) {
     const access = ports({ source: profile(source) }), installer = new TrialInstaller(access);
     const observed = await installer.inspect(access.pair());
     assert.equal(observed.eligible, eligible); assert.equal(observed.hardwareValidated, false);
     assert.equal(observed.identity.text, profile(source).text);
-    if (eligible) assert.equal(observed.capabilities.recognized, false);
+    if (eligible) {
+      assert.equal(observed.capabilities.recognized, source === 'jam');
+      assert.equal(observed.transition, source === 'jam' ? 'jambox-normal-to-jambox' : 'factory-v15-to-jambox');
+    } else assert.equal(observed.transition, null);
     assert.deepEqual(access.upgrades, []); assert.equal(installer.busy, false); assert.equal(installer.started, false);
     closed(access);
   }
 });
 
-test('production install transfers every candidate byte through guarded app/loader stages and verifies return', async () => fast(async () => {
-  const access = ports(), steps = [], log = [], installer = new TrialInstaller(access, {
+for (const source of ['stock-v15', 'jam']) test(`production install from ${source} transfers every candidate byte and verifies return`, async () => fast(async () => {
+  const access = ports({ source: profile(source) }), steps = [], log = [], installer = new TrialInstaller(access, {
     onStep: (stage, detail) => steps.push([stage, detail]), onLog: message => log.push(message) });
   const result = await installer.install(bundle, access.pair());
   assert.deepEqual(access.upgrades, ['app', 'loader']);
@@ -114,7 +121,9 @@ test('production install transfers every candidate byte through guarded app/load
     [['app', firmware.length - 20], ['loader', firmware.length - 20]]);
   assert.equal(result.identity.text, 'FM-1_700'); assert.equal(result.hardwareValidated, false);
   assert.equal(result.experimental, true); assert.equal(result.verification, 'reported-family-and-release');
-  assert.equal(result.firmwareSHA256, bundle.firmwareSHA256); assert.equal(result.transition, descriptor.transition);
+  assert.equal(result.firmwareSHA256, bundle.firmwareSHA256);
+  assert.equal(result.transition, source === 'jam' ? 'jambox-normal-to-jambox' : 'factory-v15-to-jambox');
+  assert.equal(result.sourceIdentity.text, profile(source).text);
   assert.equal(steps[0][0], 'checking'); assert.equal(steps.at(-1)[0], 'done');
   assert.ok(log.every(item => typeof item === 'string' && !item.includes('mock-')));
   assert.equal(installer.busy, false); assert.equal(installer.started, true); closed(access);
@@ -124,7 +133,7 @@ test('forged bundles, other source identities and standalone loaders never start
   const access = ports(), installer = new TrialInstaller(access);
   await assert.rejects(installer.install({ ...bundle }, access.pair()), /verify the trial bundle/);
   assert.deepEqual(access.upgrades, []); assert.equal(installer.busy, false);
-  for (const source of ['FM-1_016', 'FM-1_15', 'FM-1_0015', 'jam', 'rescue', 'sloop', 'loader', 'ota-FM-1_015']) {
+  for (const source of ['FM-1_016', 'FM-1_15', 'FM-1_0015', 'rescue', 'sloop', 'loader', 'ota-FM-1_015']) {
     const access = ports({ source: profile(source) }), installer = new TrialInstaller(access);
     await assert.rejects(installer.install(bundle, access.pair()), error => error.started === false);
     assert.deepEqual(access.upgrades, []); assert.equal(installer.started, false); assert.equal(installer.busy, false); closed(access);
@@ -138,6 +147,68 @@ test('the source is checked freshly at installation, not trusted from the inspec
   await assert.rejects(installer.install(bundle, access.pair()), { code: 'identity', started: false });
   assert.deepEqual(access.upgrades, []); closed(access);
 });
+
+test('JamBox numeric identity without the exact normal family probe never becomes eligible or starts staging', async () => {
+  const probes = [null, ...[{ family: 'FOREIGN!' }, { schema: 2 }, { mode: 1 }, { mask: 0x97 },
+    { release: '0.1.1' }, { identity: 'FM-1_000' }].map(changes => familyFrame('normal', changes))];
+  for (const family of probes) {
+    const access = ports({ source: profile('jam', { family }) }), installer = new TrialInstaller(access);
+    const observation = await installer.inspect(access.pair());
+    assert.equal(observation.identity.text, 'FM-1_700');
+    assert.equal(observation.eligible, false); assert.equal(observation.transition, null);
+    await assert.rejects(installer.install(bundle, access.pair()), { code: 'identity', started: false });
+    assert.deepEqual(access.upgrades, []); closed(access);
+  }
+});
+
+test('JamBox family is checked freshly even when the numeric identity stays the same', async () => {
+  const access = ports({ source: profile('jam') }), installer = new TrialInstaller(access);
+  assert.equal((await installer.inspect(access.pair())).eligible, true);
+  access.profiles.app = profile('jam', { family: familyFrame('normal', { mask: 1 }) });
+  await assert.rejects(installer.install(bundle, access.pair()), { code: 'identity', started: false });
+  assert.deepEqual(access.upgrades, []); closed(access);
+});
+
+test('failed staging reports the fresh eligible source when it differs from inspection', async () => fast(async () => {
+  const access = ports({ fault: { stage: 'app', type: 'disconnect' } }), installer = new TrialInstaller(access);
+  assert.equal((await installer.inspect(access.pair())).transition, 'factory-v15-to-jambox');
+  access.profiles.app = profile('jam');
+  await assert.rejects(installer.install(bundle, access.pair()), error => {
+    assert.equal(error.started, true); assert.equal(error.sourceIdentity.text, 'FM-1_700');
+    assert.equal(error.transition, 'jambox-normal-to-jambox'); return true;
+  });
+  assert.deepEqual(access.upgrades, ['app']); closed(access);
+}));
+
+test('a second device appearing during the fresh JamBox family query blocks staging', async () => {
+  const access = ports({ source: profile('jam') }), installer = new TrialInstaller(access);
+  const send = access.send.bind(access);
+  access.send = packet => {
+    send(packet);
+    if (access.transcript.length === 2) {
+      access.inputs.set('other-input', { name: 'Other FM-1', state: 'connected' });
+      access.outputs.set('other-output', { name: 'Other FM-1', state: 'connected' });
+    }
+  };
+  await assert.rejects(installer.install(bundle, access.pair()), { code: 'ambiguous', started: false });
+  assert.deepEqual(access.upgrades, []); closed(access);
+});
+
+for (const stage of ['loader', 'final']) test(`a second device appearing during the ${stage} family query blocks the next action`, async () => fast(async () => {
+  const access = ports({ source: profile('jam') }), steps = [];
+  const installer = new TrialInstaller(access, { onStep: value => steps.push(value) });
+  const send = access.send.bind(access);
+  access.send = packet => {
+    send(packet);
+    if (access.stage === stage && String(packet) === String(frame(0x12, []))) {
+      access.inputs.set('other-input', { name: 'Other FM-1', state: 'connected' });
+      access.outputs.set('other-output', { name: 'Other FM-1', state: 'connected' });
+    }
+  };
+  await assert.rejects(installer.install(bundle, access.pair()), { code: 'ambiguous', started: true });
+  assert.deepEqual(access.upgrades, stage === 'loader' ? ['app'] : ['app', 'loader']);
+  assert.ok(!steps.includes('done')); closed(access);
+}));
 
 test('additional initial MIDI candidates, including hidden duplicate groups, refuse before staging', async () => {
   for (const duplicates of [1, 2]) {

@@ -1,8 +1,12 @@
-# First JamBoxFM installation in Chrome
+# Install and update JamBoxFM in Chrome
 
-This is an experimental first installation from original factory V15
-(`FM-1_015`). It is a real firmware write. JamBox has not yet been tested on
-this owner's instrument, and musical sessions in this build are temporary.
+This page supports an experimental first installation from original factory
+V15 (`FM-1_015`) and an update from a running JamBox build (`FM-1_700` with
+the matching JamBox family response). Both perform a real firmware write.
+The owner reports that the first installation succeeded and that the
+instrument is generally working. This is useful hardware feedback, rather
+than a completed validation of every control, sound or recovery path.
+Musical sessions in this build are temporary.
 The separate `/device/` page remains read-only.
 
 ## Owner workflow
@@ -12,7 +16,8 @@ The separate `/device/` page remains read-only.
 2. Open the site's `/install/` page in desktop Chrome or Edge. Connect and
    allow MIDI access. The page checks the selected device and downloads and
    verifies the exact experimental build.
-3. Select **Install experimental JamBoxFM**. Keep USB and power connected and
+3. Select **Install experimental JamBoxFM**, or **Update experimental JamBoxFM**
+   if JamBox is already running. Keep USB and power connected and
    the page open. Progress follows preparing, writing and reconnecting stages;
    a transfer count is not a measured flash percentage.
 4. Success requires the final JamBox identity and its matching family response.
@@ -25,10 +30,10 @@ If installation stops, keep the device connected, save the report and share
 the result before retrying or resetting. The app may be partly written. A
 verified backup is useful for recovery but does not guarantee that ROM entry
 will remain available after an interruption. Recovery can require additional
-hardware. This first-install page does not offer automatic retry, loader
+hardware. This page does not offer automatic retry, loader
 resume, factory restoration or general firmware selection.
 
-## What permits this first experiment
+## Scope of the experimental workflow
 
 The owner requested actual installation. Their private double-read backup
 has been independently checked: all boot-head and application bytes match
@@ -38,23 +43,37 @@ No raw backup, retained RAM, manufacturer package or user report is published.
 
 The candidate manifest retains `release_enabled: false`,
 `hardware_validated: false` and its existing simulation record. An additional
-`trial.json` binds the exact manifest and firmware digests to the single
-`factory-v15-to-jambox` experimental workflow. This is distinct from a stable
+schema-2 `trial.json` binds the exact manifest and firmware digests to exactly
+`factory-v15-to-jambox` and `jambox-normal-to-jambox`. This is distinct from a stable
 release or completed hardware validation.
 
 A [bounded stock-record correction](build-evidence/factory-v15/stock-record-cleanup.md) handles the factory updater’s distinct handoff location without a broad scan or erase of data sectors.
 
 The production controller uses the shared updater directly. It accepts only
-the exact factory identity at entry, rechecks immediately before starting,
-and requires exact JamBox family responses at loader and final stages. It
+the exact factory V15 identity or the exact normal JamBox application profile.
+For JamBox, the family response must have schema 1, family `JAMBOXFM`, normal
+mode, release `0.1.0-dev`, capability mask `0x17`, and identity `FM-1_700`.
+It repeats the identity and family checks immediately before staging, checks
+that only one device is present, and requires exact JamBox family responses
+at loader and final stages. Rescue mode and standalone loaders remain
+ineligible starting points. The controller
 refuses ambiguous re-enumeration, foreign loaders and mismatched downloads.
 No test simulator is imported by the page. Firmware, corresponding source,
 licenses and build evidence are packaged together.
 
+The installation report records which transition actually completed. The
+offered firmware is bound by SHA-256; final device verification confirms
+family and release. Multiple development builds share `0.1.0-dev`, so that
+final response does not independently identify the installed build's bytes.
+
 ## Remaining hardware work
 
-The first successful transfer must still establish real stock-to-JamBox
-handover, boot, display, buttons, encoders and audio. A later return-to-factory
+The owner has reported a successful first installation and general musical
+use, with specific knob, chord and key-lighting feedback now being addressed.
+The new JamBox-to-JamBox route has host transfer and browser coverage; its
+next update on this instrument remains a physical trial. Sustained audio,
+all controls and interrupted-update recovery are not yet fully validated.
+A later return-to-factory
 trial is separate. App rescue relies on executable application code and is
 not a protected bootloader or a promise of power-loss recovery.
 
