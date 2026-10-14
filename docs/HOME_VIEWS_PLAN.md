@@ -26,9 +26,9 @@ The owner's navigation rule is the central decision:
 - Returning Home through another action, such as leaving the drum editor,
   also restores that remembered view.
 
-Recommend GROOVE at power-on because it puts the beat and recording in view
-for a beginner. This startup preference is proposed, not an approved firmware
-change. Remember subsequent choices for the current powered session. Changing
+The owner chose **GROOVE at power-on** on October 14, 2026, so the beat and
+recording are immediately in view. This startup decision is agreed; firmware
+implementation is still pending. Remember subsequent choices for the current powered session. Changing
 sounds or starting a fresh musical session should not reset the Home view.
 Remembering it across power cycles belongs to the later settings-storage work.
 
@@ -156,9 +156,9 @@ through hashing, drawing or LCD transfer.
 
 ## 6. Delivery order and acceptance
 
-1. Review the two-view wireframe and navigation contract. Keep the startup
-   view as a clearly identified preference, not a hidden consequence of enum
-   numbering. Use native-size and enlarged previews to assess legibility.
+1. Review the two-view wireframe and navigation contract. Set the agreed
+   GROOVE startup view explicitly, rather than relying on enum numbering.
+   Use native-size and enlarged previews to assess legibility.
 2. Implement the view state and HOME navigation with the existing Sound screen
    retained. Verify ordinary taps, returns, menu exit, holds, layer locks and
    both release orders before adding the pattern renderer.

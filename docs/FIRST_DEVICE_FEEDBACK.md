@@ -48,7 +48,8 @@ sequencer-focused view, instead of replacing the only Home layout:
 Both views keep SELECT as tempo, ALGORITHM as part, PRESETS as sound, and
 knobs 1–4 as the same sound macros. The keyboard stays playable; SEQ owns
 explicit step editing. Remember the Home view for the powered session, with
-GROOVE recommended as the initial view; power-cycle persistence is later work.
+GROOVE confirmed by the owner as the power-on view; power-cycle persistence
+of subsequent view choices is later work.
 HOME holds, recording overlays and held-layer shortcuts need explicit gesture
 priority so changing views never changes musical state or consumes an edit.
 
