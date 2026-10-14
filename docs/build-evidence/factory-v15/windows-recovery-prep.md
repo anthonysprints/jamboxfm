@@ -1,5 +1,13 @@
 # Windows recovery preparation: source audit
 
+This is the earlier source-only audit. The owner has since confirmed Windows,
+Python 3.12.7 and no valued saved sounds/settings. Follow the newer
+[Windows workflow](../../FM1_WINDOWS_BACKUP.md) and
+[validation record](windows-backup-validation.md). Later review found that the
+upstream transport could ignore short reads; the prepared local copy now
+requires transfer/status checks before a backup can be treated as verified.
+The original tool alone should not be recommended for this workflow.
+
 Reviewed public source at
 `Quixotic7/MvaveFM1Unbricker@df394beea4c881da4161fbc8a87730050b57968c`.
 Sparse Git checkout:

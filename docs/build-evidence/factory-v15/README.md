@@ -51,6 +51,13 @@ The policy suite accepts `JAMBOX_SLOOP_PACKAGE` and `JAMBOX_FACTORY_PACKAGE`; th
 
 ## Recovery research
 
+Follow-up: the owner confirmed Windows, Python 3.12.7 and no saved sounds/settings
+they need to preserve. The [Windows preparation validation](windows-backup-validation.md)
+records the separate mode-entry helper, pinned local preparation, and fixes for
+short SCSI transfers. The original upstream double-read check alone could accept
+repeatable zero-padded short reads. No owner-device mode change or backup has
+been performed by these cloud checks.
+
 [Factory backup/recovery audit](recovery-options-audit.md) and [Windows preparation](windows-recovery-prep.md) record pinned source evidence. Windows Unbricker can back up a unit already in ROM using a temporary RAM loader and two matching flash reads; the current identity check does not establish that access. No owner device mode change, RAM loader, flash dump, installation, or physical recovery test was performed here. The manufacturer update file is not a private-data backup.
 
 No canonical manufacturer firmware, uploaded device report, extracted flash, proprietary compiler, or device installation package is included in these evidence files.

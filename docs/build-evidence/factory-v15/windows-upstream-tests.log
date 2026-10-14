@@ -1,0 +1,50 @@
+test_backup_command_reports_v15_identity_of_region (test_unbrick.BackupTests.test_backup_command_reports_v15_identity_of_region) ... ok
+test_double_read_backup (test_unbrick.BackupTests.test_double_read_backup) ... ok
+test_flaky_read_aborts_backup (test_unbrick.BackupTests.test_flaky_read_aborts_backup) ... ok
+test_extract (test_unbrick.ExtractCommandTests.test_extract) ... ok
+test_extract_verify_v15_rejects_other (test_unbrick.ExtractCommandTests.test_extract_verify_v15_rejects_other) ... ok
+test_linux_sysfs (test_unbrick.FinderTests.test_linux_sysfs) ... ok
+test_macos_unsupported (test_unbrick.FinderTests.test_macos_unsupported) ... ok
+test_selection_rules (test_unbrick.FinderTests.test_selection_rules) ... WARNING: /dev/sg0 not in the scan, used because of --i-know
+ok
+test_two_devices_refused (test_unbrick.FinderTests.test_two_devices_refused) ... ok
+test_windows_parser (test_unbrick.FinderTests.test_windows_parser) ... ok
+test_windows_runner (test_unbrick.FinderTests.test_windows_runner) ... ok
+test_classification (test_unbrick.FwscTests.test_classification) ... ok
+test_corrupted_ufw_refused (test_unbrick.FwscTests.test_corrupted_ufw_refused) ... ok
+test_matches_black_box_oracle (test_unbrick.FwscTests.test_matches_black_box_oracle) ... skipped 'black-box oracle not available'
+test_no_char_markers_skipped (test_unbrick.FwscTests.test_no_char_markers_skipped) ... ok
+test_real_package_layout (test_unbrick.FwscTests.test_real_package_layout) ... skipped 'oracle package not available'
+test_roundtrip_synthetic (test_unbrick.FwscTests.test_roundtrip_synthetic) ... ok
+test_truncated_package_refused (test_unbrick.FwscTests.test_truncated_package_refused) ... ok
+test_ufw_flash_bin_found (test_unbrick.FwscTests.test_ufw_flash_bin_found) ... ok
+test_erase_uses_blocks_and_sectors_exactly (test_unbrick.MockAndGuardTests.test_erase_uses_blocks_and_sectors_exactly) ... ok
+test_nor_semantics (test_unbrick.MockAndGuardTests.test_nor_semantics) ... ok
+test_nothing_below_0x4000_by_construction (test_unbrick.MockAndGuardTests.test_nothing_below_0x4000_by_construction) ... ok
+test_non_wl82_device_untouched (test_unbrick.ProtocolTests.test_non_wl82_device_untouched) ... ok
+test_open_upload_identify_restore (test_unbrick.ProtocolTests.test_open_upload_identify_restore) ... Could not read the retained RAM (UBOOT: unsupported command FD07); continuing without it
+ok
+test_retained_ram_refused_is_not_fatal (test_unbrick.ProtocolTests.test_retained_ram_refused_is_not_fatal) ... Could not read the retained RAM (UBOOT: unsupported command FD07); continuing without it
+ok
+test_retained_ram_saved_before_loader (test_unbrick.ProtocolTests.test_retained_ram_saved_before_loader) ... ok
+test_verify_pinned_checkout (test_unbrick.ProtocolTests.test_verify_pinned_checkout) ... ok
+test_already_identical_skips_write (test_unbrick.RestoreTests.test_already_identical_skips_write) ... ok
+test_cli_dry_run (test_unbrick.RestoreTests.test_cli_dry_run) ... ok
+test_damaged_v15_refused_before_device (test_unbrick.RestoreTests.test_damaged_v15_refused_before_device) ... ok
+test_flaky_read_during_backup_writes_nothing (test_unbrick.RestoreTests.test_flaky_read_during_backup_writes_nothing) ... ok
+test_flaky_write_is_retried_once (test_unbrick.RestoreTests.test_flaky_write_is_retried_once) ... ok
+test_genuine_v15 (test_unbrick.RestoreTests.test_genuine_v15) ... ok
+test_no_tty_without_yes_refuses (test_unbrick.RestoreTests.test_no_tty_without_yes_refuses) ... ok
+test_official_v15_restore_writes_flash_relative (test_unbrick.RestoreTests.test_official_v15_restore_writes_flash_relative) ... ok
+test_persistent_failure_stops_with_instructions (test_unbrick.RestoreTests.test_persistent_failure_stops_with_instructions) ... ok
+test_restore_end_to_end (test_unbrick.RestoreTests.test_restore_end_to_end) ... ok
+test_typed_confirmation (test_unbrick.RestoreTests.test_typed_confirmation) ... ok
+test_unknown_identity_needs_i_know (test_unbrick.RestoreTests.test_unknown_identity_needs_i_know) ... ok
+test_verify_v15_flag_refuses_others (test_unbrick.RestoreTests.test_verify_v15_flag_refuses_others) ... ok
+test_wrong_chip_key_refused (test_unbrick.RestoreTests.test_wrong_chip_key_refused) ... ok
+test_wrong_flash_id_refused (test_unbrick.RestoreTests.test_wrong_flash_id_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 9.444s
+
+OK (skipped=2)

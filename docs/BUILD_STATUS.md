@@ -65,6 +65,15 @@ Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes,
 
 ## Environment
 
+Windows recovery preparation now has a [separate local workflow](FM1_WINDOWS_BACKUP.md).
+The owner confirmed Windows with Python 3.12.7 and no personal sounds/settings to
+preserve. The helper verifies the factory identity before a one-shot ROM-mode
+request; source preparation pins upstream archives and fixes short-transfer/status
+handling in the local backup tool. These are host software changes, with
+[mock/source-check evidence](build-evidence/factory-v15/windows-backup-validation.md).
+No owner-device mode change, full backup, Windows SCSI transfer or firmware
+installation is established by them. The public checker remains read-only.
+
 Cloud setup, setup replay, pinned SDK download into a fresh destination, and local serving of HTML/JavaScript/WASM passed. Python, browser/native compilers, SDK and Playwright dependencies are installed outside the checkout. Reusable installation and startup instructions have been saved to the environment draft.
 
 The official vendor endpoint became reachable, but its `jl-update.oss-cn-shenzhen.aliyuncs.com` archive redirect remained blocked by proxy CONNECT 403. The owner's uploaded archive resolved that prerequisite locally. Its SHA-256, Clang version and acquisition method are recorded honestly; future setup reuses the verified cache or requires the same bytes. Network additions and reusable instructions are saved in the environment draft. Saving that draft does not publish the environment.

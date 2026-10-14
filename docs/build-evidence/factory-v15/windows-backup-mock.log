@@ -1,0 +1,18 @@
+DRY RUN: using a MOCK FM-1 (no real device is opened, nothing is written to hardware)
+Chip key    0x980F (expected 0x980F)
+Flash ID    0x856014 (expected 0x856014, 1 MiB), type 0x03
+USB buffer  512 bytes
+Backing up the whole flash (0x0..0xFFFFF), twice
+  read 1 sha256 cfb4ce8af322932852077a68d879a54b83cde79eb377f88bc95fc42e89576494
+  read 2 sha256 cfb4ce8af322932852077a68d879a54b83cde79eb377f88bc95fc42e89576494
+Backup OK   mock-backups/fm1-recovery-20261014-033458-dryrun/full-flash-before.bin
+  sha256 cfb4ce8af322932852077a68d879a54b83cde79eb377f88bc95fc42e89576494 (both reads identical)
+Analysis
+  boot head 0x0000..0x3FFF sha256  bccade0c481347cf7b064568e5299175e286d71076a335670fdd26c8519d5c38
+  firmware  0x4000..0x92FFF sha256 802f79beeb08f170a63894061c67006ae47826a7103cfd10423a9c44690e7031
+  firmware sectors erased (all 0xFF): 0 of 143
+  vs FM-1-V15.fwsc (FM-1_015): firmware sectors identical 0/143
+  boot head DIFFERS from the official V15 package's head. This tool never writes the boot head; see README, Troubleshooting.
+Log: logs/unbrick-20261014-033458-2.log
+Everything from this run is in one folder: /workspace/scratch/jambox-stock-v15/windows-prepared-final/mock-backups/fm1-recovery-20261014-033458-dryrun
+To report a brick, zip that folder and send it (it holds your flash contents, including on-device songs and sounds).

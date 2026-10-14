@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "prepared": true,
+  "check_only": true,
+  "unbricker_commit": "df394beea4c881da4161fbc8a87730050b57968c",
+  "jlub_commit": "adb3f18889e88ac512ce0a3c4d8cc3d3cb30696a",
+  "files": [
+    {
+      "tree": "jlub",
+      "path": "requirements.txt",
+      "sha256": "d67f6908839964dcd0e0b3808c3008f9811fd760f583495cb02460882bb7caa6",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "data/chips.yaml",
+      "sha256": "6e1dba69c85c72ff18a889281e158f10b1ff959bbff20895b29e268e1e382d24",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "data/usb-loaders.yaml",
+      "sha256": "2c806452cca5cc953ac8e8244c62da7f8c07648f56aa0ab943d62366571f5631",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "jltech/uboot.py",
+      "sha256": "07be3fe0a8a61606652d9427ce5244327c72ce2799533ebb5bc8bbc1cc48776c",
+      "state": "patched"
+    },
+    {
+      "tree": "jlub",
+      "path": "jltech/cipher.py",
+      "sha256": "7a25b514866a2e563818bb91469b030d3d47f8ad0d944b1d5a2c5d9e1ae810b3",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "jltech/crc.py",
+      "sha256": "d400960a1a80ef993fc0108610173214c78ae4a9708d137ca6c9eb87c58d6a44",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "jltech/utils.py",
+      "sha256": "f49e770b622768b7d26d30f2ff7808bb9f0a4ad1bfd1b9c0b8033fb3224af0b9",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "scsiio/__init__.py",
+      "sha256": "b4a753733386f5347f95b422625b3ab377d3dfb33e007059cbcf71d5df65a837",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "scsiio/common.py",
+      "sha256": "169846e27387011097e628f74ee26a268854026fbc81675becac1762839b6603",
+      "state": "verified"
+    },
+    {
+      "tree": "jlub",
+      "path": "scsiio/win32port.py",
+      "sha256": "f9e11c39bb1d45bb2921a557681f7ff90e944b7701b999f7459ec27af693d713",
+      "state": "patched"
+    },
+    {
+      "tree": "jlub",
+      "path": "scsiio/linuxport.py",
+      "sha256": "caff4cd2ecd92f75d07aae3e873b02180f5f49791fbafa05cf7bdc734bb805da",
+      "state": "verified"
+    },
+    {
+      "tree": "unbricker",
+      "path": "fm1_unbrick.py",
+      "sha256": "7be4a716d885bfb7dd680f5c70997676e6552bcaee60e5c66b1313f22720cd45",
+      "state": "patched"
+    },
+    {
+      "tree": "jlub",
+      "path": "data/loaderblobs/usb/wl82loader.bin",
+      "sha256": "d41da6126760c9d66660bcc0cac8d27d221806c5e369a8036921efe68dca5376",
+      "state": "verified"
+    }
+  ],
+  "flash_actions": false,
+  "network_actions": false,
+  "note": "Source and RAM-loader hash checks only; no device connected or loader executed."
+}

@@ -25,10 +25,12 @@ The page now explains `FM-1_015` as **Factory V15 identity reported**. Its saved
 3. **Recovery:** a valid staged loader and flash resume record do not guarantee cold-boot recovery. Pinned ChoralRoot hardware evidence documents a failed interrupted update with both intact. JamBox's app rescue also requires application code to remain executable. The inherited unconditional power-cycle-resume comments have been corrected; no boot stub or automatic unbrick guarantee was added.
 4. **Physical validation:** USB handover, controls, audio deadlines, flash behavior and the existing static IRQ-budget failure still require separate work. Passing host tests does not pass these gates.
 
-## Windows preparation, if that is the owner's current host
+## Windows preparation
 
 The reviewed [MvaveFM1Unbricker source](https://github.com/Quixotic7/MvaveFM1Unbricker/tree/df394beea4c881da4161fbc8a87730050b57968c) has a Windows route using an ordinary USB cable **when the FM-1 is already reachable as `WL82 UBOOT1.00`**. It does not itself switch running factory V15 into that mode. Do not give the owner custom-firmware key combinations as unverified factory instructions.
 
-The next preparation is to confirm the computer/Windows version and whether personal sounds/settings need preserving. Then prepare and review a controlled factory-to-ROM-and-back procedure. A ROM backup runs temporary loader code in RAM and reads flash twice; it does not program persistent flash, but is a different device operation from the current identity query. No ROM command has been run on the owner's device here.
+The owner confirmed **Windows, Python 3.12.7, and no saved sounds/settings they need to keep**. No separate personal sound export is needed. A unit-specific backup still records the actual boot head, flash identity and device data. The exact Windows release and CPU architecture have not been reported.
+
+The [Windows workflow](FM1_WINDOWS_BACKUP.md) separates computer preparation, a factory-to-ROM-and-back test, and a later double-read backup. A ROM backup runs temporary loader code in RAM; it does not program persistent flash, but is a different device operation from the current identity query. No ROM command has been run on the owner's device here.
 
 No additional electronics are needed to continue software preparation. External Transporter hardware is an alternative for a unit that cannot otherwise enter ROM; that choice belongs to a concrete recovery plan. Current source includes Windows-capable tooling, while the pinned physical recovery evidence used Mac. [Detailed Windows audit](build-evidence/factory-v15/windows-recovery-prep.md) distinguishes source review from hardware proof.
