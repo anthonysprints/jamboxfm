@@ -20,6 +20,17 @@ int main(void)
     if (proj_ok(&source) || proj_import(&parsed, &source, sizeof source)) {
         puts("Sloop accepted a checksum-valid JamBox JRM0 RAM section"); return 1;
     }
-    puts("Sloop parser: valid FUN6 accepted; checksum-valid JamBox JRM0 rejected");
+    source.magic = 0x4A524D31u; source.sum = proj_sum(&source);
+    if (proj_ok(&source) || proj_import(&parsed, &source, sizeof source)) {
+        puts("Sloop accepted a JamBox JRM1 magic at the legacy size"); return 1;
+    }
+    uint32_t larger[4584u / 4u] = {0};
+    memcpy(larger, &source, sizeof source - 4u);
+    larger[1] = sizeof larger;
+    larger[sizeof larger / 4u - 1u] = proj_hash(larger, sizeof larger - 4u);
+    if (proj_import(&parsed, larger, sizeof larger)) {
+        puts("Sloop accepted a checksum-valid full-size JamBox JRM1 snapshot"); return 1;
+    }
+    puts("Sloop parser: valid FUN6 accepted; JamBox JRM0 and JRM1 rejected");
     return 0;
 }

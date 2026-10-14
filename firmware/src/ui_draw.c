@@ -264,6 +264,31 @@ static void graph_roll(const track_t *t, uint16_t c)
     }
     if (hi - lo < 12)
         hi = lo + 12;
+#if JAMBOX_PROTO
+    /* Independent lengths leave later onset cells intact. Draw each pitch's
+     * continuation, including a note entering this bank or crossing the loop. */
+    if (t->duration_mode) {
+        for (i = 0; i < len; i++) {
+            const step_t *st = &t->step[i];
+            if (!step_on(st))
+                continue;
+            for (j = 0; j < st->n && j < 4u; j++) {
+                uint32_t k, d = t->note_len[i][j];
+                int32_t y;
+                if (d < 2u)
+                    continue;
+                y = 80 - (st->note[j] - lo) * 74 / (hi - lo);
+                for (k = 0; k < 16u && base + k < len; k++) {
+                    uint32_t distance = (base + k + len - i) % len;
+                    if (distance && distance < d)
+                        cv_rect((int32_t)k * 15, y, 14, 1, C_GRAY);
+                    else if (!distance)
+                        cv_rect((int32_t)k * 15 + 12, y, 2, 1, C_GRAY);
+                }
+            }
+        }
+    }
+#endif
     for (i = 0; i < 16u; i++) {
         uint32_t si = base + i;
         const step_t *st = &t->step[si];
@@ -342,11 +367,15 @@ static void graph_slicer(const track_t *t, uint16_t c)
 }
 static uint32_t steps_hash(const track_t *t)
 {
-    uint32_t h = 2166136261u, i;
+    uint32_t h = 2166136261u, i, j;
     for (i = 0; i < NSTEP; i++) {
-        const step_t *st = &t->step[i];
-        h = (h ^ (st->note[0] + st->n * 128u + st->time * 1024u + st->flags * 4096u + st->note[1] * 65536u)) *
-            16777619u;
+        const uint8_t *bytes = (const uint8_t *)&t->step[i];
+        for (j = 0; j < sizeof t->step[i]; j++)
+            h = (h ^ bytes[j]) * 16777619u;
+#if JAMBOX_PROTO
+        for (j = 0; j < 4u; j++)
+            h = (h ^ t->note_len[i][j]) * 16777619u;
+#endif
     }
     return h;
 }

@@ -313,6 +313,9 @@ static void step_edit(uint32_t slot, int32_t steps)
         break;
     case 1:                                               /* NOTE: transpose the step */
         if (!st->n) {
+#if JAMBOX_PROTO
+            jam_step_lengths_clear(TSEL, ui.cursor);
+#endif
             st->note[0] = last_note;
             st->n = 1;
             st->time = ST_NOTE;
@@ -320,6 +323,9 @@ static void step_edit(uint32_t slot, int32_t steps)
         }
         for (i = 0; i < st->n; i++)
             st->note[i] = (uint8_t)clamp(st->note[i] + steps, 1, 127);
+#if JAMBOX_PROTO
+        jam_step_coalesce(TSEL, ui.cursor);
+#endif
         st->time = ST_NOTE;
         last_note = st->note[0];
         break;
@@ -340,6 +346,9 @@ static void step_edit(uint32_t slot, int32_t steps)
             break;
         }
         st->time = (uint8_t)clamp((int32_t)st->time + (steps > 0 ? 1 : -1), ST_NOTE, ST_REST);
+#if JAMBOX_PROTO
+        jam_step_lengths_clear(TSEL, ui.cursor);
+#endif
         break;
     default: {                                            /* FLAG: - / ACC / SLD / A+S */
         uint32_t f = (st->flags & SF_ACCENT ? 1u : 0u) | (st->flags & SF_SLIDE ? 2u : 0u);
@@ -587,6 +596,9 @@ static void midi_entry(void)                              /* (top of ui_input: e
             st->n = 0;
             st->lvl = st->rat = 0;
             st->time = ST_NOTE;
+#if JAMBOX_PROTO
+            jam_step_lengths_clear(t, ui.cursor);
+#endif
         }
         if (t->p[P_VOICE]) {
             st->note[0] = (uint8_t)note;
@@ -623,6 +635,9 @@ static void seq_entry(uint32_t pressed)
             st->n = 0;
             st->lvl = st->rat = 0;
             st->time = ST_NOTE;
+#if JAMBOX_PROTO
+            jam_step_lengths_clear(t, ui.cursor);
+#endif
         }
         if (t->p[P_CHORD] && !t->p[P_VOICE]) {            /* chord mode (2.4.1): the chord as it sounded (CHORD+,
                                                             * VLEAD), not only its root; (not played yet: built here) */
@@ -688,7 +703,7 @@ static void layer_tap(uint32_t layer)
         }
         if (layer == LY_ERASE && song.seq_mode && cur_page()->scope == SC_STEP && !is_drum(TSEL)) {
             undo_mark(TSEL, (undo_sess += 4u) | 3u);      /* STEP page: EDIT clears the step */
-            step_clear(&TSEL->step[ui.cursor]);
+            track_step_clear(TSEL, ui.cursor);
             cursor_set(ui.cursor + 1);
             ui_message("STEP CLEARED");
             break;
@@ -919,8 +934,20 @@ static void holds_input(uint32_t pressed, uint32_t now_ms)
         rec_toggle();
     }
     if (rec_down && rec_on && !eaten && !ui.hold_kind && now_ms - rec_t0 >= 700u) {
+#if JAMBOX_PROTO
+        {
+            uint32_t i;
+            fm1_irq_off();
+            for (i = 0; i < NPART; i++)
+                if ((song.rec & (1u << i)) && !(prev_rec & (1u << i)))
+                    jam_record_finish(&trk[i]);
+        }
+#endif
         song.rec = prev_rec;                              /* a hold: the press is undone */
         rec_wait = prev_wait;
+#if JAMBOX_PROTO
+        fm1_irq_on();
+#endif
         ui.msg_t = 0;
         ui.hold_kind = 1;
         ui.hold_t0 = now_ms;

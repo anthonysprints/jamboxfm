@@ -201,26 +201,73 @@ static int step_on(const step_t *st) { return st->time == ST_NOTE && st->n; }
  * the TIE steps after it (inside LEN, no wrap); SEQ > STEP's KNOB 3 on a note sets it (ui_input.c step_edit). Longer:
  * the steps after it become clean TIEs (a REST or an empty step; it stops at the next step holding notes, which stays,
  * and at LEN); shorter: its last TIEs become RESTs (one holding notes keeps them). The steps' locks and nudges stay;
- * the turns on one step are one undo (ui_input.c). Returns the length it got */
+ * the turns on one step are one undo (ui_input.c). JamBox independent lengths instead adjust only the onset's
+ * own notes, by the same delta, without rewriting later cells. Returns the longest length at that onset. */
 static uint32_t note_len(const track_t *t, uint32_t i)
 {
     uint32_t len = (uint32_t)clamp(t->p[P_SLEN], 1, NSTEP), n = 1;
     while (i + n < len && t->step[i + n].time == ST_TIE)
         n++;
+#if JAMBOX_PROTO
+    if (!is_drum(t)) {
+        uint32_t j, longest = 0, independent = 0;
+        for (j = 0; j < t->step[i].n && j < 4u; j++) {
+            uint32_t d = t->note_len[i][j];
+            independent |= d != 0;
+            if ((d ? d : n) > longest)
+                longest = d ? d : n;
+        }
+        if (independent)
+            return longest;
+    }
+#endif
     return n;
 }
 static uint32_t note_set_len(track_t *t, uint32_t i, uint32_t want)
 {
     uint32_t len = (uint32_t)clamp(t->p[P_SLEN], 1, NSTEP), n = note_len(t, i);
+#if JAMBOX_PROTO
+    if (!is_drum(t)) {
+        uint32_t j, independent = t->duration_mode && t->p[P_VOICE] == V_POLY;
+        for (j = 0; j < t->step[i].n && j < 4u; j++)
+            independent |= t->note_len[i][j] != 0;
+        if (independent && step_on(&t->step[i])) {
+            uint32_t legacy = 1, longest = 1;
+            int32_t delta;
+            while (i + legacy < len && t->step[i + legacy].time == ST_TIE)
+                legacy++;
+            want = (uint32_t)clamp((int32_t)want, 1, NSTEP);
+            delta = (int32_t)want - (int32_t)n;
+            for (j = 0; j < t->step[i].n && j < 4u; j++) {
+                uint32_t d = t->note_len[i][j] ? t->note_len[i][j] : legacy;
+                d = (uint32_t)clamp((int32_t)d + delta, 1, NSTEP);
+                t->note_len[i][j] = (uint8_t)d;
+                if (d > longest)
+                    longest = d;
+            }
+            jam_lengths_changed(t);
+            return longest;
+        }
+    }
+#endif
     for (; n > want && n > 1u; n--) {
         if (!t->step[i + n - 1u].n)                    /* (a TIE holding notes, from TIME or an older SLOOP, */
             memset(&t->step[i + n - 1u], 0, sizeof(step_t));   /* keeps them, as TIME would) */
         t->step[i + n - 1u].time = ST_REST;
+#if JAMBOX_PROTO
+        memset(t->note_len[i + n - 1u], 0, 4);
+#endif
     }
     for (; n < want && i + n < len && !t->step[i + n].n; n++) {
         memset(&t->step[i + n], 0, sizeof(step_t));
         t->step[i + n].time = ST_TIE;
+#if JAMBOX_PROTO
+        memset(t->note_len[i + n], 0, 4);
+#endif
     }
+#if JAMBOX_PROTO
+    jam_lengths_changed(t);
+#endif
     return n;
 }
 /* a synth step's velocity as it plays (seq.c step_vel: ACC 127, else its VEL, 96 when 0, through its first note's level) */
@@ -240,6 +287,57 @@ static void step_clear(step_t *st)
     memset(st, 0, sizeof *st);
     st->time = ST_REST;
 }
+static void track_step_clear(track_t *t, uint32_t i)
+{
+    step_clear(&t->step[i]);
+#if JAMBOX_PROTO
+    jam_step_lengths_clear(t, i);
+#endif
+}
+#if JAMBOX_PROTO
+/* Pitch clamping can merge two notes at an onset. Keep their longest length,
+ * strongest level and fastest ratchet together when compacting the slots. */
+static void jam_step_coalesce(track_t *t, uint32_t at)
+{
+    step_t *st = &t->step[at], source = *st;
+    uint8_t durations[4];
+    uint32_t i, k, n = 0, legacy = 1, len = trk_len(t);
+    if (is_drum(t) || source.n < 2u)
+        return;
+    memcpy(durations, t->note_len[at], sizeof durations);
+    while (at + legacy < len && t->step[at + legacy].time == ST_TIE)
+        legacy++;
+    st->lvl = st->rat = 0;
+    for (i = 0; i < source.n && i < 4u; i++) {
+        uint32_t level = (source.lvl >> (2u * i)) & 3u;
+        uint32_t ratchet = (source.rat >> (2u * i)) & 3u;
+        for (k = 0; k < n && st->note[k] != source.note[i]; k++)
+            ;
+        if (k == n) {
+            st->note[n] = source.note[i];
+            t->note_len[at][n] = durations[i];
+            n++;
+        } else {
+            uint32_t old = t->note_len[at][k], incoming = durations[i];
+            uint32_t old_level = (st->lvl >> (2u * k)) & 3u;
+            uint32_t old_ratchet = (st->rat >> (2u * k)) & 3u;
+            if (old || incoming) {
+                old = old ? old : legacy;
+                incoming = incoming ? incoming : legacy;
+                t->note_len[at][k] = (uint8_t)(old > incoming ? old : incoming);
+            }
+            if (lvl_vel(old_level, 100) > lvl_vel(level, 100)) level = old_level;
+            if (old_ratchet > ratchet) ratchet = old_ratchet;
+        }
+        st->lvl = (uint8_t)((st->lvl & ~(3u << (2u * k))) | level << (2u * k));
+        st->rat = (uint8_t)((st->rat & ~(3u << (2u * k))) | ratchet << (2u * k));
+    }
+    st->n = (uint8_t)n;
+    for (; n < 4u; n++) t->note_len[at][n] = 0;
+    /* Merging keeps every valid nonzero duration represented, so the cached
+     * duration mode stays correct without a whole-pattern scan per cell. */
+}
+#endif
 
 /* undo / redo (EDIT + OCT- / OCT+): the marked pattern and the one now swap places */
 static int undo_swap(int redo)
@@ -256,6 +354,14 @@ static int undo_swap(int redo)
             step_t x = t->step[i];
             t->step[i] = undo.st[i];
             undo.st[i] = x;
+#if JAMBOX_PROTO
+            {
+                uint8_t d[4];
+                memcpy(d, t->note_len[i], sizeof d);
+                memcpy(t->note_len[i], undo.note_len[i], sizeof d);
+                memcpy(undo.note_len[i], d, sizeof d);
+            }
+#endif
         }
     }
     len = t->p[P_SLEN];
@@ -263,6 +369,12 @@ static int undo_swap(int redo)
     undo.len = len;
     undo.undone = (uint8_t)!redo;
 #if JAMBOX_PROTO
+    {
+        uint8_t mode = t->duration_mode;
+        t->duration_mode = undo.duration_mode;
+        undo.duration_mode = mode;
+    }
+    jam_lengths_changed(t);
     jam_pattern_generation[trk_index(t)]++;
 #endif
     fm1_irq_on();
@@ -663,8 +775,20 @@ static void track_select(uint32_t i)
 {
     if (i >= NTRK || i == song.sel)
         return;
+#if JAMBOX_PROTO
+    {
+        uint32_t previous;
+        fm1_irq_off();
+        for (previous = 0; previous < NPART; previous++)
+            if ((song.rec & (1u << previous)) && previous != i)
+                jam_record_finish(&trk[previous]);
+    }
+#endif
     song.sel = (uint8_t)i;
     rec_follow(i);                                   /* LIVE: recording follows the selected track */
+#if JAMBOX_PROTO
+    fm1_irq_on();
+#endif
     ui.entry_open = 0;
     ui.cursor = 0;
     ui.bank = 0;

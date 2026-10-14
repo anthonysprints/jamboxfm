@@ -950,6 +950,12 @@ function stepExt(r, a, o) {
     const lo = r.b(), hi = r.b(), rt = r.b();
     o.lvl = lo | ((hi & 1) << 7);
     o.rat = rt | (((hi >> 1) & 1) << 7);
+    /* JamBox v11 appends independent grid lengths; legacy/drum replies end above. */
+    if (r.i + 4 <= a.length)
+      o.noteLen = [0, 1, 2, 3].map((k) => {
+        const n = r.b();
+        return o.time === 0 && k < o.n && n <= 64 ? n : 0;
+      });
   }
   return o;
 }
@@ -1133,9 +1139,12 @@ const req = {
   stepSet: (i, st) => {
     const n = Math.max(0, Math.min(4, st.n | 0));
     const notes = [0, 1, 2, 3].map((k) => (st.notes[k] | 0) & 0x7F);
-    const ext = st.lvl == null && st.rat == null ? []   /* v5: level / ratchet kept (older firmware ignores them) */
+    const hasLengths = Array.isArray(st.noteLen), time = Math.max(0, Math.min(2, st.time | 0));
+    const ext = st.lvl == null && st.rat == null && !hasLengths ? []   /* v5: level / ratchet kept */
       : [(st.lvl | 0) & 0x7F, (((st.lvl | 0) >> 7) & 1) | ((((st.rat | 0) >> 7) & 1) << 1), (st.rat | 0) & 0x7F];
-    return [CMD.STEP_SET, [i, n, ...notes, Math.max(0, Math.min(2, st.time | 0)), st.flags & 3, (st.vel | 0) & 0x7F, ...ext]];
+    const lengths = !hasLengths ? [] : [0, 1, 2, 3].map((k) =>
+      time === 0 && k < n && Number.isInteger(st.noteLen[k]) && st.noteLen[k] >= 0 && st.noteLen[k] <= 64 ? st.noteLen[k] : 0);
+    return [CMD.STEP_SET, [i, n, ...notes, time, st.flags & 3, (st.vel | 0) & 0x7F, ...ext, ...lengths]];
   },
   /* v5: get (d == null) or set the drum track's step i: {on: 16 bits, lvl[16], rat[16]} */
   drumStep: (i, d) => {
@@ -5493,7 +5502,8 @@ async function writeStep(i, tr) {
   let time = +c.time.value;
   if (notes.length && !old.n && time === 2) time = 0;   /* typing notes into an empty step makes it play */
   const s = { n: notes.length, notes: all, time, flags: (c.acc.checked ? 1 : 0) | (c.sl.checked ? 2 : 0),
-    vel: Math.max(0, Math.min(127, +c.vel.value || 0)), lvl: old.lvl, rat: old.rat };   /* v5: level / ratchet kept */
+    vel: Math.max(0, Math.min(127, +c.vel.value || 0)), lvl: old.lvl, rat: old.rat,
+    noteLen: old.noteLen && notes.map((note) => old.noteLen[old.notes.slice(0, old.n).indexOf(note)] || 0) };   /* v5: level / ratchet kept */
   if (s.n && !s.vel) s.vel = 96;
   stepEdit.set(i, performance.now());
   try {
@@ -5626,7 +5636,7 @@ async function writeSteps(idx) {
       const s = dev.steps[i];
       stepEdit.set(i, performance.now());
       dev.steps[i] = parse[CMD.STEP_SET](await rq(req.stepSet(i, { n: s.n, notes: s.notes, time: s.time, flags: s.flags,
-        vel: s.vel, lvl: s.lvl || 0, rat: s.rat || 0 })));
+        vel: s.vel, lvl: s.lvl || 0, rat: s.rat || 0, noteLen: s.noteLen })));
     }
   } finally { busy--; }
 }
@@ -7667,7 +7677,8 @@ $("savefile").addEventListener("click", () => {
     pCount: dev.info.pcount, pE0: dev.info.pe0,      /* (2.6: read by count on another version, patchByCount) */
     engineName: dev.info.engines[engine], presetName: (dev.names[engine] || [])[preset],
     engine, preset, p: dev.dump.p.slice(), g: dev.dump.g.slice(),
-    steps: dev.steps.map((s) => ({ n: s.n, notes: s.notes.slice(), time: s.time, flags: s.flags, vel: s.vel })) };
+    steps: dev.steps.map((s) => ({ n: s.n, notes: s.notes.slice(), time: s.time, flags: s.flags, vel: s.vel,
+      lvl: s.lvl, rat: s.rat, noteLen: s.noteLen?.slice() })) };
   download(`felucca-${fileSlug(data.engineName || "patch")}-${fileSlug(data.presetName || preset)}.json`, data);
 });
 $("loadfile").addEventListener("click", () => { $("file").value = ""; $("file").click(); });
@@ -7699,7 +7710,8 @@ $("file").addEventListener("change", async () => {
         const s = data.steps[i] || {};
         if (i % 8 === 0) sayK("applying", `steps ${i}/${m}`);
         dev.steps[i] = parse[CMD.STEP_SET](await rq(req.stepSet(i, {
-          n: s.n | 0, notes: Array.isArray(s.notes) ? s.notes : [0, 0, 0, 0], time: s.time ?? 2, flags: s.flags | 0, vel: s.vel | 0 })));
+          n: s.n | 0, notes: Array.isArray(s.notes) ? s.notes : [0, 0, 0, 0], time: s.time ?? 2, flags: s.flags | 0,
+          vel: s.vel | 0, lvl: s.lvl, rat: s.rat, noteLen: s.noteLen })));
       }
     }
     dev.dump = await getDump();

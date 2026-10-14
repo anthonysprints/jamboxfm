@@ -347,6 +347,14 @@ int32_t jam_emu_value(uint32_t field, uint32_t index)
         return (int32_t)mask;
     case 20: return jam_home_active();
     case 22: return index < 4u ? jam_groove_value(song.sel, index) : -1;
+    case 23: return index < NSTEP*4u && song.sel < NPART ? TSEL->note_len[index/4u][index%4u] : 0;
+    case 24:
+        for (i=0, mask=0; i<NVOICE; i++)
+            mask += TSEL->v[i].active && TSEL->v[i].gate && TSEL->v[i].note == index;
+        return (int32_t)mask;
+    case 25: return TSEL->p[P_VOICE];
+    case 26: return (int32_t)TSEL->seq_abs;
+    case 27: return cur_page()->id[0];
     case 21: return ui.jam_home_view; /* Appended ABI: GROOVE=0, SOUND=1; remembered off Home too. */
     default: return -1;
     }

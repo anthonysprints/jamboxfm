@@ -29,7 +29,11 @@ enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, 
        ED_FILL_GET, ED_FILL_SET,                                                /* v8: fill conditions */
        ED_FM6_GET = 68, ED_FM6_PUT, ED_FM6_LIST, ED_FM6_ERASE };                /* v9: FM6 patches (Felucca's numbers) */
 /* v10 (SLOOP 2.5): DSYN_LIST .. DSYN_PLAY = 72..76, editor_dsyn.c; backup object 9 = the SYN kits */
+#if JAMBOX_PROTO
+#define ED_PROTO 11u                                  /* optional four per-note grid lengths after a synth step */
+#else
 #define ED_PROTO 10u                                   /* the protocol version INFO ends with */
+#endif
 #define ED_STORAGE_DISABLED 6u                         /* JamBox: this build never stores user data */
 
 static uint8_t ed_out[600];
@@ -191,6 +195,11 @@ static uint32_t ed_step_sig(const track_t *t, uint32_t i)   /* all 10 bytes (a d
     uint32_t k, h = 0x811C9DC5u;
     for (k = 0; k < sizeof t->step[0]; k++)
         h = (h ^ b[k]) * 16777619u;
+#if JAMBOX_PROTO
+    if (!is_drum(t))
+        for (k = 0; k < 4u; k++)
+            h = (h ^ t->note_len[i % NSTEP][k]) * 16777619u;
+#endif
     h = (h ^ (uint8_t)t->micro[i % NSTEP]) * 16777619u;
     h = (h ^ (step_fill(t, i) + 1u)) * 16777619u;        /* v8: its fill condition */
     for (k = 0; k < NLOCK; k++)
@@ -254,6 +263,10 @@ static void ed_step_out(const track_t *t, uint32_t i)
         ed_b(st->lvl);                                   /* v5 (7 bits each: 4 x 2-bit fields, the top 1 below) */
         ed_b(st->lvl >> 7 | (st->rat >> 7) << 1);
         ed_b(st->rat);
+#if JAMBOX_PROTO
+        for (k = 0; k < 4u; k++)
+            ed_b(st->time == ST_NOTE && k < st->n ? t->note_len[i][k] : 0u);
+#endif
     }
 }
 /* a step written: n, 4 notes, time, flags, vel [, lvl, hi, rat] */
@@ -278,6 +291,14 @@ static void ed_step_in(track_t *t, uint32_t i, const uint8_t *a, uint32_t na)
         } else {
             st->lvl = st->rat = 0;
         }
+#if JAMBOX_PROTO
+        /* Old editors replace the whole step: stale durations must never attach to new pitches. */
+        memset(t->note_len[i], 0, sizeof t->note_len[i]);
+        if (na >= 15u && st->time == ST_NOTE)
+            for (k = 0; k < st->n; k++)
+                t->note_len[i][k] = a[11u + k] <= NSTEP ? a[11u + k] : 0u;
+        jam_lengths_changed(t);
+#endif
     }
 }
 static void ed_shadow(void)                              /* the editor is in sync */
@@ -437,8 +458,8 @@ static const uint8_t *ed_bk_obj(uint32_t id, uint32_t *len)   /* 0 = no such obj
     }
     if (id >= 2u && id <= 5u) {
         if (project_used(id - 2u))
-            *len = sizeof proj_slot[0];
-        return (const uint8_t *)&proj_slot[id - 2u];
+            *len = sizeof(project_t);
+        return (const uint8_t *)project_slot(id - 2u);
     }
     if (id == 6u || id == 7u) {
         if (up_bank[id - 6u].magic == UP_BANK_MAGIC)

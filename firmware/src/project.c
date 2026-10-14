@@ -1,7 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
-/* Projects: four slots in .noinit RAM (the song sections A..D), so SLOOP keeps them across resets and UBOOT
- * entry. JamBox clears them on boot and uses a private RAM-only magic. With FELUCCA_PERSIST every save
+/* Projects: four song sections A..D. SLOOP keeps its .noinit slots across resets and UBOOT
+ * entry. JamBox splits its larger RAM-only snapshots across retained and ordinary RAM, clears
+ * them on boot and uses the private JRM1 format (legacy prefix + independent synth note lengths). With FELUCCA_PERSIST every save
  * also goes to flash through storage.c, and an empty RAM slot
  * is filled from flash on load. The working project is also kept in flash by itself (autosave, when
  * the transport is stopped and nothing sounds) and comes back at power-on: SLOOP starts where you
@@ -24,11 +25,13 @@
  * PROJ_HOST needs core.h, params.c (TP), drums.c (the lanes), the engines and trk_def_engine (ui.c). */
 #include "app_policy.h"
 #if JAMBOX_PROTO
-/* Temporary arranger snapshots only. A reset into SLOOP must not interpret JamBox RAM as FUN6. */
-#define PROJ_MAGIC 0x4A524D30u                 /* "JRM0": not the future on-flash JamBox project format */
+/* Private RAM/export format: independent melodic note lengths, never a legacy flash object. */
+#define PROJ_MAGIC 0x4A524D31u                 /* "JRM1" */
+#define PROJ_MAGIC_JRM0 0x4A524D30u            /* earlier JamBox RAM snapshots: legacy group lengths */
 #else
 #define PROJ_MAGIC 0x46554E36u                 /* "FUN6": format 5 + the 2.6 parameters, nudge and condition in a byte */
 #endif
+#define PROJ_MAGIC_V6 0x46554E36u              /* "FUN6": the unchanged 3816-byte Sloop layout */
 #define PROJ_MAGIC_V5 0x46554E35u              /* "FUN5": format 4 + per-step nudge, parameter locks, fill conditions (SLOOP 2.4) */
 #define PROJ_MAGIC_V4 0x46554E34u              /* "FUN4": four tracks, P_COUNT parameters each, 10-byte steps; read only */
 #define PROJ_MAGIC_V3 0x46554E33u              /* "FUN3": SLOOP 1.x; read only */
@@ -66,7 +69,19 @@ typedef struct {
     uint8_t sel, drdly, rsv[2];                /* the selected track; 2.5: G_DRDLY */
     proj_trk_t t[NTRK];
     uint32_t sum;
+} project_v6_t;
+#if JAMBOX_PROTO
+typedef struct {                               /* JRM1: explicit lengths only for the three synth parts */
+    uint32_t magic, size;
+    int16_t g[PROJ_NG];
+    uint8_t sel, drdly, rsv[2];
+    proj_trk_t t[NTRK];
+    uint8_t note_len[NPART][NSTEP][4];          /* 0: legacy NOTE/TIE articulation; 1..64: grid steps */
+    uint32_t sum;
 } project_t;
+#else
+typedef project_v6_t project_t;
+#endif
 static int16_t pt_get(const proj_trk_t *t, uint32_t id)   /* p[id] of a stored track */
 {
     return id < PROJ_NC6 ? t->p[id] : id < P_E0 ? (int16_t)t->x[id - PROJ_NC6] : t->e[(id - P_E0) & 7u];
@@ -152,8 +167,23 @@ typedef struct {                               /* format 1 (until 0.5 beta), rea
 } project_v1_t;
 _Static_assert(sizeof(project_v2_t) == 2552u && sizeof(project_v1_t) == 688u && sizeof(project_v3_t) == 2584u &&
                sizeof(project_v4_t) == 3112u && sizeof(project_v5_t) == 3840u, "formats 1 / 2 / 3 / 4 / 5 as they were stored");
+_Static_assert(sizeof(project_v6_t) == 3816u, "legacy format 6 keeps its byte layout");
+#if JAMBOX_PROTO
+_Static_assert(sizeof(project_t) == 4584u, "JRM1 adds three 64 x four-byte duration tables");
+_Static_assert(__builtin_offsetof(project_t, note_len) == __builtin_offsetof(project_v6_t, sum),
+               "JRM1 keeps the legacy prefix before its duration tail");
+/* The retained region cannot hold four larger snapshots. JamBox clears every slot at boot;
+ * three fit in the old region and the fourth lives in ordinary zero-initialized RAM. */
+static project_t proj_retained[3] __attribute__((section(".noinit")));
+_Static_assert(sizeof proj_retained <= 0x3D50u - 256u, "three JRM1 snapshots leave room for retained panel and boot state");
+static project_t proj_volatile;
+static project_t *project_slot(uint32_t slot)
+{ return (slot & 3u) < 3u ? &proj_retained[slot & 3u] : &proj_volatile; }
+#else
 _Static_assert(sizeof(project_t) <= 3840u, "format 6 fits one flash object (storage.c ST_PAYLOAD_MAX)");
 project_t proj_slot[4] __attribute__((section(".noinit")));
+static project_t *project_slot(uint32_t slot) { return &proj_slot[slot & 3u]; }
+#endif
 
 static uint32_t proj_hash(const void *p, uint32_t n)   /* FNV-1a over n bytes */
 {
@@ -379,6 +409,24 @@ static int proj_from_v1(project_t *q, const project_v1_t *v1, int n)
     return 1;
 }
 
+#if JAMBOX_PROTO
+/* Explicit conversion only: ordinary boot/import never consumes another firmware's projects.
+ * Callers must opt into a legacy read and keep the original bytes for future migration. */
+static int proj_import_legacy(project_t *q, const void *b, int n)
+{
+    const project_v6_t *v6 = (const project_v6_t *)b;
+    if (n != (int)sizeof *v6 || (v6->magic != PROJ_MAGIC_JRM0 && v6->magic != PROJ_MAGIC_V6) ||
+        v6->size != sizeof *v6 || v6->sum != proj_hash(v6, sizeof *v6 - 4u))
+        return 0;
+    memcpy(q, v6, __builtin_offsetof(project_v6_t, sum));
+    memset(q->note_len, 0, sizeof q->note_len);
+    q->magic = PROJ_MAGIC;
+    q->size = sizeof *q;
+    q->sum = proj_sum(q);
+    return 1;
+}
+#endif
+
 /* n bytes of a stored project -> current slot q; 0 = not a supported project family/format. */
 static int proj_import(project_t *q, const void *b, int n)
 {
@@ -442,6 +490,10 @@ static void proj_capture(project_t *p)        /* what is playing now, as a proje
         p->t[i].engine = trk[i].eng_req;
         p->t[i].preset = trk[i].preset;
         memcpy(p->t[i].step, trk[i].step, sizeof trk[i].step);
+#if JAMBOX_PROTO
+        if (i < NPART)
+            memcpy(p->note_len[i], trk[i].note_len, sizeof p->note_len[i]);
+#endif
         for (k = 0; k < NSTEP; k++)
             pt_set_mf(&p->t[i], k, trk[i].micro[k], (uint32_t)trk[i].fill[k / 4u] >> (2u * (k % 4u)));
         memcpy(p->t[i].lock, trk[i].lock, sizeof trk[i].lock);
@@ -480,6 +532,10 @@ static void proj_apply(const project_t *p, int all)
         }
         t->preset = (uint8_t)(ENGINES[e]->npresets ? (s->preset == 0xFFu ? 0u : s->preset) % ENGINES[e]->npresets : 0u);
         memcpy(t->step, s->step, sizeof t->step);
+#if JAMBOX_PROTO
+        memset(t->note_len, 0, sizeof t->note_len);
+        t->duration_mode = 0;
+#endif
         memset(t->fill, 0, sizeof t->fill);
         for (i = 0; i < NSTEP; i++) {                   /* the nudges and conditions (3 means normal: 0) */
             uint32_t c = pt_fill(s, i);
@@ -510,8 +566,15 @@ static void proj_apply(const project_t *p, int all)
                     st->n = 4;
                 if (st->time > ST_REST)
                     st->time = ST_REST;
-                for (j = 0; j < 4u; j++)
+                for (j = 0; j < 4u; j++) {
                     st->note[j] &= 127u;
+#if JAMBOX_PROTO
+                    if (st->time == ST_NOTE && j < st->n && p->note_len[k][i][j] && p->note_len[k][i][j] <= NSTEP) {
+                        t->note_len[i][j] = p->note_len[k][i][j];
+                        t->duration_mode = 1;
+                    }
+#endif
+                }
             }
         fm6_track_loaded(t);                            /* FM6: the project keeps PTCH, not the patch: its slot's */
 #if JAMBOX_PROTO
@@ -537,7 +600,7 @@ static union {
 } proj_tmp;
 static void proj_fetch(uint32_t slot)
 {
-    project_t *q = &proj_slot[slot & 3u];
+    project_t *q = project_slot(slot & 3u);
     int n = st_load(OBJ_PROJECT0 + (slot & 3u), &proj_tmp, sizeof proj_tmp);
     if (!proj_import(q, &proj_tmp, n))
         q->magic = 0;
@@ -551,7 +614,7 @@ static void project_save(uint32_t slot)
     (void)slot;
     ui_message("STORAGE DISABLED");
 #else
-    project_t *p = &proj_slot[slot & 3u];
+    project_t *p = project_slot(slot & 3u);
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE SAVE"); return; }
 #endif
@@ -578,16 +641,16 @@ static void project_erase(uint32_t slot)
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE ERASE"); return; }
 #endif
-    if (!proj_ok(&proj_slot[slot])) {
+    if (!proj_ok(project_slot(slot))) {
         ui_message("EMPTY SLOT");
         return;
     }
-    if (flash_ok && st_save(OBJ_PROJECT0 + slot, &proj_slot[slot], 0)) {
+    if (flash_ok && st_save(OBJ_PROJECT0 + slot, project_slot(slot), 0)) {
         ui_message("ERASE ERROR");
         return;
     }
     fm1_irq_off();
-    memset(&proj_slot[slot], 0, sizeof proj_slot[slot]);
+    memset(project_slot(slot), 0, sizeof(project_t));
     sec_dirty &= (uint8_t)~(1u << slot);
     if (live_sec == (int8_t)slot)
         live_sec = -1;
@@ -622,7 +685,7 @@ static void project_apply(const project_t *p)
 
 static void project_load(uint32_t slot)
 {
-    project_t *p = &proj_slot[slot & 3u];
+    project_t *p = project_slot(slot & 3u);
 #if FELUCCA_ARRANGER
     if (song.playing || transport_req) { ui_message("STOP BEFORE LOAD"); return; }
 #endif
@@ -735,7 +798,8 @@ static void persist_boot(void)                    /* before settings_init / pane
 {
 #if JAMBOX_PROTO
     /* .noinit survives firmware changes. Every JamBox boot starts a fresh musical session. */
-    memset(proj_slot, 0, sizeof proj_slot);
+    for (uint32_t slot = 0; slot < 4u; slot++)
+        memset(project_slot(slot), 0, sizeof(project_t));
     memset(&settings, 0, sizeof settings);
     panel = PANEL_DEFAULT;
     sec_dirty = song_dirty = settings_later = 0;
@@ -799,11 +863,11 @@ static void persist_boot(void)                    /* before settings_init / pane
          * flash (a live section stored while playing): marked to be written when quiet */
         uint32_t i;
         for (i = 0; i < 4u; i++)
-            if (!proj_ok(&proj_slot[i])) {
+            if (!proj_ok(project_slot(i))) {
                 proj_fetch(i);
             } else {
                 int n = st_load(OBJ_PROJECT0 + i, &proj_tmp, sizeof proj_tmp);
-                if (n != (int)sizeof proj_slot[i] || memcmp(&proj_tmp.v6, &proj_slot[i], sizeof proj_slot[i]))
+                if (n != (int)sizeof(project_t) || memcmp(&proj_tmp.v6, project_slot(i), sizeof(project_t)))
                     sec_dirty |= (uint8_t)(1u << i);
             }
     }
@@ -813,7 +877,7 @@ static void persist_boot(void)                    /* before settings_init / pane
 #endif
 }
 
-static int project_used(uint32_t slot) { return proj_ok(&proj_slot[slot & 3u]); }
+static int project_used(uint32_t slot) { return proj_ok(project_slot(slot & 3u)); }
 
 #if FELUCCA_PERSIST
 /* SLOOP 2.5: the settings object holds the SYN kits after persist_t (drum_synth.c dsu): firmware before 2.5 reads
@@ -1007,7 +1071,7 @@ static uint32_t project_restore(uint32_t slot, const void *raw, uint32_t n)
     if (slot < 4u && !n) {
         if (!flash_ok || st_save(OBJ_PROJECT0 + slot, raw, 0))
             return 4;
-        memset(&proj_slot[slot], 0, sizeof proj_slot[slot]);
+        memset(project_slot(slot), 0, sizeof(project_t));
         sec_dirty &= (uint8_t)~(1u << slot);
         return 0;
     }
@@ -1019,7 +1083,7 @@ static uint32_t project_restore(uint32_t slot, const void *raw, uint32_t n)
     }
     if (!flash_ok || st_save(OBJ_PROJECT0 + slot, &autosave_buf, sizeof autosave_buf))
         return 4;
-    memcpy(&proj_slot[slot], &autosave_buf, sizeof proj_slot[slot]);
+    memcpy(project_slot(slot), &autosave_buf, sizeof(project_t));
     sec_dirty &= (uint8_t)~(1u << slot);
     return 0;
 }
@@ -1045,7 +1109,7 @@ static void section_store(uint32_t s)
 {
     s &= 3u;
     fm1_irq_off();                                      /* (the audio ISR may be applying a section) */
-    proj_capture(&proj_slot[s]);
+    proj_capture(project_slot(s));
     live_sec = (int8_t)s;
     fm1_irq_on();
     sec_dirty |= (uint8_t)(1u << s);
@@ -1053,7 +1117,7 @@ static void section_store(uint32_t s)
 static void section_load(uint32_t s)                    /* stopped: the section is the loop now */
 {
     s &= 3u;
-    project_apply(&proj_slot[s]);
+    project_apply(project_slot(s));
     live_sec = (int8_t)s;
 }
 static void sections_write(void)                        /* the dirty sections and song into flash */
@@ -1062,7 +1126,7 @@ static void sections_write(void)                        /* the dirty sections an
 #if FELUCCA_PERSIST
     if (flash_ok)
         for (i = 0; i < 4u; i++)
-            if (((sec_dirty >> i) & 1u) && st_save(OBJ_PROJECT0 + i, &proj_slot[i], sizeof proj_slot[i]) == 0)
+            if (((sec_dirty >> i) & 1u) && st_save(OBJ_PROJECT0 + i, project_slot(i), sizeof(project_t)) == 0)
                 sec_dirty &= (uint8_t)~(1u << i);       /* (a failed write stays dirty: tried again later) */
     if (!flash_ok)
 #endif

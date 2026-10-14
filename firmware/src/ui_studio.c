@@ -128,7 +128,15 @@ static void rec_toggle(void)
         return;
     }
     if (song.rec || rec_wait) {
+#if JAMBOX_PROTO
+        uint32_t i;
+        fm1_irq_off();
+        for (i = 0; i < NPART; i++) jam_record_finish(&trk[i]);
+#endif
         song.rec = 0;
+#if JAMBOX_PROTO
+        fm1_irq_on();
+#endif
         rec_wait = 0;
         ui_message("REC OFF");
         return;

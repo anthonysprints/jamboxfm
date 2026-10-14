@@ -1,6 +1,6 @@
 # JamBoxFM browser instrument
 
-Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The browser instrument uses the FM-1's controls: 27 note keys, 14 buttons,
 seven encoders and a master level control. Its 240 × 240 screen is drawn by
@@ -61,6 +61,22 @@ effect tails do not keep note lights on. This October 14 lighting follow-up
 supersedes the original chord build's root-only display. Software checks and
 publication are tracked in the [lighting build record](build-evidence/sounding-note-lights.md).
 
+## Independent POLY recording follow-up
+
+The [current recording increment](INDEPENDENT_NOTES.md) lets each POLY note
+keep its own grid length. Hold one note, add another later, then release them
+separately: replay should preserve that overlap. It also applies to overdubs
+and free-takes. Bass/Lead keep their LEGATO defaults, CHORD remains a separate
+choice, and the existing four-onsets-per-step/eight-shared-synth-voice limits
+remain. No extra overlap setting is required.
+
+The browser uses the same C recorder and release scheduling as the FM-1;
+JavaScript does not schedule a parallel performance. Shared C integration, native checks, actual WASM/AudioWorklet/browser checks
+and the FM-1 build passed. Publication remains pending. See the [follow-up build
+record](build-evidence/independent-notes.md) for the finalized result before
+assuming the public emulator has changed. Browser reload and device power-off
+still lose the temporary session; permanent saving is disabled.
+
 ## Build and package
 
 From the repository root, with Python 3, Pillow and Emscripten on PATH:
@@ -90,10 +106,11 @@ Run the emulator's native contracts, build and real Chromium checks with:
 sh tests/run_jam_emu_tests.sh
 ```
 
-The native suite exercises 88 contracts, including physical key/button
-release order, LCD drawing, recording, black-key chord roots, chord lights,
-automatic polyphony and inversion controls. Chromium exercises actual
-AudioWorklet sound, panel controls, the live screen and desktop/mobile
+The native suite exercises physical key/button release order, LCD drawing,
+recording, black-key chord roots, chord lights, automatic polyphony and
+inversion controls. Build-specific counts belong in the linked build records.
+Chromium exercises actual AudioWorklet sound, panel controls, the live screen
+and desktop/mobile
 layout. After packaging, `node tests/jam_emu_browser.mjs` also exercises
 the standalone HTML while blocking every network request after its initial
 document. That check verifies embedded runtime independence; it does not

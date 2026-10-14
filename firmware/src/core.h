@@ -235,6 +235,10 @@ typedef struct track {
         step_t step[NSTEP];
         dstep_t dstep[NSTEP];
     };
+#if JAMBOX_PROTO
+    uint8_t note_len[NSTEP][4]; /* 0: legacy articulation; 1..64: individual grid-step duration */
+    uint8_t duration_mode;
+#endif
     int8_t micro[NSTEP];         /* each step's nudge, MICRO_MIN..MICRO_MAX (1/64 of a step; - early, + late) */
     plock_t lock[NLOCK];         /* parameter locks, unsorted (step LOCK_FREE = a free slot) */
     uint8_t fill[NSTEP / 4];     /* each step's condition, 2 bits (seq.c step_fill): FC_* */

@@ -1,6 +1,6 @@
 # First FM-1 playing feedback — 2026-10-14
 
-Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The owner reports that installation succeeded and most functions work on the
 physical FM-1. This establishes an owner-reported first boot and playing
@@ -142,6 +142,26 @@ SNAP behavior while adding the sounding chord tones.
 The NOTES menu can still disable sounding-note lights. On the previous build,
 hold HOME, turn SELECT to LIGHTS, turn knob 3 to NOTES ON, then OCT− to close.
 Settings remain temporary, so the previous build needs this after reboot.
+
+## Recording follow-up: independent POLY note lengths
+
+The owner wants to keep Bass's familiar one-note default, while making POLY
+recordings preserve staggered notes. Holding C, starting E later and releasing
+E first should leave C held on replay. This is a recording-format limitation
+in the preceding build, not a musical rule or an extra switch the player
+missed.
+
+The [independent-note follow-up](INDEPENDENT_NOTES.md) implements separate
+grid durations for POLY recordings, including overdubs, free-takes and notes
+crossing the loop seam. There are still four starts per step and eight shared
+synth voices; drums and the default Bass/Lead LEGATO behavior remain unchanged.
+The device LEN control changes the selected onset's notes without erasing
+later onsets. Internal project/editor data now carry those lengths, but
+permanent saving remains disabled and needs a new format budget.
+
+Shared C integration, native/browser checks and the FM-1 build passed.
+Publication and owner audition remain pending; results
+will be recorded in the [follow-up evidence](build-evidence/independent-notes.md).
 
 ## Delivery and verification
 

@@ -58,18 +58,41 @@ static void pattern_rotate(track_t *t, int32_t d)       /* every step one later 
 {
     uint32_t len = trk_len(t), i;
     step_t keep;
+#if JAMBOX_PROTO
+    uint8_t keep_len[4];
+#endif
     layer_undo_mark(t);
     fm1_irq_off();
     if (d > 0) {
         keep = t->step[len - 1u];
-        for (i = len - 1u; i > 0; i--)
+#if JAMBOX_PROTO
+        memcpy(keep_len, t->note_len[len - 1u], sizeof keep_len);
+#endif
+        for (i = len - 1u; i > 0; i--) {
             t->step[i] = t->step[i - 1u];
+#if JAMBOX_PROTO
+            memcpy(t->note_len[i], t->note_len[i - 1u], sizeof keep_len);
+#endif
+        }
         t->step[0] = keep;
+#if JAMBOX_PROTO
+        memcpy(t->note_len[0], keep_len, sizeof keep_len);
+#endif
     } else {
         keep = t->step[0];
-        for (i = 0; i + 1u < len; i++)
+#if JAMBOX_PROTO
+        memcpy(keep_len, t->note_len[0], sizeof keep_len);
+#endif
+        for (i = 0; i + 1u < len; i++) {
             t->step[i] = t->step[i + 1u];
+#if JAMBOX_PROTO
+            memcpy(t->note_len[i], t->note_len[i + 1u], sizeof keep_len);
+#endif
+        }
         t->step[len - 1u] = keep;
+#if JAMBOX_PROTO
+        memcpy(t->note_len[len - 1u], keep_len, sizeof keep_len);
+#endif
     }
     fm1_irq_on();
 }
@@ -79,8 +102,12 @@ static void pattern_length(track_t *t, int32_t d)       /* x2 (the pattern again
     layer_undo_mark(t);
     fm1_irq_off();
     if (d > 0 && len * 2u <= NSTEP) {
-        for (i = 0; i < len; i++)
+        for (i = 0; i < len; i++) {
             t->step[len + i] = t->step[i];
+#if JAMBOX_PROTO
+            memcpy(t->note_len[len + i], t->note_len[i], sizeof t->note_len[i]);
+#endif
+        }
         t->p[P_SLEN] = (int16_t)(len * 2u);
     } else if (d < 0 && len >= 2u) {
         t->p[P_SLEN] = (int16_t)(len / 2u);
@@ -102,6 +129,9 @@ static void pattern_transpose(track_t *t, int32_t d)    /* every note a semitone
     for (i = 0; i < NSTEP; i++)
         for (j = 0; j < t->step[i].n && j < 4u; j++)
             t->step[i].note[j] = (uint8_t)clamp(t->step[i].note[j] + (d > 0 ? 1 : -1), 0, 127);
+#if JAMBOX_PROTO
+    for (i = 0; i < NSTEP; i++) jam_step_coalesce(t, i);
+#endif
     fm1_irq_on();
 }
 
@@ -136,6 +166,9 @@ static void step_down(uint32_t w)
         step_t *s = &t->step[idx];
         uint32_t i, n = pen_n ? pen_n : 1u;
         memset(s, 0, sizeof *s);
+#if JAMBOX_PROTO
+        jam_step_lengths_clear(t, idx);
+#endif
         for (i = 0; i < n && i < 4u; i++)
             s->note[i] = pen_n ? pen_note[i] : last_note;
         s->n = (uint8_t)(t->p[P_VOICE] == V_POLY ? n : 1u);
@@ -160,7 +193,7 @@ static void step_up(uint32_t w)
     if (is_drum(t))
         dstep_clr(&t->dstep[idx], pen_lane);
     else
-        step_clear(&t->step[idx]);
+        track_step_clear(t, idx);
     if (!is_drum(t) || !dstep_mask(&t->dstep[idx])) {   /* an empty step keeps no lock, no nudge, no condition */
         lock_del(t, idx, P_COUNT);
         t->micro[idx] = 0;
@@ -241,6 +274,9 @@ static void steps_held_edit(uint32_t knob, int32_t s)
                 st->lvl = (uint8_t)((st->lvl & ~(3u << sh)) | lv << sh);
                 st->rat = (uint8_t)((st->rat & ~(3u << sh)) | rt << sh);
             }
+#if JAMBOX_PROTO
+            if (knob == 0u) jam_step_coalesce(t, idx);
+#endif
         }
     }
     fm1_irq_on();

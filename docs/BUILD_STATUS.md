@@ -1,6 +1,6 @@
 # JamBox software prototype and FM-1 update isolation
 
-Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The initial Home increment implemented two views: **GROOVE** at startup
 for four literal 16-step pattern rows, and **SOUND** for larger sound controls.
@@ -55,7 +55,7 @@ The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. 
 - Two curated sounds per role. Melodic macros control brightness, movement, grit and space; drum macros control tone, level, echo and room.
 - A 240×240 Home screen with real physical encoder/button handling and access to the existing deeper sound pages.
 - A browser AudioWorklet running the shared C DSP, keyboard mapping, chord generation and sequencer. Keyboard/touch pads, sound browsing, macros, mute, tempo, swing and drum-step editing work through C commands.
-- Chord and bass capture through the existing grid-snapped recorder. Finishing a take leaves playback running. Browser part selection finishes the current take and releases its held input.
+- Chord and bass capture through the grid-snapped recorder. The independent-POLY follow-up adds separate per-note grid lengths for staggered holds; build checks passed and publication is pending. Finishing a take leaves playback running. Browser part selection finishes the current take and releases its held input.
 - Bounded browser commands, panic on overflow/focus loss, and explicit audio start.
 
 Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). The default application remains Sloop; `JAMBOX_PROTO=1` selects JamBox. `FELUCCA_PERSIST=0` disables app-data persistence independently of `FELUCCA_FLASH` and `FELUCCA_OTA`. The experimental Chrome installer and candidate are now published; the owner reports successful installation.
@@ -65,7 +65,7 @@ Exact patch, beat and macro values are in [DUSTY_PALETTE.md](DUSTY_PALETTE.md). 
 - `bash tools/cloud/build_device.sh --with-updater` enables low-level flash and OTA, with app persistence disabled and both OTA dry-run/RAM-only modes disabled.
 - Normal JamBox boot clears retained projects and settings, starts Dusty, and imports no foreign musical state. A separate read-only helper accepts only a recognized, CRC-validated settings schema containing a strictly valid PAN5 physical-control mapping.
 - Project/preset save, erase and editor restore/upload actions report storage unavailable before changing banks or flash. Settings and calibration edits are labeled temporary. Autosave and pre-reset app-data writes are disabled.
-- Internal arranger snapshots use private `JRM0` magic. Returning to Sloop cannot treat them as `FUN6` projects. Settings and panel mappings still use shared `SET3`/`PAN5` RAM layouts: if Sloop has no valid flash settings, temporary JamBox preferences/calibration may carry back on a warm return.
+- Milestone 2 initially used private `JRM0` arranger snapshots; the independent-note follow-up uses `JRM1` RAM/export snapshots carrying note lengths. Returning to Sloop cannot treat either as `FUN6` projects. Settings and panel mappings still use shared `SET3`/`PAN5` RAM layouts: if Sloop has no valid flash settings, temporary JamBox preferences/calibration may carry back on a warm return.
 - The app's lowest flash writer permits only OTA staging, `[0xE0000, 0xE5000)`. The JamBox loader writes the app region and cleans only its known resume-record sector. Unknown flash identity refuses writes. Normal boot may clear stale OTA staging; the guarantee is no app-data writes, not a completely read-only chip.
 - USB timeout/retry and bus-reset handling close or discard abandoned SysEx state, and rescue drains complete messages. Loader cleanup errors prevent a success reset and keep the current loader session available for retry; final regression results are retained with the software evidence.
 
@@ -80,6 +80,8 @@ The adapter passed 27 native checks. Real Chromium checks passed for screen pixe
 `tools/package_jam_emu.py` creates a standalone HTML and a separate static site rooted at `build/jambox-web/`. Source and notices accompany the runtime. The public [JamBox browser instrument](https://anthonysprints.github.io/jamboxfm/emu/) is deployed and verified. Follow-up source `5b24d1e` passed 36 native adapter checks and the real Chromium suite, including corrected SNAP note lights; its published HTML, JavaScript and WASM matched the tested build. Managed Chromium blocks local-file navigation, so direct double-click execution is not claimed as tested; use HTTPS hosting when local-file AudioWorklet access is unavailable.
 
 ## Validation
+
+The [independent-note follow-up](INDEPENDENT_NOTES.md) passed native recorder/playback, actual WASM/browser, duration UI, project/editor, storage and FM-1 build checks. Publication remains pending. Final results and target memory fit belong in the [follow-up build record](build-evidence/independent-notes.md). JRM1 is a 4,584-byte RAM/export format with three retained slots and one ordinary-RAM slot; it is not a persistent flash object. Earlier sizes and counts below are historical and do not establish this increment's memory or performance.
 
 The unchanged pinned Sloop source built with Emscripten 3.1.69 and Clang 19.1.7. All twelve engines matched native/WASM samples exactly, and the existing sequence, sample, live edit, mute, transport and timing checks passed.
 

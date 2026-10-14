@@ -116,6 +116,20 @@ static int all_zero(const void *p, size_t n)
     for (size_t i = 0; i < n; ++i) if (b[i]) return 0;
     return 1;
 }
+static int project_slots_zero(void)
+{
+    for (uint32_t i = 0; i < 4u; i++)
+        if (!all_zero(project_slot(i), sizeof(project_t))) return 0;
+    return 1;
+}
+static void project_slots_snapshot(project_t out[4])
+{ for (uint32_t i = 0; i < 4u; i++) out[i] = *project_slot(i); }
+static int project_slots_equal(const project_t expected[4])
+{
+    for (uint32_t i = 0; i < 4u; i++)
+        if (memcmp(&expected[i], project_slot(i), sizeof(project_t))) return 0;
+    return 1;
+}
 static void snapshot(void)
 { memcpy(before, nor, sizeof nor); raw_erases = raw_programs = 0; }
 static void unchanged(const char *label)
@@ -157,15 +171,16 @@ static panel_t alternative_panel(void)
 }
 static void test_boot(void)
 {
-    project_t foreign;
+    project_v6_t foreign;
+    project_t current;
     up_bank_t bank = { .magic = UP_BANK_MAGIC, .rsize = sizeof(up_rec_t), .nslot = UP_PER_BANK };
     panel_t calibrated = alternative_panel();
     memset(nor, 255, sizeof nor);
-    memset(proj_slot, 0x55, sizeof proj_slot);
+    for (uint32_t i = 0; i < 4u; i++) memset(project_slot(i), 0x55, sizeof(project_t));
     memset(&settings, 0x55, sizeof settings); memset(&panel, 0x55, sizeof panel);
     snapshot(); ordinary_boot();
     check(flash_ok && plain_inits == 1, "ordinary boot detects flash independently of persistence");
-    check(all_zero(proj_slot, sizeof proj_slot) && !sec_dirty && !song_dirty, "ordinary boot clears retained slots and dirty state");
+    check(project_slots_zero() && !sec_dirty && !song_dirty, "ordinary boot clears retained slots and dirty state");
     check(settings.palette == 4 && !settings.lowcut && !settings.zoom, "ordinary boot applies JamBox display defaults");
     check(lights_notes == 1, "ordinary device boot enables sounding-note lights without browser overrides");
     check(!memcmp(&panel, &PANEL_DEFAULT, sizeof panel), "ordinary boot uses default panel when flash has no calibration");
@@ -175,11 +190,14 @@ static void test_boot(void)
     /* A complete valid foreign project, bank and settings object coexist with
      * patterned samples/FM6/globals. Only the panel calibration may be read in. */
     for (uint32_t i = 0; i < sizeof nor; ++i) nor[i] = (uint8_t)(i * 17u + (i >> 11) + 33u);
-    proj_capture(&foreign); foreign.magic = 0x46554E36u; foreign.g[G_BPM] = 173; foreign.sum = proj_sum(&foreign);
+    proj_capture(&current);
+    memcpy(&foreign, &current, __builtin_offsetof(project_v6_t, sum));
+    foreign.magic = PROJ_MAGIC_V6; foreign.size = sizeof foreign; foreign.g[G_BPM] = 173;
+    foreign.sum = proj_hash(&foreign, sizeof foreign - 4u);
     for (uint32_t i = 0; i < 4; ++i) {
         seed_object(OBJ_PROJECT0 + i, 0, 20 + i, &foreign, sizeof foreign);
         memset(nor + st_sector(OBJ_PROJECT0 + i, 1), 255, ST_SECTOR);
-        proj_slot[i] = foreign;
+        memcpy(project_slot(i), &foreign, sizeof foreign);
     }
     seed_object(OBJ_AUTOSAVE, 0, 5, &foreign, sizeof foreign);
     memset(nor + st_sector(OBJ_AUTOSAVE, 1), 255, ST_SECTOR);
@@ -210,7 +228,7 @@ static void test_boot(void)
     settings.magic = SETTINGS_MAGIC; settings.palette = 1; settings.lowcut = settings.zoom = 1;
     panel = calibrated; up_bank[0] = bank; sec_dirty = 15; song_dirty = settings_later = 1;
     snapshot(); ordinary_boot();
-    check(all_zero(proj_slot, sizeof proj_slot) && !arrangement_ready(), "foreign retained FUN6 slots and flash projects are not imported");
+    check(project_slots_zero() && !arrangement_ready(), "foreign retained FUN6 slots and flash projects are not imported");
     check(!up_count() && all_zero(up_bank, sizeof up_bank), "foreign user preset bank is not imported and RAM banks are empty");
     check(settings.palette == 4 && !settings.lowcut && !settings.zoom, "foreign settings and valid retained preferences are discarded");
     check(!memcmp(&panel, &calibrated, sizeof panel), "only validated foreign physical panel mapping is imported");
@@ -222,14 +240,14 @@ static void test_boot(void)
     unchanged("foreign retained/flash boot preserves all NOR bytes");
     for (uint32_t i = 0; i < 4; ++i) {
         song.g[G_BPM] = (int16_t)(101 + i); section_store(i);
-        check(proj_ok(&proj_slot[i]) && proj_slot[i].magic == 0x4A524D30u, "internal arranger snapshot uses valid private JRM0 format");
+        check(proj_ok(project_slot(i)) && project_slot(i)->magic == PROJ_MAGIC, "internal arranger snapshot uses valid private JRM1 format");
     }
     project_t parsed;
     memset(&parsed,0xC3,sizeof parsed);
-    check(proj_import(&parsed,&proj_slot[2],sizeof proj_slot[2]) && parsed.g[G_BPM]==103,
+    check(proj_import(&parsed,project_slot(2),sizeof(project_t)) && parsed.g[G_BPM]==103,
           "private JamBox RAM snapshot remains readable before a reset");
     snapshot(); ordinary_boot();
-    check(all_zero(proj_slot, sizeof proj_slot) && song.g[G_BPM] == 88, "warm boot discards every different retained JamBox section");
+    check(project_slots_zero() && song.g[G_BPM] == 88, "warm boot discards every different retained JamBox section");
     unchanged("warm JamBox boot neither flushes nor migrates retained sections");
     project_t untouched; memset(&untouched,0xC3,sizeof untouched); parsed=untouched;
     check(!proj_import(&parsed, &foreign, sizeof foreign) && !memcmp(&parsed,&untouched,sizeof parsed),
@@ -238,10 +256,10 @@ static void test_boot(void)
     v5.g[G_BPM]=143; v5.sum=proj_hash(&v5,sizeof v5-4u);
     check(!proj_import(&parsed,&v5,sizeof v5) && !memcmp(&parsed,&untouched,sizeof parsed),
           "JamBox rejects checksum-valid historical FUN5 without destination mutation");
-    proj_slot[0]=foreign; settings.magic=SETTINGS_MAGIC; settings.palette=1; panel=calibrated;
+    memcpy(project_slot(0), &foreign, sizeof foreign); settings.magic=SETTINGS_MAGIC; settings.palette=1; panel=calibrated;
     uint32_t reads_before=raw_reads;
     jedec = 0; snapshot(); ordinary_boot();
-    check(raw_reads==reads_before && all_zero(proj_slot,sizeof proj_slot) && settings.palette==4,
+    check(raw_reads==reads_before && project_slots_zero() && settings.palette==4,
           "unknown JEDEC still clears retained app data without any raw flash read");
     check(!flash_ok && !memcmp(&panel, &PANEL_DEFAULT, sizeof panel), "unrecognized flash identity falls back to default calibration");
     unchanged("unrecognized flash identity cannot enable app storage");
@@ -331,13 +349,13 @@ static void test_writers(void)
 {
     project_t slots[4]; up_bank_t banks[2]; up_rec_t record = {0};
     song.playing = 0; transport_req = 0;
-    section_store(0); memcpy(slots, proj_slot, sizeof slots); memcpy(banks, up_bank, sizeof banks);
+    section_store(0); project_slots_snapshot(slots); memcpy(banks, up_bank, sizeof banks);
     snapshot();
     for (uint32_t i = 0; i < 4; ++i) {
         project_save(i); check(!strcmp(ui.msg, "STORAGE DISABLED"), "explicit project SAVE reports storage disabled");
         project_erase(i); check(!strcmp(ui.msg, "STORAGE DISABLED"), "explicit project ERASE reports storage disabled");
     }
-    check(!memcmp(slots, proj_slot, sizeof slots), "forbidden explicit project operations preserve RAM section contents");
+    check(project_slots_equal(slots), "forbidden explicit project operations preserve RAM section contents");
     check(up_put(0, &record) == 6 && up_put(0, NULL) == 6 && up_store(0, "TEST") == 6,
           "preset PUT/erase/store return explicit disabled status");
     up_ui(1,0); check(!strcmp(ui.msg, "STORAGE DISABLED"), "preset UI erase reports disabled");
@@ -378,7 +396,7 @@ static void test_editor(void)
     uint8_t a[512] = {0};
     project_t slots[4]; up_bank_t banks[2]; dsu_bank_t ds;
     (void)dsu_kit(0); ds = dsu;
-    memcpy(slots, proj_slot, sizeof slots); memcpy(banks, up_bank, sizeof banks); snapshot();
+    project_slots_snapshot(slots); memcpy(banks, up_bank, sizeof banks); snapshot();
     a[0]=1; a[1]=0; refused(ED_PROJECT,a,2,4);
     a[0]=0; refused(ED_SMP_BEGIN,a,1,2); refused(ED_SMP_ERASE,a,1,2);
     a[1]=0; a[2]=4; a[3]=0; a[4]=0; a[5]=64; refused(ED_SMP_WRITE,a,6,5);
@@ -389,7 +407,7 @@ static void test_editor(void)
     for (uint32_t op=0; op<4; ++op) { a[0]=op; a[1]=0; refused(ED_BK_PUT,a,op==0?11:op==1?8:2,3); }
     command(ED_BK_LIST,NULL,0); check(reply_len==8 && reply[5]==6 && reply[6]==0,"backup list advertises disabled, empty inventory");
     memset(a,0,sizeof a); command(ED_BK_GET,a,6); check(reply_len==15 && reply[6]==6 && reply[12]==0 && reply[13]==0,"backup GET returns disabled with no data");
-    check(!memcmp(slots,proj_slot,sizeof slots) && !memcmp(banks,up_bank,sizeof banks) && !memcmp(&ds,&dsu,sizeof ds), "all forbidden editor writes preserve RAM projects/preset/drum banks");
+    check(project_slots_equal(slots) && !memcmp(banks,up_bank,sizeof banks) && !memcmp(&ds,&dsu,sizeof ds), "all forbidden editor writes preserve RAM projects/preset/drum banks");
     check(ed_smp_erase(0,1)==6 && ed_smp_end(0,a,1)==6 && ed_fm6_bank_write(0,a)==6 && ed_dsyn_store()==6,
           "direct sample/FM6/SYN helpers also refuse storage beneath the dispatcher");
     unchanged("all editor save/sample/backup/FM6/drum-store paths preserve NOR");
@@ -409,7 +427,7 @@ static void test_editor(void)
 static void test_ui(void)
 {
     project_t slots[4]; up_bank_t banks[2];
-    memcpy(slots,proj_slot,sizeof slots); memcpy(banks,up_bank,sizeof banks); snapshot();
+    project_slots_snapshot(slots); memcpy(banks,up_bank,sizeof banks); snapshot();
     song.sel=jam_role_track(1); song.playing=0; transport_req=0;
     for(uint32_t pg=0;pg<NPAGES;++pg) if(PAGES[pg].graph==GR_SLOTS || PAGES[pg].graph==GR_USER) {
         ui.page=pg; ui.home=0;
@@ -425,7 +443,7 @@ static void test_ui(void)
     uint8_t serial=usb_serial; mi_set(MI_SERIAL,1);
     check(usb_serial==serial && !strcmp(ui.msg,"STORAGE DISABLED"),"disabled serial preference cannot offer a reboot-only change");
     menu_close(); check(!strcmp(ui.msg,"SETTINGS IN RAM ONLY"),"settings menu labels temporary preferences truthfully");
-    check(!memcmp(slots,proj_slot,sizeof slots) && !memcmp(banks,up_bank,sizeof banks),"physical save gestures cannot mutate RAM sections or user banks");
+    check(project_slots_equal(slots) && !memcmp(banks,up_bank,sizeof banks),"physical save gestures cannot mutate RAM sections or user banks");
     unchanged("physical UI settings/save/erase gestures preserve NOR");
 }
 static void test_ota_hooks(void)
@@ -450,9 +468,11 @@ static void test_ota_hooks(void)
     check(!memcmp(before,nor,OTA_AREA) && !memcmp(before+OTA_AREA+OTA_AREA_LEN,nor+OTA_AREA+OTA_AREA_LEN,sizeof nor-OTA_AREA-OTA_AREA_LEN),"allowed update staging preserves every byte outside its 20 KiB window");
     uint8_t readback[257]; check(ota_fread(OTA_AREA,readback,sizeof readback)==0 && !memcmp(readback,data,sizeof data),"updater staging readback uses the actual shared flash read hook");
 }
+#ifndef JAM_STORAGE_LIBRARY
 int main(void)
 {
     test_boot(); test_device_snap_lights(); test_calibration(); test_writers(); test_editor(); test_ui(); test_ota_hooks();
     printf("JamBox temporary-session storage: %u checks, %u failures\n",checks,failures);
     return failures ? 1 : 0;
 }
+#endif /* JAM_STORAGE_LIBRARY */

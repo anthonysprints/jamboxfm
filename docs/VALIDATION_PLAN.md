@@ -1,6 +1,6 @@
 # JamBoxFM build and validation plan
 
-Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md). Since those milestones, the owner has reported a successful Chrome installation and a normal JamBox update with working BPM and SNAP lights. Complete hardware and recovery validation remains outstanding.
 
@@ -94,6 +94,9 @@ Implement focused host tests against actual JamBox C modules:
 | Capacity | Fifth raw chord note and full MIDI token pool follow documented refusal/replacement rules; no lost release mapping |
 | No retrospective edits | Toggle Assist/root/scale/correction and compare previously stored note/micro bytes: unchanged |
 | Two-chord phrase | Chord at step0 and step16 with ties, two complete loop repetitions, correct releases and no duplicate record-monitor attack |
+| Independent POLY lengths | Staggered starts/releases and same-step chords; existing hold survives later onset; overdub, free-take, loop seam and full-loop hold; 1–64-step bounds; Bass/Lead LEGATO defaults and drums unchanged |
+| Note-length editing | LEN changes only the selected onset; unequal lengths keep their differences within bounds; transpose/deduplication, rotation, doubling, delete/clear and undo keep durations attached to pitches; hidden steps retain data |
+| Duration state lifecycle | Stop/restart, mute/solo, live shared pitches, sound browse, pattern replacement and panic leave no stale release owners or duplicate record-monitor attack |
 | Record strength | Off/Gentle/Tight at positive/negative offsets and across swing/tempo/loop boundaries; adapter latency explicit |
 | Overdub | Occupied-step onset retained, whole assisted chord replacement atomic, no old/new chord hybrid |
 | Timing | Swing0 straight; amount changes playback only; negative step0 offset, triplets, stop/restart and ties handled |
@@ -120,7 +123,7 @@ Required isolation contracts:
 - Seed valid foreign projects, settings, user banks and sample metadata plus retained RAM; normal JamBox boot starts Dusty, clears retained projects/settings and does not import foreign musical state. Unknown JEDEC still clears retained session state without reading flash.
 - Accept only a recognized full settings-record schema with a valid storage CRC and a valid PAN5 mapping. Reject duplicate/out-of-range IDs, invalid directions, unknown sizes, damaged data and unsupported schemas; preserve flash bytes.
 - Reject project/preset save, erase, backup restore and sample/FM6-bank upload before mutations; verify UI/editor status as well as unchanged bytes. Live settings/calibration edits must clearly say RAM-only. Exercise autosave, idle flush and pre-reset hooks too.
-- Internal snapshots use `JRM0`, work during the live session, and are cleared on reboot. A real Sloop parser must still accept its valid `FUN6` control and reject `JRM0`; JamBox rejects foreign project imports without changing the destination.
+- Internal snapshots now use `JRM1` with independent note lengths, work during the live session, and are cleared on reboot. A real Sloop parser must still accept its valid `FUN6` control and reject both `JRM0` and `JRM1`; JamBox rejects foreign project imports without changing the destination. Verify JRM1 size/checksum/length validation, capture/apply, arranger scenes and legacy zero-length decode. Editor protocol 11 and the browser editor must round-trip the duration tail; old-editor step replacement clears stale durations.
 - App storage hooks refuse all writes; OTA hooks and the app's lowest driver admit staging only, `[0xE0000, 0xE5000)`. Normal boot is allowed to clean stale staging. The loader writes only the app and its known record sector; unknown flash causes no writes, and cleanup failures prevent a success reset while allowing retry in the current loader session.
 - Exercise partial SysEx timeout/retry, reset during sending, bounded stalls and rescue queue draining through real transport/parser units. Retain ordinary Sloop tests and compile-time rejection tests for invalid JamBox configurations.
 
@@ -128,13 +131,13 @@ Compare the protected NOR bytes before/after, with raw mocks that actually mutat
 
 `SET3` settings and `PAN5` calibration remain shared retained layouts. If a warm return to Sloop finds no valid flash settings, it may retain temporary JamBox preferences/calibration. Test that transition during hardware preparation; the current project-family isolation does not imply every retained field is family-private.
 
-JAM1 remains future implementation. Its separate acceptance cases are:
+Permanent saving remains future implementation. The old 3,840-byte JAM1/24-byte-tail proposal cannot hold independent note lengths; [section 7 of the implementation plan](IMPLEMENTATION_PLAN.md#7-save-format-that-fits-the-existing-flash-layout) now requires a new bounded encoding/storage design. Its separate acceptance cases are:
 
-- Assert the encoded JAM1 length is 3,840 bytes, including checksum and all 24 new metadata bytes.
+- Specify and assert the exact maximum encoded size, storage-object/sector budget and schema identity before implementing persistence; preserve duration and Assist metadata at their maximum supported values.
 - Round-trip every Assist enum/mask, signed micro extremes, scale/root and palette ID. Reject unknown versions, invalid sizes, checksum errors and out-of-range fields.
 - Confirm master bypass preserves individual preferences across save/load.
 - Prove A/B saves survive interruption after every erase/program/commit step using the inherited simulated flash hooks.
-- Inspect final NOINIT alignment/size: four full slots plus retained diagnostic/calibration state must fit, using at least the existing 256-byte ancillary allowance. Do not place live Assist state there.
+- Inspect final NOINIT and ordinary-RAM alignment/size for the actual slot layout plus diagnostic/calibration state, using at least the existing 256-byte ancillary allowance. The JRM1 temporary-session layout uses three retained slots and one ordinary-RAM slot; do not assume four full larger slots fit NOINIT. Keep runtime ownership separate.
 - Boot against erased flash, valid JamBox objects and representative foreign Sloop/Felucca/ChoralRoot data. Foreign payloads are rejected read-only, not implicitly converted or immediately overwritten by autosave.
 - Explicit initialization must preserve required device calibration and protected areas, and happen only after the chosen backup path is complete.
 - Backup/export includes companion FM6 banks, user kits and samples referenced by projects. Test interrupted restore, missing dependencies and round-trip sound identity.
@@ -143,6 +146,8 @@ JAM1 remains future implementation. Its separate acceptance cases are:
 Keep user data out of committed fixtures; construct synthetic fixtures or use consented, sanitized backups.
 
 ## Gate 4: browser parity and usable controls
+
+For [independent POLY recording](INDEPENDENT_NOTES.md), exercise the actual AudioWorklet with staggered holds, replay after releasing inputs, overdub and stop/panic. Check note lights and visible sustained spans against C state, and preserve GROOVE/SOUND knob ownership and standalone operation. Dedicated native recording/playback, UI, project/editor and storage-isolation checks must pass before the final device build and package. Record commands, results, app/RAM/pool/retained sizes and source/artifact hashes in the [follow-up evidence](build-evidence/independent-notes.md); physical timing and audition remain separate.
 
 For the current SOUND/GROOVE increment, verify:
 

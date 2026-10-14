@@ -1,6 +1,6 @@
 # JamBoxFM implementation plan
 
-Current follow-up: [GROOVE controls](GROOVE_CONTROLS.md) use SWING / LEVEL / STEPS / PAN; SOUND keeps its sound macros. See the [build record](build-evidence/groove-controls.md) for this increment.
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty palette, Home and shared-code browser slice are now implemented; see [README](../README.md) and [cloud setup](CLOUD_SETUP.md) for current scope and validation. The remaining sections describe intended work, not completed capabilities.
 
@@ -170,7 +170,7 @@ Keep the 64-step storage capacity, with a default two-bar loop of 32 sixteenth-n
 
 Store the actual expanded chord pitches, not just a root and recipe. Sloop already plays its stored pitches directly. Turning Assist off or changing a chord recipe must leave recorded harmony unchanged. ChoralRoot's semantic chord-event looper is a useful reference but would revoice playback; do not substitute it wholesale.
 
-A first-version limitation is explicit: chord notes on one step share onset microtiming and duration/tie behavior; drum hits sharing a step share its microtiming. This is a grid recorder with fine offsets, not unrestricted independently timed multitrack audio or MIDI capture. Longer/free-form recording needs a later format and budget.
+The [independent-note follow-up](INDEPENDENT_NOTES.md) replaces the first-version shared-duration limit for POLY recordings with a per-note grid length. Starts on one step still share onset microtiming; drum hits sharing a step retain their shared microtiming. Lengths are 1–64 steps, bounded to the current loop during capture/playback, and later onsets can overlap earlier holds. Bass/Lead keep their LEGATO defaults; drums and mono/legato retain the legacy path. Final browser/device build and publication checks for this follow-up are pending. This remains grid recording, not unrestricted independently timed multitrack audio or MIDI capture.
 
 ### Record timing correction
 
@@ -214,7 +214,7 @@ features are implemented:
 | SELECT encoder on Home | Tempo, one BPM per detent, 40–240 BPM |
 | PRESETS encoder on Home | Browse curated sounds for the selected part |
 | ALGORITHM encoder on Home | Select Drums / Bass / Chords / Lead; display selected role clearly |
-| Knobs 1–4 on Home | Selected sound's four labeled macros |
+| Knobs 1–4 on Home | GROOVE: Swing / Level / Steps / Pan; SOUND: selected sound's four labeled macros |
 | PLAY | Existing play/stop behavior |
 | REC | Arm/disarm selected part using the existing transport state machine; retain visible count-in/armed state |
 | SEL (`B_SCL`) | Open Assist; SELECT chooses a row, Knob 1 edits it; HOME exits |
@@ -233,7 +233,8 @@ Modal handlers must consume a confirmation gesture so SAVE cannot both apply a p
 Key/scale rows in GLO and Assist edit the selected melodic part and show its name. A separate explicit `Apply key to all melodic parts` command can synchronize them; do not present per-track values as an unexplained global key. Palette initialization sets consistent defaults across the melodic parts. SAVE must distinguish a queued save from a completed flash commit and wait for the inherited stopped/quiet condition.
 
 SOUND shows the selected sound and large macros; GROOVE shows four literal
-16-step rows plus the selected sound and compact versions of those same macros.
+16-step rows plus the selected sound and compact Swing / Level / Steps / Pan
+track controls.
 Both show tempo and transport state. Per-part row windows follow each part's
 playhead, expose their range/length and preserve stopped windows. The current
 [two-view specification](HOME_VIEWS_PLAN.md) defines gesture priority and
@@ -243,26 +244,32 @@ A performance shortcut for mute can be added after the first mapping is tried. S
 
 ## 7. Save format that fits the existing flash layout
 
-Keep Sloop's physical sector map and A/B commit-last storage mechanism. Its current project is 3,816 bytes; one storage object permits 3,840 bytes. Use a distinct **JAM1** project identity and append exactly 24 bytes of versioned metadata before the project checksum. [P1]
+The independent-note increment makes the old 3,840-byte JAM1 proposal
+insufficient. Its suggested 24-byte metadata tail fitted the 3,816-byte FUN6
+project but had no room for three 64×4-byte note-duration tables. Do not treat
+that proposal as the current persistence specification.
 
-Proposed byte-level extension:
+The working software uses a private 4,584-byte **JRM1** RAM/export project,
+with three retained snapshots and a fourth ordinary-RAM snapshot. Normal
+JamBox boot clears them, and `FELUCCA_PERSIST=0` still refuses app-data saves,
+erases and restore/upload. The inherited 3,840-byte flash-object payload and
+Sloop's FUN6 layout remain unchanged. See [independent-note representation and
+project boundary](INDEPENDENT_NOTES.md#representation-and-project-boundary).
 
-| Bytes | Field |
-| --- | --- |
-| 0 | Extension version: 1 |
-| 1 | Master Assist enable, reserved bits zero |
-| 2 | Palette ID |
-| 3 | Role/voice-policy version |
-| 4–7 | Variation seed, fixed little-endian encoding |
-| 8–23 | Four internal-track records, four bytes each: enable/chord/scale flags, record-correction enum, chord recipe, input-source policy |
+Before enabling permanent saving, design and compare explicit bounded
+encodings/storage layouts that preserve note lengths, Assist choices,
+parameters, microtiming, locks, fill and referenced sound dependencies. Keep
+the existing physical sector map and A/B commit-last guarantees unless a
+separately reviewed migration changes them. Pick a versioned identity distinct
+from foreign schemas; encode fields and checksum explicitly rather than
+relying on host struct padding. Specify exact maximum encoded sizes,
+validation, unsupported-version handling and migration fixtures before
+implementation. A compressor's typical size is not a guaranteed object bound.
 
-Retain existing root/scale and sound parameters in their existing fields. Preserve internal track order 0/1/2/3. Explicitly encode fields and checksum; do not rely on an arbitrary host compiler's struct packing. Add `_Static_assert(sizeof(jam_project_t) == 3840)` where a device struct mirrors the encoding, exact encoded-length checks, and golden byte fixtures. [P1]
-
-Validate every enum, root/scale value and reserved bit. Reject unsupported versions. There is no room left for unrelated new data in this schema. Additional recording formats or automation require a new design rather than silently appending bytes.
-
-Four retained project slots grow by 96 bytes. Check the complete `.noinit` region including calibration/settings and other globals before accepting this layout. The slot payload fitting flash does not prove the retained-state region fits RAM.
-
-The source audit totals 15,560 bytes for the enlarged four slots plus existing retained globals, versus a 15,696-byte region, leaving only 136 bytes before alignment. The existing test's conservative 256-byte allowance for ancillary state leaves 80 bytes. Treat this as tight: require the target linker to confirm the bound and keep all new live Assist/undo/ownership state outside `.noinit`. [P2]
+Recheck the complete retained region and ordinary RAM with the new note state,
+including settings/calibration and runtime bookkeeping. Do not assume four
+full larger snapshots fit in `.noinit`, or enlarge a memory partition to hide
+a failed budget. Keep note ownership/undo state outside retained project data.
 
 Use a JamBox storage-family discriminator so foreign settings/presets/autosaves are not implicitly treated as valid. Audit every boot reader, not just projects. Begin with a clean in-memory session on unknown data; do not immediately autosave defaults over it. Read-only export and an explicit initialization step must precede reuse of existing storage sectors. This deliberately overwrites old data when the user chooses it; backing up is required for returning to Sloop later.
 
@@ -325,7 +332,7 @@ Keep the original loader/application layout during initial musical development. 
 2. **One playable palette:** introduce fixed part roles, new Home hierarchy and curated Dusty sounds/groove. Keep existing transport and audio. Verify all four parts sounding without lost voices at the target workload.
 3. **Assist correctness:** input-only mapping, original-note ownership, master/per-part toggles, held-key changes, MIDI/pedal/disconnect tests. No retrospective edits.
 4. **Two-bar capture:** record timing residuals, Off/Gentle/Tight, separate swing, ties, overdub and complete undo. Document step-format limits.
-5. **Persistence:** JAM1 encoder/decoder, A/B interruption tests, retained-state size gate, unknown-data read-only boot, browser project round trip, explicit initialization/backup.
+5. **Persistence:** redesign the versioned encoding/storage budget for independent note lengths and Assist metadata, then add encoder/decoder, A/B interruption tests, retained-state size gate, unknown-data read-only boot, browser project round trip and explicit initialization/backup.
 6. **Shared browser/device workflow:** browser controls use the C paths; native/WASM fixtures match; device screen/control simulator parity added as needed.
 7. **Device bring-up:** identify current Sloop, prepare backup and recovery, validate unchanged baseline and incremental JamBox builds, measure latency/CPU/USB/storage and listen through the real outputs.
 8. **Release candidate:** expand Garage/Neon after auditioning, verify installer transitions and manifests, publish source/licenses and packages together after hardware gates pass.

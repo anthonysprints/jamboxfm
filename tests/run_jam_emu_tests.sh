@@ -12,5 +12,10 @@ mkdir -p build/jam-emu-evidence
     tests/jam_emu_native.c -o build/jam-emu-evidence/native -lm
 build/jam-emu-evidence/native
 sh tests/run_jam_home_nav_tests.sh
+sh tests/run_jam_poly_duration_tests.sh
+sh tests/run_jam_duration_ui_tests.sh
+sh tests/run_jam_note_project_tests.sh
+sh tests/run_jam_duration_ownership_tests.sh
+node tests/jam_poly_duration_wasm.mjs
 node tests/jam_emu_browser.mjs
 echo 'JamBox emulator package, native controls, and real browser tests passed.'

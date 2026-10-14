@@ -35,7 +35,12 @@ and 32 is two; other divisions have different durations. Storage is still
 temporary and resets on power-off.
 
 The [Bass voice explanation](CHORD_BUILDER.md#bass-one-note-or-several)
-distinguishes LEGATO/POLY, automatic chord building and the sequencer's tied
-note-group recording model. This change does not alter voice or recording behavior.
+distinguishes LEGATO/POLY and automatic chord building. These Groove controls
+do not alter voice mode. The next [independent-note recording
+follow-up](INDEPENDENT_NOTES.md) gives POLY notes their own grid lengths,
+including staggered notes and overdubs, while preserving Bass's LEGATO
+default. It passed native/browser checks and the FM-1 build; publication is
+pending. Shortening Steps keeps the stored duration data with the hidden
+onsets, and playback bounds held lengths to the current loop.
 
 Build, tests and publication are recorded in [the follow-up evidence](build-evidence/groove-controls.md).

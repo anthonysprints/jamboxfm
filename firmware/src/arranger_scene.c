@@ -4,7 +4,7 @@ static uint32_t arrangement_ready(void)
 {
     uint32_t i, ready = 0;
     for (i = 0; i < ARR_SCENES; i++)
-        if (proj_ok(&proj_slot[i])) ready |= 1u << i;
+        if (proj_ok(project_slot(i))) ready |= 1u << i;
     return ready;
 }
 
@@ -12,7 +12,7 @@ static uint32_t arrangement_ready(void)
  * chain (seq.c chain_*) plays each of its sections this long */
 static uint32_t section_bars(uint32_t s)
 {
-    const project_t *p = &proj_slot[s & 3u];
+    const project_t *p = project_slot(s & 3u);
     uint32_t k, bars = 1;
     if (!proj_ok(p))
         return 1;
@@ -38,7 +38,7 @@ static void arrangement_apply(uint32_t scene)
         t->nheld = t->arp_phys = t->arp_note = t->rh_n = t->rskip_n = 0;
         t->rskip_lanes = 0;
     }
-    proj_apply(&proj_slot[scene], 0);
+    proj_apply(project_slot(scene), 0);
     sync_reload = 1;
     ui.force = 1;
 }

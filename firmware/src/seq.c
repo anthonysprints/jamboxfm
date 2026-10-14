@@ -42,6 +42,46 @@ static const uint16_t SCALE_MASK[] = {
 #if JAMBOX_PROTO
 /* Whole-pattern replacement resets the overview window; sound browsing does not. */
 static volatile uint32_t jam_pattern_generation[NTRK];
+/* Fixed storage: four onsets per step, up to the existing eight synth voices
+ * sounding independently. Neither recording nor playback allocates memory. */
+typedef struct { uint32_t start, generation; uint8_t active, note, step, slot; } jam_record_hold_t;
+typedef struct { uint32_t start, end, generation; uint8_t active, note; } jam_sequence_note_t;
+static jam_record_hold_t jam_record_hold[NPART][16];
+static jam_sequence_note_t jam_sequence_note[NPART][NVOICE];
+static uint8_t jam_live_count[NPART][128];
+static void jam_sequence_release(track_t *t);
+static void jam_lengths_changed(track_t *t)
+{
+    uint32_t i, k;
+    if (is_drum(t)) { t->duration_mode = 0; return; }
+    t->duration_mode = 0;
+    for (i = 0; i < NSTEP; i++)
+        for (k = 0; k < 4; k++)
+            if (t->step[i].time == ST_NOTE && k < t->step[i].n && t->note_len[i][k])
+                t->duration_mode = 1;
+}
+static void jam_step_lengths_clear(track_t *t, uint32_t i)
+{
+    memset(t->note_len[i % NSTEP], 0, 4);
+    jam_lengths_changed(t);
+}
+static int jam_independent_owns(const track_t *t, uint32_t note)
+{
+    uint32_t i, tr = (uint32_t)(t-trk);
+    if (tr >= NPART) return 0;
+    for (i=0; i<NVOICE; i++) if (jam_sequence_note[tr][i].active && jam_sequence_note[tr][i].note == note) return 1;
+    return 0;
+}
+static int jam_sequence_owns(const track_t *t, uint32_t note)
+{
+    uint32_t i, tr = (uint32_t)(t - trk);
+    if (tr >= NPART) return 0;
+    for (i = 0; i < NVOICE; i++)
+        if (jam_sequence_note[tr][i].active && jam_sequence_note[tr][i].note == note) return 1;
+    for (i = 0; i < t->seq_n; i++)
+        if (t->seq_notes[i] == note) return 1;
+    return 0;
+}
 #endif
 
 #define KB_SILENT 255u
@@ -103,6 +143,13 @@ static void seq_out_off(const track_t *t, uint32_t note)
     if (note > 127u || !(mo_set[i][note >> 5] & (1u << (note & 31u))))
         return;
     mo_set[i][note >> 5] &= ~(1u << (note & 31u));
+#if JAMBOX_PROTO
+    {
+        uint32_t k, j;
+        for (k=0; k<27u; k++) if (kb_kind[k] == KS_NOTE && kb_trk[k] == i)
+            for (j=0; j<kb_n[k]; j++) if (kb_nt[k][j] == note) return;
+    }
+#endif
     midi_out_note(mo_ch[i], note, 0);
 }
 static void seq_out_track_off(const track_t *t);
@@ -489,6 +536,9 @@ static struct {
     int16_t len;
     uint32_t sess;
     step_t st[NSTEP];
+#if JAMBOX_PROTO
+    uint8_t note_len[NSTEP][4], duration_mode;
+#endif
 } undo;
 static uint32_t undo_sess = 1;           /* UI sessions (seq.c: recording passes use the track's pass) */
 static void undo_mark(const track_t *t, uint32_t sess)
@@ -497,6 +547,10 @@ static void undo_mark(const track_t *t, uint32_t sess)
     if (undo.valid && !undo.undone && undo.trk == i && undo.sess == sess)
         return;                                          /* (this session is marked already) */
     memcpy(undo.st, t->step, sizeof undo.st);
+#if JAMBOX_PROTO
+    memcpy(undo.note_len, t->note_len, sizeof undo.note_len);
+    undo.duration_mode = t->duration_mode;
+#endif
     undo.len = t->p[P_SLEN];
     undo.trk = (uint8_t)i;
     undo.sess = sess;
@@ -535,6 +589,9 @@ static void step_add(track_t *t, uint32_t idx, uint32_t note, uint32_t vel, uint
         s->vel = 0;
         s->lvl = 0;
         s->rat = 0;
+#if JAMBOX_PROTO
+        memset(t->note_len[idx], 0, 4);
+#endif
     }
     for (k = 0; k < s->n && s->note[k] != note; k++)
         ;
@@ -543,6 +600,9 @@ static void step_add(track_t *t, uint32_t idx, uint32_t note, uint32_t vel, uint
             s->n++;
         k = s->n - 1u;
         s->note[k] = (uint8_t)note;
+#if JAMBOX_PROTO
+        t->note_len[idx][k] = 0;
+#endif
     }
     s->lvl = (uint8_t)((s->lvl & ~(3u << (2u * k))) | (lvl & 3u) << (2u * k));
     s->rat = (uint8_t)((s->rat & ~(3u << (2u * k))) | (rat & 3u) << (2u * k));
@@ -550,6 +610,10 @@ static void step_add(track_t *t, uint32_t idx, uint32_t note, uint32_t vel, uint
     if (vel > s->vel)
         s->vel = (uint8_t)vel;
 }
+
+#if JAMBOX_PROTO
+#include "jam_duration_record.c"
+#endif
 
 /* live recording into a synth part: the nearest step (rec_target). Held on: each further step the
  * sequencer enters while the note is held becomes a TIE (rec_hold), up to the pattern length and
@@ -560,7 +624,13 @@ static void rec_note(track_t *t, uint32_t note, uint32_t vel, uint32_t rat, int 
 {
     uint32_t len = trk_len(t), later, abs = rec_target(t, &later), idx = abs % len, k;
     undo_mark(t, UNDO_REC(t));
+#if JAMBOX_PROTO
+    if (t->p[P_VOICE] == V_POLY) jam_record_prepare(t);
+#endif
     step_add(t, idx, note, vel, vel_lvl(vel), rat);
+#if JAMBOX_PROTO
+    if (hold && t->p[P_VOICE] == V_POLY) jam_record_begin(t, idx, abs, note);
+#endif
     t->seq_active = 1;
     if (later) {                                    /* it sounds now: the step must not trigger it again */
         if (t->rskip_abs != abs)
@@ -571,6 +641,9 @@ static void rec_note(track_t *t, uint32_t note, uint32_t vel, uint32_t rat, int 
     }
     if (!hold)
         return;
+#if JAMBOX_PROTO
+    if (t->p[P_VOICE] == V_POLY) return;
+#endif
     if (!t->rh_n || t->rh_start != idx) {           /* a new hold (one in another step ends) */
         t->rh_n = 0;
         t->rh_start = (uint8_t)idx;
@@ -601,6 +674,9 @@ static void rec_hit(track_t *t, uint32_t lane, uint32_t lvl, uint32_t rat)
 static void rec_hold(track_t *t, uint32_t idx, uint32_t len, uint32_t abs)
 {
     step_t *s;
+#if JAMBOX_PROTO
+    jam_record_extend(t, abs);
+#endif
     if (!t->rh_n)
         return;
     if (!((song.rec >> trk_index(t)) & 1u) || t->rh_ties + 1u >= len) {
@@ -626,6 +702,9 @@ static void rec_hold(track_t *t, uint32_t idx, uint32_t len, uint32_t abs)
 static void rec_release(track_t *t, uint32_t note)
 {
     uint32_t i, k = 0, into, slen, half, lat;
+#if JAMBOX_PROTO
+    jam_record_end(t, note);
+#endif
     for (i = 0; i < t->rh_n; i++)
         if (t->rh_note[i] != note)
             t->rh_note[k++] = t->rh_note[i];
@@ -865,6 +944,9 @@ static void steps_clear(track_t *t)           /* an empty pattern (synth: REST s
     memset(t->fill, 0, sizeof t->fill);
 #if JAMBOX_PROTO
     jam_pattern_generation[trk_index(t)]++;
+    memset(t->note_len, 0, sizeof t->note_len);
+    t->duration_mode = 0;
+    if (!is_drum(t)) memset(jam_record_hold[trk_index(t)], 0, sizeof jam_record_hold[0]);
 #endif
 }
 
@@ -923,7 +1005,9 @@ static void ft_note_off(uint32_t note)
     while (i--)
         if (ft_ev[i].note == note && ft_ev[i].d == FT_OPEN) {
             ft_ev[i].d = (uint16_t)(ft_t - ft_ev[i].t);
+#if !JAMBOX_PROTO
             return;
+#endif
         }
 }
 
@@ -954,6 +1038,22 @@ static void ft_close(void)
         else
             step_add(t, idx, ft_ev[i].note, ft_ev[i].vel, vel_lvl(ft_ev[i].vel), 0);
     }
+#if JAMBOX_PROTO
+    if (!is_drum(t) && t->p[P_VOICE] == V_POLY) {
+        for (i = 0; i < ft_n; i++) {
+            uint32_t end = ft_ev[i].d == FT_OPEN ? T : (uint32_t)ft_ev[i].t + ft_ev[i].d;
+            uint32_t start = (ft_ev[i].t * len * 2u + T) / (2u * T);
+            uint32_t stop = ((end > T ? T : end) * len * 2u + T) / (2u * T), j;
+            uint32_t idx = start % len;
+            step_t *s = &t->step[idx];
+            for (j = 0; j < s->n; j++) if (s->note[j] == ft_ev[i].note) {
+                uint32_t duration = (uint32_t)clamp((int32_t)stop - (int32_t)start, 1, len);
+                if (duration > t->note_len[idx][j]) t->note_len[idx][j] = (uint8_t)duration;
+                t->duration_mode = 1;
+            }
+        }
+    } else
+#endif
     if (!is_drum(t))
         for (i = 0; i < ft_n; i++) {                  /* their lengths: TIE steps, up to the next note */
             uint32_t d = ft_ev[i].d == FT_OPEN || ft_ev[i].t + ft_ev[i].d > T ? T - ft_ev[i].t : ft_ev[i].d;
@@ -1034,11 +1134,18 @@ static void erase_step(track_t *t, uint32_t idx)
             if (!er_has(s->note[i])) {
                 lv |= ((s->lvl >> (2u * i)) & 3u) << (2u * k);
                 rt |= ((s->rat >> (2u * i)) & 3u) << (2u * k);
+#if JAMBOX_PROTO
+                t->note_len[idx][k] = t->note_len[idx][i];
+#endif
                 s->note[k++] = s->note[i];
             }
         if (k == s->n)
             return;
         er_flash = 1;
+#if JAMBOX_PROTO
+        memset(t->note_len[idx] + k, 0, 4u - k);
+        jam_lengths_changed(t);
+#endif
         s->n = (uint8_t)k;
         s->lvl = (uint8_t)lv;
         s->rat = (uint8_t)rt;
@@ -1166,8 +1273,14 @@ static void arp_tick(track_t *t, uint32_t adv)
     uint32_t div = (uint32_t)t->p[P_ARATE] % NDIV_SHORT, u = div_units(div), into, slen, abs = 0, fire = 0;
     if (t->arp_note) {
         if (t->arp_off <= adv) {
+#if JAMBOX_PROTO
+            if (!jam_sequence_owns(t,t->arp_note)) {
+#endif
             trk_note_off(t, t->arp_note);
             seq_out_off(t, t->arp_note);
+#if JAMBOX_PROTO
+            }
+#endif
             t->arp_note = 0;
         } else {
             t->arp_off -= adv;
@@ -1175,8 +1288,14 @@ static void arp_tick(track_t *t, uint32_t adv)
     }
     if (!t->p[P_AMODE] || !t->nheld) {
         if (!t->nheld && t->arp_note) {
+#if JAMBOX_PROTO
+            if (!jam_sequence_owns(t,t->arp_note)) {
+#endif
             trk_note_off(t, t->arp_note);
             seq_out_off(t, t->arp_note);
+#if JAMBOX_PROTO
+            }
+#endif
             t->arp_note = 0;
         }
         t->arp_new = 0;
@@ -1210,8 +1329,14 @@ static void arp_tick(track_t *t, uint32_t adv)
     if (!fire)
         return;
     if (t->arp_note) {
+#if JAMBOX_PROTO
+        if (!jam_sequence_owns(t,t->arp_note)) {
+#endif
         trk_note_off(t, t->arp_note);
         seq_out_off(t, t->arp_note);
+#if JAMBOX_PROTO
+        }
+#endif
     }
     t->arp_note = 0;
     if ((uint32_t)(rng() & 127u) <= (uint32_t)t->p[P_APROB]) {
@@ -1256,6 +1381,15 @@ static uint32_t in_chord_n, in_chord_i;
  * again meanwhile is held by its key again. Per track: the pedal, the notes waiting */
 static uint8_t sus_on[NTRK];
 static uint32_t sus_wait[NTRK][4];
+#if JAMBOX_PROTO
+static int jam_live_owns(const track_t *t, uint32_t note)
+{
+    uint32_t tr = trk_index(t);
+    if (tr >= NPART || note >= 128u) return 0;
+    if (t->p[P_AMODE]) return t->arp_note && t->arp_note == note;
+    return jam_live_count[tr][note] || (sus_wait[tr][note >> 5] & (1u << (note & 31u)));
+}
+#endif
 static void input_off_now(track_t *t, uint32_t note);
 static void input_on(track_t *t, uint32_t note, uint32_t vel)
 {
@@ -1272,6 +1406,9 @@ static void input_on(track_t *t, uint32_t note, uint32_t vel)
             input_off_now(t, note);
         }
     }
+#if JAMBOX_PROTO
+    if (note < 128u && jam_live_count[trk_index(t)][note] < 255u) jam_live_count[trk_index(t)][note]++;
+#endif
     arm_start(t);
     if (ft_on && t == &trk[ft_trk % NTRK])
         ft_note_on(note, vel);
@@ -1294,6 +1431,11 @@ static void input_off(track_t *t, uint32_t note)
             ft_note_off(lane_of_note(note));
         return;
     }
+#if JAMBOX_PROTO
+    if (note < 128u && jam_live_count[trk_index(t)][note]) {
+        if (--jam_live_count[trk_index(t)][note]) return;
+    }
+#endif
     if (sus_on[trk_index(t) % NTRK]) {               /* the pedal down: it waits for the pedal (2.6) */
         sus_wait[trk_index(t) % NTRK][(note >> 5) & 3u] |= 1u << (note & 31u);
         return;
@@ -1306,7 +1448,10 @@ static void input_off_now(track_t *t, uint32_t note)
         ft_note_off(note);
     rec_release(t, note);
     arp_remove(t, note);                            /* both: the note may have started in the */
-    trk_note_off(t, note);                          /* other mode (ARP switched while held) */
+#if JAMBOX_PROTO
+    if (!jam_sequence_owns(t, note))
+#endif
+        trk_note_off(t, note);                      /* other mode (ARP switched while held) */
 }
 
 /* a drum hit from a key, MIDI or a roll: lane, level; rat: its ratchet when recorded (rolls); rec: it
@@ -1499,7 +1644,10 @@ static void key_note_off(uint32_t sel, uint32_t note)
         return;
     }
     input_off(t, note);
-    midi_out_note(trk_midi_ch(sel), note, 0);
+#if JAMBOX_PROTO
+    if (!jam_sequence_owns(t,note))
+#endif
+        midi_out_note(trk_midi_ch(sel), note, 0);
 }
 /* A panicked part no longer owns its held key notes. Keep the physical edge history so
  * those fingers stay silent until released, but allow a newly pressed alias to play. */
@@ -1921,6 +2069,13 @@ static void seq_reset_tracks(uint32_t pos)
         t->rskip_lanes = 0;
         t->rskip_abs = SEQ_NONE;
         t->rh_n = 0;
+#if JAMBOX_PROTO
+        if (i < NPART) {
+            jam_sequence_release(t);
+            memset(jam_record_hold[i],0,sizeof jam_record_hold[i]);
+            memset(jam_sequence_note[i],0,sizeof jam_sequence_note[i]);
+        }
+#endif
         t->arp_new = t->nheld != 0;
     }
     for (i = 0; i < NROLL; i++)
@@ -1954,18 +2109,62 @@ static void seq_start(void)
     seq_reset_tracks(0);
 }
 
-static void seq_release(track_t *t)
+static void seq_release_legacy(track_t *t)
 {
     uint32_t i;
     for (i = 0; i < t->seq_n; i++) {
-        trk_note_off(t, t->seq_notes[i]);
-        seq_out_off(t, t->seq_notes[i]);
+#if JAMBOX_PROTO
+        if (!jam_live_owns(t, t->seq_notes[i]) && !jam_independent_owns(t,t->seq_notes[i]))
+#endif
+            trk_note_off(t, t->seq_notes[i]);
+#if JAMBOX_PROTO
+        if (!jam_independent_owns(t,t->seq_notes[i]))
+#endif
+            seq_out_off(t, t->seq_notes[i]);
     }
     if (is_drum(t))
         seq_out_track_off(t);                       /* the drum hits of the step: ended with it */
     t->seq_n = 0;
     t->seq_hold = 0;
     t->slide_glide = 0;                             /* live MONO / LEG keys must not glide after it */
+}
+
+#if JAMBOX_PROTO
+static void jam_sequence_release(track_t *t)
+{
+    uint32_t i, tr = trk_index(t);
+    if (tr >= NPART) return;
+    for (i = 0; i < NVOICE; i++) {
+        jam_sequence_note_t *v = &jam_sequence_note[tr][i];
+        if (!v->active) continue;
+        v->active = 0;
+        if (!jam_live_owns(t,v->note)) trk_note_off(t,v->note);
+        seq_out_off(t,v->note);
+    }
+}
+static void jam_sequence_expire(track_t *t, uint32_t abs)
+{
+    uint32_t i, tr = trk_index(t);
+    if (tr >= NPART) return;
+    for (i = 0; i < NVOICE; i++) {
+        jam_sequence_note_t *v = &jam_sequence_note[tr][i];
+        if (!v->active) continue;
+        if ((int32_t)(v->end - (v->start + trk_len(t))) > 0) v->end = v->start + trk_len(t);
+        if (v->generation == jam_pattern_generation[tr] && (int32_t)(abs-v->end) < 0) continue;
+        v->active = 0;
+        if (!jam_sequence_owns(t,v->note)) {
+            if (!jam_live_owns(t,v->note)) trk_note_off(t,v->note);
+            seq_out_off(t,v->note);
+        }
+    }
+}
+#endif
+static void seq_release(track_t *t)
+{
+    seq_release_legacy(t);
+#if JAMBOX_PROTO
+    jam_sequence_release(t);
+#endif
 }
 
 static void seq_stop(void)
@@ -1982,6 +2181,9 @@ static void seq_stop(void)
     fill_bar_on = 0;
     song.playing = 0;
     for (i = 0; i < NTRK; i++) {
+#if JAMBOX_PROTO
+        jam_record_finish(&trk[i]);
+#endif
         seq_release(&trk[i]);
         locks_restore(&trk[i]);                    /* the parameters back to their base */
         trk[i].rh_n = 0;                           /* a recorded note held over the stop: as far as it got */
@@ -2002,11 +2204,36 @@ static uint32_t step_vel(const step_t *s, uint32_t i)
     return lvl_vel((s->lvl >> (2u * i)) & 3u, base);
 }
 
+#if JAMBOX_PROTO
+#include "jam_duration_play.c"
+#endif
+
 /* play one synth step: TIE extends, REST releases, NOTE (re)triggers; a SLIDE on the previous
  * step makes this one legato with a glide (acid style). skip: bit k = note k already sounds
  * from live recording (not triggered, not released here). len: the step's length (units). */
 static void seq_step(track_t *t, const step_t *s, uint32_t slen, uint32_t skip)
 {
+#if JAMBOX_PROTO
+    step_t legacy;
+    if (t->duration_mode && s->time == ST_NOTE && s->n) {
+        uint32_t oldskip = skip, i, n = 0, lv = 0, rt = 0;
+        legacy = *s; skip = 0;
+        for (i = 0; i < s->n && i < 4; i++) {
+            uint32_t d = t->note_len[t->seq_idx % NSTEP][i];
+            if (d) {
+                jam_sequence_start(t,s,i,d,oldskip & (1u<<i));
+            } else {
+                legacy.note[n] = s->note[i];
+                lv |= ((s->lvl>>(2*i))&3u)<<(2*n);
+                rt |= ((s->rat>>(2*i))&3u)<<(2*n);
+                if (oldskip & (1u<<i)) skip |= 1u<<n;
+                n++;
+            }
+        }
+        legacy.n = (uint8_t)n; legacy.lvl = (uint8_t)lv; legacy.rat = (uint8_t)rt;
+        s = &legacy;
+    }
+#endif
     uint32_t i, j, gate = slen * (uint32_t)t->p[P_SGATE] / 128u;
     uint32_t slide_in = t->seq_hold && t->seq_n;
     uint32_t next_tie = t->step[(t->seq_idx + 1u) % trk_len(t)].time == ST_TIE;
@@ -2018,7 +2245,7 @@ static void seq_step(track_t *t, const step_t *s, uint32_t slen, uint32_t skip)
         return;
     }
     if (s->time == ST_REST || !s->n) {
-        seq_release(t);
+        seq_release_legacy(t);
         return;
     }
     if (s->rat) {                                   /* ratchets: each hit its share of the step */
@@ -2030,12 +2257,18 @@ static void seq_step(track_t *t, const step_t *s, uint32_t slen, uint32_t skip)
     }
     t->slide_glide = (uint8_t)slide_in;
     if (!slide_in)
-        seq_release(t);
+        seq_release_legacy(t);
     for (i = 0; i < s->n; i++)
         if (roll_has(t, s->note[i]))
             skip |= 1u << i;                        /* (a roll plays it) */
     for (i = 0; i < s->n; i++)
         if (!((skip >> i) & 1u)) {
+#if JAMBOX_PROTO
+            uint32_t j, tr = trk_index(t);
+            for (j=0; j<NVOICE; j++)
+                if (jam_sequence_note[tr][j].active && jam_sequence_note[tr][j].note == s->note[i])
+                    jam_sequence_note[tr][j].active = 0;
+#endif
             if (slide_in)
                 trk_note_on(t, s->note[i], step_vel(s, i));
             else                                    /* (STRUM: a chord's notes one after the other) */
@@ -2110,6 +2343,9 @@ static void seq_ratchets(track_t *t, uint32_t into, uint32_t slen)
                 trk_note_off(t, s->note[i]);
                 trk_note_on(t, s->note[i], step_vel(s, i));
                 seq_out_on(t, s->note[i], step_vel(s, i));
+#if JAMBOX_PROTO
+                if (t->note_len[t->seq_idx % NSTEP][i]) continue;
+#endif
                 t->seq_off = slen / hits * (uint32_t)t->p[P_SGATE] / 128u;
                 for (j = 0; j < t->seq_n && t->seq_notes[j] != s->note[i]; j++)
                     ;
@@ -2140,17 +2376,24 @@ static void seq_tick(track_t *t, uint32_t adv)
     int32_t rel;
     if (t->seq_n && !t->seq_hold) {
         if (t->seq_off <= adv)
-            seq_release(t);
+            seq_release_legacy(t);
         else
             t->seq_off -= adv;
     }
     if (!song.playing)
         return;
     abs = trk_grid(t, &into, &slen);
+#if JAMBOX_PROTO
+    jam_sequence_expire(t, abs);
+#endif
     {
         uint32_t div = trk_div(t);
-        if (t->seq_abs != SEQ_NONE && div != t->seq_den)
-            t->seq_abs = abs;                        /* DIV changed: the next step of the new grid plays */
+        if (t->seq_abs != SEQ_NONE && div != t->seq_den) {
+#if JAMBOX_PROTO
+            jam_sequence_release(t);                /* duration indices belong to the former grid */
+#endif
+            t->seq_abs = abs;
+        }                        /* DIV changed: the next step of the new grid plays */
         t->seq_den = (uint8_t)div;
     }
     if (t->seq_abs == SEQ_NONE) {                    /* PLAY: the step the grid is in (nudged late: once there) */
@@ -2187,7 +2430,7 @@ static void seq_tick(track_t *t, uint32_t adv)
                 seq_out_track_off(t);
             } else {
                 rec_hold(t, idx, len, nabs);
-                seq_release(t);
+                seq_release_legacy(t);
             }
         } else if (is_drum(t)) {
             uint32_t skip = t->rskip_abs == nabs ? t->rskip_lanes : 0u;
@@ -2604,6 +2847,15 @@ static void events_block(uint32_t n)
     for (i = 0; i < NTRK; i++) {
         track_t *t = &trk[i];
         if ((pr >> i) & 1u) {
+#if JAMBOX_PROTO
+            if (i < NPART) {
+                jam_record_finish(t);
+                seq_out_track_off(t);
+                memset(jam_record_hold[i],0,sizeof jam_record_hold[i]);
+                memset(jam_sequence_note[i],0,sizeof jam_sequence_note[i]);
+                memset(jam_live_count[i],0,sizeof jam_live_count[i]);
+            }
+#endif
             key_track_forget(i);
             if (t->pold) {                            /* (2.6) a preset loaded: the notes keep sounding as they are
                                                        * and fade out with the old sound (voice.c sound_change):
@@ -2627,8 +2879,14 @@ static void events_block(uint32_t n)
             if (!t->p[P_AMODE])
                 t->arp_phys = 0;
             if (t->arp_note) {
+#if JAMBOX_PROTO
+                if (!jam_sequence_owns(t,t->arp_note)) {
+#endif
                 trk_note_off(t, t->arp_note);
                 seq_out_off(t, t->arp_note);
+#if JAMBOX_PROTO
+                }
+#endif
                 t->arp_note = 0;
             }
         }
