@@ -8,13 +8,23 @@ The October 14 [chord-builder increment](CHORD_BUILDER.md) needs focused checks
 for every black-key root in OFF/SNAP on Chords and Lead, exact scale-derived
 and fixed-shape pitches, WHITE modifier compatibility, duplicate snapped roots
 and overlapping chord tones in either release order, held setting changes,
-strum, arp, recording, panic and root-only live lights. Preserve old CHORD IDs
+strum, arp, recording, panic and sounding-note lights. Preserve old CHORD IDs
 and the existing single-note path. Check full POLY chords when enabled on
 Bass/Lead through the normal/held SEL, preview/editor and sound-loading paths;
 CHORD OFF must leave the selected voice mode unchanged. Check ROOT/AUTO/manual
 inversion pitches, old `P_VLEAD` values, SEL 2 controls and the triad +3 octave
-shift. Native/browser outcomes and target memory
-fit must be recorded for this build before publication; these are pending here.
+shift. The original chord build's outcomes are in its
+[build record](build-evidence/chord-builder.md).
+
+The later October 14 lighting follow-up needs separate checks for every
+sounding chord tone plus physical pressed keys, simultaneous sequencer/MIDI
+notes on the selected part, brief note flashes, WHITE mapping, transpose,
+inversions and out-of-range notes without wrapping. Confirm single-note SNAP
+still lights only its pressed and corrected pitches, without unrelated input
+aliases, and that drum/step/layer indications retain their existing behavior.
+Native/browser outcomes and target memory fit for this follow-up must be
+recorded before publication; see the
+[lighting build record](build-evidence/sounding-note-lights.md) for results.
 The owner's successful earlier installation and tempo/light update do not
 establish physical validation of the new chord behavior.
 

@@ -278,7 +278,7 @@ try {
     await tap(chords, 6);
     await chords.waitForFunction(() => globalThis.jamEmu.state.home);
 
-    async function holdChordRoot(key, held, roots) {
+    async function holdChordKey(key, held, litKeys) {
       await chords.evaluate(({ key, held }) => {
         globalThis.chordLedSamples = [];
         const receive = globalThis.jamEmu.node.port.onmessage;
@@ -296,15 +296,15 @@ try {
       await chords.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
       await chords.waitForTimeout(180); // Observe the note-hit flash and sustained chord.
       const samples = await chords.evaluate(() => globalThis.chordLedSamples);
-      assert(samples.length > 1, `part ${part}: root LEDs are observed while ${held} notes sound`);
-      for (const sample of samples) assert.deepEqual(sample, roots, `part ${part}: only the pressed and corrected chord roots light`);
+      assert(samples.length > 1, `part ${part}: chord LEDs are observed while ${held} notes sound`);
+      for (const sample of samples) assert.deepEqual(sample, litKeys, `part ${part}: only the pressed key and actual chord pitches light`);
       await chords.mouse.up();
       await chords.waitForFunction(() => !globalThis.jamEmu.state.keys && !globalThis.jamEmu.state.held && !globalThis.jamEmu.state.leds.slice(14).includes(255));
       await chords.evaluate(() => { globalThis.jamEmu.node.port.onmessage = globalThis.chordLedReceive; });
     }
 
-    await holdChordRoot(10, 3, [10]); // In-key D# forms a chord without advertising E or chord-tone aliases.
-    await holdChordRoot(11, 3, [10, 11]); // Out-of-key E snaps the chord root to D#.
+    await holdChordKey(10, 3, [10, 14, 17]); // D# major lights D#/G/A#, without the unpressed E alias.
+    await holdChordKey(11, 3, [10, 11, 14, 17]); // Snapped E lights the pressed E plus the same D# major chord.
     await chords.screenshot({ path: resolve(evidence, `chord-builder-part-${part}.png`), fullPage: true });
 
     // QNT OFF leaves chromatic roots available even while the builder is on.
@@ -314,7 +314,8 @@ try {
     await idle(chords);
     await tap(chords, 6);
     await chords.waitForFunction(() => globalThis.jamEmu.state.home);
-    await holdChordRoot(11, 3, [11]); // E now builds an E-root chord rather than snapping.
+    // Scale-built TRIAD keeps E/G/A#; fixed MAJOR gives E/G#/B, irrespective of the chosen scale.
+    await holdChordKey(11, 3, part === 1 ? [11, 14, 17] : [11, 15, 18]);
 
     // Turning CHORD OFF restores one note through the same panel controls.
     await tap(chords, 1);
@@ -323,7 +324,7 @@ try {
     await idle(chords);
     await tap(chords, 6);
     await chords.waitForFunction(() => globalThis.jamEmu.state.home);
-    await holdChordRoot(10, 1, [10]);
+    await holdChordKey(10, 1, [10]);
     await chords.close();
   }
 
@@ -368,7 +369,7 @@ try {
     await offline.close();
   }
   assert.deepEqual(errors, [], 'no browser JavaScript errors');
-  console.log(`JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, root-only chord LEDs, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
+  console.log(`JamBox physical emulator: real LCD, seven encoders, layers/deep pages/Home, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, sounding chord-tone LEDs without SNAP aliases, release/blur panic, pause/resume, desktop/mobile${packaged ? ', standalone document with all further network blocked' : ''} passed`);
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));

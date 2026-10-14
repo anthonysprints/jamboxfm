@@ -1,9 +1,11 @@
 # Chord builder
 
 This guide describes the new shared browser/FM-1 chord implementation.
-Software checks and publication are tracked in the [build record](build-evidence/chord-builder.md).
-Physical audition of this build remains separate from the earlier successful
-device update, which did not include these changes.
+The original chord build's software checks and publication are tracked in its
+[build record](build-evidence/chord-builder.md). The October 14 lighting
+follow-up below replaces that build's root-only chord display. Its software
+checks and publication are in the [lighting build record](build-evidence/sounding-note-lights.md);
+physical audition remains separate.
 
 ## Start with one key
 
@@ -120,13 +122,29 @@ voices so the chord remains audible.
 
 ## Lights and held keys
 
-With live chords in OFF/SNAP, lights identify the keys you pressed and any
-corrected root. In D# major, pressing D# lights only D#; pressing E lights E
-and D#. It does not light every chord tone or other keys that could have
-produced that root. Live chord roots take priority over playback/MIDI note
-lights on the same part. Once no local chord keys are held, sounding
-playback/MIDI pitches may light their actual keys. Brief chord-tone flashes
-are suppressed in OFF/SNAP so they cannot look like an extra root suggestion.
+The October 14 follow-up shows **the keys you press plus every note playing
+on the selected part**, including all sounding chord tones. In D# major with
+TRIAD, ROOT inversion and no strum, pressing D# lights D#, G and A#. Pressing
+E in SNAP lights E as well, because E is the physical input while D#–G–A#
+is the chord being played.
+
+With CHORD OFF, the original single-note SNAP behavior remains: D# lights
+only D#; E sounds D# and lights E plus D#. E does not light merely because it
+could have produced D#. Additional lit keys represent physical inputs or
+notes actually playing, including simultaneous sequencer/MIDI notes on the
+selected part.
+
+Sounding notes use their printed positions in the selected keyboard octave,
+independent of OFF/SNAP/WHITE input mapping or transpose. Transposing or
+inverting a chord therefore moves its sounding-note lights; pressed keys
+still light in place. Notes beyond the visible keyboard range are not wrapped
+onto unrelated keys. Drum pads, step editing and held-button layers keep
+their existing control indications.
+
+Brief note flashes of about a tenth of a second make quick taps visible.
+Held-note lights follow note-on/note-off, rather than continuing through
+reverb or other effect tails. These lights show the selected part, not an
+aggregate of every track in the session.
 
 The keyboard stores each held chord's resolved notes. Releasing one key must
 not cut off notes still needed by another held key, including when two inputs

@@ -92,8 +92,16 @@ whole chord up an octave. Occupied octaves are skipped to keep notes distinct
 INVERT reuses `P_VLEAD`: old values 0/1 become ROOT/AUTO and values 2–4 add
 the manual choices. WHITE's existing modifier combinations remain available.
 
-While playing live chords in OFF/SNAP, LEDs show the pressed keys and any
-corrected root, without lighting other possible inputs or every chord tone.
+The owner's later October 14 lighting request replaces the first chord build's
+root-only display: LEDs now show pressed keys plus all notes playing on the
+selected part, including chord tones and simultaneous sequencer/MIDI notes.
+Sounding notes use printed note positions in the selected octave, independently
+of OFF/SNAP/WHITE mapping or transpose; notes outside the visible range are
+not wrapped. Brief note flashes are restored. Single-note SNAP keeps its
+pressed-key-plus-corrected-note behavior without lighting unrelated input aliases.
+This lighting follow-up's software results are in the
+[lighting build record](build-evidence/sounding-note-lights.md); the original
+chord build record remains historical evidence for the preceding behavior.
 The beginner controls and exact shape table are in [Chord builder](CHORD_BUILDER.md).
 Software validation and physical audition of this new build are separate from
 the owner's successful earlier tempo/light update; results are in the
@@ -107,7 +115,9 @@ only the browser enabled NOTES at startup. The hardware default was off.
 JamBox now enables NOTES in the shared panel defaults and the browser-specific
 override is removed. In D# major with chords off, pressing D# lights only D#;
 pressing E sounds D# and lights E plus D#. Release, octave and transposition
-behavior remain covered by tests. Sloop's default is unchanged.
+behavior are covered by the earlier single-note checks. Sloop's default is
+unchanged. The later chord-light follow-up above retains this single-note
+SNAP behavior while adding the sounding chord tones.
 
 The NOTES menu can still disable sounding-note lights. On the previous build,
 hold HOME, turn SELECT to LIGHTS, turn knob 3 to NOTES ON, then OCT− to close.

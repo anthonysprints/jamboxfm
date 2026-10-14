@@ -1,5 +1,18 @@
 # JamBox software prototype and FM-1 update isolation
 
+October 14, 2026 lighting follow-up: the owner now wants every sounding chord
+note visible alongside pressed keys. The current change maps all melodic
+sounding-note LEDs to printed note positions in the selected octave, across
+OFF/SNAP/WHITE and transpose, while preserving physical key lights. It includes
+simultaneous sequencer/MIDI notes on the selected part and restores brief note
+flashes; off-screen notes are not wrapped. Single-note SNAP still shows the
+pressed key plus its corrected note without unrelated input aliases. Native
+and Chromium checks and the FM-1 build passed; the
+[lighting build record](build-evidence/sounding-note-lights.md) tracks the
+candidate and publication. Physical audition remains separate. The original
+[chord build record](build-evidence/chord-builder.md) remains historical evidence
+for its earlier root-only chord display.
+
 The current chord update makes every black key playable in OFF/SNAP, adds
 MAJOR/MINOR/DIM and explicit inversion controls, and enables full polyphony
 when chords are selected on Bass or Lead. Fresh Bass/Lead defaults still have

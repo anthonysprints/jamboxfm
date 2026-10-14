@@ -296,20 +296,14 @@ static uint16_t pad_lit[DRUM_LANES];                   /* pads and key LEDs: fra
 static uint8_t key_lit[27];                             /* menu NOTES, a synth track: frames its key stays lit */
 static uint8_t key_lit_trk = 0xFF;                      /* (the track key_lit is for) */
 
-#if JAMBOX_PROTO
-static int key_chord_roots(const track_t *t)
-{
-    return kb_scaled(t) && t->p[P_CHORD] && t->p[P_QUANT] != 2;
-}
-#endif
-
 static uint32_t key_light_note(const track_t *t, uint32_t k)
 {
 #if JAMBOX_PROTO
-    /* SNAP shows the sounding pitch, not every input that would snap to it.
-     * The selected octave sets the visible register; transposition moves the
-     * sounding light within it. Pressed keys are lit separately by keys_lit. */
-    if (kb_scaled(t) && (t->p[P_QUANT] == 1 || key_chord_roots(t))) {
+    /* Sounding LEDs use printed pitches in every melodic keyboard mode.
+     * Input mapping (SNAP, WHITE and transpose) must not hide chord tones or
+     * light aliases. The selected octave sets the visible register; physical
+     * presses are included separately by keys_lit. Never wrap off-screen notes. */
+    if (kb_scaled(t)) {
         int32_t note = 53 + (int32_t)k + 12 * song.octave;
         return note >= 0 && note < 128 ? (uint32_t)note : KB_SILENT;
     }
@@ -342,16 +336,6 @@ static void pads_tick(void)                             /* once a frame: the hit
     for (k = 0; k < 27u; k++)
         if (key_lit[k])
             key_lit[k]--;
-#if JAMBOX_PROTO
-    /* Chord input feedback shows its root, not its generated tones. note_hits
-     * mixes live and sequencer sources, including taps entirely between UI
-     * frames, so this mode deliberately omits short tone flashes. Sustained
-     * playback still lights its actual pitches when no local key is held. */
-    if (key_chord_roots(TSEL)) {
-        memset(key_lit, 0, sizeof key_lit);
-        return;
-    }
-#endif
     if (song.sel < NPART && (n[song.sel][0] | n[song.sel][1] | n[song.sel][2] | n[song.sel][3]))
         for (k = 0; k < 27u; k++) {
             uint32_t note = key_light_note(TSEL, k);

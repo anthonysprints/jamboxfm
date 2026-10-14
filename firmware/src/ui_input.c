@@ -51,7 +51,7 @@ static int play_led(void)
 /* the keys' lights: what the layer held does, else the keys down and the drum hits */
 /* what sounds on track t, as keys: the drum hits (each lights its key a few frames) or, on a synth
  * track, the voices still held, mapped back through the keyboard (octave, scale, chords; by
- * @renebohne, PR #11). JamBox SNAP shows actual pitches in the current octave.
+ * @renebohne, PR #11). JamBox shows actual pitches in the current octave.
  * Shown at once with menu NOTES on, on every screen and layer (keys_notes_dim) */
 static uint32_t keys_sounding(const track_t *t)
 {
@@ -62,24 +62,6 @@ static uint32_t keys_sounding(const track_t *t)
                 m |= 1u << key_of_white(i);
         return m;
     }
-#if JAMBOX_PROTO
-    if (key_chord_roots(t)) {
-        uint32_t held = 0, k;
-        /* A live chord's corrected root is input feedback; its other tones
-         * would suggest pressing more keys. This temporarily takes priority
-         * over simultaneous pattern/MIDI lights on the same part. The ledger
-         * keeps the original root when ROOT, QNT or transpose changes held. */
-        for (i = 0; i < 27u; i++)
-            if (kb_kind[i] == KS_NOTE && kb_trk[i] == trk_index(t)) {
-                held = 1;
-                for (k = 0; k < 27u; k++)
-                    if (key_light_note(t, k) == kb_root[i])
-                        m |= 1u << k;
-            }
-        if (held)
-            return m;
-    }
-#endif
     for (i = 0; i < NVOICE; i++) {
         const voice_t *v = &t->v[i];
         if (v->active && v->gate && v->stage <= 2) {
@@ -89,11 +71,9 @@ static uint32_t keys_sounding(const track_t *t)
                     m |= 1u << k;
         }
     }
-    if (t == TSEL
-#if JAMBOX_PROTO
-        && !key_chord_roots(t)
-#endif
-       )                                          /* + the notes just started, a few frames (pads_tick) */
+    /* ui_leds runs before pads_tick: do not borrow the previous part's flash
+     * cache on the first frame after switching parts. */
+    if (t == TSEL && key_lit_trk == song.sel)       /* + the notes just started, a few frames */
         for (i = 0; i < 27u; i++)
             if (key_lit[i])
                 m |= 1u << i;

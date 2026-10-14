@@ -31,6 +31,16 @@ for STRUM and knob 3 for INVERT (ROOT/AUTO/+1/+2/+3). See the
 [chord builder guide](CHORD_BUILDER.md) for examples, lights and the remaining
 planned Assist features.
 
+Keyboard lights show the keys you press plus all notes playing on the selected
+part, including every sounding chord tone and simultaneous sequencer/MIDI notes.
+In single-note SNAP, an out-of-scale key lights both the pressed key and its
+corrected note. Sounding lights use printed note positions in the selected
+octave; they do not suggest other keys that happen to map to the same note.
+Notes outside the visible range are not wrapped. Quick taps leave a brief flash;
+effect tails do not keep note lights on. This October 14 lighting follow-up
+supersedes the original chord build's root-only display. Software checks and
+publication are tracked in the [lighting build record](build-evidence/sounding-note-lights.md).
+
 ## Build and package
 
 From the repository root, with Python 3, Pillow and Emscripten on PATH:
@@ -60,7 +70,7 @@ Run the emulator's native contracts, build and real Chromium checks with:
 sh tests/run_jam_emu_tests.sh
 ```
 
-The native suite exercises 78 contracts, including physical key/button
+The native suite exercises 88 contracts, including physical key/button
 release order, LCD drawing, recording, black-key chord roots, chord lights,
 automatic polyphony and inversion controls. Chromium exercises actual
 AudioWorklet sound, panel controls, the live screen and desktop/mobile

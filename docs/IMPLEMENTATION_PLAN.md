@@ -13,8 +13,15 @@ The [current chord controls](CHORD_BUILDER.md)
 and [first-device feedback](FIRST_DEVICE_FEEDBACK.md) distinguish this work from
 the remaining master Assist, external-MIDI/playback ownership, new-input-only
 setting changes, timing correction, sequencer Home and persistence proposals.
-Validation of this new chord build is pending; earlier owner-reported device
-success applies to the preceding controls update.
+The original chord build's software results are in its
+[build record](build-evidence/chord-builder.md). The later October 14 lighting
+request replaces root-only chord feedback with pressed keys plus all sounding
+notes on the selected part, using printed note positions in the selected
+octave across OFF/SNAP/WHITE and transpose. Single-note SNAP still shows its
+pressed and corrected notes without unrelated aliases. This lighting
+follow-up's software checks and publication are in the
+[lighting build record](build-evidence/sounding-note-lights.md); physical
+audition remains separate.
 
 ## 1. Main decision: use Sloop's device engine as the first baseline
 
