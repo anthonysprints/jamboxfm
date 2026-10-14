@@ -10,8 +10,8 @@ returns to the remembered view from other pages; a short HOME tap closes
 settings, while holds, layer locks and recorder overlays retain priority.
 Both views share the existing sound macros and musical keyboard. GROOVE shows
 literal per-part 16-step windows and the selected part's sound/macro data.
-Native/browser checks and the updater-enabled FM-1 build passed. Publication
-and physical audition remain pending in the
+Native/browser checks and the updater-enabled FM-1 build passed. Publication is verified;
+physical audition remains pending in the
 [Home views build record](build-evidence/home-views.md).
 
 The October 14 chord-builder follow-up implements a narrower part of section 4:

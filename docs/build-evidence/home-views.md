@@ -1,7 +1,8 @@
 # Groove and Sound Home views — 2026-10-14
 
 This implements part two of the [first device feedback](../FIRST_DEVICE_FEEDBACK.md#2-sequencer-prominence-two-home-views)
-and the [two-Home-view specification](../HOME_VIEWS_PLAN.md).
+and the [two-Home-view specification](../HOME_VIEWS_PLAN.md). Implementation
+source: `b029162`.
 
 ## Behavior
 
@@ -63,4 +64,16 @@ increment remains outstanding. No physical device was accessed from the cloud.
 
 ## Publication
 
-Pending final expanded-package checks and GitHub Pages deployment verification.
+Pages commit `dfce9e7cab0dea5b559622d1e466a73e6bbb846d` was published without
+rewriting history. [Workflow 38607142273](https://github.com/anthonysprints/jamboxfm/actions/runs/38607142273)
+completed successfully for that exact commit. The expanded 50-file package's
+`SHA256SUMS` digest is
+`eeb700a67f8a1dcc8e562af1c0eec4ade2eba9b9acb49421e108628bd9bd8143`.
+All 49 downloadable files matched the tested local package byte for byte over
+HTTPS; the remaining file is the `.nojekyll` configuration marker.
+
+The live [installer](https://anthonysprints.github.io/jamboxfm/install/) and
+[emulator](https://anthonysprints.github.io/jamboxfm/emu/) serve this update.
+The corresponding source archives retain their build-time snapshot. This
+publication record is completed in a subsequent documentation-only commit;
+it does not change the firmware or browser runtime.

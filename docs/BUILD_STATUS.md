@@ -10,8 +10,8 @@ defines the controls and per-part windows. Palette/Home UI/native-WASM checks,
 118 native emulator checks, 115 dedicated navigation checks and actual Chromium
 checks passed, including held chords, overdub, LEDs and the standalone page.
 The updater-enabled target uses 551,160 of 581,564 app bytes, 80,744 of 98,304
-ordinary RAM bytes and 324,580 of 344,064 pool bytes. Publication and physical
-audition remain pending in the [Home views build record](build-evidence/home-views.md).
+ordinary RAM bytes and 324,580 of 344,064 pool bytes. Publication is verified;
+physical audition remains pending in the [Home views build record](build-evidence/home-views.md).
 
 October 14, 2026 lighting follow-up: the owner now wants every sounding chord
 note visible alongside pressed keys. The current change maps all melodic

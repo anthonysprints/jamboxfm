@@ -6,8 +6,8 @@ Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). Th
 
 The [two-Home-view implementation](HOME_VIEWS_PLAN.md) passed its native/browser
 checks and updater-enabled target build. Results belong in the
-[Home views build record](build-evidence/home-views.md); publication and physical
-audition remain pending. Its specific acceptance requirements are listed under
+[Home views build record](build-evidence/home-views.md); publication is verified and physical
+audition remains pending. Its specific acceptance requirements are listed under
 Gate 4 below, separately from earlier UI builds.
 
 The October 14 [chord-builder increment](CHORD_BUILDER.md) needs focused checks

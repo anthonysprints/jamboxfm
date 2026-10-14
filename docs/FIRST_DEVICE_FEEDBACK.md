@@ -54,7 +54,7 @@ that part's playhead. Stopping retains each displayed window; a cell represents
 one stored step. The selected sound and macros follow the selected part.
 The [two-Home-view specification](HOME_VIEWS_PLAN.md) contains the layout,
 navigation priorities and acceptance checks. Native/browser checks and the
-updater-enabled FM-1 build passed. Publication and physical audition remain
+updater-enabled FM-1 build passed. Publication is verified; physical audition remains
 pending in the [Home views build record](build-evidence/home-views.md).
 
 Current shortcut: hold SEQ to see its 4×4 step tiles. To keep this editor open,

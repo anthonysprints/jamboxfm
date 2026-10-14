@@ -3,7 +3,7 @@
 Status: implemented and software-verified, 2026-10-14. This document specifies the
 current two-view controls and display contract from [First device feedback](FIRST_DEVICE_FEEDBACK.md#2-sequencer-prominence-two-home-views).
 The shared native/browser checks and updater-enabled FM-1 build passed.
-Publication and physical audition remain pending. Outcomes are tracked in the
+Publication is verified; physical audition remains pending. Outcomes are tracked in the
 [Home views build record](build-evidence/home-views.md).
 
 ## 1. Playing experience
@@ -176,7 +176,7 @@ through hashing, drawing or LCD transfer.
    both views and HOME gestures on the physical unit.
 
 Native and browser checks and the updater-enabled target build passed;
-publication and physical audition remain pending in the
+publication is verified and physical audition remains pending in the
 [Home views build record](build-evidence/home-views.md). Persistence, a redesigned
 step editor, arrangement tools, per-drum-lane Home rows and new knob modes remain
 separate later work. Switching views must preserve the musical session and

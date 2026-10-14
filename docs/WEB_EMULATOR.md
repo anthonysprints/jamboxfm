@@ -16,7 +16,7 @@ sessions are temporary: reloading loses edits and recorded notes. This
 page does not install firmware or access an attached FM-1.
 
 The two-view Home update is implemented, with native/browser checks and the
-updater-enabled FM-1 build passing. Publication and physical audition remain
+updater-enabled FM-1 build passing. Publication is verified; physical audition remains
 pending in the [Home views build record](build-evidence/home-views.md).
 It starts in **GROOVE**, with four rows of actual pattern steps. Tap **HOME**
 while already on Home to switch to **SOUND**, with larger sound controls; tap
