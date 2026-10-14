@@ -4,7 +4,14 @@
 local report after attempting the first UI update. The private original report
 is not committed; this record contains the relevant non-identifying fields.
 
-## Established outcome
+**Later owner follow-up:** a retry succeeded, and the owner confirmed that
+BPM control and SNAP lights work as expected on the FM-1. No firmware fix was
+published between these attempts. The successful retry supersedes the earlier
+hold below; it does not establish the cause of this first failure or complete
+hardware validation. The owner then requested swapping Home tempo to SELECT
+and part selection to ALGORITHM as a separate change.
+
+## Established outcome of the first attempt
 
 - Intended firmware SHA-256:
   `1e2c7a956081db0e71e2a455d1532b2c555e26d24bc3794f1d23e0b33255afd8`.
@@ -13,9 +20,10 @@ is not committed; this record contains the relevant non-identifying fields.
 - Stage-one request count: 20. Stage-two/write request count: 0.
 - Stages reached: checking, start, verify, loader. The error followed the
   loader settling/discovery window.
-- The owner reports the instrument operates normally afterward and confirms
-  the Home ALGORITHM knob still changes sounds. Thus the new BPM behavior
-  is not installed; normal operation alone must not be reported as success.
+- The owner reported the instrument operated normally afterward and confirmed
+  the Home ALGORITHM knob still changed sounds. Thus the new BPM behavior
+  was not installed at that point; normal operation alone was not evidence
+  of update success.
 
 The attempt did not reach the browser's main application-writing stage.
 Stage one can modify loader staging and resume records, so zero write-stage
@@ -48,15 +56,18 @@ the staged loader. None is established by this report. Web MIDI specifies
 that closing a connected output finishes already queued immediate messages;
 an arbitrary delay before close is not a demonstrated fix.
 
-## Next step and limits
+## Advice at the time of the failed attempt
 
-Keep the functioning existing build. Do not label the update as successful,
-ask for a blind repeat, relax identity checks, or write via ROM to bypass an
-undiagnosed handoff. Obtain the observed on-device error/reset behavior before
-choosing the next write attempt. The already available MIDI device check is
-read-only, but its family/release identity cannot distinguish these two builds.
+The recommendation was to keep the functioning existing build and obtain
+the observed on-device error/reset behavior before another write attempt.
+The failed attempt was not labeled successful, and neither identity checks
+nor the ROM write path were changed to bypass the undiagnosed handoff. This
+hold is historical: the owner subsequently reported a successful retry as
+recorded above. The read-only MIDI device check's family/release identity
+cannot distinguish these two development builds.
 
-If USB serial was already enabled, existing read-only console status/crash
-and staging-record reads may help. Do not reboot just to enable it: normal
-boot clears stale staging evidence. More detailed bounded reconnect reporting
-is useful future work, separate from a verified handoff fix.
+Existing read-only USB serial console status/crash and staging-record reads
+were considered for diagnosis if serial was already enabled. Normal boot
+clears stale staging evidence, so the earlier failure may no longer be
+diagnosable from the device. More detailed bounded reconnect reporting remains
+useful future work. No handoff bug or fix has been established by this record.

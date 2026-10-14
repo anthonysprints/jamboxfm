@@ -43,13 +43,16 @@ Input is an 11-column × 6-row diode matrix behind two 74HC595s. IRQ scan ~10 kH
 
 The product is four roles but physical Sloop indices stay fixed initially: synth slots 0–2 = Bass / Chords / Lead; drum slot 3 = Drums. The Home display orders roles Drums / Bass / Chords / Lead through a mapping table, without renumbering storage or MIDI IDs. Every page shows selected role; no hidden track switch on a knob originally expected to shape a sound.
 
+The Home encoder rows reflect the owner's 2026-10-14 follow-up request;
+the other proposed features retain their separate implementation status.
+
 | Actual control | JamBox proposal |
 |---|---|
 | HOME tap | Return to four-role Jam overview. Each role displays name, sound, mute and record status. |
-| SELECT rotate on HOME | Select Drums / Bass / Chords / Lead. |
+| SELECT rotate on HOME | Tempo, one BPM per detent, 40–240 BPM. |
 | SELECT rotate in a menu | Select labeled row; in sound editor, select labeled page. |
 | KNOB 1–4 on HOME | Selected sound macros Brightness / Movement / Grit / Space, with actual values/labels on screen. |
-| ALGORITHM rotate | Select role on secondary pages; on HOME it may mirror SELECT. Do not silently replace engines in beginner mode. |
+| ALGORITHM rotate | On HOME, select Drums / Bass / Chords / Lead. Keep existing secondary-page control ownership. |
 | PRESETS rotate | Audition next curated sound for the selected role. Preserve recorded events; make sound change undoable. |
 | PLAY | Start/stop whole jam, globally accessible unless a blocking confirmation explicitly consumes it. |
 | REC | Stopped: arm selected role and show count-in; playing: begin/end selected-role capture at documented boundary. Visible red record state. |

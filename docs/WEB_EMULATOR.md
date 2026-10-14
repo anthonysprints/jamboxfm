@@ -7,8 +7,8 @@ audio engine in an AudioWorklet. This is a host port of the instrument,
 not an emulation of the AC791 chip or a hardware timing test.
 
 Press **Start audio**, then **PLAY** to hear the Dusty session. Turn
-**SELECT** to change part; **PRESETS** changes sound. Use the bottom-right
-**ALGORITHM** knob on Home to change tempo (one
+**ALGORITHM** to change part; **PRESETS** changes sound. Use the top-right
+**SELECT** knob on Home to change tempo (one
 BPM per detent, from 40 to 240 BPM). Deeper pages retain their existing controls.
 Drag or scroll a knob, or focus it and use the arrow keys. The page lists the computer keyboard
 shortcuts. **All notes off** releases notes and stops playback. Browser

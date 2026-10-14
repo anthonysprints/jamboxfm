@@ -46,11 +46,11 @@ int main(int argc, char **argv)
     if (outdir) ppm("jam-home-chords");
 
     bpm = song.g[G_BPM];
-    turn(EN_SELECT, 1);
-    check(song.sel == 2 && song.g[G_BPM] == bpm, "SELECT chooses Lead without changing tempo");
-    turn(EN_SELECT, -20);
-    check(song.sel == TRK_DRUM, "SELECT clamps to Drums in display order");
-    turn(EN_SELECT, 1);
+    turn(EN_ALGO, 1);
+    check(song.sel == 2 && song.g[G_BPM] == bpm, "ALGORITHM chooses Lead without changing tempo");
+    turn(EN_ALGO, -20);
+    check(song.sel == TRK_DRUM, "ALGORITHM clamps to Drums in display order");
+    turn(EN_ALGO, 1);
     check(song.sel == 0, "the next role after Drums is Bass");
     for (k = 0; k < NTRK; k++) memcpy(patterns[k], trk[k].step, sizeof patterns[k]);
     old_index = jam_sound_index(song.sel);
@@ -61,15 +61,15 @@ int main(int argc, char **argv)
     check(before, "curated sound browsing preserves all four patterns");
     old_index = jam_sound_index(song.sel); old_track = song.sel;
     before = strip_hash(0, 36);
-    turn(EN_ALGO, 1);
+    turn(EN_SELECT, 1);
     check(song.g[G_BPM] == bpm + 1 && song.sel == old_track && jam_sound_index(song.sel) == old_index,
-          "ALGORITHM raises tempo one BPM without changing part or sound");
+          "SELECT raises tempo one BPM without changing part or sound");
     check(before != strip_hash(0, 36), "the Home BPM display follows the tempo knob");
-    turn(EN_ALGO, -1);
-    check(song.g[G_BPM] == bpm, "ALGORITHM lowers tempo one BPM");
-    turn(EN_ALGO, 1000);
+    turn(EN_SELECT, -1);
+    check(song.g[G_BPM] == bpm, "SELECT lowers tempo one BPM");
+    turn(EN_SELECT, 1000);
     check(song.g[G_BPM] == GP[G_BPM].max, "tempo clamps at 240 BPM");
-    turn(EN_ALGO, -1000);
+    turn(EN_SELECT, -1000);
     check(song.g[G_BPM] == GP[G_BPM].min, "tempo clamps at 40 BPM");
     song.g[G_BPM] = bpm;
     before = 1;
@@ -119,9 +119,9 @@ int main(int argc, char **argv)
     /* Real transport buttons still execute before the Home encoder hook. */
     tap(B_PLAY); frame();
     check(song.playing, "PLAY starts the shared transport from Home");
-    turn(EN_ALGO, 1);
+    turn(EN_SELECT, 1);
     check(song.playing && song.g[G_BPM] == bpm + 1, "tempo changes while the groove keeps playing");
-    turn(EN_ALGO, -1);
+    turn(EN_SELECT, -1);
     frames(12);
     if (outdir) ppm("jam-home-playing");
     tap(B_PLAY); frame();

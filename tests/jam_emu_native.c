@@ -96,9 +96,9 @@ int main(int argc, char **argv)
         fclose(f);
     }
     before = jam_emu_value(8, 0);
-    jam_emu_encoder(EN_SELECT, 1);
-    CHECK(jam_emu_value(0, 0) == 2 && (uint32_t)jam_emu_value(8, 0) == before, "SELECT chooses role through physical UI");
-    jam_emu_encoder(EN_SELECT, -1);
+    jam_emu_encoder(EN_ALGO, 1);
+    CHECK(jam_emu_value(0, 0) == 2 && (uint32_t)jam_emu_value(8, 0) == before, "ALGORITHM chooses role through physical UI");
+    jam_emu_encoder(EN_ALGO, -1);
     before = jam_emu_value(12, 0);
     jam_emu_encoder(EN_K1, 1);
     CHECK((uint32_t)jam_emu_value(12, 0) > before, "K1 reaches the real sound macro");

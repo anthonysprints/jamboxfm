@@ -98,23 +98,23 @@ try {
   await page.screenshot({ path: resolve(evidence, 'desktop-home.png'), fullPage: true });
 
   // Encoder events go through the firmware panel roles, not a browser patch editor.
-  await turn(page, 0);
+  await turn(page, 1);
   await page.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
-  assert.equal((await state(page)).tempo, 88, 'SELECT changes part without changing tempo');
+  assert.equal((await state(page)).tempo, 88, 'ALGORITHM changes part without changing tempo');
   await waitForScreenChange(page, initialScreen.hash);
   assert.notEqual((await screen(page)).hash, initialScreen.hash, 'part selection redraws the real LCD');
-  await turn(page, 0, 'ArrowDown');
+  await turn(page, 1, 'ArrowDown');
   await page.waitForFunction(() => globalThis.jamEmu.state.selected === 1);
   const soundBefore = (await state(page)).sound;
   await turn(page, 2);
   await page.waitForFunction(previous => globalThis.jamEmu.state.sound !== previous, soundBefore);
   const tempoSound = (await state(page)).sound;
-  await turn(page, 1);
+  await turn(page, 0);
   await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
-  assert.equal((await state(page)).selected, 1, 'bottom-right Home knob preserves part');
-  assert.equal((await state(page)).sound, tempoSound, 'bottom-right Home knob preserves sound');
-  assert.equal(await encoder(page, 1).getAttribute('aria-valuetext'), 'Tempo: 89 BPM');
-  await turn(page, 1, 'ArrowDown');
+  assert.equal((await state(page)).selected, 1, 'top-right Home knob preserves part');
+  assert.equal((await state(page)).sound, tempoSound, 'top-right Home knob preserves sound');
+  assert.equal(await encoder(page, 0).getAttribute('aria-valuetext'), 'Tempo: 89 BPM');
+  await turn(page, 0, 'ArrowDown');
   await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
   const macroBefore = (await state(page)).macros[0];
   await turn(page, 3);
@@ -224,7 +224,7 @@ try {
   // neighboring key that could quantize to that pitch. Use a fresh session.
   const snap = await browser.newPage({ viewport: { width: 1280, height: 1060 } });
   await start(snap, address);
-  await turn(snap, 0);
+  await turn(snap, 1);
   await snap.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
   await tap(snap, 1);
   await snap.waitForFunction(() => !globalThis.jamEmu.state.home && globalThis.jamEmu.state.layer === 0);

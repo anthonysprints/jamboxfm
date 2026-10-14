@@ -1,11 +1,11 @@
 # Install and update JamBoxFM in Chrome
 
-**Current hardware finding:** the owner's first normal-JamBox update stopped
-with `noloader` before the application-writing stage. The existing instrument
-still works, but the UI update is not installed. See the
-[handoff failure record](build-evidence/ui-update-handoff-failure.md).
-Do not repeat that attempt without diagnosing the handoff; the software tests
-below did not establish this physical transition.
+**Current hardware finding:** the owner reports that a normal-JamBox update
+retry succeeded and that BPM control and SNAP lights work as expected on the
+FM-1. No intervening firmware fix was published. The first attempt's `noloader`
+failure remains unexplained; its [handoff record](build-evidence/ui-update-handoff-failure.md)
+preserves both the failed attempt and the later success. This is owner-reported
+functional confirmation, not completion of the hardware validation checklist.
 
 This page supports an experimental first installation from original factory
 V15 (`FM-1_015`) and an update from a running JamBox build (`FM-1_700` with
@@ -75,10 +75,12 @@ final response does not independently identify the installed build's bytes.
 
 ## Remaining hardware work
 
-The owner has reported a successful first installation and general musical
-use, with specific knob, chord and key-lighting feedback now being addressed.
-The new JamBox-to-JamBox route has host transfer and browser coverage; its
-next update on this instrument remains a physical trial. Sustained audio,
+The owner has reported a successful first installation, general musical use,
+and a successful normal-JamBox update retry with working BPM control and SNAP
+lights. The subsequent Home knob swap assigns tempo to SELECT and part
+selection to ALGORITHM; its device behavior still needs owner confirmation.
+The JamBox-to-JamBox route also has host transfer and browser coverage, while
+the first failed handoff remains unexplained. Sustained audio,
 all controls and interrupted-update recovery are not yet fully validated.
 A later return-to-factory
 trial is separate. App rescue relies on executable application code and is

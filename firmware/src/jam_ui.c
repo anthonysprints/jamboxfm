@@ -61,15 +61,15 @@ static int jam_home_input(void)
     int32_t s;
     if (!jam_home_active())
         return 0;
-    if ((s = panel_enc(EN_SELECT)) != 0) {
+    if ((s = panel_enc(EN_ALGO)) != 0) {
         int32_t r = (int32_t)jam_home_role(song.sel);
         /* Clamp the increment before adding it: a noisy encoder cannot wrap. */
         r = clamp(r + clamp(s, -4, 4), 0, 3);
         track_select(jam_role_track((uint32_t)r));
     }
     jam_home_browse(panel_enc(EN_PRESET));
-    /* Bottom-right left encoder: one BPM per detent on Home. */
-    if ((s = panel_enc(EN_ALGO)) != 0) {
+    /* Top-right left encoder (SELECT): one BPM per detent on Home. */
+    if ((s = panel_enc(EN_SELECT)) != 0) {
         song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + clamp(s, -200, 200),
                                       GP[G_BPM].min, GP[G_BPM].max);
         ui.bpm_t = 40;
@@ -198,9 +198,9 @@ static int jam_home_draw(void)
         jam_home_cache.foot = foot;
         cv_begin(240, 32, C_BLACK);
         jam_home_text(8, 0, 224, &FONT_S,
-                      ui.msg_t ? ui.msg : "SELECT part  PRESET sound", ui.msg_t ? C_HI : C_GRAY);
+                      ui.msg_t ? ui.msg : "ALGO part  PRESET sound", ui.msg_t ? C_HI : C_GRAY);
         jam_home_text(8, 16, 224, &FONT_S,
-                      jam_home_macros_available(selected) ? "ALGO tempo / SEL scale" : "ALGO tempo / EDIT sound", C_GRAY);
+                      jam_home_macros_available(selected) ? "SELECT tempo / SEL scale" : "SELECT tempo / EDIT sound", C_GRAY);
         cv_blit(0, 208);
     }
     return 1;

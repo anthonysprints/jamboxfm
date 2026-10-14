@@ -1,11 +1,12 @@
 # JamBox software prototype and FM-1 update isolation
 
-The subsequent normal-JamBox UI update failed at loader discovery (`noloader`,
-20 staging requests, zero application-writing requests). The owner confirms
-normal operation of the previous build, including the old sound-selection
-knob behavior. The [failure record](build-evidence/ui-update-handoff-failure.md)
-is the current hardware status; published packages and passing host tests do
-not establish that this update reached the device.
+The owner reports that a retry of the normal-JamBox UI update succeeded, with
+BPM control and SNAP lights working as expected on the FM-1. No intervening
+firmware fix was published; the earlier `noloader` failure remains unexplained
+in the [handoff record](build-evidence/ui-update-handoff-failure.md). The next
+requested Home mapping is SELECT for tempo and ALGORITHM for part selection,
+with PRESETS still choosing sounds. This follow-up has separate build and
+publication checks; the owner's confirmation applies to the preceding update.
 
 October 14, 2026. The owner reports a successful Chrome installation and is playing JamBox on the FM-1. The four UI follow-ups, focused fixes and proposed chord/sequencer work are tracked in [First device feedback](FIRST_DEVICE_FEEDBACK.md). This remains experimental; the owner's report does not complete the hardware-validation or recovery checklist. Earlier milestones below describe their historical validation state.
 
@@ -66,9 +67,9 @@ That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative 
 
 ## Remaining implementation boundaries
 
-The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and physically validated installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
+The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo and JAM1 persistence/import are not implemented. First installation and a normal JamBox update have owner-reported success; complete hardware validation, including interrupted-update recovery, remains outstanding. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
-Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's read-only report now returns `FM-1_015`, and the original factory interface is confirmed. Factory V15 is the current baseline. Its exact uploaded return file is verified; separate host simulations and native staging checks are recorded in [factory preparation](FM1_FACTORY_V15.md). The current stock staging/record audit is separate from these earlier software checks; actual JamBox handover and return remain unverified. See the [factory follow-up](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline).
+Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's original read-only report returned `FM-1_015`, and the factory interface was confirmed as the installation baseline. Its exact uploaded return file is verified; separate host simulations and native staging checks are recorded in [factory preparation](FM1_FACTORY_V15.md). The owner has since reported successful JamBox installation and an update; return to factory remains unverified. See the [factory follow-up](FM1_DEVICE_PLAN.md#software-follow-up-for-the-confirmed-factory-baseline).
 
 ## Environment
 

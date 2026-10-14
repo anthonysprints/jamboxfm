@@ -167,14 +167,16 @@ Keep one reliable undo/redo level initially. A small variation operation can cha
 
 The source maps 27 note keys, 14 labeled buttons, seven endless encoders, LEDs and a 240×240 screen. Encoders are not assumed to have push switches. The button Sloop calls `SEL` is `B_SCL` internally. Keep raw scanning, debouncing, encoder calibration, LED multiplexing and display drivers. [H1]
 
-This is the first mapping to implement in the simulator and try on the device:
+The Home encoder rows incorporate the owner's 2026-10-14 follow-up request.
+The remaining rows describe the broader planned controls; they do not imply
+that all proposed features are implemented:
 
 | Control/context | Planned action |
 | --- | --- |
 | HOME | Return to the four-part overview |
-| SELECT encoder on Home | Select Drums / Bass / Chords / Lead; display selected role clearly |
+| SELECT encoder on Home | Tempo, one BPM per detent, 40–240 BPM |
 | PRESETS encoder on Home | Browse curated sounds for the selected part |
-| ALGORITHM encoder on Home | Browse the selected part's small sound-category list; hold deep engine choices for Edit |
+| ALGORITHM encoder on Home | Select Drums / Bass / Chords / Lead; display selected role clearly |
 | Knobs 1–4 on Home | Selected sound's four labeled macros |
 | PLAY | Existing play/stop behavior |
 | REC | Arm/disarm selected part using the existing transport state machine; retain visible count-in/armed state |

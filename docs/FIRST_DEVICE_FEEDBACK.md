@@ -3,21 +3,27 @@
 The owner reports that installation succeeded and most functions work on the
 physical FM-1. This establishes an owner-reported first boot and playing
 experience; it does not complete the hardware validation or recovery checklist.
+The owner later confirmed that a successful update retry enabled the BPM
+control and expected SNAP lights, then requested the Home knob swap below.
 
-## 1. Bottom-right left knob: tempo
+## 1. Home knobs: SELECT tempo, ALGORITHM part
 
 Implemented for the JamBox Home screen:
 
 | Physical position | Label | Home action |
 | --- | --- | --- |
 | Top left | MASTER | Output level |
-| Top right | SELECT | Drums / Bass / Chords / Lead |
+| Top right | SELECT | Tempo, one BPM per detent, 40–240 BPM |
 | Bottom left | PRESETS | Selected part's sound |
-| Bottom right | ALGORITHM | Tempo, one BPM per detent, 40–240 BPM |
+| Bottom right | ALGORITHM | Drums / Bass / Chords / Lead |
 
-The previous bottom-right sound-browsing alias is removed. Tempo changes keep
+The first UI update removed the bottom-right sound-browsing alias and assigned
+tempo to ALGORITHM. After confirming that update on the FM-1, the owner asked
+to swap the Home roles: SELECT now controls tempo and ALGORITHM selects parts.
+Tempo changes keep
 playback running and preserve the selected part, sound and all recorded steps.
-The screen already shows BPM; its footer now identifies ALGO as tempo.
+The screen already shows BPM; its footer identifies SELECT as tempo and ALGO
+as part selection.
 Held-button layers, record setup, menus and deeper pages keep their existing
 control ownership. The browser labels Home controls only while Home actually
 owns them, including when a held layer temporarily covers Home.
