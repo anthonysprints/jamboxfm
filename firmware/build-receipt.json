@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "e37fb9e0b58023c228ecaa4acc9c133e1fa85672c8df11f39a51c1a388f04883",
-      "size_bytes": 547964
+      "sha256": "c6d1c36518007d53b57824b949bc4789eb1bf7664df65fb6f5be0feee5d09191",
+      "size_bytes": 547932
     },
     "felucca.elf": {
-      "sha256": "a24f3a4a35709ed0a1c852be4606a472d7e621bc4d0206a901e49b0e5c5df125",
-      "size_bytes": 585452
+      "sha256": "60757aa4aa327155afe340dd05b6cc578674aae0c4751ad7bf3007dc511aee58",
+      "size_bytes": 585420
     },
     "felucca.fwsc": {
-      "sha256": "feed5f35c47d36520c9f81090d4a46a6d077ea6542587412cfccc34cb92836b3",
+      "sha256": "e64dbff63594a08e5c0fff99e2170b966aeea892620ba144f986a57c3a6e528c",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -513,11 +513,11 @@
     "firmware/src/uac_fir.h": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56",
     "firmware/src/ui.c": "fb1f17fcd188c1146a7a3a8ccf7d656a639fdefc72ac2bb481bc20dea2f19efb",
     "firmware/src/ui_draw.c": "7d3d9d7b502092e7d03af010aac5ceb4599ecad8a8c1a4ab67d22a67f02069ce",
-    "firmware/src/ui_input.c": "823775bcf872990a65f5452e43f95f454661e386ec122dd355879ccce7329641",
+    "firmware/src/ui_input.c": "b39d741efb912e570052f28bab3d157dadb42535fe312c0d94b5924628ccea9c",
     "firmware/src/ui_layers.c": "42ac032bc06c4d7f92675e75193b77d6125ce6527d29955ff421159abbe8ed28",
     "firmware/src/ui_menu.c": "926dc2024bc0e5737ce81508e7eb011588a5de18d39d8986a204d8dec048b65c",
     "firmware/src/ui_song.c": "53fafd8ca8bda2c0ee8ecf37be2e51e60e2a3b991070feeb90b8dd025f529d3e",
-    "firmware/src/ui_studio.c": "7d50b6874edbe8e995b4d2bbdb631b3f4b5a50e6a5b08bb9e55d78bf04bbd1fc",
+    "firmware/src/ui_studio.c": "202f6dc195086baf7803df8004b4376fe9fc3ae751def25f81b52577c2a83477",
     "firmware/src/ui_vis.c": "aab57d452245a1a758c660ff270de42db1ebd6ce7e3876c2f96ffaaf0a995049",
     "firmware/src/upreset.c": "873970da0a924727da63182f458c0dc22e758b8f065c8a13d596887ffcddbcbf",
     "firmware/src/usb.c": "50afa91200b28ba17537c4ea6a10bbb7d4a925c6dbdc8512e5f7441c2986dd2a",
@@ -569,7 +569,7 @@
   "source": {
     "dirty": true,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "acd8336f8a182523900b92dd3ebc767276b90690"
+    "revision": "c15f24dba43e365e378fc8f934d15fed390efd86"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
