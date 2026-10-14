@@ -1,0 +1,95 @@
+{
+  "verified_at_utc": "2026-10-14T03:12:07.731393+00:00",
+  "source_commit": "6d56718",
+  "publication": {
+    "action": "published",
+    "branch": "refs/heads/gh-pages",
+    "bytes": 12797158,
+    "commit": "c07e0f4cebc4f790c03cddae9df0e6a5db824c29",
+    "destination": "https://github.com/anthonysprints/jamboxfm.git",
+    "files": 27,
+    "package_sha256": "a3b37bd0991773dd6b6986452a8d90468b929ec1dd0a54bceda1a8599d639b7b",
+    "parent": "25449a7965d63a2b597fb4058b78aa955866c213",
+    "tree": "9d2078a5ba6a5532ff8b1d1757dfc0daff324536"
+  },
+  "http_checks": [
+    {
+      "file": "device/index.html",
+      "status": 200,
+      "sha256": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58",
+      "expected": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58",
+      "matches": true
+    },
+    {
+      "file": "device/app.js",
+      "status": 200,
+      "sha256": "26edd33b5d07de690101a3affa622b4bb5587f246491d2dcf32de66aba65a07c",
+      "expected": "26edd33b5d07de690101a3affa622b4bb5587f246491d2dcf32de66aba65a07c",
+      "matches": true
+    },
+    {
+      "file": "device/style.css",
+      "status": 200,
+      "sha256": "123c7a508786288de673c0dbf26cee8b2f0b1cd971a23f4d6aaf36e98fb2f89b",
+      "expected": "123c7a508786288de673c0dbf26cee8b2f0b1cd971a23f4d6aaf36e98fb2f89b",
+      "matches": true
+    },
+    {
+      "file": "jam-device-policy.js",
+      "status": 200,
+      "sha256": "20e627a9d0a6002028a60d42b356c71b880e30b6b7417a4cd150ca35b80775cd",
+      "expected": "20e627a9d0a6002028a60d42b356c71b880e30b6b7417a4cd150ca35b80775cd",
+      "matches": true
+    },
+    {
+      "file": "fm1ota.js",
+      "status": 200,
+      "sha256": "5fc546830fb75e321c6ff46336d2e9b9ef8f8315eef4bb41fe65d9a3ba87daca",
+      "expected": "5fc546830fb75e321c6ff46336d2e9b9ef8f8315eef4bb41fe65d9a3ba87daca",
+      "matches": true
+    },
+    {
+      "file": "fm1pkg.js",
+      "status": 200,
+      "sha256": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b",
+      "expected": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b",
+      "matches": true
+    },
+    {
+      "file": "emu/index.html",
+      "status": 200,
+      "sha256": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87",
+      "expected": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87",
+      "matches": true
+    },
+    {
+      "file": "emu/app.js",
+      "status": 200,
+      "sha256": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290",
+      "expected": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290",
+      "matches": true
+    },
+    {
+      "file": "emu/worklet.js",
+      "status": 200,
+      "sha256": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5",
+      "expected": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5",
+      "matches": true
+    },
+    {
+      "file": "emu/jam-emu.wasm",
+      "status": 200,
+      "sha256": "7e93e3e63aab8e995fc0056ab0ea54d318a966c6d01ed651a4cece8a0744e22d",
+      "expected": "7e93e3e63aab8e995fc0056ab0ea54d318a966c6d01ed651a4cece8a0744e22d",
+      "matches": true
+    },
+    {
+      "file": "SHA256SUMS",
+      "status": 200,
+      "sha256": "a3b37bd0991773dd6b6986452a8d90468b929ec1dd0a54bceda1a8599d639b7b",
+      "expected": "a3b37bd0991773dd6b6986452a8d90468b929ec1dd0a54bceda1a8599d639b7b",
+      "matches": true
+    }
+  ],
+  "firmware_published": false
+}

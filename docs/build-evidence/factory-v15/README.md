@@ -54,3 +54,5 @@ The policy suite accepts `JAMBOX_SLOOP_PACKAGE` and `JAMBOX_FACTORY_PACKAGE`; th
 [Factory backup/recovery audit](recovery-options-audit.md) and [Windows preparation](windows-recovery-prep.md) record pinned source evidence. Windows Unbricker can back up a unit already in ROM using a temporary RAM loader and two matching flash reads; the current identity check does not establish that access. No owner device mode change, RAM loader, flash dump, installation, or physical recovery test was performed here. The manufacturer update file is not a private-data backup.
 
 No canonical manufacturer firmware, uploaded device report, extracted flash, proprietary compiler, or device installation package is included in these evidence files.
+
+The final source was pushed as `6d56718`. Website commit `c07e0f4cebc4f790c03cddae9df0e6a5db824c29` publishes the read-only explanation and corresponding source. Eleven public HTML/module/WASM/checksum responses returned HTTP 200 and matched the tested package; see [publication verification](publication.json). Device firmware remains unpublished.
