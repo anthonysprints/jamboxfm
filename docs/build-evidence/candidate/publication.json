@@ -1,0 +1,121 @@
+{
+  "verified_at_utc": "2026-10-14T02:03:18.035560+00:00",
+  "source_commit": "0d891f016d2df539d23f5cb779b611bbd1c6abd3",
+  "publication": {
+    "action": "published",
+    "branch": "refs/heads/gh-pages",
+    "bytes": 12762441,
+    "commit": "25449a7965d63a2b597fb4058b78aa955866c213",
+    "destination": "https://github.com/anthonysprints/jamboxfm.git",
+    "files": 27,
+    "package_sha256": "909f007daf2a64c6ee17909d1610b99ea076bdd2374c344dffd8a1c655b566a4",
+    "parent": "fb393b72ce0c4ef00faf8b377dad389b7c447bdd",
+    "tree": "d0503c97c68458d66e17c73367b018710e9101e7"
+  },
+  "direct_page_checks": [
+    {
+      "url": "https://anthonysprints.github.io/jamboxfm/device/",
+      "status": 200,
+      "sha256": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58",
+      "matches_tested_build": true
+    },
+    {
+      "url": "https://anthonysprints.github.io/jamboxfm/emu/",
+      "status": 200,
+      "sha256": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87",
+      "matches_tested_build": true
+    }
+  ],
+  "asset_checks": [
+    {
+      "file": "emu/index.html",
+      "status": 200,
+      "bytes": 6197,
+      "sha256": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87",
+      "expected_sha256": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87",
+      "matches": true
+    },
+    {
+      "file": "emu/app.js",
+      "status": 200,
+      "bytes": 18458,
+      "sha256": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290",
+      "expected_sha256": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290",
+      "matches": true
+    },
+    {
+      "file": "emu/worklet.js",
+      "status": 200,
+      "bytes": 5408,
+      "sha256": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5",
+      "expected_sha256": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5",
+      "matches": true
+    },
+    {
+      "file": "emu/jam-emu.wasm",
+      "status": 200,
+      "bytes": 678759,
+      "sha256": "7e93e3e63aab8e995fc0056ab0ea54d318a966c6d01ed651a4cece8a0744e22d",
+      "expected_sha256": "7e93e3e63aab8e995fc0056ab0ea54d318a966c6d01ed651a4cece8a0744e22d",
+      "matches": true
+    },
+    {
+      "file": "device/index.html",
+      "status": 200,
+      "bytes": 5191,
+      "sha256": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58",
+      "expected_sha256": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58",
+      "matches": true
+    },
+    {
+      "file": "device/app.js",
+      "status": 200,
+      "bytes": 12821,
+      "sha256": "487df02a77e29878b122a4a24515a73f229cc023ce075b8072c2d14b720fa4a1",
+      "expected_sha256": "487df02a77e29878b122a4a24515a73f229cc023ce075b8072c2d14b720fa4a1",
+      "matches": true
+    },
+    {
+      "file": "device/style.css",
+      "status": 200,
+      "bytes": 7085,
+      "sha256": "123c7a508786288de673c0dbf26cee8b2f0b1cd971a23f4d6aaf36e98fb2f89b",
+      "expected_sha256": "123c7a508786288de673c0dbf26cee8b2f0b1cd971a23f4d6aaf36e98fb2f89b",
+      "matches": true
+    },
+    {
+      "file": "fm1ota.js",
+      "status": 200,
+      "bytes": 18601,
+      "sha256": "5fc546830fb75e321c6ff46336d2e9b9ef8f8315eef4bb41fe65d9a3ba87daca",
+      "expected_sha256": "5fc546830fb75e321c6ff46336d2e9b9ef8f8315eef4bb41fe65d9a3ba87daca",
+      "matches": true
+    },
+    {
+      "file": "fm1pkg.js",
+      "status": 200,
+      "bytes": 2009,
+      "sha256": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b",
+      "expected_sha256": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b",
+      "matches": true
+    },
+    {
+      "file": "jam-device-policy.js",
+      "status": 200,
+      "bytes": 26066,
+      "sha256": "d1e69283810cb3169b18c8f796f063f03be71da8bfbdffa1429e1593b4c4263a",
+      "expected_sha256": "d1e69283810cb3169b18c8f796f063f03be71da8bfbdffa1429e1593b4c4263a",
+      "matches": true
+    },
+    {
+      "file": "SHA256SUMS",
+      "status": 200,
+      "bytes": 2193,
+      "sha256": "909f007daf2a64c6ee17909d1610b99ea076bdd2374c344dffd8a1c655b566a4",
+      "expected_sha256": "909f007daf2a64c6ee17909d1610b99ea076bdd2374c344dffd8a1c655b566a4",
+      "matches": true
+    }
+  ],
+  "hardware_connected": false,
+  "firmware_published": false
+}

@@ -71,3 +71,7 @@ python3 tests/target_budget.py
 The final command preserves the known failure. The transition checks require the separately cached exact Sloop package; pass its path as the second argument to `jam_device_candidate_check.mjs` or use `JAMBOX_SLOOP_PACKAGE` for the policy suite. The fixture is not redistributed. Tests use simulated MIDI endpoints, never an attached instrument. Publication is a separate explicit step in [GitHub Pages instructions](../../GITHUB_PAGES.md).
 
 Next: read the owner's actual firmware identity, verify available private backups and recovery equipment/procedure, then plan the physical trial. Simulated return to Sloop does not prove preservation of data on real hardware.
+
+## Publication
+
+Source commit `0d891f016d2df539d23f5cb779b611bbd1c6abd3` was pushed to the public repository's `main`. Website commit `25449a7965d63a2b597fb4058b78aa955866c213` preserves `gh-pages` history and publishes the validated 27-file package. Direct HTTP checks of [the instrument](https://anthonysprints.github.io/jamboxfm/emu/) and [device check](https://anthonysprints.github.io/jamboxfm/device/) returned 200 with the tested HTML hashes. Eleven asset/HTML/checksum responses also matched the local package, including WASM and all device-page modules. [Publication evidence](publication.json) records those observations. Firmware remains unpublished.
