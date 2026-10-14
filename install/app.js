@@ -9,6 +9,7 @@ const CODES = ['aborted', 'permission', 'ambiguous', 'notfound', 'identity', 'mo
   'manifest', 'trial', 'package', 'hash', 'busy', 'ineligible', 'configuration', 'operation'];
 const safeCode = error => CODES.includes(error?.code) ? error.code : 'unknown';
 const safeIdentity = identity => identity && /^(?:ota-)?FM-1_\d{3}$/.test(identity.text || '') ? identity.text : null;
+const safeTransition = value => ['factory-v15-to-jambox', 'jambox-normal-to-jambox'].includes(value) ? value : null;
 
 function beforeStartMessage(error) {
   if (error?.name === 'NotAllowedError' || error?.name === 'SecurityError' || error?.code === 'permission')
@@ -16,7 +17,7 @@ function beforeStartMessage(error) {
   if (error?.code === 'aborted') return 'Preparation cancelled. No update was started.';
   if (error?.code === 'ambiguous') return 'Choose one FM-1 below, or disconnect other MIDI devices, then check the connection again.';
   if (error?.code === 'lost' || error?.code === 'notfound') return 'The FM-1 disconnected. Check the USB cable, then connect again.';
-  if (error?.code === 'identity' || error?.code === 'ineligible') return 'The selected device could not be confirmed as factory V15. No update was started.';
+  if (error?.code === 'identity' || error?.code === 'ineligible') return 'The selected device could not be confirmed as factory V15 or a supported JamBox build. No update was started.';
   return 'The device check could not finish. Close other MIDI apps, check the USB cable, and connect again. No update was started.';
 }
 
@@ -40,6 +41,7 @@ export function mountInstallPage({
   const on = (target, type, fn) => { target.addEventListener(type, fn); removers.push(() => target.removeEventListener(type, fn)); };
   const timestamp = () => now().toISOString();
   const started = () => attempted || installer?.started === true;
+  const updating = () => observation?.transition === 'jambox-normal-to-jambox';
   const key = pair => JSON.stringify([pair.inputId, pair.outputId]);
   const topology = () => !access ? '' : JSON.stringify(['inputs', 'outputs'].flatMap(direction =>
     [...access[direction].values()].filter(port => port.state !== 'disconnected')
@@ -52,6 +54,7 @@ export function mountInstallPage({
     ui['connect-device'].disabled = !requestMIDIAccess || busy || started();
     ui['midi-pair'].disabled = busy || started();
     ui['install-device'].disabled = busy || started() || !bundle || !observation?.eligible || pairs.length !== 1 || !selectedPair();
+    ui['install-device'].textContent = updating() ? 'Update experimental JamBoxFM →' : 'Install experimental JamBoxFM →';
     ui['cancel-prepare'].hidden = !operation || started();
     ui['reload-firmware'].disabled = busy || bundlePending || started();
   }
@@ -132,11 +135,12 @@ export function mountInstallPage({
       ui['device-state'].dataset.ready = String(observation.eligible);
       ui['device-state'].dataset.error = String(!observation.eligible);
       ui['device-label'].textContent = multiple ? 'More than one matching MIDI device · disconnect the others' :
-        observation.eligible ? 'Factory FM-1 V15 · ready for this trial' :
-        `${safeIdentity(result.identity) || 'Unconfirmed firmware'} · this trial requires factory V15`;
+        observation.eligible ? (updating() ? 'JamBoxFM · ready to update' : 'Factory FM-1 V15 · ready to install') :
+        `${safeIdentity(result.identity) || 'Unconfirmed firmware'} · requires factory V15 or supported JamBox`;
       status(multiple ? 'Connect only one FM-1 for this trial. Disconnect other matching MIDI devices, then check the connection again.' :
-        observation.eligible ? 'Your FM-1 is ready. Read the experimental notes, then install when you’re ready.' :
-        'This first-install trial starts from the original factory V15 firmware. No update was started.', !observation.eligible);
+        observation.eligible ? (updating() ? 'Your JamBox is ready. Read the experimental notes, then update when you’re ready.' :
+          'Your FM-1 is ready. Read the experimental notes, then install when you’re ready.') :
+        'Start from original factory V15 or a supported JamBoxFM build. No update was started.', !observation.eligible);
     } catch (error) {
       if (!disposed) status(beforeStartMessage(error), error?.code !== 'aborted');
     } finally {
@@ -194,9 +198,10 @@ export function mountInstallPage({
     // names, so they are deliberately excluded from the downloadable report.
     return {
       format: 'jamboxfm-install-report', formatVersion: 1, recordedAt: timestamp(),
-      experimental: true, hardwareValidated: false, transition: 'factory-v15-to-jambox',
+      experimental: true, hardwareValidated: false,
+      transition: safeTransition(result?.transition) || safeTransition(error?.transition) || safeTransition(observation?.transition),
       outcome, updateStarted: started(),
-      sourceIdentity: safeIdentity(observation?.identity), finalIdentity: safeIdentity(result?.identity),
+      sourceIdentity: safeIdentity(result?.sourceIdentity || error?.sourceIdentity || observation?.identity), finalIdentity: safeIdentity(result?.identity),
       unexpectedIdentity: safeIdentity({ text: error?.detail }),
       version: typeof bundle?.version === 'string' ? bundle.version : null,
       firmwareSHA256: /^[a-f0-9]{64}$/.test(bundle?.firmwareSHA256 || '') ? bundle.firmwareSHA256 : null,
@@ -208,15 +213,15 @@ export function mountInstallPage({
     ui['report-details'].textContent = JSON.stringify(report, null, 2);
     ui['result-card'].dataset.outcome = outcome; ui['result-card'].hidden = false;
     if (outcome === 'completed') {
-      ui['result-title'].textContent = 'Your little band is on board.';
+      ui['result-title'].textContent = result?.transition === 'jambox-normal-to-jambox' ? 'Your JamBox is updated.' : 'Your little band is on board.';
       ui['result-eyebrow'].textContent = 'JAMBOXFM IDENTIFIED';
-      ui['result-guidance'].textContent = 'The FM-1 returned as JamBoxFM after installation. Start with low volume, try a key, then PLAY. Check the screen, keys, knobs, and sound, and save this report. Your sessions are temporary in this first build.';
+      ui['result-guidance'].textContent = 'The FM-1 returned as JamBoxFM. Start with low volume, try a key, then PLAY. Check the screen, keys, knobs, and sound, and save this report. Your sessions are temporary in this build.';
       ui['progress-title'].textContent = 'JamBoxFM is running.';
-      ui['progress-detail'].textContent = 'Installation and firmware identity confirmed. The sound and controls are ready for their first check.';
+      ui['progress-detail'].textContent = 'Transfer and firmware identity confirmed. Try the sound and controls on your instrument.';
       for (const id of ['stage-check', 'stage-loader', 'stage-write', 'stage-return']) {
         ui[id].dataset.state = 'done'; ui[id].removeAttribute('aria-current');
       }
-      status('JamBoxFM returned successfully. Start with low volume for your first test.');
+      status('JamBoxFM returned successfully. Start with low volume when checking this build.');
     } else if (started()) {
       ui['result-title'].textContent = 'Installation needs a closer look.';
       ui['result-eyebrow'].textContent = 'UPDATE STOPPED';

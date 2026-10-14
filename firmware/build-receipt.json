@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "26910f2176be67e70fc00c9d44d89422c2c9453cb405989e283258558e8d399e",
-      "size_bytes": 547552
+      "sha256": "136f70c210c484d0c6b964d823465765f9460142631206e970b94503153d8df5",
+      "size_bytes": 547256
     },
     "felucca.elf": {
-      "sha256": "123f1b7f9890f5a3cd8db0558d7b36e97f37e131fe563ecaa9f4af70ec7074e9",
-      "size_bytes": 585304
+      "sha256": "fac4a024cfb9a0e06736a8375bf7ba12da27251f5cf0905e5f7c369a25eb6453",
+      "size_bytes": 585272
     },
     "felucca.fwsc": {
-      "sha256": "8bc79f41770b54de2af863aa1dcfd6ed7c80ddb962c92cd582178697038f5c42",
+      "sha256": "1e2c7a956081db0e71e2a455d1532b2c555e26d24bc3794f1d23e0b33255afd8",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -491,14 +491,14 @@
     "firmware/src/jam_calibration.h": "c5ae507d2edbe87dcec03db5d743bf26faa25cf265e41464e93cac17e29ec451",
     "firmware/src/jam_identity.h": "052bb9b5aca3e525dc37e56bcfc9c9f3d1839c0ed030c4625e33c404ceb4f92a",
     "firmware/src/jam_palette.c": "3e99f4c70f17680efafc84f94ff705237a7be6cf0932d06e934c09c40e7abf62",
-    "firmware/src/jam_ui.c": "6132acdcb5aac5c0263cf736277c7019f0705748fe5f6e06bb4e5675bd4a1d87",
+    "firmware/src/jam_ui.c": "f2da357bbffeaa5b8f54ed0790ea7e0ce2bcceb8e361f8e35a0e8e1009c1cc15",
     "firmware/src/lcd.c": "b69f0c3d6a5b61c883a35b50ddd6582811bd620a45268543e923fb8849caaac4",
     "firmware/src/libc.c": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a",
     "firmware/src/main.c": "0745fe1b33a076b4de4c6f2269e02b258221154997d33ecccd320f4c09d2ca3f",
     "firmware/src/midi_uart.c": "7a87da4a1c3fe103cbda65d13977af9385dffa1997bb1a752a0ae6d6d46c380f",
     "firmware/src/ota.c": "dd9c7891e6cf43041ffb14cde34ee81f003de4e678b58e67c5b6ec4faa4fe5a9",
     "firmware/src/ota_flash_access.c": "83c16477c95e64e47f1e08cb70cb6551bb6bc2dc9e914679add8dd05d78b757c",
-    "firmware/src/panel.c": "30e137fa20a239d07b34a0b7b76190b085f9d7da320ccf79fec60d98e1234a29",
+    "firmware/src/panel.c": "9b508565ca2ffe596e3a1b4533eef5f7e9659ab71ca777688aec72e523164633",
     "firmware/src/params.c": "4da33b7d95ce0146257ca108bcd74ac02aeaad448ff4ae027b4edc86a3886388",
     "firmware/src/phys_dsp.c": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c",
     "firmware/src/phys_symp.c": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47",
@@ -569,7 +569,7 @@
   "source": {
     "dirty": true,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "ce32b549069cd33b423a386036bfb148df798ccb"
+    "revision": "9d7beefa386e100e3481e9f5621f98e211b74878"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
