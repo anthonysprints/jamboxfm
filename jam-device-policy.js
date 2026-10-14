@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Read-only inventory, offline package checks and simulation policy. This module
 // has no install entry point. Transfer exercises live in tests/helpers only.
-import { productOf, logicalImage, sha256hex } from './fm1pkg.js';
+import { productOf, logicalImage, sha256hex, validateStockPackage,
+  STOCK_V15_PRODUCT, STOCK_V15_SHA256, STOCK_V15_SIZE } from './fm1pkg.js';
 import { encodeMessage, decodeMessage } from './fm1ota.js';
 
 export const JAM_VERSION = '0.1.0-dev';
@@ -10,6 +11,13 @@ export const SLOOP_26 = Object.freeze({ family: 'sloop', version: '2.6', product
   sha256: '199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2' });
 export const SIMULATED_TRANSITIONS = Object.freeze(['jambox-normal-to-jambox', 'jambox-rescue-to-jambox',
   'jambox-loader-to-jambox', 'sloop-2.6-to-jambox', 'jambox-normal-to-sloop-2.6', 'jambox-rescue-to-sloop-2.6']);
+// An exact uploaded return-file profile, separate from the six-transition
+// candidate manifest. Numeric device identity does not authenticate this file
+// as the firmware actually running on a connected instrument.
+export const FACTORY_V15 = Object.freeze({ family: 'factory', version: '15', product: STOCK_V15_PRODUCT,
+  size_bytes: STOCK_V15_SIZE, sha256: STOCK_V15_SHA256 });
+export const FACTORY_SIMULATED_TRANSITIONS = Object.freeze(['factory-v15-to-jambox',
+  'jambox-normal-to-factory-v15', 'jambox-rescue-to-factory-v15']);
 const REQUIRED_FLAGS = Object.freeze({ JAMBOX_PROTO: 1, FELUCCA_FLASH: 1, FELUCCA_PERSIST: 0, FELUCCA_OTA: 1,
   FELUCCA_OTA_DRYRUN: 0, FELUCCA_OTA_RAMONLY: 0, FELUCCA_ICONS: 0, FELUCCA_SLICE: 0 });
 const TARGET = Object.freeze({ model: 'M-VAVE FM-1', soc: 'AC791N', platform: 'WL82', flash_bytes: 1048576,
@@ -229,6 +237,13 @@ export async function prepareReturnPackage(bytes) {
   const copy = new Uint8Array(bytes);
   insist(copy.length === SLOOP_26.size_bytes && await sha256hex(copy) === SLOOP_26.sha256, 'Only the exact audited Sloop 2.6 return package is accepted', 'package');
   return prepared('sloop', '2.6', SLOOP_26.sha256, validatePackage(copy, SLOOP_26.product), null);
+}
+export async function prepareStockReturnPackage(bytes) {
+  insist(bytes instanceof Uint8Array, 'Expected package bytes', 'package');
+  // The factory layout differs from the canonical JamBox/Sloop layout. Every
+  // factory byte is pinned by its existing independently recorded digest.
+  const validated = await validateStockPackage(new Uint8Array(bytes));
+  return prepared(FACTORY_V15.family, FACTORY_V15.version, FACTORY_V15.sha256, validated, null);
 }
 const preparedPackages = new WeakSet();
 function prepared(family, version, sha256, validated, manifest) {
