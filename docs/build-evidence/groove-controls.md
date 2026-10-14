@@ -1,5 +1,7 @@
 # Sloop-style Groove controls — 2026-10-14
 
+Implementation source: `aaa4724`.
+
 The owner requested performance controls on GROOVE, keeping sound shaping on
 SOUND. [The control guide](../GROOVE_CONTROLS.md) specifies the resulting layout:
 shared SWING, selected-part LEVEL, STEPS and PAN. Left encoders, Home navigation,
@@ -35,11 +37,22 @@ for staggered, independently overlapping note lengths.
 - Final publication integration: **15 checks passed** on the exact expanded
   50-file package, including source, receipt, firmware and notices.
 
-Publication is pending. Device receipt
+Publication is verified below. Device receipt
 input hashes bind the actual build snapshot. Persistence remains disabled;
 hardware validation/release flags remain false. This build has not been
 auditioned on a physical FM-1 in the cloud environment.
 
 ## Publication
 
-Pending verification of the deployed firmware and browser files.
+Pages commit `25a85b670a4c54c287a4294010eaa44c830954aa` was published without
+rewriting history. [Workflow 38612596990](https://github.com/anthonysprints/jamboxfm/actions/runs/38612596990)
+completed successfully for that exact commit. The 50-file package manifest
+SHA-256 is `3b9a87eec0552c5944848fff2b9eba1a1a45e21679f1381621ee48fbdbd64a74`.
+All 49 downloadable files matched the tested package byte for byte over HTTPS;
+the remaining file is the `.nojekyll` configuration marker.
+
+The live [installer](https://anthonysprints.github.io/jamboxfm/install/) and
+[emulator](https://anthonysprints.github.io/jamboxfm/emu/) now serve this build.
+This documentation-only publication record follows the implementation commit;
+corresponding source archives retain the build-time snapshot. Physical audition
+of the new controls on the owner's FM-1 remains outstanding.
