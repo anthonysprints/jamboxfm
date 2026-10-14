@@ -1,6 +1,6 @@
 # JamBoxFM build and validation plan
 
-Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md). Since those milestones, the owner has reported a successful Chrome installation and a normal JamBox update with working BPM and SNAP lights. Complete hardware and recovery validation remains outstanding.
 

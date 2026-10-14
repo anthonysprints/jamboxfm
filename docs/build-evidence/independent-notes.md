@@ -1,5 +1,7 @@
 # Independent POLY note lengths — 2026-10-14
 
+Implementation source: `6b0b302`.
+
 The owner approved removing the tied-group recording restriction for POLY
 parts while keeping Bass's LEGATO default. The [playing/design guide](../INDEPENDENT_NOTES.md)
 describes the resulting behavior and boundaries.
@@ -69,11 +71,23 @@ new flash-save format. No linker, flash-sector or stack boundaries changed.
 - Final publication integration: **15 checks passed** on the exact expanded
   50-file package, binding firmware, corresponding source, receipt and notices.
 
-Publication is pending. The build receipt binds the
+Publication is verified below. The build receipt binds the
 actual source inputs, compiler and candidate. Hardware/release flags remain
 false; physical FM-1 audio deadlines, USB behavior and audition remain separate
 from host validation. Persistence remains disabled.
 
 ## Publication
 
-Pending final expanded-package checks and exact live-file verification.
+Pages commit `6b95eb57f5fc1865aa744dc80c79bb5343be7aaf` was published without
+rewriting history. [Workflow 38619029691](https://github.com/anthonysprints/jamboxfm/actions/runs/38619029691)
+completed successfully for that exact commit. The expanded 50-file package's
+`SHA256SUMS` digest is
+`589afe5285b308cfd124b2dbb630d472744f97a6f9777df34fd68ef9171be166`.
+All 49 downloadable files matched the tested local package byte for byte over
+HTTPS; the remaining file is the `.nojekyll` configuration marker.
+
+The live [installer](https://anthonysprints.github.io/jamboxfm/install/) and
+[emulator](https://anthonysprints.github.io/jamboxfm/emu/) serve this candidate.
+The source archives retain their build-time snapshot. This documentation-only
+publication record follows the implementation commit and changes no runtime
+or firmware bytes. Physical FM-1 audition of this increment remains outstanding.

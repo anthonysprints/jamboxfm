@@ -158,7 +158,7 @@ The [GROOVE/SOUND Home views](HOME_VIEWS_PLAN.md) and
 [GROOVE track controls](GROOVE_CONTROLS.md) are implemented. A master Assist
 on/off switch, Gentle/Tight recording correction, broader source ownership,
 complete undo and saved sessions remain future work. Independent note lengths
-are the [current software follow-up](INDEPENDENT_NOTES.md), with native/browser checks and the FM-1 build passed; publication pending. See [First device
+are the [current software follow-up](INDEPENDENT_NOTES.md), with native/browser checks, the FM-1 build and publication verified. See [First device
 feedback](FIRST_DEVICE_FEEDBACK.md) and the [implementation roadmap](IMPLEMENTATION_PLAN.md).
 
 ## Bass: one note or several?
@@ -175,12 +175,10 @@ Choosing another curated Bass/Lead sound currently restores LEGATO when CHORD
 is off, so set POLY after choosing the sound. This follow-up does not change
 that existing behavior or the default.
 
-The published GROOVE-controls build still records tied note groups: starting
-a new group on a later step interrupts the earlier hold. The
-[independent-note follow-up](INDEPENDENT_NOTES.md) removes that limitation in
-the working software for POLY recording. It stores a grid length for each
+The [independent-note update](INDEPENDENT_NOTES.md) removes the earlier
+tied-group limitation for POLY recording. It stores a grid length for each
 note, so holding C, adding E later, then releasing E can leave C sounding.
 Each step still accepts up to four note starts, and the synth parts still
 share eight voices. Bass/Lead defaults and the sound-browsing behavior above
-are unchanged. Native/browser checks and the FM-1 build passed. Publication and physical audition
-remain pending; an older installed build retains the group-based behavior.
+are unchanged. Native/browser checks and the FM-1 build passed. Publication is verified; physical audition
+remains pending; an older installed build retains the group-based behavior.

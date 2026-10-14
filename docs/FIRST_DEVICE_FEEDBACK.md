@@ -1,6 +1,6 @@
 # First FM-1 playing feedback — 2026-10-14
 
-Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 The owner reports that installation succeeded and most functions work on the
 physical FM-1. This establishes an owner-reported first boot and playing
@@ -160,7 +160,7 @@ later onsets. Internal project/editor data now carry those lengths, but
 permanent saving remains disabled and needs a new format budget.
 
 Shared C integration, native/browser checks and the FM-1 build passed.
-Publication and owner audition remain pending; results
+Publication is verified; owner audition remains pending; results
 will be recorded in the [follow-up evidence](build-evidence/independent-notes.md).
 
 ## Delivery and verification

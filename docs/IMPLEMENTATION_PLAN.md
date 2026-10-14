@@ -1,6 +1,6 @@
 # JamBoxFM implementation plan
 
-Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks and the FM-1 build passed; installer verification and publication are pending. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
+Current follow-up: [independent POLY note lengths](INDEPENDENT_NOTES.md) preserve staggered held notes in grid recording. Native/browser checks, the FM-1 build, installer checks and live publication verification passed. Bass remains LEGATO by default. The preceding [GROOVE controls](GROOVE_CONTROLS.md) update is recorded in its [build record](build-evidence/groove-controls.md).
 
 Decision date: October 13, 2026. Status: implementation roadmap. The first Dusty palette, Home and shared-code browser slice are now implemented; see [README](../README.md) and [cloud setup](CLOUD_SETUP.md) for current scope and validation. The remaining sections describe intended work, not completed capabilities.
 

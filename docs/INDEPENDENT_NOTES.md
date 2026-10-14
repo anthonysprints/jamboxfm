@@ -2,10 +2,9 @@
 
 October 14, 2026. Status: implemented and software-verified.
 Native checks, actual WASM/Chromium checks and the FM-1 target build passed.
-Final package checks and publication remain pending. Results belong in the
+Installer/package checks and exact live-file verification passed. Results are in the
 [follow-up build record](build-evidence/independent-notes.md) when finalized.
-An existing installed GROOVE-controls build retains the earlier tied-group
-recording model until this follow-up is published and installed.
+Earlier installations retain the tied-group recording model until updated.
 
 ## Play what you hold
 
@@ -115,7 +114,7 @@ object must therefore be redesigned before saving is implemented. A future
 versioned format needs an explicit packing/storage budget, migration rules,
 interruption tests and companion sound-bank handling.
 
-## Validation before publication
+## Validation
 
 Use the real shared recorder and playback paths, rather than a second
 JavaScript note scheduler. Required checks include:
