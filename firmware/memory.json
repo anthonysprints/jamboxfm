@@ -1,8 +1,8 @@
 {
   "app": {
     "flash_slot_bytes": 581564,
-    "flash_spare_bytes": 33632,
-    "image_bytes": 547932,
+    "flash_spare_bytes": 30404,
+    "image_bytes": 551160,
     "regions": {
       "NOINIT": {
         "capacity_bytes": 15696,
@@ -24,9 +24,9 @@
         "capacity_bytes": 98304,
         "minimum_spare_bytes": 4096,
         "origin": 29392896,
-        "span_bytes": 80648,
-        "spare_bytes": 17656,
-        "used_bytes": 80648
+        "span_bytes": 80744,
+        "spare_bytes": 17560,
+        "used_bytes": 80744
       },
       "RAMTEXT": {
         "capacity_bytes": 24576,
@@ -40,15 +40,15 @@
         "capacity_bytes": 581564,
         "minimum_spare_bytes": 0,
         "origin": 33554720,
-        "span_bytes": 547932,
-        "spare_bytes": 33632,
-        "used_bytes": 547932
+        "span_bytes": 551160,
+        "spare_bytes": 30404,
+        "used_bytes": 551160
       }
     },
     "sections": [
       {
         "address": 33554720,
-        "bytes": 542252,
+        "bytes": 545464,
         "name": ".text",
         "region": "XIP"
       },
@@ -60,13 +60,13 @@
       },
       {
         "address": 29392896,
-        "bytes": 2896,
+        "bytes": 2912,
         "name": ".data",
         "region": "RAM"
       },
       {
-        "address": 29395792,
-        "bytes": 77752,
+        "address": 29395808,
+        "bytes": 77832,
         "name": ".bss",
         "region": "RAM"
       },
@@ -130,8 +130,8 @@
   },
   "schema_version": 1,
   "sha256": {
-    "app_bin": "c6d1c36518007d53b57824b949bc4789eb1bf7664df65fb6f5be0feee5d09191",
-    "app_elf": "60757aa4aa327155afe340dd05b6cc578674aae0c4751ad7bf3007dc511aee58",
+    "app_bin": "2b97545956eba34bf5536371541e0aadae4edd0495fa26baa7ed5249afd5d7ec",
+    "app_elf": "77e7902a27aa008c66b3ada24563843e19cf366d57a4cfc6bd96117d73cf4ff2",
     "loader_bin": "061e2f1db1ccfe75c3d5ad9f5b7348a66f384d08897f88d8db9beace2d3b92eb",
     "loader_elf": "640272884cd9856337fdb6703290b2ec8587c2197a047042d23274ec5921d447",
     "ota_bin": "ab1e368dd10ffe8dd1ccfdc03bc235df8992ee5961b20e056ae55079b7659d7e"

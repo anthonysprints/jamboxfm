@@ -248,6 +248,13 @@ knob('MASTER', -1, 'encoders', true); knob('SELECT', 0, 'encoders'); knob('PRESE
 for (let i = 0; i < 4; i++) knob(['BRIGHT', 'MOVE', 'GRIT', 'SPACE'][i], 3 + i, 'macros');
 
 function renderState(state) {
+  const homeName = state.homeView === 1 ? 'Sound' : 'Groove';
+  const homeCaption = state.homeControls ? `${homeName.toUpperCase()} HOME` : 'LIVE SCREEN';
+  if ($('home-view').textContent !== homeCaption) $('home-view').textContent = homeCaption;
+  $('screen').setAttribute('aria-label', state.homeControls ? `JamBoxFM ${homeName} Home, ${['Bass', 'Chords', 'Lead', 'Drums'][state.selected]}, ${state.tempo} BPM` : 'JamBoxFM live device screen');
+  elementFor('button:6').setAttribute('aria-label', state.homeControls
+    ? `HOME: show ${state.homeView === 1 ? 'Groove' : 'Sound'} view; hold for settings`
+    : 'HOME navigation; hold for settings');
   for (let i = 0; i < 14; i++) {
     const element = elementFor(`button:${i}`);
     element.classList.toggle('is-on', state.leds[i] >= 128); element.classList.toggle('is-dim', state.leds[i] > 0 && state.leds[i] < 128);
