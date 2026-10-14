@@ -1,5 +1,12 @@
 # JamBox software prototype and FM-1 update isolation
 
+The subsequent normal-JamBox UI update failed at loader discovery (`noloader`,
+20 staging requests, zero application-writing requests). The owner confirms
+normal operation of the previous build, including the old sound-selection
+knob behavior. The [failure record](build-evidence/ui-update-handoff-failure.md)
+is the current hardware status; published packages and passing host tests do
+not establish that this update reached the device.
+
 October 14, 2026. The owner reports a successful Chrome installation and is playing JamBox on the FM-1. The four UI follow-ups, focused fixes and proposed chord/sequencer work are tracked in [First device feedback](FIRST_DEVICE_FEEDBACK.md). This remains experimental; the owner's report does not complete the hardware-validation or recovery checklist. Earlier milestones below describe their historical validation state.
 
 The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper builds the OTA-disabled diagnostic target; `--with-updater` selects the experimental update-enabled target. The owner’s factory backup is verified. The [Chrome trial workflow](FM1_CHROME_TRIAL.md) provides installation and normal JamBox updates at `/install/`, while `/device/` remains read-only and the candidate’s hardware/release flags remain false.

@@ -1,5 +1,12 @@
 # Install and update JamBoxFM in Chrome
 
+**Current hardware finding:** the owner's first normal-JamBox update stopped
+with `noloader` before the application-writing stage. The existing instrument
+still works, but the UI update is not installed. See the
+[handoff failure record](build-evidence/ui-update-handoff-failure.md).
+Do not repeat that attempt without diagnosing the handoff; the software tests
+below did not establish this physical transition.
+
 This page supports an experimental first installation from original factory
 V15 (`FM-1_015`) and an update from a running JamBox build (`FM-1_700` with
 the matching JamBox family response). Both perform a real firmware write.
