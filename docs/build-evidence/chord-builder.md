@@ -3,7 +3,7 @@
 The owner requested playable black-key chord roots, optional WHITE-mode
 modifiers, configurable chord shapes, and full chords whenever the setting
 is enabled on Lead or Bass. The [playing guide](../CHORD_BUILDER.md) describes
-the controls and beginner defaults.
+the controls and beginner defaults. Implementation source: `0184003`.
 
 ## Result
 
@@ -42,6 +42,13 @@ the controls and beginner defaults.
   instructions without calls; register-access checks passed.
 - Firmware: `jamboxfm-0.1.0-dev.fwsc`, 611,255 bytes; SHA-256
   `feed5f35c47d36520c9f81090d4a46a6d077ea6542587412cfccc34cb92836b3`.
+- Installer controller and shared transport: 44 checks passed, including
+  simulated factory and normal-JamBox transfers of this candidate.
+- Read-only device page: 18 Chromium cases passed; every outgoing MIDI
+  packet matched the read-only allowlist.
+- Publication integration: 15 checks passed. The expanded 50-file package
+  validated firmware, build receipt, corresponding source, descriptors and
+  notices. The final package includes the corrected SEL page instructions.
 
 The device receipt preserves the actual pre-commit snapshot and input hashes;
 it is not relabeled as a later commit. This is a software-tested development
@@ -51,5 +58,15 @@ false. No physical FM-1 was accessed from the cloud environment.
 
 ## Publication
 
-Packaging, installer regression results and live publication verification
-will be recorded here after deployment completes.
+Pages commit `c7bba5675207accdca74b354ecdcd0e7848b19c0` was published without
+rewriting history. [Workflow 38587624027](https://github.com/anthonysprints/jamboxfm/actions/runs/38587624027)
+completed successfully for that exact commit. The 50-file package's
+`SHA256SUMS` digest is
+`b6d0a9692a5e30fe6e9f6c08899061246ed278ace23abab9c3666f45973f6192`.
+All 49 downloadable files matched the local package byte for byte over HTTPS;
+the remaining file is the `.nojekyll` configuration marker.
+
+The live [installer](https://anthonysprints.github.io/jamboxfm/install/) and
+[emulator](https://anthonysprints.github.io/jamboxfm/emu/) serve this update.
+The attached source archives preserve the implementation snapshot; this
+publication-results addition is a later documentation-only commit.
