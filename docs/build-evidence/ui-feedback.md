@@ -59,3 +59,22 @@ power-loss recovery. The prior static IRQ heuristic and inherited Sloop PWA
 failure were not rerun or relabeled as passing by this focused change.
 The final identity response verifies family/release, not an independent
 readback of the new firmware digest.
+
+## Publication
+
+Implementation source: `fe9b256`. The non-forced Pages publisher deployed
+`70790f902f8215f286b129a1e377c8047b3f71d1`, preserving parent
+`02a743e04a7cbce16fef21114b1d88e6113fc75a`. Its 50-file package has
+`SHA256SUMS` digest
+`4b97c1eb306052c9503a188d5e033bbd47640ca227f579dc538560e372106951`.
+
+[Pages run 38517259954](https://github.com/anthonysprints/jamboxfm/actions/runs/38517259954)
+completed successfully for that exact commit. All 49 downloadable files were
+fetched over HTTPS and matched the local package byte for byte; `.nojekyll`
+is the remaining configuration marker. Firmware, emulator/WASM, install/update
+controller, bound descriptor, source and licenses were included in that check.
+
+Live [installer](https://anthonysprints.github.io/jamboxfm/install/) and
+[emulator](https://anthonysprints.github.io/jamboxfm/emu/) are verified.
+No cloud command accessed or updated the physical instrument. Owner
+verification of this new update remains separate from publication.
