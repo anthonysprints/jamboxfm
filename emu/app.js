@@ -265,8 +265,8 @@ function renderState(state) {
     control.setAttribute('aria-valuetext', available ? `${name} ${state.macros[i]} percent` : 'Turn to change the parameter shown on the screen');
     if (available) control.querySelector('.knob').style.setProperty('--rotation', `${-135 + state.macros[i] * 2.7}deg`);
   }
-  knobValues.get(0).setAttribute('aria-valuetext', `Selected part: ${['Bass', 'Chords', 'Lead', 'Drums'][state.selected]}`);
-  const tempoKnob = knobValues.get(1);
+  knobValues.get(1).setAttribute('aria-valuetext', `Selected part: ${['Bass', 'Chords', 'Lead', 'Drums'][state.selected]}`);
+  const tempoKnob = knobValues.get(0);
   tempoKnob.querySelector('.keyhint').textContent = state.homeControls ? 'HOME: BPM' : 'DRAG / SCROLL';
   tempoKnob.setAttribute('aria-valuemin', state.homeControls ? '40' : '0');
   tempoKnob.setAttribute('aria-valuemax', state.homeControls ? '240' : '100');

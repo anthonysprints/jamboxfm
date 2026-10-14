@@ -13,14 +13,14 @@
       "JAMBOX_PROTO": 1
     },
     "memory_report_file": "memory.json",
-    "memory_report_sha256": "9af8e7f3fd70b6d61e5091e73c0011812f58b542834a7cb6e368c0a2674fb98d",
+    "memory_report_sha256": "9436fb5f1daa632f95f4b32e22e567529ce649b77def56b1c82c82f70e5c0fee",
     "receipt_file": "build-receipt.json",
-    "receipt_sha256": "ee7d5bf28b92f41a97d502e8e4d3bc1a68ca5859eece939b1c2ee8cc57b4d402"
+    "receipt_sha256": "310640d58e6175eb7582cda5e2d49ef6f8acbf752932363e4ea6dbb78da05768"
   },
   "family": "jamboxfm",
   "firmware": {
     "file": "jamboxfm-0.1.0-dev.fwsc",
-    "sha256": "1e2c7a956081db0e71e2a455d1532b2c555e26d24bc3794f1d23e0b33255afd8",
+    "sha256": "fe9761b0bd2dedbb8ecd065bfd6f0dd66e1616d1b99bddf6c2a3500c4fc4ccbf",
     "size_bytes": 611255
   },
   "format_validation": {
@@ -108,9 +108,9 @@
   "source": {
     "dirty": true,
     "file": "jamboxfm-source.zip",
-    "revision": "9d7beefa386e100e3481e9f5621f98e211b74878",
-    "sha256": "7f61ad71158cc3e7fef63459bcef091d5cbaecc04623ff8f39f2e8df299a99e7",
-    "size_bytes": 4713864
+    "revision": "0573ebfa5b2ce36123e607b75c495492f0dc0256",
+    "sha256": "ba1bd13e62d995ca87d6dd5a2f592e42f414f5b9cd6d01e6e417f512df1fa411",
+    "size_bytes": 4714587
   },
   "target": {
     "chip_key": "0x980f",
