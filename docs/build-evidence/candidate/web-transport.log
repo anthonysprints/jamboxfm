@@ -1,0 +1,26 @@
+✔ strict identity and request envelopes reject noncanonical or corrupt frames (4.894267ms)
+✔ identity text is ASCII with canonical NUL padding and a numeric version (0.598458ms)
+✔ read-only identify sends only the handshake and supplied query, then closes both ports (3.653183ms)
+✔ identify allowlist rejects reset, editor writes, nonempty and noncanonical queries (2.667835ms)
+✔ port discovery is deterministic and rejects ambiguous automatic or mismatched pairs (10.280471ms)
+✔ abort before identify or while selecting/waiting never sends upgrade commands (6.814819ms)
+✔ abort during port open is prompt and late cleanup cannot close a newer read (1.644919ms)
+✔ abort during handshake send and receive removes listeners and closes ports (1.28561ms)
+✔ waitFor keeps its deadline during malformed floods, unresolved selection, and port opens (108.683281ms)
+✔ serve supports 481 and 512 byte datagrams with exact checksums and payloads (22.397368ms)
+✔ serve rejects zero, oversized, out-of-bounds and wrong-phase completion requests before responding (2.37165ms)
+✔ malformed requests cannot extend idle deadline and floods have a bounded queue (37.012655ms)
+✔ completion and data send failures are never reported as finished (10.234462ms)
+✔ disconnect wakes a pending read and abort after a data request sends no data (1.245189ms)
+✔ family guard runs before application and loader UPGRADE and is mandatory for JamBox (1.604428ms)
+✔ application and loader command send failures propagate and clean up (0.607512ms)
+✔ aborting in an asynchronous guard or upgrade send prevents any transfer data (1.990838ms)
+✔ final family guard is required before success even when numeric identity matches (3005.058202ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3292.892098

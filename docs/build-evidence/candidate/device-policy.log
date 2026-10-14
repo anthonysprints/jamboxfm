@@ -1,0 +1,17 @@
+✔ manifest strictly validates candidate gates, provenance, artifacts, target and evidence (4.201987ms)
+✔ preparation pins exact bytes and keeps prepared image immutable (84.75858ms)
+✔ full package validator rejects bounds, metadata and nested payload corruption even with valid outer CRCs (601.606805ms)
+✔ family probe requires exact framing, fields and matching identity (7.065426ms)
+✔ Sloop identification requires exact audited INFO and rejects numeric-only identities (0.868113ms)
+✔ inventory sends only identity-specific read-only query shapes and handles loss/abort (1.185429ms)
+✔ all six approved simulated transitions use actual updater and explicitly selected mock pairs (72.913098ms)
+✔ unknown families, stock, standalone foreign loader and unsupported return paths refuse before any upgrade (13.199081ms)
+✔ stage faults, cancellation, identity mismatches and failed final acknowledgement cannot produce done (148.022909ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1161.987233

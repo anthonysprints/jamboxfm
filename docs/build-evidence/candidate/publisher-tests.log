@@ -1,0 +1,12 @@
+test_candidate_firmware_cannot_enter_public_site (__main__.DeploymentTests.test_candidate_firmware_cannot_enter_public_site) ... ok
+test_concurrent_update_is_rejected_and_preserved (__main__.DeploymentTests.test_concurrent_update_is_rejected_and_preserved) ... ok
+test_device_page_must_match_corresponding_source (__main__.DeploymentTests.test_device_page_must_match_corresponding_source) ... ok
+test_inherited_git_paths_cannot_redirect_staging (__main__.DeploymentTests.test_inherited_git_paths_cannot_redirect_staging) ... ok
+test_initial_dry_run_publish_update_and_noop (__main__.DeploymentTests.test_initial_dry_run_publish_update_and_noop) ... ok
+test_package_validation_rejects_stale_extra_and_symlink (__main__.DeploymentTests.test_package_validation_rejects_stale_extra_and_symlink) ... ok
+test_source_zip_rejects_binary_and_secret_material (__main__.DeploymentTests.test_source_zip_rejects_binary_and_secret_material) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 9.434s
+
+OK

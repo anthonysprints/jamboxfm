@@ -1369,7 +1369,7 @@ async function packages() {
   const logical = py(`import sys; raw = open(sys.argv[1], "rb").read()
 sys.stdout.buffer.write(b"".join(raw[i * 48:i * 48 + 47] for i in range(20)) + raw[960:])`, pkg);
   ok(eq(logicalImage(raw), logical), "fm1pkg.js logicalImage");
-  ok(/^FM-1_9\d\d$/.test(productOf(raw)), "fm1pkg.js productOf");
+  ok(productOf(raw) === "FM-1_700" || /^FM-1_9\d\d$/.test(productOf(raw)), "fm1pkg.js productOf (JamBox or inherited Sloop target)");
 }
 
 /* ------------------------------------------------- update protocol (fm1ota.js) --- */
@@ -1400,7 +1400,8 @@ class FakeFM1 {
   rx(d) {
     if (eq(d, HS)) {
       const t = [...new TextEncoder().encode(this.identity)];
-      const body = [0, 0x59, 0x11, 0, 0, 0, ...t, ...new Array(28 - t.length).fill(0)];
+      const identity = [...t, ...new Array(27 - t.length).fill(0)];
+      const body = [0, 0x59, 0x11, 27, 0, 0, ...identity, ~identity.reduce((sum, byte) => sum + byte, 0) & 0xFF];
       this.tx([0xF0, ...pack7(body), 0xF7]);
     } else if (eq(d, UPGRADE)) {
       this.queue = this.identity.startsWith("ota-")
@@ -1426,7 +1427,7 @@ class FakeFM1 {
     if (!r) return;
     this.waiting = r;
     const [addr, len] = r;
-    const u = [0, 0x59, 0x30, 0, 0, 0, 0, addr & 0xFF, (addr >>> 8) & 0xFF, (addr >>> 16) & 0xFF, (addr >>> 24) & 0xFF, len & 0xFF, len >> 8, 0];
+    const u = [0, 0x59, 0x30, 8, 0, 0, 0, addr & 0xFF, (addr >>> 8) & 0xFF, (addr >>> 16) & 0xFF, (addr >>> 24) & 0xFF, len & 0xFF, len >> 8, 0];
     let s = 0;
     for (let i = 6; i < 14; i++) s += u[i];
     u.push(~s & 0xFF);

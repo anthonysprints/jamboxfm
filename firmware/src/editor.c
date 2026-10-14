@@ -736,7 +736,11 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     }
     switch (cmd) {
     case ED_INFO:
+#if JAMBOX_PROTO
+        ed_str(FELUCCA_VERSION, 24);
+#else
         ed_str("FELUCCA " FELUCCA_VERSION, 24);
+#endif
         ed_b(NENGINES);
         ed_b(P_COUNT);
         ed_b(G_COUNT);

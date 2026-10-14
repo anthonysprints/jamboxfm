@@ -1,7 +1,7 @@
 # JamBoxFM: first physical FM-1 build
 
 Research and plan: October 13, 2026. Starting source: `5b24d1e82efa785bb79a820b7eba2c9df8bb26ec`.
-Status: milestone 1 target builds passed; milestone 2 now implements update/rescue support with app-data persistence disabled. See [baseline build outcomes](build-evidence/device-build/README.md) and [update-isolation evidence](build-evidence/update-isolation/README.md). The outputs are software bring-up artifacts, not owner-installation releases. No physical device has been flashed or tested.
+Status: milestone 1 target builds passed; milestone 2 implements update/rescue support with app-data persistence disabled; milestone 3 implements JamBox identity, local candidate packaging, transition simulations and read-only inventory. See [baseline build outcomes](build-evidence/device-build/README.md), [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md). The next milestone is physical-trial preparation. The outputs remain software bring-up artifacts without approval for owner installation. No physical device has been flashed or tested.
 
 ## Decision
 
@@ -81,7 +81,7 @@ Record the source SHA, compiler/SDK hashes, flags, generated-asset inputs, app a
 | RAM code / retained state / stacks | Measure their own regions and guards; do not count them as spare ordinary RAM |
 | Loader | Must fit its RAM region, including BSS, and not execute code from flash while rewriting it |
 
-Do not relax the linker map or audio/CPU baselines to make a failing build pass. Rebuild from a clean source export without the checkout's untracked upstream artwork. Force `FELUCCA_SLICE=0` and `FELUCCA_ICONS=0` in the JamBox target, as in the browser, and verify those assets are absent from the deliverable. Replace the inherited Sloop splash/identity before preparing an installation candidate.
+Do not relax the linker map or audio/CPU baselines to make a failing build pass. Rebuild from a clean source export without the checkout's untracked upstream artwork. Force `FELUCCA_SLICE=0` and `FELUCCA_ICONS=0` in the JamBox target, as in the browser, and verify those assets are absent from the deliverable. Milestone 3 supplies the JamBox splash and identity; preserve those checks when preparing later candidates.
 
 Deliverable: archived baseline and JamBox build reports. No hardware writes.
 
@@ -118,28 +118,27 @@ The wrapper explicitly sets `FELUCCA_OTA_DRYRUN=0` and `FELUCCA_OTA_RAMONLY=0`; 
 
 Deliverable: software bring-up builds and isolation evidence, with no persistent song saving. Candidate identity/packaging and installer compatibility are milestone 3. No installer publication or hardware writing belongs to this milestone.
 
-## Milestone 3: package identity and installer
+## Milestone 3: package identity and installer simulations — software implemented
 
-Owner: agent. This is the next implementation milestone: identity/splash, manifest, installer transition simulations and read-only inventory. User-facing target: `https://anthonysprints.github.io/jamboxfm/installer/` (planned; not published).
+Owner: agent. Identity/splash, local candidate packaging, simulated transitions and read-only inventory are implemented. [Candidate instructions](FM1_CANDIDATE.md) describe the workflow and limits; [candidate evidence](build-evidence/candidate/README.md) records exact commands, outcomes and artifact hashes. The site package includes a read-only `/device/` page, with intended URL `https://anthonysprints.github.io/jamboxfm/device/`; packaging alone does not publish it. The page has no Install control or firmware download.
 
-Reuse the inherited `.fwsc` builder and `web/fm1ota.js`/Python installer transport. A web installer serves an already-built package; it does not compile firmware in the browser. USB MIDI SysEx requests are handled on the owner's computer. This cloud environment cannot directly access that computer's USB port.
+The implementation reuses the inherited `.fwsc` builder and host transport. The local candidate packager builds firmware in the cloud; browser identification sends USB MIDI SysEx queries on the owner's computer. This cloud environment cannot directly access that computer's USB port. Actual transfer orchestration for milestone 3 is confined to test helpers requiring simulated MIDI access.
 
-Before publishing any candidate:
+Implemented software boundaries:
 
-- Give the normal app, INFO response, package, loader and website an intentional, documented mapping of names/version/capabilities. The loader may keep a different recognized transport identity from the app (Dinghy does this); consistency does not mean assigning both the same numeric ID. Inspect currently used numeric identities before choosing one; Dinghy documents collisions and no central registry. Do not identify a firmware family solely by a matching version number.
-- Preserve required FM-1 model and transport markers. Test normal JamBox, exact supported Sloop versions, `FM-1_000` app rescue, a known `ota-` loader and unknown firmware as separate cases.
-- Harden both host identity parsers: validate declared body length, checksum, framing and expected mode/family. Our current Python parser lacks the body-length/checksum checks found in FM-1-RE. Do not copy its exception for one deliberately modified experimental `FM-1_016` identity.
-- Gate installation on a matching package manifest, checksums/CRCs, model and supported transition. No blanket `--force` or arbitrary “install anything” path.
-- Preserve the actual target checks: AC791N/WL82, the supported 1 MiB flash JEDEC `0x856014`, and package/device chip-key compatibility before erasing. The inherited package key is `0x980F`; the loader checks against the device's key. The printed FM-1 model alone does not prove compatibility with every hardware revision.
-- Cover both transfer stages and port re-enumeration. Stage 1 stages the incoming loader; stage 2 writes the app. Include partial final blocks, especially the 481-byte case documented by FM-1-RE, plus zero/maximum lengths, cancellation, stall, reconnect and incorrect completion identity.
-- Offer read-only device identification and clear backup guidance before Install. Reject unsupported firmware explicitly rather than guessing which restore/update procedure applies.
-- Keep complete corresponding source, licenses, build manifest and checksum beside the candidate package. Do not upload the inherited Sloop package from `docs/firmware/` as JamBox.
+- Normal app/package `FM-1_700`, app rescue `FM-1_000`, and loader `ota-FM-1_700` have a documented JamBox version/name mapping. An exact read-only `JAMBOXFM` family response binds schema, mode, release, capabilities and current transport identity. The numeric choice is not a registered allocation and is insufficient by itself to recognize JamBox. The splash and USB/INFO labels identify JamBox without inherited artwork.
+- Host parsers check exact framing, canonical packed bytes, declared body length and checksum. No exception accepts FM-1-RE's deliberately modified experimental `FM-1_016` checksum. Normal JamBox, rescue, loader and unknown firmware remain separate cases; Sloop recognition requires the exact audited 2.6 INFO profile as well as its transport identity.
+- Local packaging binds current source/generator inputs, compiled app/loader flags, pinned toolchain/SDK identities, artifact hashes, ELF/memory checks and canonical package reconstruction. The bundle includes corresponding source, notices, manifest, build receipt, memory report and checksums. Hashes are reproducibility records, not digital signatures. The manifest disables release/hardware approval and lists no approved physical transitions.
+- Software policy preserves AC791N/WL82, the supported 1 MiB flash JEDEC `0x856014`, and package key `0x980F`; the loader retains its device chip-key check before erasing. The printed FM-1 model and software inventory do not establish the owner's hardware revision or actual flash behavior.
+- Simulations cover JamBox normal/rescue/loader to JamBox, exact Sloop 2.6 to JamBox, and JamBox normal/rescue back to the pinned Sloop 2.6 package. They exercise both transfer stages, selected pairs after re-enumeration, partial final blocks including 481 bytes, invalid lengths, cancellation, stalls, disconnects and incorrect completion identity. The synthetic package fixture checks host behavior; the actual built candidate has separate validation.
+- The device page requires explicit input/output selection, permits only read-only identity/capability queries, handles cancellation and stale replies, and exports an identification report without port names, port IDs or serial metadata. It provides backup guidance and leaves unknown firmware unrecognized. A report is not a musical-data backup.
+- Candidate firmware stays in ignored `build/jambox-device/`, outside the public `build/jambox-web/` site. The inherited Sloop package is not published as JamBox. The Python CLI rejects the unmodified JamBox candidate product before MIDI access, including with `--force`; its inherited generic Sloop installer remains separate from the JamBox simulation policy.
 
-An installer may initially be tested against simulated devices while its candidate remains unpublished. A published installer and downloadable candidate must be labeled experimental until the hardware gates below pass. Do not claim firmware-hub inclusion; that is a separate optional publication step.
+No hardware installation or firmware release follows from these checks. Any future operational installer must enforce matching package/manifest, exact supported transition, backup and recovery gates before writing. Firmware publication and physical installation remain separate steps; do not claim firmware-hub inclusion.
 
 ## Milestone 4: prepare and perform the first physical trial
 
-Owner: agent prepares build and test sheet; owner operates their FM-1 and local browser. Current installed Sloop version is still unknown; it is needed to select the supported transition and backup tools, not to continue software work.
+Owner: agent prepares build and test sheet; owner operates their FM-1 and local browser. This is the next milestone, and its physical gates are pending. Current installed Sloop version is still unknown; it is needed to select the supported transition and backup tools, not to continue software work. The milestone 3 device check can collect read-only inventory, but it does not authorize a write.
 
 Before the first write, record the actual firmware identity/version and computer/browser. The earlier screenshot suggests Windows; confirm before writing local instructions. Use the installed version's compatible editor to export the complete available backup: settings/calibration, working project and slots, presets, FM6 banks, user kits, MIDI mapping and user samples where supported. Validate lengths/checksums offline and retain the exact known-good Sloop package. An editor backup is not automatically a complete raw-flash image; inventory what it contains and what it omits. Keep personal backups off the public repository.
 
@@ -177,15 +176,15 @@ Only then label a version as a regular device release, with an explicit supporte
 
 1. **Toolchain/build evidence:** target builds and clean-source checks completed; retain the inherited IRQ/PWA failures and compiler provenance.
 2. **Platform isolation:** software implemented; final build/test evidence covers separate update flash, disabled app persistence, write boundaries, retained state, calibration and rescue. Hardware remains untested.
-3. **Candidate packaging:** JamBox identity/splash, manifest/source/notices, targeted transport fix if justified, simulated installer matrix and read-only identification page.
-4. **Hardware trial:** inventory/backup/recovery setup, baseline observations, candidate installation, functional/performance checks and return to Sloop.
+3. **Candidate packaging:** software implemented: JamBox identity/splash, manifest/source/notices and build receipts, strict host framing, simulated transition matrix and read-only identification page. Exact integration outcomes are retained in candidate evidence; installation remains disabled.
+4. **Hardware trial — next:** inventory/backup/recovery setup, baseline observations, separately prepared candidate installation, functional/performance checks and return to Sloop. All physical validation remains pending.
 5. **Persistence/release:** schema, power-cycle checks, supported transitions and normal release packaging.
 
 The first three batches are work the agent can prepare without asking the owner to code. The physical connection and observations in batch 4 require the owner or a development device. There is no hardware completion date implied by this plan; compilation and measurements determine whether optimization or driver fixes are needed.
 
 ## Source references and evidence limits
 
-This pass ran FM-1-RE's inspected offline test entrypoints: **27 tests passed**. A pure serialization comparison produced **1,028 byte-identical replies** between its packet builder and our existing Python installer, covering lengths 0–512 with two address/flag pairs and the two completion replies. Our response framing already handles the documented short-block case; transport timeout and identity validation are separate work. These checks opened no MIDI connection and do not validate a hardware installation. [Retained logs and reproduction details](build-evidence/device-plan/README.md).
+The original research pass ran FM-1-RE's inspected offline test entrypoints: **27 tests passed**. A pure serialization comparison produced **1,028 byte-identical replies** between its packet builder and our then-current Python installer, covering lengths 0–512 with two address/flag pairs and the two completion replies. That established the short-block serialization contract. Later timeout, framing and identity changes have their own [candidate evidence](build-evidence/candidate/README.md). These checks opened no MIDI connection and do not validate a hardware installation. [Original logs and reproduction details](build-evidence/device-plan/README.md).
 
 Detailed repository audits: [Dinghy](research/dinghy-device.md) and [FM-1-RE](research/fm1-re-device.md).
 

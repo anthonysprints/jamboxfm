@@ -102,12 +102,22 @@ static uint32_t ota_unpack7(const uint8_t *in, uint32_t n, uint8_t *out, uint32_
     return o;
 }
 
+#if JAMBOX_PROTO
+#include "jam_identity.h"
+#define OTA_TX_BODY_MAX JAMBOX_IDENTITY_SIZE
+static uint8_t ota_msg[7u + OTA_TX_BODY_MAX];
+static uint8_t ota_wire[2u + ((7u + OTA_TX_BODY_MAX) * 8u + 6u) / 7u];
+#else
+#define OTA_TX_BODY_MAX 32u
 static uint8_t ota_msg[8 + 32], ota_wire[2 + 48];
+#endif
 static uint8_t ota_dec[OTA_FRAME_MAX];           /* decoded host message */
 
-static int ota_send_msg(uint32_t cmd, const uint8_t *body, uint32_t n)   /* n <= 32 */
+static int ota_send_msg(uint32_t cmd, const uint8_t *body, uint32_t n)
 {
     uint32_t i, s = 0, w;
+    if (n > OTA_TX_BODY_MAX)
+        return -1;
     ota_msg[0] = 0;
     ota_msg[1] = 0x59;
     ota_msg[2] = (uint8_t)cmd;
@@ -143,6 +153,59 @@ static void ota_reply_identity(void)
     ota_send_msg(0x11, id, sizeof id);
 }
 
+#if JAMBOX_PROTO
+static void ota_reply_family(void)
+{
+    uint8_t b[JAMBOX_IDENTITY_SIZE];
+    uint32_t i, mode, caps;
+    const char *identity;
+#ifdef FELUCCA_LOADER
+    mode = JAMBOX_MODE_LOADER;
+    caps = JAMBOX_CAPS_LOADER;
+    identity = FELUCCA_ID;
+#else
+#ifdef OTA_JAMBOX_MODE
+    mode = OTA_JAMBOX_MODE;
+#else
+    mode = JAMBOX_MODE_APP;
+#endif
+    caps = mode == JAMBOX_MODE_RESCUE ? JAMBOX_CAPS_RESCUE : JAMBOX_CAPS_APP;
+#ifdef OTA_IDENTITY
+    identity = OTA_IDENTITY;
+#else
+    identity = FELUCCA_ID;
+#endif
+#endif
+    for (i = 0; i < sizeof b; i++) b[i] = 0;
+    for (i = 0; i < 8u; i++) b[i] = (uint8_t)JAMBOX_FAMILY[i];
+    b[8] = JAMBOX_IDENTITY_SCHEMA;
+    b[9] = (uint8_t)mode;
+    b[10] = (uint8_t)caps;
+    b[11] = (uint8_t)(caps >> 8);
+    for (i = 0; i < 19u && JAMBOX_RELEASE[i]; i++) b[12u + i] = (uint8_t)JAMBOX_RELEASE[i];
+    for (i = 0; i < 15u && identity[i]; i++) b[32u + i] = (uint8_t)identity[i];
+    ota_send_msg(JAMBOX_IDENTITY_COMMAND, b, sizeof b);
+}
+#endif
+
+/* Read-only queries are also accepted while serving an update read request. */
+static int ota_identity_query(uint32_t d)
+{
+    if (d != 7u)
+        return 0;
+    if (ota_dec[2] == 0x11) {
+        ota_reply_identity();
+        return 1;
+    }
+#if JAMBOX_PROTO
+    if (ota_dec[2] == JAMBOX_IDENTITY_COMMAND) {
+        ota_reply_family();
+        return 1;
+    }
+#endif
+    return 0;
+}
+
 /* decode the pending frame; returns its decoded length (0 = not ours) */
 static uint32_t ota_take(void)
 {
@@ -151,6 +214,24 @@ static uint32_t ota_take(void)
     if (!ota_frame_get(&p, &n))
         return 0;
     d = ota_unpack7(p, n, ota_dec, sizeof ota_dec);
+#if JAMBOX_PROTO
+    /* Canonical pack7 only: no status bits, extra groups or nonzero padding.
+     * An invalid probe must not be interpreted as a valid empty query. */
+    if (n != (d * 8u + 6u) / 7u) {
+        ota_frame_done();
+        return 0;
+    }
+    for (i = 0; i < n; i++) {
+        if (p[i] & 0x80u) {
+            ota_frame_done();
+            return 0;
+        }
+    }
+    if (n && d * 8u % 7u && p[n - 1u] >> (d * 8u % 7u)) {
+        ota_frame_done();
+        return 0;
+    }
+#endif
     ota_frame_done();
     if (d < 7u || d > sizeof ota_dec || ota_dec[0] != 0 || ota_dec[1] != 0x59 || ota_rd24(ota_dec + 3) + 7u != d)
         return 0;
@@ -165,8 +246,7 @@ static uint32_t ota_take(void)
 static void ota_service(void)
 {
     uint32_t d = ota_take();
-    if (d == 7u && ota_dec[2] == 0x11)
-        ota_reply_identity();
+    (void)ota_identity_query(d);
 }
 
 /* one read request (3 tries x 5 s); data -> dst */
@@ -191,8 +271,7 @@ static int ota_read(uint32_t addr, uint8_t *dst, uint32_t len)
             d = ota_take();
             if (!d)
                 continue;
-            if (d == 7u && ota_dec[2] == 0x11) {
-                ota_reply_identity();
+            if (ota_identity_query(d)) {
                 continue;
             }
             if (d == len + 15u && ota_dec[2] == 0x30 && ota_rd24(ota_dec + 3) == len + 8u &&
@@ -367,7 +446,7 @@ static int ota_session(void)
     ota_wr16(parm + 4, 0x5A01u);
     ota_wr16(parm + 6, 0x5441u);
     for (i = 0; i < 12u; i++)
-        parm[8 + i] = (uint8_t)"ota-FM-1_015"[i];    /* the loader's own USB identity */
+        parm[8 + i] = (uint8_t)"ota-FM-1_015"[i];    /* SPL compatibility marker, not the runtime USB identity */
     ota_wr32(parm + 72, OTA_AREA);
     ota_wr16(parm, ota_crc16(parm + 2, 78, 0));
 #if FELUCCA_OTA_DRYRUN

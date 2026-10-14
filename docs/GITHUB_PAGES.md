@@ -50,6 +50,8 @@ From the existing source checkout:
 ```sh
 . tools/cloud/activate.sh
 sh tests/run_jam_emu_tests.sh
+JAM_DEVICE_SITE_ROOT="$PWD/build/jambox-web" node tests/jam_device_browser.mjs
+python3 tests/test_publish_jam_web.py
 python3 tools/publish_jam_web.py
 python3 tools/publish_jam_web.py --publish
 ```
@@ -58,6 +60,8 @@ The test runner builds the current emulator and its publication package.
 The first publisher invocation performs a Git push dry-run; the second
 publishes the same validated package. Use `--publish` when the user requests
 a website deployment or update. Publishing is not a startup action.
+
+The public package includes the browser instrument at `/emu/` and the read-only device check at `/device/`. The exact 27-file allowlist excludes device firmware, candidate manifests and installation pages. Device-page modules must match their corresponding source archive.
 
 The publisher validates the exact static-site file list, hashes and included
 source archive, creates a temporary deployment checkout, and commits the

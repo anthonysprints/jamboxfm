@@ -1,0 +1,18 @@
+target: analog_render     650 instructions,  470 in loops, 20 divides,  0 calls there: cost   630 (budget 638) ok
+target: digital_render    482 instructions,  333 in loops, 0 divides,  0 calls there: cost   333 (budget 333) ok
+target: phase_render      198 instructions,   79 in loops, 0 divides,  2 calls there: cost    79 (budget 79) ok
+target: lofi_render       318 instructions,  128 in loops, 0 divides,  0 calls there: cost   128 (budget 128) ok
+target: sample_render     174 instructions,   91 in loops, 0 divides,  1 calls there: cost   130 (budget 126) ok
+target: formant_render    614 instructions,  298 in loops, 2 divides,  0 calls there: cost   314 (budget 314) ok
+target: trio_render       625 instructions,  301 in loops, 5 divides,  2 calls there: cost   341 (budget 341) ok
+target: trio_pass         257 instructions,  151 in loops, 3 divides,  0 calls there: cost   175 (budget 175) ok
+target: drawbar_render    287 instructions,  180 in loops, 0 divides,  0 calls there: cost   267 (budget 267) ok
+target: drawbar_block     202 instructions,  102 in loops, 0 divides,  0 calls there: cost   102 (budget 102) ok
+target: grain_render      736 instructions,  286 in loops, 2 divides,  1 calls there: cost  1748 (budget 1734) ok
+target: grain_block       254 instructions,  132 in loops, 0 divides,  1 calls there: cost   132 (budget 138) ok
+target: slicer_track      311 instructions,  266 in loops, 5 divides,  0 calls there: cost   825 (budget 825) ok
+target: drums_mix        1017 instructions,  950 in loops, 3 divides,  1 calls there: cost  6563 (budget 6153) ok
+target: fm6_op_run        104 instructions,   72 in loops, 0 divides,  0 calls there: cost    72 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm6_op_fb          48 instructions,   26 in loops, 0 divides,  0 calls there: cost    26 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm6_render        509 instructions,  294 in loops, 0 divides,  6 calls there: cost   363 (budget -) no budget (BUDGET_UPDATE=1 adds it)
+target: fm1_alnk0_irq     225 instructions,   88 in loops, 0 divides,  3 calls there: cost   256 (budget 174) OVER BUDGET (+47 %, limit +10 %)

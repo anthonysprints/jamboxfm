@@ -35,13 +35,17 @@ EXPECTED_FILES = frozenset({
     "licenses/Apache-2.0-msfa.txt", "licenses/Terminus-LICENSE.txt", "licenses/CC0-ATTRIBUTION.txt",
     "licenses/CC0-CREDITS.txt", "licenses/FUKIAI-LICENSE.txt", "licenses/phys_dsp.c-notice.txt",
     "licenses/phys_symp.c-notice.txt",
+    "device/index.html", "device/style.css", "device/app.js",
+    "fm1ota.js", "fm1pkg.js", "jam-device-policy.js",
 })
-EXPECTED_DIRECTORIES = frozenset({"emu", "licenses"})
+EXPECTED_DIRECTORIES = frozenset({"emu", "licenses", "device"})
 SOURCE_PREFIX = "jamboxfm-source/"
 SOURCE_REQUIRED = frozenset({
     "LICENSE", "LICENSING.md", "firmware/host/jam_emu.c", "firmware/src/jam_ui.c",
     "tools/build_jam_emu.py", "tools/package_jam_emu.py", "web/emu/index.html",
     "web/emu/style.css", "web/emu/app.js", "web/emu/worklet.js", "docs/WEB_EMULATOR.md",
+    "web/device/index.html", "web/device/style.css", "web/device/app.js",
+    "web/fm1ota.js", "web/fm1pkg.js", "web/jam-device-policy.js",
 })
 SOURCE_ROOTS = frozenset({"firmware", "tools", "tests", "web", "LICENSES", "assets", "docs"})
 SOURCE_ROOT_FILES = frozenset({
@@ -146,13 +150,17 @@ def validate_source(data: bytes, files: dict[str, bytes]) -> int:
     for name in ("style.css", "app.js", "worklet.js"):
         if content[f"web/emu/{name}"] != files[f"emu/{name}"]:
             raise DeploymentError(f"Published {name} differs from its corresponding source.")
+    for name in ("device/index.html", "device/style.css", "device/app.js",
+                 "fm1ota.js", "fm1pkg.js", "jam-device-policy.js"):
+        if content[f"web/{name}"] != files[name]:
+            raise DeploymentError(f"Published {name} differs from its corresponding source.")
     if content["LICENSE"] != files["LICENSE"]:
         raise DeploymentError("Published LICENSE differs from corresponding source.")
     return len(content)
 
 
 def validate_site(site: Path) -> dict[str, bytes]:
-    """Return an in-memory, checksum-verified snapshot of exactly the 21 files."""
+    """Return a checksum-verified snapshot of the exact approved public files."""
     if not site.is_absolute():
         site = site.absolute()
     for component in (site, *site.parents):
@@ -175,7 +183,7 @@ def validate_site(site: Path) -> dict[str, bytes]:
     if found != EXPECTED_FILES or directories != EXPECTED_DIRECTORIES:
         unexpected = sorted((found - EXPECTED_FILES) | (directories - EXPECTED_DIRECTORIES))
         missing = sorted(EXPECTED_FILES - found)
-        raise DeploymentError(f"Publish root must contain exactly its 21 packaged files. Missing: {missing}; unexpected: {unexpected}")
+        raise DeploymentError(f"Publish root must contain exactly its {len(EXPECTED_FILES)} packaged files. Missing: {missing}; unexpected: {unexpected}")
     if any((site / name).stat().st_size > 64 * 1024 * 1024 for name in found):
         raise DeploymentError("A publish file exceeds the supported 64 MiB limit.")
     files = {name: (site / name).read_bytes() for name in sorted(EXPECTED_FILES)}
@@ -190,7 +198,7 @@ def validate_site(site: Path) -> dict[str, bytes]:
             raise DeploymentError("SHA256SUMS has an invalid or duplicate entry.")
         hashes[match[2]] = match[1]
     if set(hashes) != EXPECTED_FILES - {"SHA256SUMS"}:
-        raise DeploymentError("SHA256SUMS must cover exactly the other 20 publish files.")
+        raise DeploymentError(f"SHA256SUMS must cover exactly the other {len(EXPECTED_FILES) - 1} publish files.")
     for name, digest in hashes.items():
         if sha(files[name]) != digest:
             raise DeploymentError(f"Publish checksum mismatch: {name}; rebuild the package.")
@@ -198,6 +206,8 @@ def validate_site(site: Path) -> dict[str, bytes]:
         raise DeploymentError("Invalid .nojekyll marker or WebAssembly header.")
     if b"jambox-source.zip" not in files["emu/index.html"] or b"jambox-source.zip" not in files["LICENSES.html"]:
         raise DeploymentError("Published emulator and license page must link corresponding source.")
+    if b"jambox-source.zip" not in files["device/index.html"]:
+        raise DeploymentError("Published device check must link corresponding source.")
     validate_source(files["jambox-source.zip"], files)
     return files
 
@@ -292,7 +302,7 @@ def prepare_deployment(files: dict[str, bytes], remote: str, identity: tuple[str
         changed = not parent or git(directory, "rev-parse", f"{parent}^{{tree}}").stdout.strip() != tree
         if changed:
             parents = ["-p", parent] if parent else []
-            message = f"Publish JamBox browser emulator\n\nPackage manifest SHA256: {sha(files['SHA256SUMS'])}\n"
+            message = f"Publish JamBox browser instrument and device check\n\nPackage manifest SHA256: {sha(files['SHA256SUMS'])}\n"
             commit = git(directory, "-c", "commit.gpgsign=false", "commit-tree", tree, *parents,
                          input_text=message).stdout.strip()
         else:

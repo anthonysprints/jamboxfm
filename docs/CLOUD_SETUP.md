@@ -1,6 +1,6 @@
 # JamBox development environment
 
-The browser, native C and FM-1 target build workflows are available in this Debian 13 amd64 cloud environment. The owner supplied the official-download compiler archive after its redirect host was blocked. Sloop and JamBox now compile for pi32v2; [baseline device evidence](build-evidence/device-build/README.md) and [update-isolation evidence](build-evidence/update-isolation/README.md) distinguish software checks from the remaining hardware work.
+The browser, native C and FM-1 target build workflows are available in this Debian 13 amd64 cloud environment. The owner supplied the official-download compiler archive after its redirect host was blocked. Sloop and JamBox now compile for pi32v2. [Baseline device evidence](build-evidence/device-build/README.md), [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md) record the separate software stages; physical installation and recovery remain untested.
 
 ## Install and activate
 
@@ -35,6 +35,8 @@ sh tests/run_jam_emu_tests.sh
 This runs the native physical-control checks and actual Chromium tests, including the single-file package with further network requests blocked. The development output is `build/jam-emu/`; the standalone HTML and isolated publication root are described in [WEB_EMULATOR.md](WEB_EMULATOR.md). To build/package without running tests, use `python3 tools/package_jam_emu.py`. No target compiler or attached device is needed.
 
 The emulator can be served internally using the server command below with `--directory build/jam-emu`. The cloud interface does not turn that server into a public preview URL. A public site requires publishing the isolated `build/jambox-web/` directory to an HTTPS static host; the inherited `docs/` contains Sloop's installer and is not the JamBox publish root.
+
+The site package also includes `/device/`, a read-only firmware check with explicit MIDI input/output selection and a local identification-report download. It exposes no firmware installation or package download. Test its source page with `node tests/jam_device_browser.mjs`; set `JAM_DEVICE_SITE_ROOT=build/jambox-web` to test the packaged page. Browser tests inject simulated Web MIDI; they do not connect to an FM-1.
 
 Build and test the earlier four-part workbench with:
 
@@ -100,7 +102,17 @@ sh tests/run_jam_emu_tests.sh
 
 Put `--with-updater` first. It changes `FELUCCA_FLASH` and `FELUCCA_OTA` to `1`; app persistence stays `0`. The policy rejects JamBox builds with persistence enabled or an updater configured for dry-run/RAM-only resume. Normal Sloop builds continue to default persistence to their flash capability. Both targets reuse `build/felucca.*`, so preserve evidence before switching targets.
 
-The update-enabled target starts a fresh Dusty RAM session, accepts only strictly validated read-only panel calibration, and permits bounded update writes while rejecting app-data saves/restores. The software test runner uses synthetic NOR and transport fixtures; it never connects to an FM-1. Its final command list, outcomes and current target memory report are retained in [update-isolation evidence](build-evidence/update-isolation/README.md). **Neither generated `.fwsc` is ready for owner installation.** Identity/splash/manifest work, installer transition simulation, read-only inventory and the physical recovery gates remain in [the device plan](FM1_DEVICE_PLAN.md). No installer or firmware release is published by these commands.
+The update-enabled target starts a fresh Dusty RAM session, accepts only strictly validated read-only panel calibration, and permits bounded update writes while rejecting app-data saves/restores. The software test runner uses synthetic NOR and transport fixtures; it never connects to an FM-1. Milestone 2's command list and outcomes are retained in [update-isolation evidence](build-evidence/update-isolation/README.md). **Neither generated `.fwsc` is ready for owner installation.**
+
+Milestone 3 implements identity/splash, build receipts, manifest/source/license packaging, simulated transitions and read-only inventory. Create a local software candidate with:
+
+```sh
+python3 tools/package_jam_device.py
+```
+
+This rebuilds the updater-enabled target, verifies compiled configuration, current inputs, pinned tools, artifacts and memory gates, then packages into ignored `build/jambox-device/`. Use `python3 tools/package_jam_device.py --no-build` only to verify/package an existing build whose receipt still matches. Diagnostic builds and stale or changed inputs/artifacts are refused. The receipt records provenance and hashes; it is not a digital signature. See [candidate instructions](FM1_CANDIDATE.md) and [candidate evidence](build-evidence/candidate/README.md) for the exact validation commands and outcomes.
+
+Candidate files stay separate from `build/jambox-web/`. These commands publish neither an installer nor firmware. [Milestone 4](FM1_DEVICE_PLAN.md#milestone-4-prepare-and-perform-the-first-physical-trial) remains pending: identify the owner's current firmware and host, validate private backups, establish compatible app-rescue and ROM recovery paths, then arrange a physical trial. Cloud builds and simulations cannot operate the owner's USB device.
 
 The memory reporter checks the app and loader regions, reserves, unresolved/runtime-helper symbols and compressed loader headers/size. It cannot measure physical stack use or audio deadlines. Build outputs stay under ignored `build/`; the public repository retains text evidence and hashes, not a firmware release or the proprietary compiler archive.
 

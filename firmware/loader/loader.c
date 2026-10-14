@@ -12,7 +12,12 @@
 #define FELUCCA_OTA 1
 #define FELUCCA_OTA_DRYRUN 0
 #define FELUCCA_USB_PID 0x0002
+#if JAMBOX_PROTO
+#include "../src/jam_identity.h"
+#define FELUCCA_ID JAMBOX_LOADER_ID
+#else
 #define FELUCCA_ID "ota-FM-1_900"
+#endif
 #define RING_PUBLISH() __asm__ volatile("" ::: "memory")
 #include "fm1_time.h"
 #include "fm1_sys.h"

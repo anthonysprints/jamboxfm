@@ -100,7 +100,9 @@ class FakeFM1:
     def rx(self, d):
         if d == I.HS_QUERY:
             t = self.identity.encode()
-            self.tx(b"\xF0" + I.pack7(bytes([0, 0x59, 0x11, 0, 0, 0]) + t + bytes(28 - len(t))) + b"\xF7")
+            body = t + bytes(27 - len(t))
+            self.tx(b"\xF0" + I.pack7(bytes([0, 0x59, 0x11, 27, 0, 0]) + body +
+                                     bytes([~sum(body) & 0xFF])) + b"\xF7")
         elif d == I.UPGRADE:
             self.upgrades += 1
             first = self.bad_addr if self.bad_addr is not None else 0
@@ -133,7 +135,7 @@ class FakeFM1:
         if not self.queue:
             return
         self.waiting = addr, n = self.queue.pop(0)
-        u = bytearray([0, 0x59, 0x30, 0, 0, 0, 0]) + addr.to_bytes(4, "little") + bytes([n & 0xFF, n >> 8, 0])
+        u = bytearray([0, 0x59, 0x30, 8, 0, 0, 0]) + addr.to_bytes(4, "little") + bytes([n & 0xFF, n >> 8, 0])
         u.append(~sum(u[6:14]) & 0xFF)
         self.tx(b"\xF0" + I.pack7(u) + b"\xF7")
 
@@ -246,7 +248,7 @@ def errors():
 
     t0 = time.monotonic()
     rc, out, err = cli([p, "--yes"], FakeFM1(image, unplug_after=2))
-    ok(rc == 4 and "disconnected" in err and "nothing was written" in err and time.monotonic() - t0 < 3,
+    ok(rc == 4 and "disconnected" in err and "staging may be incomplete" in err and time.monotonic() - t0 < 3,
        "unplugged in step 1 -> exit 4 'lost', nothing written")
     t0 = time.monotonic()
     rc, out, err = cli([p, "--yes"], FakeFM1(image, identity="ota-FM-1_900", name="Felucca Update", unplug_after=3))

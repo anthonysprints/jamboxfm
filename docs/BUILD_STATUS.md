@@ -2,7 +2,7 @@
 
 October 13, 2026. The source contains the first Dusty palette, physical Home screen and shared C browser instrument. Milestone 2 adds FM-1 update/rescue support while keeping musical sessions temporary. The owner-supplied compiler builds the device targets. This remains a software prototype, with no physical-device test or firmware release.
 
-The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper still builds the OTA-disabled diagnostic target; `--with-updater` selects the update-enabled software bring-up target. Neither output is ready for owner installation. Milestone 3 still needs JamBox identity/splash, a package manifest, installer transition simulations and read-only device inventory.
+The [physical-device plan](FM1_DEVICE_PLAN.md) incorporates Dinghy and FM-1-RE. The default device wrapper still builds the OTA-disabled diagnostic target; `--with-updater` selects the update-enabled software bring-up target. Neither output is ready for owner installation. Milestone 3 adds JamBox identity/splash, a verified local candidate bundle, six simulated update/return transitions and a public read-only device check. See [candidate preparation](FM1_CANDIDATE.md) and its [software evidence](build-evidence/candidate/README.md). Physical transitions remain unapproved, and no device firmware is published.
 
 ## Implemented
 
@@ -59,9 +59,9 @@ That full Sloop run exited 1. Its IRQ instruction-cost budget is stale relative 
 
 ## Remaining implementation boundaries
 
-The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and supported installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
+The new Assist master switch, Off/Gentle/Tight timing capture, stronger live/playback note ownership, complete undo, JAM1 persistence/import and physically validated installer transitions are not implemented. Browser sessions are temporary. Its existing chord/scale setting changes release currently held pads; the future new-input-only Assist contract is a separate milestone. Home macros do not yet register MIDI Learn or the last-selected lock parameter. Other synthesis engines remain on their existing deeper editing pages.
 
-Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 2 report](build-evidence/update-isolation/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's installed Sloop version has not been identified.
+Milestone 1's diagnostic target occupied 533,012 of 581,564 available app bytes, 70,520 of 98,304 ordinary RAM bytes and 324,580 of 344,064 pool bytes, with OTA/storage disabled. Use the [milestone 3 report](build-evidence/candidate/README.md) for current update-enabled sizes and reserves. Static section checks cannot establish total audio interrupt timing, dynamic stack use, USB/TRS behavior, saved-data migration or physical recovery. Those remain future gates. The owner's installed Sloop version has not been identified.
 
 ## Environment
 

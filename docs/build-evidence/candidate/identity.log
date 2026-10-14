@@ -1,0 +1,9 @@
+identity mode 0: exact records, TX bounds, read interleaving and no writes passed; JamBox probe unsupported
+USB identity mode 0: manufacturer, product, descriptor lengths and VID/PID passed
+identity mode 1: exact records, TX bounds, read interleaving and no writes passed; malformed probes rejected
+USB identity mode 1: manufacturer, product, descriptor lengths and VID/PID passed
+identity mode 2: exact records, TX bounds, read interleaving and no writes passed; malformed probes rejected
+USB identity mode 2: manufacturer, product, descriptor lengths and VID/PID passed
+identity mode 3: exact records, TX bounds, read interleaving and no writes passed; malformed probes rejected
+USB identity mode 3: manufacturer, product, descriptor lengths and VID/PID passed
+JamBox splash: real renderer, four labels, original vector bars and canvas/display bounds passed

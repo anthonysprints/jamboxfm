@@ -1,0 +1,110 @@
+{
+  ".nojekyll": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "LICENSE": {
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  "LICENSES.html": {
+    "bytes": 68422,
+    "sha256": "c38b50559a14c872038abe1dd7be9b73dd5b8cd10954cadcff48eeef252e2b6a"
+  },
+  "LICENSING.md": {
+    "bytes": 4604,
+    "sha256": "ccd7ec8bade6eadf16f8edb63d2759c9e76ee46bbafe9873e26cd49d85af3255"
+  },
+  "SHA256SUMS": {
+    "bytes": 2193,
+    "sha256": "909f007daf2a64c6ee17909d1610b99ea076bdd2374c344dffd8a1c655b566a4"
+  },
+  "WEB_EMULATOR.md": {
+    "bytes": 5953,
+    "sha256": "015074f78dbd2113006729cc5018cf08a3caa189f1e81a769837da2c96d2b55e"
+  },
+  "device/app.js": {
+    "bytes": 12821,
+    "sha256": "487df02a77e29878b122a4a24515a73f229cc023ce075b8072c2d14b720fa4a1"
+  },
+  "device/index.html": {
+    "bytes": 5191,
+    "sha256": "7e32ee64734c65890accb92ccb18d72445dd674fcb1b0d3972cb7d3fbee48c58"
+  },
+  "device/style.css": {
+    "bytes": 7085,
+    "sha256": "123c7a508786288de673c0dbf26cee8b2f0b1cd971a23f4d6aaf36e98fb2f89b"
+  },
+  "emu/app.js": {
+    "bytes": 18458,
+    "sha256": "205a1fd0938f6048777b313aabd1f90381e6a5c0134b42492c0c39e82ab53290"
+  },
+  "emu/index.html": {
+    "bytes": 6197,
+    "sha256": "3d34ca77f5c6ba001d8ed3710fd2b3a0d040bd26d7bf27f05a6d95793f9c8e87"
+  },
+  "emu/jam-emu.wasm": {
+    "bytes": 678759,
+    "sha256": "7e93e3e63aab8e995fc0056ab0ea54d318a966c6d01ed651a4cece8a0744e22d"
+  },
+  "emu/style.css": {
+    "bytes": 23796,
+    "sha256": "d1210a1d3399d6af54928a022cad9097d051ba7529455529cdd9befcb5b6e0aa"
+  },
+  "emu/worklet.js": {
+    "bytes": 5408,
+    "sha256": "15186287a08a2a9241c5cd6f2aec682e498b7faeb356fa5317d9977f769707f5"
+  },
+  "fm1ota.js": {
+    "bytes": 18601,
+    "sha256": "5fc546830fb75e321c6ff46336d2e9b9ef8f8315eef4bb41fe65d9a3ba87daca"
+  },
+  "fm1pkg.js": {
+    "bytes": 2009,
+    "sha256": "14df103d8ab8bbc22531d30dfbfbbdf1d5031a1eeae23009e4897611e44e8e1b"
+  },
+  "index.html": {
+    "bytes": 179,
+    "sha256": "d31f46d052426522771c85a8ca65c4db7f4dcccbaeda86649afb3e420618626f"
+  },
+  "jam-device-policy.js": {
+    "bytes": 26066,
+    "sha256": "d1e69283810cb3169b18c8f796f063f03be71da8bfbdffa1429e1593b4c4263a"
+  },
+  "jambox-emulator.html": {
+    "bytes": 7191806,
+    "sha256": "e2e67dffd8e4d6b1be2c555a579f774e08856df1e17e3c76dae037e24ca8d1b4"
+  },
+  "jambox-source.zip": {
+    "bytes": 4623300,
+    "sha256": "59db93dd6b9e36a25f25b300db20ebd5e62246c7f72d4ad5be06810602a05995"
+  },
+  "licenses/Apache-2.0-msfa.txt": {
+    "bytes": 11024,
+    "sha256": "27dd23b62bc11d0806562397a1e782f86fc7dcacd1ba7a1b58d3c78a54795e62"
+  },
+  "licenses/CC0-ATTRIBUTION.txt": {
+    "bytes": 6001,
+    "sha256": "81461e108313ef6fbda38fefc3851685d68db4b5397647536a4f6c9f58031118"
+  },
+  "licenses/CC0-CREDITS.txt": {
+    "bytes": 1232,
+    "sha256": "8d54ace4773911b596a2a9421af1e4fcec5cd0ca3396ac3511c2c839f582e2bf"
+  },
+  "licenses/FUKIAI-LICENSE.txt": {
+    "bytes": 1142,
+    "sha256": "242ea3b0915e1f58cbf14ecafd4eee2733565a44e3b2629036d965168a2b0b19"
+  },
+  "licenses/Terminus-LICENSE.txt": {
+    "bytes": 4535,
+    "sha256": "10badc64d36b6d6fb1a27fa6e58dfc18475e3bd5412d9f42fca7cae08efcc289"
+  },
+  "licenses/phys_dsp.c-notice.txt": {
+    "bytes": 1265,
+    "sha256": "dabfd568979a5930308ebfc926dd37918ec17fbc782d540a3f08b41633b573f3"
+  },
+  "licenses/phys_symp.c-notice.txt": {
+    "bytes": 1245,
+    "sha256": "41ba517b17f789edfd02c26b595b380da1c383184fc8e5e2245d7f58b91dfc3a"
+  }
+}

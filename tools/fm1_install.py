@@ -33,7 +33,8 @@ FINISH_CHECK, FINISH_WRITE = 0xE0000000, 0xF0000000
 MAXDATA = 512
 BLOCKS, BLK, KEEP = 20, 0x30, 0x2F
 LOADER_MARK = b"FELUCCA-LOADER-1"
-PORT_RE = re.compile(r"fm-1|felucca|sloop|clipper|ota|composite|sinco|usb-midi", re.I)   # never probe other gear
+JAMBOX_CANDIDATE = re.compile(r"(?:ota-)?FM-1_0*700", re.I)
+PORT_RE = re.compile(r"fm-1|jamboxfm|felucca|sloop|clipper|ota|composite|sinco|usb-midi", re.I)   # never probe other gear
 # (the FM-1 under SLOOP / Felucca, under CLIPPER, the update loaders, the stock firmware: as web/fm1ota.js FM1_PORT)
 
 # seconds; the tests shorten them
@@ -56,6 +57,8 @@ class InstallError(Exception):
 def pack7(data):
     out, acc, nb = [], 0, 0
     for b in data:
+        if not isinstance(b, int) or not 0 <= b <= 0xFF:
+            raise ValueError("packed input must contain bytes")
         acc |= b << nb
         nb += 8
         while nb >= 7:
@@ -68,31 +71,60 @@ def pack7(data):
 
 
 def unpack7(s):
+    """Decode one complete, canonical packed stream; invalid bytes/tails fail."""
     out, acc, nb = [], 0, 0
     for b in s:
-        acc |= (b & 0x7F) << nb
+        if not isinstance(b, int) or not 0 <= b <= 0x7F:
+            raise ValueError("packed stream contains a non-MIDI data byte")
+        acc |= b << nb
         nb += 7
         while nb >= 8:
             out.append(acc & 0xFF)
             acc >>= 8
             nb -= 8
+    # Seven leftover bits are an unnecessary extra byte. Any nonzero
+    # remainder is padding that pack7 would never emit for the decoded data.
+    if nb == 7 or acc:
+        raise ValueError("packed stream has a noncanonical tail")
     return bytes(out)
 
 
 def response(addr, data, fl=0):
     n = len(data)
+    if not 0 <= n <= MAXDATA:
+        raise ValueError("response payload must be at most 512 bytes")
+    if not isinstance(addr, int) or not 0 <= addr <= 0xFFFFFFFF or not isinstance(fl, int) or not 0 <= fl <= 0xFF:
+        raise ValueError("response address or flash type is outside its wire field")
     body = bytearray([0x00, 0x59, 0x30, (n + 8) & 0xFF, ((n + 8) >> 8) & 0xFF, 0, fl])
     body += addr.to_bytes(4, "little") + bytes([n & 0xFF, (n >> 8) & 0xFF, 0]) + bytes(data)
     body.append(~sum(body[6:]) & 0xFF)
     return b"\xF0" + pack7(body) + b"\xF7"
 
 
+def _frame(pkt, command, body_length):
+    """Exact SysEx envelope, continuous packing, declared length and checksum.
+
+    Bound the wire size before decoding; no prefix/trailing packet fragments
+    or extra zero bytes can alias a valid frame.
+    """
+    decoded_length = body_length + 7
+    if len(pkt) != 2 + (decoded_length * 8 + 6) // 7 or pkt[0] != 0xF0 or pkt[-1] != 0xF7:
+        return None
+    try:
+        u = unpack7(pkt[1:-1])
+    except ValueError:
+        return None
+    if (len(u) != decoded_length or u[:3] != bytes((0, 0x59, command)) or
+            int.from_bytes(u[3:6], "little") != body_length or
+            (~sum(u[6:-1]) & 0xFF) != u[-1]):
+        return None
+    return u
+
+
 def parse_request(pkt):
     """-> (flags, addr, len) or None"""
-    if len(pkt) < 2 or pkt[0] != 0xF0 or pkt[-1] != 0xF7:
-        return None
-    u = unpack7(pkt[1:-1])
-    if len(u) != 15 or u[:3] != b"\x00\x59\x30" or ~sum(u[6:14]) & 0xFF != u[14]:
+    u = _frame(pkt, 0x30, 8)
+    if u is None:
         return None
     return u[6], int.from_bytes(u[7:11], "little"), int.from_bytes(u[11:14], "little")
 
@@ -107,14 +139,17 @@ class Identity:
 
 
 def parse_identity(pkt):
-    if len(pkt) < 2 or pkt[0] != 0xF0 or pkt[-1] != 0xF7:
+    d = _frame(pkt, 0x11, 27)
+    if d is None:
         return None
-    d = unpack7(pkt[1:-1])
-    if len(d) != 34 or d[:3] != b"\x00\x59\x11":
+    # A complete ASCII model/version, followed only by NUL padding. A full
+    # 27-byte identity is allowed (the firmware's field can be completely full).
+    field = d[6:-1]
+    text, separator, padding = field.partition(b"\0")
+    if separator and any(padding):
         return None
-    txt = d[6:33].rstrip(b"\0").decode("latin-1")
-    m = re.fullmatch(r"([^_]+)_(\d+)", txt)
-    return Identity(txt, m[1], int(m[2])) if m else None
+    m = re.fullmatch(rb"([A-Za-z0-9][A-Za-z0-9-]*)_([0-9]+)", text)
+    return Identity(text.decode("ascii"), m[1].decode("ascii"), int(m[2])) if m else None
 
 
 # --------------------------------------------------------------- package ---
@@ -210,7 +245,7 @@ def pair_output(name, outs):
     same = [o for o in outs if re.sub(r"\s+\d+$", "", o) == base]
     if len(same) == 1:
         return same[0]
-    return outs[0] if len(outs) == 1 else None
+    return None                              # never pair an FM-1 input with unrelated equipment
 
 
 # --------------------------------------------------------------- updater ---
@@ -261,7 +296,11 @@ class Updater:
                 link = self.backend.open(name, out)
             except Exception:
                 continue
-            ident = handshake(link, 2)
+            try:
+                ident = handshake(link, 2)
+            except BaseException:
+                link.close()
+                raise
             if ident and (want is None or want(ident)):
                 return Device(link, ident, name)
             link.close()
@@ -280,7 +319,12 @@ class Updater:
         """answer read requests until the device asks for `finish`; -> (served, finished, lost)"""
         served, last = 0, time.monotonic()
         while True:
-            pkt = link.read(DELAY["poll"])
+            if link.lost:
+                return served, False, True
+            remaining = idle - (time.monotonic() - last)
+            if remaining <= 0:
+                return served, False, False
+            pkt = link.read(min(DELAY["poll"], remaining))
             if pkt is None:
                 if link.lost:
                     return served, False, True
@@ -291,14 +335,15 @@ class Updater:
             if not r:
                 continue
             fl, addr, n = r
-            last = time.monotonic()
             if addr in (FINISH_CHECK, FINISH_WRITE):
-                link.send(response(addr, b"success\0"))
-                if addr == finish:
-                    return served, True, False
-                continue
-            if n > MAXDATA or addr + n > len(image):
+                if addr != finish or n != 8:
+                    raise InstallError("badreq", "the device sent an unexpected update completion request")
+                if not link.send(response(addr, b"success\0")):
+                    return served, False, True
+                return served, True, False
+            if not 1 <= n <= MAXDATA or addr + n > len(image):
                 raise InstallError("badreq", f"the device asked for {addr:#x}+{n}, outside the package")
+            last = time.monotonic()
             time.sleep(DELAY["reply"])
             if not link.send(response(addr, image[addr:addr + n], fl)):
                 return served, False, True
@@ -308,15 +353,18 @@ class Updater:
     def check(self, dev, image, step):
         """step 1: the running firmware checks the package and starts the loader"""
         step("start", dev.id.text)
-        dev.link.send(UPGRADE)
-        time.sleep(DELAY["start"])
-        served, finished, lost = self.serve(dev.link, image, FINISH_CHECK, DELAY["idle_check"],
-                                            lambda k, end: step("check", k))
-        dev.link.close()
+        try:
+            if not dev.link.send(UPGRADE):
+                raise InstallError("lost", "the FM-1 disconnected before update entry")
+            time.sleep(DELAY["start"])
+            served, finished, lost = self.serve(dev.link, image, FINISH_CHECK, DELAY["idle_check"],
+                                                lambda k, end: step("check", k))
+        finally:
+            dev.link.close()
         if not finished:
             raise InstallError("lost" if lost else "stopped",
                                f"the FM-1 {'was disconnected' if lost else 'stopped answering'} after "
-                               f"{served} requests; nothing was written")
+                               f"{served} requests; update staging may be incomplete")
         step("loader")
         time.sleep(DELAY["loader"])
         ota = self.wait_for(lambda i: i.loader, DELAY["wait_loader"])
@@ -328,11 +376,14 @@ class Updater:
     def write(self, ota, image, step):
         """step 2: the loader reads and writes the whole package, then restarts"""
         step("write", 0)
-        ota.link.send(UPGRADE)
-        time.sleep(DELAY["start"])
-        served, finished, lost = self.serve(ota.link, image, FINISH_WRITE, DELAY["idle_write"],
-                                            lambda k, end: step("write", min(99, end * 100 // len(image))))
-        ota.link.close()
+        try:
+            if not ota.link.send(UPGRADE):
+                raise InstallError("lost", "the update loader disconnected before transfer")
+            time.sleep(DELAY["start"])
+            served, finished, lost = self.serve(ota.link, image, FINISH_WRITE, DELAY["idle_write"],
+                                                lambda k, end: step("write", min(99, end * 100 // len(image))))
+        finally:
+            ota.link.close()
         if not finished:
             raise InstallError("lost" if lost else "stopped",
                                f"the loader {'was disconnected' if lost else 'stopped answering'} after "
@@ -354,6 +405,9 @@ class Updater:
     def install(self, dev, image, product, step=lambda *a: None):
         """running firmware -> loader -> new firmware; dev from find(). A device already in
         update mode only needs the write."""
+        if JAMBOX_CANDIDATE.fullmatch(product):
+            dev.link.close()
+            raise InstallError("badpkg", "JamBox candidate transfers are disabled; --info remains read-only")
         if model_of(dev.id.text) != model_of(product):
             dev.link.close()
             raise InstallError("model", f"the device is {dev.id.text}, the package is for {product}")
@@ -362,6 +416,11 @@ class Updater:
             raise InstallError("foreign", f"the FM-1 is in the update mode of another firmware ({dev.id.text}): "
                                           "finish that update with its own updater (M-UPGRADE), then install again")
         ota = dev if dev.id.loader else self.check(dev, image, step)
+        # The device discovered after staging must meet the same loader policy
+        # as one already in update mode when install() began.
+        if model_of(ota.id.text) != model_of(product) or not re.fullmatch(r"ota-FM-1_9\d\d", ota.id.text, re.I):
+            ota.link.close()
+            raise InstallError("foreign", f"refusing an unexpected update loader ({ota.id.text})")
         self.write(ota, image, step)
         return self.verify(product, step)
 
@@ -370,10 +429,13 @@ class Updater:
 
 def load_package(path, force):
     try:
-        raw = open(path, "rb").read()
+        with open(path, "rb") as source:
+            raw = source.read()
     except OSError as e:
         raise InstallError("badpkg", f"cannot read {path}: {e.strerror}")
     product = product_of(raw)
+    if JAMBOX_CANDIDATE.fullmatch(product):
+        raise InstallError("badpkg", "JamBox candidate transfers are disabled; --force cannot enable them")
     if not re.fullmatch(r"[^_]+_\d+", product):
         raise InstallError("badpkg", f"{path}: not an FM-1 package (identity {product!r})")
     if LOADER_MARK not in raw and not force:
@@ -464,7 +526,7 @@ class Progress:
             self.line = False
 
 
-def run(a, backend, out, ask):
+def run(a, backend, out, ask, package=None):
     up = Updater(backend, a.port)
     if a.info:
         dev = up.find()
@@ -474,21 +536,21 @@ def run(a, backend, out, ask):
         mode = "update loader (update not finished)" if dev.id.loader else "running"
         print(f"{dev.id.text}  [{mode}]  port: {dev.name}", file=out)
         return 0
-    product, image = load_package(a.package, a.force)
+    product, image = package if package is not None else load_package(a.package, a.force)
     print(f"package: {product}  ({a.package})", file=out)
     dev = up.find()
     if not dev:
         raise not_found(up)
     print(f"device:  {dev.id.text}  ({dev.name})" + ("  in update mode: the write will be finished" if dev.id.loader else ""),
           file=out)
-    if not a.yes and not ask("Install? Do not unplug the FM-1 while writing. [y/N] "):
-        dev.link.close()
-        print("cancelled", file=out)
-        return 1
     prog = Progress(out)
     try:
+        if not a.yes and not ask("Install? Do not unplug the FM-1 while writing. [y/N] "):
+            print("cancelled", file=out)
+            return 1
         up.install(dev, image, product, prog)
     finally:
+        dev.link.close()
         prog.end()
     return 0
 
@@ -511,12 +573,15 @@ def main(argv=None, backend=None, out=sys.stdout, ask=ask_tty):
     if bool(a.info) == bool(a.package):
         ap.error("give a PACKAGE.fwsc or --info")
     try:
+        # Reject a candidate or damaged file before constructing a MIDI backend.
+        # Pass the validated bytes through so the file cannot change between checks.
+        package = None if a.info else load_package(a.package, a.force)
         if backend is None:
             try:
                 backend = MidoBackend()
             except ImportError:
                 raise InstallError("usage", "needs mido and python-rtmidi (pip install mido python-rtmidi)")
-        return run(a, backend, out, ask)
+        return run(a, backend, out, ask, package)
     except InstallError as e:
         print(f"error: {e}", file=sys.stderr)
         return EXIT.get(e.code, 1)

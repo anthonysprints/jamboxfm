@@ -3,6 +3,7 @@
 # Software bring-up targets only; neither is an owner-installation release.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
+rm -f build/device-build-receipt.json build/device-build-receipt.json.partial
 . tools/cloud/activate.sh
 python3 tools/cloud/check_device.py
 export JAMBOX_PROTO=1

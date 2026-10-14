@@ -31,6 +31,7 @@ LDR = OUT / "loader"
 sys.path.insert(0, str(SRC / "tools"))
 import fm1pkg_make  # noqa: E402
 import lz4blk  # noqa: E402
+import device_build_receipt as receipt  # noqa: E402
 
 APP_XIP = 0x02000120                # app.bin offset 0 in the XIP map; the SPL jumps here
 APP_SLOT = fm1pkg_make.APP_SLOT
@@ -49,6 +50,8 @@ SDK_SHA256 = {
 
 PRODUCT = "FM-1_900"                # package identity; release builds are FM-1_9XY
 VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/ui.c)
+COMMANDS = []
+CONFIGURATION = {}
 
 
 def toolchain():
@@ -69,6 +72,7 @@ def tc(tool, *args):
     rel = [str(Path(a).resolve().relative_to(SRC)) if isinstance(a, Path) else a for a in args]
     if tool == "cc":                # the toolchain's cc wrapper needs python3; call clang directly
         tool, rel = "pi32v2/bin/clang", ["-target", "pi32v2", *rel]
+    COMMANDS.append({"tool": tool, "args": rel})
     if use_docker():
         cmd = ["docker", "run", "--rm", "--platform", "linux/amd64", "-v", f"{SRC}:/work",
                "-v", f"{toolchain()}:/opt/jieli:ro", "-w", "/work", DOCKER_IMAGE, f"/opt/jieli/{tool}", *rel]
@@ -99,8 +103,29 @@ def generate():
             [tools / "gen_drumkits.py", GEN / "felucca_drumkits.h"],
             [tools / "gen_fm6_patches.py", GEN / "felucca_fm6.h"],
             [tools / "gen_logo.py", GEN / "sloop_logo.h"]]
-    procs = [subprocess.Popen([sys.executable, *map(str, c)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                              text=True) for c in cmds]
+    if os.environ.get("JAMBOX_PROTO") == "1":
+        # Generate enum metadata without ever opening reserved icon artwork.
+        # JamBox's splash has its own drawing and consumes no Sloop logo.
+        cmds.pop()
+        (GEN / "sloop_logo.h").unlink(missing_ok=True)
+        # A cached header is generated material, not a trusted build input.
+        # Recreate synthesized waves as well so added local WAVs cannot enter
+        # the generated sample input set.
+        (OUT / "gen_samples.cache").unlink(missing_ok=True)
+        waves = OUT / "genwav"
+        if waves.is_symlink():
+            waves.unlink()
+        elif waves.exists():
+            shutil.rmtree(waves)
+        icon_metadata = GEN / "jambox-icon-metadata"
+        icon_metadata.mkdir(exist_ok=True)
+        (icon_metadata / "icons.png").unlink(missing_ok=True)
+        shutil.copyfile(SRC / "assets/icons.json", icon_metadata / "icons.json")
+        cmds[1].append(icon_metadata)
+    for command in cmds:
+        COMMANDS.append({"tool": "python3", "args": [str(path.relative_to(SRC)) for path in command]})
+    procs = [subprocess.Popen([sys.executable, *map(str, c)], cwd=SRC, stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT, text=True) for c in cmds]
     failed = []
     for c, p in zip(cmds, procs):
         sys.stdout.write(p.communicate()[0])
@@ -149,8 +174,10 @@ def build_loader():
     # Sloop target retains its separately audited compatibility behavior.
     if os.environ.get("JAMBOX_PROTO") == "1":
         flags.append("-DJAMBOX_PROTO=1")
-    tc_all(("cc", "-c", src / "crt0_ldr.S", "-o", LDR / "crt0_ldr.o"),
-           ("cc", *flags, "-c", src / "loader.c", "-o", LDR / "loader.o"))
+    if os.environ.get("JAMBOX_PROTO") == "1":
+        CONFIGURATION["loader"] = receipt.configuration(SRC, OUT, "loader", flags, tc)
+    tc_all(("cc", "-MMD", "-MF", LDR / "crt0_ldr.d", "-c", src / "crt0_ldr.S", "-o", LDR / "crt0_ldr.o"),
+           ("cc", *flags, "-MMD", "-MF", LDR / "loader.d", "-c", src / "loader.c", "-o", LDR / "loader.o"))
     elf = LDR / "loader.elf"
     tc("pi32v2/bin/ld", "--gc-sections", "-e", "_start", "-T", src / "loader.ld",
        LDR / "crt0_ldr.o", LDR / "loader.o", "-o", elf)
@@ -186,10 +213,12 @@ def build_app():
     flags.append(f'-DFELUCCA_ID="{PRODUCT}"')
     if VERSION:
         flags.append(f'-DFELUCCA_VERSION="{VERSION}"')
-    tc_all(("cc", "-c", FW / "crt0.S", "-o", OUT / "crt0.o"),
-           ("cc", "-c", FW / "hal" / "fm1_vec.S", "-o", OUT / "fm1_vec.o"),
-           ("cc", "-c", FW / "hal" / "fm1_isr.S", "-o", OUT / "fm1_isr.o"),
-           ("cc", *flags, "-c", FW / "src" / "felucca.c", "-o", OUT / "felucca.o"))
+    if os.environ.get("JAMBOX_PROTO") == "1":
+        CONFIGURATION["app"] = receipt.configuration(SRC, OUT, "app", flags, tc)
+    tc_all(("cc", "-MMD", "-MF", OUT / "crt0.d", "-c", FW / "crt0.S", "-o", OUT / "crt0.o"),
+           ("cc", "-MMD", "-MF", OUT / "fm1_vec.d", "-c", FW / "hal" / "fm1_vec.S", "-o", OUT / "fm1_vec.o"),
+           ("cc", "-MMD", "-MF", OUT / "fm1_isr.d", "-c", FW / "hal" / "fm1_isr.S", "-o", OUT / "fm1_isr.o"),
+           ("cc", *flags, "-MMD", "-MF", OUT / "app.d", "-c", FW / "src" / "felucca.c", "-o", OUT / "felucca.o"))
     elf = OUT / "felucca.elf"
     tc("pi32v2/bin/ld", "-T", FW / "app.ld", OUT / "crt0.o", OUT / "fm1_vec.o", OUT / "fm1_isr.o",
        OUT / "felucca.o", "-o", elf)
@@ -304,11 +333,24 @@ def mmio_check():
 
 def main():
     global PRODUCT, VERSION
+    PRODUCT, VERSION = "FM-1_900", None
+    # Even a failed/diagnostic/legacy attempt invalidates any previous receipt.
+    (OUT / "device-build-receipt.json").unlink(missing_ok=True)
+    (OUT / "device-build-receipt.json.partial").unlink(missing_ok=True)
+    COMMANDS.clear()
+    CONFIGURATION.clear()
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_9XY, version string X.Y")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     a = ap.parse_args()
     name = "felucca.fwsc"
+    jambox = os.environ.get("JAMBOX_PROTO") == "1"
+    if jambox:
+        if a.release:
+            raise SystemExit("JamBox software candidates use the version in jam_identity.h; --release is for Sloop")
+        identity = receipt.jam_identity(SRC)
+        PRODUCT = identity["JAMBOX_APP_ID"]
+        VERSION = identity["JAMBOX_NAME"] + " " + identity["JAMBOX_RELEASE"]
     if a.release:                   # one digit each: the identity has room for two
         m = re.fullmatch(r"(\d)\.(\d)(-[A-Za-z0-9]+)?", a.release)
         if not m:
@@ -321,6 +363,10 @@ def main():
         if hashlib.sha256(fm1pkg_make.sdk_file(rel)).hexdigest() != sha:
             print(f"warning: SDK {rel} differs from AC79NN_SDK_V1.2.1; the package will not match the reference")
     OUT.mkdir(parents=True, exist_ok=True)
+    if jambox:
+        sdk = Path(a.sdk or os.environ.get("AC79_SDK", ""))
+        external = receipt.external_inputs(toolchain(), sdk, strict=True)
+        before = receipt.input_pool(SRC)
     with ThreadPoolExecutor(2) as ex:
         gen, ldr = ex.submit(generate), ex.submit(build_loader)
         gen.result()
@@ -339,6 +385,11 @@ def main():
         raise SystemExit("build: checks failed")
     pkg = fm1pkg_make.ufw(fm1pkg_make.flash_image(img, fm1pkg_make.KEY), ota, PRODUCT)
     (OUT / name).write_bytes(pkg)
+    if jambox:
+        receipt.require(receipt.external_inputs(toolchain(), sdk, strict=False) == external,
+                        "Compiler/SDK inputs changed during build; rebuild")
+        receipt.finish(SRC, OUT, before, external, CONFIGURATION["app"], CONFIGURATION["loader"],
+                       PRODUCT, name, COMMANDS)
     att = SRC / "assets" / "samples-cc0" / "ATTRIBUTION.txt"
     if att.exists():
         shutil.copy(att, OUT / "ATTRIBUTION.txt")

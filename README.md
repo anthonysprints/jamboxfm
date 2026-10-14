@@ -20,17 +20,20 @@ For repeatable public updates, use the [GitHub Pages publishing instructions](do
 
 `sh tests/run_jam_tests.sh` still builds the four-part workbench in `build/jam-preview/` and runs the palette, Home and native/WASM audio contracts. See [cloud setup](docs/CLOUD_SETUP.md) for all commands and device prerequisites.
 
-The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. The FM-1 build now supports updating and application rescue while rejecting app-data writes. Target builds, simulated storage/update checks and browser regression pass; hardware timing and physical updating/recovery remain untested. See [update-isolation evidence](docs/build-evidence/update-isolation/README.md). No owner-installation package is ready yet.
+The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. The FM-1 build supports updating and application rescue while rejecting app-data writes; [update-isolation evidence](docs/build-evidence/update-isolation/README.md) records those software checks.
+
+Milestone 3 adds JamBox identity and splash, local candidate packaging with source/build evidence, simulated firmware transitions, and a read-only device check at the packaged site's `/device/` path. The page identifies firmware and saves a private report; it has no Install control or firmware download. See [candidate workflow and limits](docs/FM1_CANDIDATE.md) and [candidate evidence](docs/build-evidence/candidate/README.md). Hardware timing, physical installation and recovery remain untested. The next milestone is owner-device inventory, backup and recovery preparation before any physical trial.
 
 ## Design and provenance
 
 - [Product brief](PRODUCT_BRIEF.md): agreed musical direction and user experience.
 - [Implementation plan](docs/IMPLEMENTATION_PLAN.md): selected firmware baseline, modules, control mapping, sound/voice budgets, recording, persistence, browser and installer architecture.
 - [First FM-1 device build plan](docs/FM1_DEVICE_PLAN.md): Dinghy/FM-1-RE findings, compiler path, update/recovery work, first hardware trial and release gates.
+- [FM-1 software candidate](docs/FM1_CANDIDATE.md): identity, local package checks, simulated transitions and read-only device inventory.
 - [Research evidence](docs/RESEARCH_EVIDENCE.md): pinned source links, REA results, executed host checks and limitations.
 - [Validation plan](docs/VALIDATION_PLAN.md): reproducible build, software, browser, hardware and release gates.
 - [Current build status](docs/BUILD_STATUS.md): implemented slice, executed checks and remaining hardware blocker.
 
 Sloop's source is imported at `8fad1a15ff59d5c3ed0bfe2d7a9ae90962cf4d5e`, with its licenses and notices retained. The original README is in [docs/upstream/SLOOP_README.md](docs/upstream/SLOOP_README.md); [the import manifest](docs/upstream/import-manifest.json) records original file hashes. Research is retained under `docs/research/`; current build evidence is under `docs/build-evidence/`.
 
-The FM-1 prototype is selected with `JAMBOX_PROTO=1`; the default device build still selects the inherited Sloop application. Use the documented prototype wrapper. No JamBox installer or release package is ready yet.
+The FM-1 prototype is selected with `JAMBOX_PROTO=1`; invoking the inherited builder directly without that flag selects Sloop. Use the documented JamBox wrapper or candidate packager. The local candidate is not approved for owner installation, and no JamBox firmware release or operational installer is published by these build commands.

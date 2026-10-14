@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eee9df">
+  <meta name="description" content="Find out which firmware is running on your FM-1 with a read-only JamBoxFM device check.">
+  <title>JamBoxFM · Check your FM-1</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="workbench">
+    <header class="masthead">
+      <a class="wordmark" href="../emu/" aria-label="JamBoxFM browser instrument">jam<span>box</span><sup>FM</sup></a>
+      <p class="edition"><span aria-hidden="true"></span> DEVICE CHECK <b>01</b></p>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">YOUR INSTRUMENT / FM-1</p>
+      <h1 id="page-title">Check your FM-1.</h1>
+      <p class="lede">A quick look at the firmware your little box is running.</p>
+      <p class="read-only"><span aria-hidden="true">→</span> Read only. Your sounds and settings stay as they are.</p>
+    </section>
+
+    <div class="check-layout">
+      <section class="check-card" aria-labelledby="connect-title">
+        <div class="card-heading"><span class="step-mark" aria-hidden="true">01</span><div><p class="eyebrow">CONNECT &amp; READ</p><h2 id="connect-title">Let’s meet your instrument.</h2></div></div>
+        <p class="card-copy">Turn on your FM-1 and connect it with a USB data cable. Close other apps using its MIDI connection.</p>
+        <button id="midi-enable" class="primary" type="button">Enable MIDI access <span aria-hidden="true">→</span></button>
+        <p class="permission-note">Your browser will ask to allow MIDI and system exclusive messages. This page uses them only to read the device identity.</p>
+
+        <fieldset id="port-fields" disabled>
+          <legend>Choose your FM-1’s matching ports</legend>
+          <div class="port-grid">
+            <div class="field"><label for="midi-input">MIDI input <small>From the FM-1</small></label><select id="midi-input" aria-describedby="pair-hint"><option value="">Choose an input</option></select></div>
+            <div class="field"><label for="midi-output">MIDI output <small>To the FM-1</small></label><select id="midi-output" aria-describedby="pair-hint"><option value="">Choose an output</option></select></div>
+          </div>
+          <p id="pair-hint" class="pair-hint">Enable MIDI access to see the available ports.</p>
+        </fieldset>
+        <div class="read-actions"><button id="read-device" class="primary" type="button" disabled>Read device <span aria-hidden="true">→</span></button><button id="cancel-read" class="secondary" type="button" hidden>Cancel</button></div>
+        <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Ready when your FM-1 is connected.</p>
+      </section>
+
+      <aside class="next-card" aria-labelledby="next-title">
+        <p class="eyebrow">A LITTLE PREPARATION</p>
+        <h2 id="next-title">Keep your music close.</h2>
+        <ol class="steps">
+          <li><span>1</span><div><strong>Read the device</strong><p>Find its firmware family, version, and current mode.</p></div></li>
+          <li><span>2</span><div><strong>Save a report</strong><p>Keep the identification result on your computer.</p></div></li>
+          <li><span>3</span><div><strong>Back up your music</strong><p>Use your current firmware’s own backup tools before considering a change.</p></div></li>
+        </ol>
+        <p class="development">JamBox installation is still in development. This page identifies your device; it doesn’t install firmware.</p>
+        <a class="text-link" href="../emu/">Play the browser instrument <span aria-hidden="true">→</span></a>
+      </aside>
+    </div>
+
+    <section id="result" class="result-card" aria-labelledby="result-title" hidden>
+      <div class="result-heading"><div><p class="eyebrow">YOUR DEVICE</p><h2 id="result-title" tabindex="-1">Device identified.</h2></div><span id="result-badge" class="result-badge">READ ONLY</span></div>
+      <dl class="device-facts"><div><dt>Firmware family</dt><dd id="device-family">Unknown</dd></div><div><dt>Version</dt><dd id="device-version">Unknown</dd></div><div><dt>Current mode</dt><dd id="device-mode">Unknown</dd></div></dl>
+      <p id="result-guidance" class="result-guidance"></p>
+      <button id="save-report" class="secondary" type="button">Save device report <span aria-hidden="true">↓</span></button>
+      <p class="report-note">The report contains firmware identification only. It leaves out MIDI port names, port IDs, and serial numbers.</p>
+      <details class="details"><summary>Identification details <span aria-hidden="true">+</span></summary><pre id="report-details"></pre></details>
+    </section>
+
+    <footer class="page-footer"><span>JAMBOXFM <b>·</b> DEVICE CHECK</span><p>Read here. Back up with your firmware’s own tools.</p><a href="../jambox-source.zip" download>Download source</a><a href="../LICENSES.html">Licenses &amp; credits</a></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

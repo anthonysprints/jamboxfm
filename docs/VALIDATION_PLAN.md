@@ -1,10 +1,10 @@
 # JamBoxFM build and validation plan
 
-Status: implementation gates, with completed checks identified separately. JamBox diagnostic target builds and milestone 2's update/persistence isolation are implemented. Final software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md); no physical device has been flashed or tested.
+Status: implementation gates, with completed checks identified separately. JamBox target builds, milestone 2's update/persistence isolation, and milestone 3's identity, local candidate packaging, simulated transitions and read-only inventory are implemented. Software results are indexed in [update-isolation evidence](build-evidence/update-isolation/README.md) and [candidate evidence](build-evidence/candidate/README.md); no physical device has been flashed or tested.
 
 Current prototype results are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). This document remains the roadmap for the full firmware, including features beyond the first playable slice.
 
-The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds and update/persistence isolation, candidate identity/installer simulations and inventory, an experimental hardware trial, then versioned persistence. Milestone 3 packaging is next. The temporary-session milestone does not require every future musical feature below.
+The narrower [first-device build plan](FM1_DEVICE_PLAN.md) orders the immediate work: target builds and update/persistence isolation, candidate identity/installer simulations and inventory, an experimental hardware trial, then versioned persistence. The next milestone is physical-trial preparation: owner-device inventory, private backups and an available recovery route. The temporary-session milestone does not require every future musical feature below.
 
 ## Already done
 
@@ -13,6 +13,8 @@ See [RESEARCH_EVIDENCE.md](RESEARCH_EVIDENCE.md) for pinned sources, actual outc
 Those results justify proceeding to an implementation baseline. They do not certify new JamBox features or a physical update.
 
 The target-build follow-up compiled the unchanged Sloop baseline and JamBox diagnostic target. Milestone 2 separates `FELUCCA_PERSIST=0` from enabled low-level flash/OTA, rejects app-data saves/restores, clears retained musical state and accepts only narrowly validated read-only panel calibration. Its simulated NOR, UI/editor, OTA, loader and USB/parser tests validate software contracts; they cannot certify recovery on the owner's device.
+
+Milestone 3 adds exact JamBox family/mode/capability responses, host framing checks, local package/build-source consistency gates and transition simulations. The public-site package gains a read-only device page with explicit port selection and a private report export. [FM1_CANDIDATE.md](FM1_CANDIDATE.md) documents the implemented boundaries; test counts, artifact hashes and integration outcomes belong in the candidate evidence record.
 
 ## Gate 1: reproducible unchanged baseline
 
@@ -122,7 +124,7 @@ User audition gate: make a beat, capture two chords, add bass and improvise a le
 
 Before the first flash, identify the hardware/current Sloop version through read-only device information; export and validate a full backup; establish an available recovery procedure and equipment. This requires the owner and a physical device. It does not block software-only development.
 
-First run the unmodified pinned baseline, then small JamBox increments. Use a charged device, stable direct data connection and known firmware package. Do not perform a deliberate power-cut experiment on the owner's only instrument without separate agreement and a demonstrated recovery route.
+First observe the currently installed, identified firmware as a baseline; select any subsequent firmware write from the exact supported transition and recovery plan. Confirm both normal/app-rescue return to the known-good package and a concrete ROM recovery route for failures before application rescue. If the chosen ROM tool requires a device-specific raw flash reference and an adapter, obtain and verify them before a trial; an editor backup alone does not establish that route. Use a charged device, stable direct data connection and known firmware package. Do not perform a deliberate power-cut experiment on the owner's only instrument without separate agreement and a demonstrated recovery route.
 
 Check:
 
@@ -137,13 +139,13 @@ If the workload fails, reduce unused processing/buffers, shorten preset releases
 
 ## Gate 6: installer and release
 
-This is the next software milestone. The update-enabled build still needs JamBox app/INFO identity, splash, manifest, supported transition simulations and read-only inventory before an installation candidate. No installer or firmware release has been published by milestone 2.
+Milestone 3's software is implemented: JamBox app/INFO/USB identity and splash, exact family probes in normal/rescue/loader modes, manifest-bound package validation, local build receipts, simulated transitions and read-only inventory. The candidate manifest keeps `release_enabled` and `hardware_validated` false and its approved physical-transition list empty. There is no public Install control or candidate firmware download.
 
-Build a static installer using the existing SysEx transport. Validate `.fwsc` identity/structure/checksums against the manifest before writing. Preserve required model and loader compatibility markers.
+Maintain separate checks for strict SysEx framing/length/checksum, JamBox family/mode/capability agreement, and the exact audited Sloop INFO profile. A numeric firmware version alone never establishes a family. Exercise both transfer stages, selected ports after re-enumeration, short final blocks including 481 bytes, invalid lengths, stalls, cancellation, disconnects and wrong final identity. Transition orchestration is confined to mock-only test helpers; the device page permits only identity/capability queries.
 
-Test a matrix of device family, normal app, app-rescue (`FM-1_000`), actual `ota-` loader, unknown version and disconnected device. Our app rescue needs a tested family-identification path. Unknown firmware never becomes approved merely because the numeric version matches.
+The current simulated matrix covers JamBox normal/rescue/loader to JamBox, exact Sloop 2.6 to JamBox, and JamBox normal/rescue back to the pinned Sloop 2.6 package. An unknown or standalone foreign loader is not a supported starting point. The test suite's synthetic package fixture proves host policy and transfer behavior; validate the actual built candidate separately. Source, flags, artifact, memory and canonical-container checks must pass before local candidate packaging. Keep firmware files outside the public site package and keep private reports/backups off the repository.
 
-Use simulated peers for success, stage-one failure, re-enumeration, write interruption, retry/resume, wrong returned family/version, bad hashes, missing backup and user cancellation. On hardware verify the specifically supported Sloop→JamBox and JamBox→JamBox paths. Do not generalize ChoralRoot's V15 recommendation into a proven universal reset.
+Physical validation remains pending. Verify each specifically selected transition, application rescue and return to Sloop on recoverable hardware before enabling installation. Complete the backup/recovery gate above first; simulation does not validate a backup or prove physical recovery. Do not generalize ChoralRoot's V15 recommendation into a proven universal reset.
 
 Release only after source, build manifest, checksums, licenses, package, browser assets and user instructions agree on the tested version. The GPL code and asset-specific notices must travel with the release. Preserve an explicit transition/recovery support list and unresolved limitations.
 

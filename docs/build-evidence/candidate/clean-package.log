@@ -1,0 +1,7 @@
+JIELI_TOOLCHAIN=/workspace/toolchains/jieli/toolchain
+clang version 4.0.1 () ()
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin
+archive SHA256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd
+Local software candidate: /workspace/scratch/jambox-milestone3/clean-source/jamboxfm-source/build/jambox-device; 610,465 firmware bytes; SHA256 ab0c2071c2a3e18ce6c8ee7a55621af8f20aa1fe978c1784481352542fc2a0b2

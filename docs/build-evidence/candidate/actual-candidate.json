@@ -1,0 +1,20 @@
+{
+  "result": "passed",
+  "family": "jamboxfm",
+  "version": "0.1.0-dev",
+  "firmware_size_bytes": 610465,
+  "firmware_sha256": "ab0c2071c2a3e18ce6c8ee7a55621af8f20aa1fe978c1784481352542fc2a0b2",
+  "bundle_descriptors_verified": 15,
+  "simulated_transitions": [
+    "jambox-normal-to-jambox",
+    "jambox-rescue-to-jambox",
+    "jambox-loader-to-jambox",
+    "sloop-2.6-to-jambox",
+    "jambox-normal-to-sloop-2.6",
+    "jambox-rescue-to-sloop-2.6"
+  ],
+  "return_sha256": "199829bb5b892feae9058158dfed7a137c83ec4d8dfc1223761be1f5614ad6a2",
+  "release_enabled": false,
+  "hardware_validated": false,
+  "install_allowed": false
+}

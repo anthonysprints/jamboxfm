@@ -1,0 +1,22 @@
+test_candidate_package_rejected_before_midi_even_with_force (__main__.ServingTests.test_candidate_package_rejected_before_midi_even_with_force) ... ok
+test_confirmation_interrupt_closes_pair_without_upgrade (__main__.ServingTests.test_confirmation_interrupt_closes_pair_without_upgrade) ... ok
+test_ctrl_c_and_bad_requests_close_active_pair (__main__.ServingTests.test_ctrl_c_and_bad_requests_close_active_pair) ... ok
+test_exact_final_block_and_maximum_payload (__main__.ServingTests.test_exact_final_block_and_maximum_payload) ... ok
+test_failed_completion_reply_and_disconnect_cannot_claim_success (__main__.ServingTests.test_failed_completion_reply_and_disconnect_cannot_claim_success) ... ok
+test_failed_upgrade_send_closes_without_serving (__main__.ServingTests.test_failed_upgrade_send_closes_without_serving) ... ok
+test_input_cannot_pair_with_unrelated_single_output (__main__.ServingTests.test_input_cannot_pair_with_unrelated_single_output) ... ok
+test_invalid_lengths_ranges_and_terminal_requests_never_answered (__main__.ServingTests.test_invalid_lengths_ranges_and_terminal_requests_never_answered) ... ok
+test_malformed_packet_flood_cannot_extend_idle_deadline (__main__.ServingTests.test_malformed_packet_flood_cannot_extend_idle_deadline) ... ok
+test_newly_discovered_foreign_loader_never_receives_stage_two (__main__.ServingTests.test_newly_discovered_foreign_loader_never_receives_stage_two) ... ok
+test_bad_packed_data_and_noncanonical_tails (__main__.WireTests.test_bad_packed_data_and_noncanonical_tails) ... ok
+test_complete_codec_roundtrip_and_independent_wire (__main__.WireTests.test_complete_codec_roundtrip_and_independent_wire) ... ok
+test_envelope_bounds_and_canonical_tail (__main__.WireTests.test_envelope_bounds_and_canonical_tail) ... ok
+test_identity_fields_padding_and_checksum (__main__.WireTests.test_identity_fields_padding_and_checksum) ... ok
+test_request_fields_and_exact_header (__main__.WireTests.test_request_fields_and_exact_header) ... ok
+test_response_all_lengths_and_partial_final_481 (__main__.WireTests.test_response_all_lengths_and_partial_final_481) ... ok
+test_response_rejects_oversized_or_unrepresentable_fields (__main__.WireTests.test_response_rejects_oversized_or_unrepresentable_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.330s
+
+OK

@@ -1,0 +1,404 @@
+storage: ordinary boot detects flash independently of persistence                     ok
+storage: ordinary boot clears retained slots and dirty state                          ok
+storage: ordinary boot applies JamBox display defaults                                ok
+storage: ordinary boot uses default panel when flash has no calibration               ok
+storage: real instrument initializer creates the playable Dusty session               ok
+storage: ordinary boot does not modify any NOR byte                                   ok
+storage: foreign retained FUN6 slots and flash projects are not imported              ok
+storage: foreign user preset bank is not imported and RAM banks are empty             ok
+storage: foreign settings and valid retained preferences are discarded                ok
+storage: only validated foreign physical panel mapping is imported                    ok
+storage: foreign autosave and pending saves cannot replace fresh session              ok
+storage: valid foreign SYN/MIDI/lighting/USB preferences are not imported             ok
+storage: boot does not import foreign sample indexes or attach FM6 bank               ok
+storage: foreign retained/flash boot preserves all NOR bytes                          ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: internal arranger snapshot uses valid private JRM0 format                    ok
+storage: private JamBox RAM snapshot remains readable before a reset                  ok
+storage: warm boot discards every different retained JamBox section                   ok
+storage: warm JamBox boot neither flushes nor migrates retained sections              ok
+storage: JamBox rejects checksum-valid FUN6 without touching the destination          ok
+storage: JamBox rejects checksum-valid historical FUN5 without destination mutation   ok
+storage: unknown JEDEC still clears retained app data without any raw flash read      ok
+storage: unrecognized flash identity falls back to default calibration                ok
+storage: unrecognized flash identity cannot enable app storage                        ok
+storage: audited calibration schema PER1 / 40 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER2 / 48 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER2 / 52 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 52 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 84 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 88 bytes accepted                          ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1552 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1584 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1588 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER3 / 1592 bytes accepted                        ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER4 / 572 bytes accepted                         ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: audited calibration schema PER5 / 764 bytes accepted                         ok
+storage: calibration read imports no preferences, MIDI or lighting state              ok
+storage: calibration import is read-only across the whole NOR image                   ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: invalid panel magic/permutation/direction falls back to defaults             ok
+storage: rejected panel payload leaves NOR untouched                                  ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: unknown schema/length or full-payload CRC failure rejected                   ok
+storage: rejected settings object leaves NOR untouched                                ok
+storage: torn newer calibration copy falls back to intact older copy                  ok
+storage: A/B calibration fallback does not repair or write flash                      ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: explicit project SAVE reports storage disabled                               ok
+storage: explicit project ERASE reports storage disabled                              ok
+storage: forbidden explicit project operations preserve RAM section contents          ok
+storage: preset PUT/erase/store return explicit disabled status                       ok
+storage: preset UI erase reports disabled                                             ok
+storage: preset UI save reports disabled                                              ok
+storage: forbidden preset operations preserve RAM banks                               ok
+storage: idle autosave and resume cannot claim a stored working project               ok
+storage: SAVE/autosave/settings/pre-reset flush cannot mutate NOR                     ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: production app program hook rejects protected and OTA addresses              ok
+storage: production app erase hook rejects every range with persistence off           ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: real A/B object save cannot bypass disabled app hooks                        ok
+storage: direct app hooks and object storage cannot bypass session policy             ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor persistent writer returns status 6 in its normal reply shape          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: backup list advertises disabled, empty inventory                             ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: backup GET returns disabled with no data                                     ok
+storage: all forbidden editor writes preserve RAM projects/preset/drum banks          ok
+storage: direct sample/FM6/SYN helpers also refuse storage beneath the dispatcher     ok
+storage: all editor save/sample/backup/FM6/drum-store paths preserve NOR              ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor synth parameter editing still changes the live RAM sound              ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor step recording remains editable in RAM                                ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor FM6 track patch remains editable in RAM                               ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor synthesized drum kit remains editable in RAM                          ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: editor never reports RAM drum kits as stored                                 ok
+storage: allowed live editor edits still cannot modify NOR                            ok
+storage: physical page ERASE rejects without arming                                   ok
+storage: physical page SAVE rejects without arming                                    ok
+storage: physical page ERASE rejects without arming                                   ok
+storage: physical page SAVE rejects without arming                                    ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: SAVE layer section-storage gesture is explicitly refused                     ok
+storage: song-screen REC refuses a persistent section capture                         ok
+storage: song-screen SAVE refuses persistent storage                                  ok
+storage: disabled serial preference cannot offer a reboot-only change                 ok
+storage: settings menu labels temporary preferences truthfully                        ok
+storage: physical save gestures cannot mutate RAM sections or user banks              ok
+storage: physical UI settings/save/erase gestures preserve NOR                        ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: production final RAM-driver range policy rejects non-staging/wrapped spans   ok
+storage: real updater program hook rejects non-staging/wrapped spans                  ok
+storage: real updater erase hook rejects protected/misaligned sectors                 ok
+storage: rejected OTA hook requests do not reach raw NOR writers                      ok
+storage: updater hooks refuse writes without validated flash identity                 ok
+storage: missing flash identity cannot alter staging or protected data                ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may erase each of its five staging sectors                      ok
+storage: real updater may program first and last bounded staging bytes                ok
+storage: only requested bounded updater mutations reached raw flash hooks             ok
+storage: allowed update staging preserves every byte outside its 20 KiB window        ok
+storage: updater staging readback uses the actual shared flash read hook              ok
+JamBox temporary-session storage: 238 checks, 0 failures
+Sloop parser: valid FUN6 accepted; checksum-valid JamBox JRM0 rejected
+handshake answered                                   ok
+identity frame is FM-1_900                           ok
+recovery identity is distinct from a successful normal boot ok
+  20 requests
+session commits                                      ok
+headers + loader + confirm, no head reads            ok
+staged body == the package's loader                  ok
+LOADER.BIN head CRC                                  ok
+record at 0xE4F00 == RAM record                      ok
+record CRC / type / magic / ota_addr                 ok
+nothing written outside 0xE0000..0xE4FFF             ok
+boot cleanup erases the area                         ok
+second boot: nothing to do                           ok
+host gone -> no commit, area clean                   ok
+no 'success' -> -13, no commit, area clean           ok
+ota test passed
+JamBox real OTA session stages and commits with foreign user data present ok
+successful staging preserves every non-OTA flash byte ok
+boot cleanup erases only staging with foreign data present ok
+boot cleanup preserves all protected data            ok
+disconnected updater aborts without committing       ok
+abort cleanup preserves every non-OTA byte           ok
+missing host confirmation cleans staging without commit ok
+unconfirmed update preserves all protected data      ok
+JamBox OTA isolation: 8 extra checks passed
+Configuration guard persist: passed
+Configuration guard noflash: passed
+Configuration guard dryrun: passed
+Configuration guard ramonly: passed
+JamBox editor: refused Save never reports success or changes slots; busy/legacy replies preserved.
+partial SysEx timeout, bounded retry, F7 closure and updater-key parser: passed
+zero-byte timeout/disconnect leave no spurious terminator: passed
+bus reset clears abandoned frame; next full payload parses: passed
+bus reset during partial-send wait cancels stale tail; next payload parses: passed
+bus reset while waiting to close old frame leaves the next connection clean: passed
+ISR reset at final-packet publication cancels and removes stale tail: passed
+ISR reset at old-frame-F7 publication leaves next full frame intact: passed
+rescue drains saturated MIDI before/after real USB poll; OTA and ROM keys work: passed
+JamBox update transport tests passed
+recovery: boot failures, manual key, timer wrap, polled USB during OTA, retry, flash refusal and ROM fallback passed
+uart: running status, realtime, SysEx, system common ok
+uart: channels 1, 2, 3, 10, 16 -> USB-MIDI packets   ok
+uart ring: nothing landed, nothing read              ok
+uart ring: a burst's last message (note-off) at once ok
+uart ring: byte-by-byte arrival across the wrap      ok
+uart ring: a received FD is skipped, not taken for empty ok
+usb ep1: ring too full -> packet held, nothing dropped ok
+usb ep1: room again -> all 16 events taken           ok
+usb ep1: malformed ignored, clock / start / note-off / PC queued ok
+usb: ota_wire_send packets (CIN 4.. then 5/6/7)      ok
+usb: received frame == the bytes between F0 and F7   ok
+usb: a frame while one is pending is dropped         ok
+usb: a truncated frame is replaced by the next one   ok
+usb: an oversized frame (698 B) is not taken         ok
+usb: soft key -> uboot_req, not a frame              ok
+usb: upgrade key -> ota_req, not a frame             ok
+usb: bytes outside F0..F7 are ignored                ok
+usb: send with a full ring and no host fails at once ok
+usb: send with a full ring times out (500 ms)        ok
+midi parser test passed
+package build/jam-tests/jam_storage_old.fwsc: 610465 B, identity FM-1_900, chip key 0x980f
+  rc 0, 1180 requests, 88 sector erases
+install completes                                        ok
+app area == the new package's flash.bin                  ok
+flash head [0, 0x4000) untouched                         ok
+finish asked (0xF0000000)                                ok
+update record cleared (RAM + flash)                      ok
+no write outside the allowed windows                     ok
+re-run with the same package erases nothing              ok
+foreign key / damaged app head refused, nothing erased   ok
+a byte damaged once: caught by the CRC, fixed by a 2nd pass ok
+a damaged package: refused after 3 passes, the record stays ok
+... also when the damage is in the head                  ok
+no "success" from the host: the record stays             ok
+... and the next session finishes                        ok
+  refused flash JEDEC 0
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xef4014
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+known chip: retained update can complete on retry        ok
+update with record lookalikes installs app and completes ok
+cleanup erases only the selected policy's ranges         ok
+legacy loader retains its broad record cleanup           ok
+  cleanup fault: record read
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: record erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: erase readback
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: ignored erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+loader test passed
+  rc 0, 1180 requests, 88 sector erases
+install completes                                        ok
+app area == the new package's flash.bin                  ok
+flash head [0, 0x4000) untouched                         ok
+finish asked (0xF0000000)                                ok
+update record cleared (RAM + flash)                      ok
+no write outside the allowed windows                     ok
+re-run with the same package erases nothing              ok
+foreign key / damaged app head refused, nothing erased   ok
+a byte damaged once: caught by the CRC, fixed by a 2nd pass ok
+a damaged package: refused after 3 passes, the record stays ok
+... also when the damage is in the head                  ok
+no "success" from the host: the record stays             ok
+... and the next session finishes                        ok
+  refused flash JEDEC 0
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xffffffff
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+  refused flash JEDEC 0xef4014
+unknown chip: refused without erase/program/finish       ok
+unknown chip: complete flash and resume record preserved ok
+known chip: retained update can complete on retry        ok
+update with record lookalikes installs app and completes ok
+cleanup erases only the selected policy's ranges         ok
+JamBox clears its known resume-record sector             ok
+JamBox preserves all bytes outside app + record sector   ok
+  cleanup fault: record read
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: record erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: erase readback
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+  cleanup fault: ignored erase
+cleanup failure returns error without clearing RAM state ok
+cleanup failure leaves verified app and protected bytes  ok
+cleanup retry finishes without reprogramming the app     ok
+cleanup retry preserves all protected bytes              ok
+loader test passed

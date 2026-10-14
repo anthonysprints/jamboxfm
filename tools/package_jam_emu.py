@@ -25,6 +25,16 @@ BUILD = ROOT / "build"
 EMU = BUILD / "jam-emu"
 SITE = BUILD / "jambox-web"
 RUNTIME_FILES = ("index.html", "style.css", "app.js", "worklet.js", "jam-emu.wasm")
+# The public device tool only identifies firmware. Candidate bundles and
+# installation simulations are separate, unpublished build/test outputs.
+DEVICE_FILES = {
+    "device/index.html": "web/device/index.html",
+    "device/style.css": "web/device/style.css",
+    "device/app.js": "web/device/app.js",
+    "fm1ota.js": "web/fm1ota.js",
+    "fm1pkg.js": "web/fm1pkg.js",
+    "jam-device-policy.js": "web/jam-device-policy.js",
+}
 SOURCE_SUFFIXES = {".c", ".h", ".S", ".ld", ".py", ".json", ".sh", ".ps1", ".bat",
                    ".js", ".mjs", ".html", ".css", ".md", ".txt", ".ttf"}
 SOURCE_ROOTS = ("firmware", "tools", "tests", "web", "LICENSES")
@@ -107,9 +117,10 @@ def add_source_footer(page: str, standalone: bool, notices: dict[str, bytes]) ->
         license_link = f"<details><summary>Licenses and credits</summary>{licenses}</details>"
     else:
         license_link = '<a href="../LICENSES.html">Licenses and credits</a>'
+    device_link = '' if standalone else ' <span aria-hidden="true">·</span> <a href="../device/">Check your FM-1</a>'
     footer = (f'<aside aria-label="Source and licenses" style="max-width:70rem;margin:0 auto;padding:0 1rem 2rem;font:12px/1.5 Arial,sans-serif">'
               f'<a id="source-download" href="{source_link}" download="jambox-source.zip">Download corresponding source</a>'
-              f' <span aria-hidden="true">·</span> {license_link}</aside>\n')
+              f' <span aria-hidden="true">·</span> {license_link}{device_link}</aside>\n')
     return replace_one(r"</body\s*>", footer + "</body>", page, "closing body")
 
 
@@ -167,6 +178,7 @@ def main() -> None:
     standalone = standalone_html(runtime, source_zip, notices)
     site_entries = {"emu/" + name: data for name, data in runtime.items()}
     site_entries["emu/index.html"] = add_source_footer(runtime["index.html"].decode(), False, notices).encode()
+    site_entries.update({target: (ROOT / source).read_bytes() for target, source in DEVICE_FILES.items()})
     site_entries.update(notices)
     site_entries["index.html"] = ("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\">"
                                   "<meta http-equiv=\"refresh\" content=\"0;url=emu/\"><title>JamBoxFM</title>"

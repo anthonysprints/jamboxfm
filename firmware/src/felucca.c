@@ -17,10 +17,19 @@
 #define FELUCCA_OTA_RAMONLY 0
 #endif
 #include "app_policy.h"
+#if JAMBOX_PROTO
+#include "jam_identity.h"
+#endif
 #if JAMBOX_PROTO && !defined(FELUCCA_VERSION)
-#define FELUCCA_VERSION "JAMBOX DEV"
+#define FELUCCA_VERSION JAMBOX_NAME " " JAMBOX_RELEASE
 #endif
 #include <stdint.h>
+#if FELUCCA_OTA
+static uint8_t recovery_active;
+#if JAMBOX_PROTO
+#define JAMBOX_USB_RESCUE (recovery_active != 0u)
+#endif
+#endif
 #include "fm1_time.h"
 #include "fm1_sys.h"
 #include "fm1_irq.h"
@@ -43,7 +52,11 @@
 #include "slicer.c"          /* per-track SLICER insert, used by fx.c */
 #include "fx.c"
 #ifndef FELUCCA_ID
+#if JAMBOX_PROTO
+#define FELUCCA_ID JAMBOX_APP_ID
+#else
 #define FELUCCA_ID "FM-1_900"    /* package identity (build.py: the .fwsc marker string) */
+#endif
 #endif
 #ifndef FELUCCA_CDC
 #define FELUCCA_CDC 1            /* USB CDC-ACM serial console */
@@ -86,8 +99,12 @@
 #include "upreset.c"          /* user presets (RAM mirror; flash with FELUCCA_PERSIST) */
 #include "project.c"
 #if FELUCCA_OTA
-static uint8_t recovery_active;
+#if JAMBOX_PROTO
+#define OTA_IDENTITY (recovery_active ? JAMBOX_RESCUE_ID : FELUCCA_ID)
+#define OTA_JAMBOX_MODE (recovery_active ? JAMBOX_MODE_RESCUE : JAMBOX_MODE_APP)
+#else
 #define OTA_IDENTITY (recovery_active ? "FM-1_000" : FELUCCA_ID)
+#endif
 #include "ota.c"
 static void recovery_poll(void);
 static uint32_t ota_now_ms(void) { return fm1_ms; }

@@ -172,6 +172,24 @@ class DeploymentTests(unittest.TestCase):
                 with self.assertRaisesRegex(publish.DeploymentError, "Private or binary"):
                     publish.validate_site(site)
 
+    def test_device_page_must_match_corresponding_source(self):
+        payload = dict(self.payload)
+        payload["device/app.js"] += b"\n// changed after source packaging\n"
+        hashes(payload)
+        site = self.directory / "modified-device-tool"
+        write_site(site, payload)
+        with self.assertRaisesRegex(publish.DeploymentError, "differs from its corresponding source"):
+            publish.validate_site(site)
+
+    def test_candidate_firmware_cannot_enter_public_site(self):
+        payload = dict(self.payload)
+        payload["device/jambox-candidate.fwsc"] = b"unpublished device build"
+        hashes(payload)
+        site = self.directory / "candidate-leak"
+        write_site(site, payload)
+        with self.assertRaisesRegex(publish.DeploymentError, "exactly"):
+            publish.validate_site(site)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

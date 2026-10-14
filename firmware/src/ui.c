@@ -2,8 +2,15 @@
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
 /* Felucca user interface. Four columns map to KNOB 1..4. Rendering is lazy:
  * every element remembers what it last drew and is redrawn only on change. */
+#if JAMBOX_PROTO
+#include "jam_identity.h"
+#endif
 #ifndef FELUCCA_VERSION
+#if JAMBOX_PROTO
+#define FELUCCA_VERSION JAMBOX_NAME " " JAMBOX_RELEASE
+#else
 #define FELUCCA_VERSION "SLOOP 2.6"  /* the beat machine firmware for the FM-1 (based on Felucca) */
+#endif
 #endif
 static void project_save(uint32_t slot);
 static void arrangement_save(void);

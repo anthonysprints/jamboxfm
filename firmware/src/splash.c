@@ -1,4 +1,28 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
+#if JAMBOX_PROTO
+#include "jam_identity.h"
+/* Original JamBox vector/text splash. No upstream logo bitmap is included. */
+static void sloop_splash(void)
+{
+    uint32_t i;
+    static const uint8_t bars[4] = {34, 54, 42, 68};
+    static const uint16_t colors[4] = {RGB(225, 163, 92), RGB(144, 180, 151),
+                                        RGB(204, 133, 116), RGB(174, 164, 200)};
+    lcd_fill(0, 0, 240, 240, C_BLACK);
+    cv_begin(240, 120, C_BLACK);
+    for (i = 0; i < 4u; i++) {
+        cv_rect(49 + (int32_t)i * 38, 86 - bars[i], 26, bars[i], colors[i]);
+        cv_rect(49 + (int32_t)i * 38, 94, 26, 4, colors[i]);
+    }
+    cv_blit(0, 12);
+    cv_begin(240, 108, C_BLACK);
+    cv_text(120 - text_w(&FONT_L, "JAMBOXFM") / 2, 0, &FONT_L, "JAMBOXFM", C_WHITE);
+    cv_text(120 - text_w(&FONT_S, JAMBOX_RELEASE) / 2, 38, &FONT_S, JAMBOX_RELEASE, RGB(196, 196, 204));
+    cv_text(120 - text_w(&FONT_S, "TEMPORARY SESSION") / 2, 60, &FONT_S, "TEMPORARY SESSION", RGB(225, 163, 92));
+    cv_text(120 - text_w(&FONT_S, "SLOOP + FELUCCA") / 2, 88, &FONT_S, "SLOOP + FELUCCA", RGB(96, 96, 104));
+    cv_blit(0, 132);
+}
+#else
 /* SLOOP boot splash: the logo (tools/gen_logo.py -> sloop_logo.h: 16 colours, RLE runs of
  * (run - 1) << 4 | colour), drawn into the canvas in bands of at most 120 rows. */
 #include "sloop_logo.h"
@@ -33,3 +57,4 @@ static void sloop_splash(void)
     cv_text(120 - text_w(&FONT_S, "based on felucca") / 2, 18, &FONT_S, "based on felucca", RGB(96, 96, 104));
     cv_blit(0, 202);
 }
+#endif
