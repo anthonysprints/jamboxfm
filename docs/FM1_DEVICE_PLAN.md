@@ -138,13 +138,21 @@ No hardware installation or firmware release follows from these checks. Any futu
 
 ## Milestone 4: prepare and perform the first physical trial
 
-Owner: agent prepares build and test sheet; owner operates their FM-1 and local browser. This is the next milestone, and its physical gates are pending. Current installed Sloop version is still unknown; it is needed to select the supported transition and backup tools, not to continue software work. The milestone 3 device check can collect read-only inventory, but it does not authorize a write.
+Owner: agent prepares build and test sheet; owner operates their FM-1 and local browser. This is the next milestone, and its physical gates are pending. Read-only inventory now reports `FM-1_015`, and the owner confirms the original factory interface. Use factory V15 as the current baseline. The report establishes a successful identity exchange; it does not authenticate the installed bytes, hardware revision or recovery capability. Its `unknown` family and false capability flags mean the current checker has no audited factory profile, not that the device lacks updating. Installation remains disabled.
 
-Before the first write, record the actual firmware identity/version and computer/browser. The earlier screenshot suggests Windows; confirm before writing local instructions. Use the installed version's compatible editor to export the complete available backup: settings/calibration, working project and slots, presets, FM6 banks, user kits, MIDI mapping and user samples where supported. Validate lengths/checksums offline and retain the exact known-good Sloop package. An editor backup is not automatically a complete raw-flash image; inventory what it contains and what it omits. Keep personal backups off the public repository.
+Before the first write, record the actual firmware identity/version and computer/browser. The earlier screenshot suggests Windows; confirm before writing local instructions. Use the installed version's compatible editor to export the complete available backup: settings/calibration, working project and slots, presets, FM6 banks, user kits, MIDI mapping and user samples where supported. Do not assume the Sloop editor can back up factory data. First identify the factory tools and which settings/sounds they can export; record any missing backup capability. Validate available export lengths/checksums offline and retain the exact factory V15 return package. An editor backup is not automatically a complete raw-flash image; inventory what it contains and what it omits. Keep personal backups off the public repository.
+
+### Software follow-up for the confirmed factory baseline
+
+1. Obtain the manufacturer’s exact V15 `FM-1.fwsc` for private local validation. The inherited validator pins 699,956 bytes, product `FM-1_015`, SHA-256 `db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a`. The canonical file is not currently cached; older locally researched stock images are not substitutes. Do not republish manufacturer firmware.
+2. Audit stock V15 entry and exact return separately from the six existing JamBox/Sloop simulations. Add factory→JamBox and JamBox normal/rescue→factory tests only after validating the actual package and stock loader/flash behavior. The current `prepareReturnPackage` accepts only the pinned Sloop image; do not relabel V15 or broaden a numeric-ID allowlist to bypass it.
+3. Distinguish a reported stock identity from verified family/capability evidence in the read-only page. Keep installation disabled while adding any clearer factory explanation. A successful browser handshake is not a passed firmware-installation test.
+
+No interim Sloop installation or factory reset is required for this preparation. The intended first path is factory V15 → JamBox → factory V15; it remains a plan, not an approved transition. The previously tested Sloop matrix remains useful separate evidence.
 
 Establish two recovery levels explicitly:
 
-- **Normal app / app-rescue return:** a prepared, compatible Sloop package and tested installer path from our candidate, including OCT-minus rescue before synth startup.
+- **Normal app / app-rescue return:** the exact verified factory V15 package and an audited installer path from JamBox normal/rescue, including OCT-minus rescue before synth startup. Current JamBox policy only simulates return to Sloop 2.6; that does not cover factory return.
 - **Failure before app rescue:** a concrete ROM recovery route. The previously researched [FM-1 Transporter](https://github.com/kurogedelic/FM-1-transporter/tree/a632d923203170e3a08565f4056dbb3fd3d65ca5) uses a separate XIAO RP2040 connection and loader; it is not just the normal USB cable or a browser button. Its documented setup and host support must be checked for the owner's machine. Neither this session nor FM-1-RE's reflash record demonstrates recovery on the owner's unit. If that equipment/path is unavailable, keep early bring-up on a development/spare device rather than calling the owner's only unit covered.
 
 If Transporter is the chosen fallback, obtain and verify a device-specific full raw flash dump before the first firmware write and retain it privately. Its writer requires that reference as `--ref backup.bin`; an editor project export cannot substitute for it. Preparing that dump itself requires the appropriate adapter/setup, so it is part of establishing recovery, not a step the cloud environment can perform remotely.
@@ -153,12 +161,12 @@ With the candidate package, source/checksum, compatible backup and actual recove
 
 First-session checklist:
 
-1. Read the running Sloop identity, preserve the backup and confirm its package; test the current device as a baseline before changing it.
+1. Reconfirm factory V15 identity, preserve the available backup and verify its return package; test the current device as a baseline before changing it.
 2. Install the JamBox candidate; verify its actual post-restart identity, boot screen and fresh Dusty session.
 3. Check all 27 keys, 14 buttons, seven encoders, MASTER, octave controls, display and LED behavior. Verify D-sharp major/SNAP: D-sharp does not light E; E shows its correction to D-sharp.
 4. Start drums, record two chords, add bass, play Lead and turn every exposed sound/effect control. Check release, stop/start, mute and sustained/repeated notes.
 5. Check speaker/headphone audio, USB MIDI, TRS MIDI, USB audio and cable reconnect. Verify only the advertised USB sample rates.
-6. Exercise application rescue normally, reinstall the same candidate, then return to the exact known-good Sloop package. Check backed-up data and calibration; restore only through the matching supported tools if needed.
+6. Exercise application rescue normally, reinstall the same candidate, then return to the exact verified factory V15 package. Check backed-up data and calibration; restore only through the matching supported tools if needed.
 
 No deliberate power-cut test on the owner's only instrument. Test transfer-failure cases in simulation first; real destructive/interruption testing belongs on recoverable development hardware.
 
@@ -177,7 +185,7 @@ Only then label a version as a regular device release, with an explicit supporte
 1. **Toolchain/build evidence:** target builds and clean-source checks completed; retain the inherited IRQ/PWA failures and compiler provenance.
 2. **Platform isolation:** software implemented; final build/test evidence covers separate update flash, disabled app persistence, write boundaries, retained state, calibration and rescue. Hardware remains untested.
 3. **Candidate packaging:** software implemented: JamBox identity/splash, manifest/source/notices and build receipts, strict host framing, simulated transition matrix and read-only identification page. Exact integration outcomes are retained in candidate evidence; installation remains disabled.
-4. **Hardware trial — next:** inventory/backup/recovery setup, baseline observations, separately prepared candidate installation, functional/performance checks and return to Sloop. All physical validation remains pending.
+4. **Hardware trial — next:** inventory/backup/recovery setup, baseline observations, separately prepared candidate installation, functional/performance checks and return to the verified original firmware (factory V15 for this unit). Read-only identity has been collected; JamBox hardware validation remains pending.
 5. **Persistence/release:** schema, power-cycle checks, supported transitions and normal release packaging.
 
 The first three batches are work the agent can prepare without asking the owner to code. The physical connection and observations in batch 4 require the owner or a development device. There is no hardware completion date implied by this plan; compilation and measurements determine whether optimization or driver fixes are needed.
