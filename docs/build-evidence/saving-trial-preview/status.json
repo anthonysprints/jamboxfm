@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "isolated-manual-saving-chrome-trial",
+  "branch": "next/usability-and-saving",
+  "implementation_commit": "73df99c494c7231c9d5737e393655fd2b43da1b3",
+  "stable_main": "99cbf62495d9f021be80ee3d20fcef739dd8c93e",
+  "preview": "https://anthonysprints.github.io/jamboxfm/preview/saving/install/",
+  "publication": {
+    "action": "published",
+    "branch": "refs/heads/gh-pages",
+    "bytes": 5787067,
+    "commit": "a6e8a2320cc30641a620f293b903d10aeb25fe96",
+    "destination": "https://github.com/anthonysprints/jamboxfm.git",
+    "files": 29,
+    "package_sha256": "dc99fee07f7b3eedb5f301a62557102e8082417a7edd974b40b0ecc54fa75352",
+    "parent": "c4896b796312e8b26a9c01206d25bdc2d8b93589",
+    "prefix": "preview/saving/",
+    "protected_paths": 56,
+    "tree": "4b2709edb59c1341f2922a81d980a0afa8d04ba6"
+  },
+  "firmware": {
+    "file": "jamboxfm-recovery-0.1.0-dev.fwsc",
+    "sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7",
+    "size_bytes": 611255
+  },
+  "checks": {
+    "normal_policy_trial_node": {
+      "passed": 35,
+      "failed": 0,
+      "skipped": 0
+    },
+    "normal_package_python": 13,
+    "recovery_package_python": 18,
+    "scoped_publisher_python": 16,
+    "browser_unique_cases": 30,
+    "final_browser_javascript_console_errors": 0,
+    "final_browser_open_midi_ports_and_listeners": 0,
+    "physical_device_executed": false,
+    "private_backup_pair_accepted_by_browser_validator": true
+  },
+  "hardware_validated": false,
+  "automatic_saving": false,
+  "normal_installer_changed": false,
+  "private_backup_uploaded": false,
+  "pages_http_status": "cloud proxy CONNECT403; live Pages not independently confirmed",
+  "notes": [
+    "Actual upload is a normal JamBox-to-JamBox development update, not factory/rescue installation.",
+    "Existing local backup report/dump matching does not establish freshness, physical device binding or inclusion of current RAM music.",
+    "Current temporary jam is discarded by updating; the page requires explicit acknowledgement.",
+    "Git and raw repository HTTP publication verified; these are separate from Pages availability and device saving."
+  ],
+  "local_log_sha256": {
+    "build/jam-recovery-preview-final-target.log": "4200f856a235f0a7324eb6ee5c1d2837356f516ad27362871bc2427b32500a65",
+    "build/jam-recovery-preview-final-package.log": "8131183730d3de8ea0b5716652d222d48a33189380dd67df8f5de8a45027d105",
+    "build/jam-recovery-normal-policy-regression.log": "a056ad3bedd3a6d317c250d9a7e24e9b8d1134c659c44ea561f500b9c931a47d",
+    "build/jam-recovery-preview-package-tests.log": "5cfbe4835195d41a25a30b8f6988da451de059b542a8d9a5140589b3e514a8f5",
+    "build/jam-recovery-preview-publisher-tests.log": "34c7f377b6fa86a5928cde2396140d7b723874073de809cc1e53dc3688ab4952",
+    "build/jam-recovery-preview-normal-package-tests.log": "98f4941d6b3d574c5ddef86dd7d9039720925a750e182de07d7663d7d7242139"
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "file": "SHA256SUMS",
+    "status": 200,
+    "matches": true,
+    "sha256": "dc99fee07f7b3eedb5f301a62557102e8082417a7edd974b40b0ecc54fa75352"
+  },
+  {
+    "file": "install/index.html",
+    "status": 200,
+    "matches": true,
+    "sha256": "1ad426328f7e761f105332e611989381c940242cd9a6eb302fc607bed699fdda"
+  },
+  {
+    "file": "jam-recovery-policy.js",
+    "status": 200,
+    "matches": true,
+    "sha256": "7fb658869b78307e311b7e1a9a8c7f6bb9f4c70e32c04b537ec05f066a0e42c5"
+  },
+  {
+    "file": "firmware/trial.json",
+    "status": 200,
+    "matches": true,
+    "sha256": "f58ea387de371bdc27e72dd47f248e539f8c712b90677980bdb78fbdc8f15faf"
+  },
+  {
+    "file": "firmware/manifest.json",
+    "status": 200,
+    "matches": true,
+    "sha256": "73f934e5ef579b2594a164675f26957b3213251028fccbe2aa5b86ab331f104a"
+  }
+]

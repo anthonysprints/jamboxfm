@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "jamboxfm-recovery-installer-browser-verification",
+  "recorded_at": "2026-10-15T04:41:50.216722+00:00",
+  "source_revision": "73df99c494c7231c9d5737e393655fd2b43da1b3",
+  "hardware_validated": false,
+  "physical_flash_performed": false,
+  "device_firmware_executed": false,
+  "final_preview_checksums_sha256": "dc99fee07f7b3eedb5f301a62557102e8082417a7edd974b40b0ecc54fa75352",
+  "firmware_sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7",
+  "runs": [
+    {
+      "kind": "full-staged-browser",
+      "passed_cases": 29,
+      "status": "passed",
+      "note": "Before final source-provenance repack and backup-copy simplification; same firmware and controller."
+    },
+    {
+      "kind": "final-staged-focused-browser",
+      "passed_cases": 2,
+      "status": "passed",
+      "cases": [
+        "badLoaderRecovery blocks installation before MIDI writes",
+        "mobile layout and labelled local-only backup actions"
+      ]
+    },
+    {
+      "kind": "final-staged-success-and-desktop",
+      "passed_cases": 1,
+      "status": "passed",
+      "cases": [
+        "complete normal to loader to normal transfer and private report"
+      ]
+    }
+  ],
+  "unique_cases_passed": 30,
+  "assertions": {
+    "every_firmware_byte_checked": true,
+    "normal_loader_normal_transition": true,
+    "no_automatic_retry_after_started_failure": true,
+    "final_identity_required": true,
+    "backup_proof_and_disposable_jam_ack_required": true,
+    "ineligible_firmware_refused": true,
+    "manifest_hash_package_and_receipt_gates_checked": true,
+    "ambiguous_stale_and_disconnected_pairs_refused": true,
+    "browser_javascript_errors": 0,
+    "browser_console_errors": 0,
+    "leaked_midi_ports": 0,
+    "leaked_midi_listeners": 0,
+    "network_requests_local_get_only": true,
+    "backup_uploaded": false
+  },
+  "screenshots": [
+    "desktop-ready.png",
+    "desktop-complete.png",
+    "mobile-ready.png"
+  ]
+}
