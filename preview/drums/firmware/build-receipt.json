@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "99f140fa37d8bfa5a2424181c0f0b968066628c7af032e7d5d8a1f60b71d8737",
-      "size_bytes": 577312
+      "sha256": "1494fe98cdfa0ec2f19499e719fba5bfd68e07fd20dfb99248e97f2d0483fc1a",
+      "size_bytes": 579652
     },
     "felucca.elf": {
-      "sha256": "142cbd1d3a4adbb14d10c74a5a97ddb7fbf71750edb10bba532c8752d27e2baa",
-      "size_bytes": 619064
+      "sha256": "39247bb0654625a5f117ead8b8198b6f3c90dffcee72ace1f9565d71505a0eeb",
+      "size_bytes": 621980
     },
     "felucca.fwsc": {
-      "sha256": "77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90",
+      "sha256": "a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -528,11 +528,12 @@
     "firmware/src/uac_fir.h": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56",
     "firmware/src/ui.c": "fc2c0f10a5ecc95ca1e2cfa73be0a6d49f37a942e129763d36b9a5a3e268d616",
     "firmware/src/ui_draw.c": "304d833f2aed88c3a547a568aea2915a0177f34b1ecbe8a560dfa33d7212a448",
-    "firmware/src/ui_input.c": "c571e9febae21e6d9f24dc242d69f0b8d751e71fc085d86062bf04cfc8f1a261",
+    "firmware/src/ui_drum_sound.c": "c132502e8efd4aef676bbbd784d286d86ae0fca620975eec398062208c2169e5",
+    "firmware/src/ui_input.c": "397a7036f520cd4e4b80719fb0e2709ce5a0c4b1668104a6cdb2a2d0ca2b3487",
     "firmware/src/ui_layers.c": "ccc61b632ac7fa56e308ba5fe17ee429220036587848e0a649b92fe63f490a29",
     "firmware/src/ui_menu.c": "926dc2024bc0e5737ce81508e7eb011588a5de18d39d8986a204d8dec048b65c",
     "firmware/src/ui_song.c": "53fafd8ca8bda2c0ee8ecf37be2e51e60e2a3b991070feeb90b8dd025f529d3e",
-    "firmware/src/ui_studio.c": "f914200e67ddfe2eb4a7da67768b2d7eaf9843801da2b036de41c7b9a0e9b8c8",
+    "firmware/src/ui_studio.c": "5b6e27d46cb95cb7f1e9d4331616939bc1eb8372dc00ee9cd32f6016aeb4f88c",
     "firmware/src/ui_vis.c": "aab57d452245a1a758c660ff270de42db1ebd6ce7e3876c2f96ffaaf0a995049",
     "firmware/src/upreset.c": "873970da0a924727da63182f458c0dc22e758b8f065c8a13d596887ffcddbcbf",
     "firmware/src/usb.c": "50afa91200b28ba17537c4ea6a10bbb7d4a925c6dbdc8512e5f7441c2986dd2a",
@@ -584,7 +585,7 @@
   "source": {
     "dirty": false,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "d41e979dd150f5893cc8b5719b58fe5b0f28b7cb"
+    "revision": "4c04594dd00c29892b1df0ce8b639191d5815644"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
