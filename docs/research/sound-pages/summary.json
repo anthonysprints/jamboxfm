@@ -1,0 +1,30 @@
+{
+  "source_revision": "b1662b65a3e49817146bf7fd3a9f6454261817c7",
+  "firmware_modified": false,
+  "native_host_only": true,
+  "icons_enabled_in_fixture": true,
+  "device_icons_enabled": false,
+  "curated_sounds": 36,
+  "engine_sound_counts": {
+    "ANALOG": 19,
+    "DIGITAL": 6,
+    "PHASE": 3,
+    "SAMPLE": 3,
+    "WHEEL": 2,
+    "FM6": 3
+  },
+  "page_records": 595,
+  "paired_audio_comparisons": 23,
+  "renders": 46,
+  "changed_comparisons": 10,
+  "unchanged_comparisons": 13,
+  "all_render_pairs_non_silent": true,
+  "files": {
+    "inventory.tsv": "f8f150515b0b405af07d0a728f160b32988e319e0087e31a56d8e6c89f4f7085",
+    "audio.tsv": "3884d7f0877d0aa85850ed44611e0b9745e63e84fa4247e3387fd354a5c78ea8",
+    "routes.txt": "12e31f6588d58dd0b1644df4c19be3fdfdaa8fd3dde346a8e3c4bd961eae2101"
+  },
+  "hardware_tested": false,
+  "publication_performed": false,
+  "audio_repeat_exact_report_match": true
+}

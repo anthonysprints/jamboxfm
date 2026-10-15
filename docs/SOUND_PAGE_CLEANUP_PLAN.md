@@ -79,3 +79,22 @@ merely because its name is unfamiliar.
 
 Related existing backlog: #6 controls match the sound; #9 everyday navigation;
 #10 staged usability roadmap. This local plan does not change GitHub issue status.
+
+## Research follow-up: current recommendation
+
+The [baseline findings](research/sound-pages/FINDINGS.md) now include all 36
+curated sounds, 595 reachable page records, 23 paired production-DSP renders
+and real panel navigation observations. Six engines cover the current curated
+bank; advanced-browser-only engines still need review before generic changes.
+
+The evidence changes the implementation priority: first make the ENV and
+modulation controls accurately reflect the selected engine, especially FM6's
+patch-owned envelopes. Preserve working modulation, organ ADSR, post-filters,
+voice settings and deep editing. Then mock up clearer first EDIT groupings for
+one engine at a time. Keep SELECT/page behavior unchanged in the first slice.
+
+The findings distinguish unused destinations, conditionally effective controls,
+working controls with misleading labels, deliberate blank slots and shared
+parameter aliases. No firmware, installer, save format or published trial was
+changed by this research. The probe source and repeatable runner are under
+`docs/research/probes/`; their outputs stay in `build/sound-page-research/`.

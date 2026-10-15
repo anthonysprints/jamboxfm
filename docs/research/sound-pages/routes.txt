@@ -1,0 +1,7 @@
+EDIT first: OSC / BPM 88
+SELECT +1: FLT / BPM 88
+HOME then EDIT: FLT (remembered)
+next EDIT: FILTER
+same part switches to DIGITAL: MOD / shown=1
+HOME SELECT +1: BPM 89
+EDIT page switches to Drums: home=1 scope=2 page=EDIT 2
