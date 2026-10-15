@@ -84,12 +84,19 @@ async function runCase(name, config, body, options = {}) {
       await page.route('**/firmware/trial.json', route => route.fulfill({ status: 200, body: JSON.stringify({ ...trial, manifest_sha256: digest(body) }) }));
     }
     await page.goto(installURL);
-    const drumTrial = await page.locator('html').getAttribute('data-trial') === 'drums';
+    const trialKind = await page.locator('html').getAttribute('data-trial');
+    const drumTrial = trialKind === 'drums';
+    const soundTrial = trialKind === 'sound';
+    if (soundTrial) {
+      assert.match(await page.locator('#page-title').textContent(), /sound/i);
+      assert.match(await page.locator('#install-device').textContent(), /sound controls trial/i);
+    }
     if (drumTrial) {
       assert.match(await page.locator('#page-title').textContent(), /beat/i);
       assert.match(await page.locator('#install-device').textContent(), /drum trial/i);
     }
     await page.waitForFunction(() => !document.getElementById('firmware-label').textContent.includes('Checking'));
+    if (soundTrial && await page.locator('#firmware-state').getAttribute('data-ready') === 'true') assert.match(await page.locator('#firmware-label').textContent(), /sound controls trial/i);
     assert.deepEqual(await page.evaluate(() => fakeMIDI.snapshot().permissions), [], 'MIDI permission requires a click');
     assert(await page.locator('#install-device').isDisabled());
     await body(page);
@@ -104,6 +111,7 @@ async function connect(page) {
   await page.locator('#connect-device').click();
   await page.waitForFunction(() => !document.getElementById('connect-device').disabled);
   assert.deepEqual((await page.evaluate(() => fakeMIDI.snapshot())).upgrades, [], 'inspection never starts an update');
+  if (await page.locator('html').getAttribute('data-trial') === 'sound' && await page.locator('#device-state').getAttribute('data-ready') === 'true') assert.match(await page.locator('#device-label').textContent(), /sound controls trial/i);
 }
 async function backup(page) {
   await page.locator('#backup-report').setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: backupReport });
@@ -231,6 +239,10 @@ try {
   await runCase('complete normal to loader to normal transfer and private report', {}, async page => {
     await ready(page); await page.screenshot({ path: resolve(evidence, 'desktop-ready.png'), fullPage: true });
     await page.locator('#install-device').click(); const report=await result(page);
+    if (await page.locator('html').getAttribute('data-trial') === 'sound') {
+      assert.match(await page.locator('#result-title').textContent(), /sound controls trial/i);
+      assert.match(await page.locator('#result-guidance').textContent(), /SOFT PAD/);
+    }
     assert.equal(report.outcome,'completed');assert.equal(report.finalIdentity,'FM-1_700');assert.equal(report.sourceIdentity,'FM-1_700');
     assert.equal(report.transition,'jambox-normal-to-jambox');assert.equal(report.hardwareValidated,false);assert.equal(report.automaticSaving,false);
     assert.equal(report.firmwareSHA256,digest(firmware));assert(report.stages.some(entry=>entry.stage==='done'));
@@ -255,8 +267,8 @@ try {
     await ready(page);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     assert.equal(await page.locator('#status').getAttribute('role'),'status');assert.equal(await page.locator('#status').getAttribute('aria-live'),'polite');
     assert.equal(await page.locator('label[for="backup-report"]').count(),1);assert.equal(await page.locator('label[for="backup-flash"]').count(),1);
-    const drumTrial = await page.locator('html').getAttribute('data-trial') === 'drums';
-    assert.match(await page.locator('#disposable-jam').locator('..').textContent(), drumTrial ? /discards any unsaved edits/ : /loses its current temporary music/);
+    const soundOrDrum = ['drums', 'sound'].includes(await page.locator('html').getAttribute('data-trial'));
+    assert.match(await page.locator('#disposable-jam').locator('..').textContent(), soundOrDrum ? /discards any unsaved edits/ : /loses its current temporary music/);
     await page.screenshot({path:resolve(evidence,'mobile-ready.png'),fullPage:true});
     await page.setViewportSize({width:320,height:740});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await noOpenLinks(page);
   }, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });

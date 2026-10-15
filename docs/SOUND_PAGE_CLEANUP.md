@@ -1,8 +1,8 @@
 # Sound controls that match the engine: first implementation
 
 October 15, 2026. Development branch: `next/sound-page-cleanup`.
-This builds on Trial 05 without updating the normal installer, live browser
-instrument or active drum preview. Physical device acceptance is pending.
+This builds on the adopted Trial 05 drum editor. The normal installer now
+includes all drum changes; this newer sound-page experiment stays separate. Physical device acceptance is pending.
 The [research](research/sound-pages/FINDINGS.md) explains the source/audio audit;
 this document describes the implemented first slice.
 
@@ -113,5 +113,5 @@ production AudioWorklet browser checks and a target build supplement them.
 See [build evidence](build-evidence/sound-page-cleanup/README.md) for exact
 counts, build revision, memory figures and remaining limits.
 
-No physical FM-1 is accessed by these checks. No new installer was published;
-the owner can keep testing Trial 05 while this candidate stays isolated.
+No physical FM-1 is accessed by these checks. The owner requested a [separate test installer](SOUND_PAGE_TEST_INSTALLER.md);
+its publication evidence records delivery independently of the source/build.
