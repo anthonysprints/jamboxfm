@@ -696,11 +696,24 @@ static void layer_tap(uint32_t layer)
         break;
     case LY_ERASE:
     case LY_STEP:
+#if JAMBOX_PROTO
+        if (layer == LY_STEP && is_drum(TSEL) && (rec_wait || ft_on || ci_on)) {
+            ui_message("FINISH TAKE FIRST");           /* The recorder owns the keyboard until its overlay closes. */
+            break;
+        }
+#endif
         if (on_drum_page()) {                             /* DRUMS: GRID <-> KIT */
             drum_page = (uint8_t)((drum_page + 1u) % 2u);
             ui.force = 1;
             break;
         }
+#if JAMBOX_PROTO
+        if (layer == LY_STEP && is_drum(TSEL)) {
+            drum_page = 0;                              /* SEQ enters the drum grid from any ordinary page. */
+            studio_open(SC_DRUM);
+            break;
+        }
+#endif
         if (!ui.home && cur_page()->scope == SC_TRK && is_drum(TSEL)) {
             studio_open(SC_DRUM);
             break;
@@ -1000,7 +1013,11 @@ static int jam_home_navigation_free(void)
 }
 #endif
 
+#if JAMBOX_PROTO
+static void ui_input_process(void)
+#else
 static void ui_input(void)
+#endif
 {
     uint32_t pressed = fm1_input_edges(0), notes = fm1_input_note_edges(), now = fm1_ticks(), id, b, k;
 #if JAMBOX_PROTO
@@ -1226,6 +1243,16 @@ static void ui_input(void)
         }
     }
 }
+
+#if JAMBOX_PROTO
+static void ui_input(void)
+{
+    ui_input_process();
+    /* Navigation and modal handlers can return early. Publish the resulting
+     * keyboard job now, before the next audio block sees another key edge. */
+    kb_grid = (uint8_t)grid_keys_on();
+}
+#endif
 
 /* ---------------------------------------------------- panel setup --- */
 /* 30 s without input: give up and keep the old table (a stuck key cannot hang the boot) */

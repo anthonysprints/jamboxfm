@@ -142,6 +142,12 @@ static void rec_toggle(void)
         return;
     }
     arrangement_enabled = 0;
+#if JAMBOX_PROTO
+    /* Recording uses playable pads, not the grid's step keys. Return before
+     * arming so the first hit and every following hit keep the same job. */
+    if (on_drum_page() && !drum_page)
+        go_home();
+#endif
     if (song.playing)
         rec_begin();                    /* playing: record now */
     else
@@ -465,7 +471,18 @@ static const uint8_t LV_UP[4] = {LV_GHOST, LV_SOFT, LV_NORM, LV_HARD};
 static uint32_t lvl_rank(uint32_t lvl) { return lvl == LV_GHOST ? 0u : lvl == LV_SOFT ? 1u : lvl == LV_NORM ? 2u : 3u; }
 
 /* the GRID page shown, no layer held: its keys are steps (seq.c kb_grid) */
-static int grid_keys_on(void) { return on_drum_page() && !drum_page && song.sel == TRK_DRUM && !ui.menu; }
+static int grid_keys_on(void)
+{
+#if JAMBOX_PROTO
+    if (ui.hold_kind || rec_wait || ft_on || ci_on)
+        return 0;
+#if JAMBOX_RECOVERY
+    if (ui.recovery_screen || jam_recovery_ui_modal)
+        return 0;
+#endif
+#endif
+    return on_drum_page() && !drum_page && song.sel == TRK_DRUM && !ui.menu;
+}
 /* a key down on the GRID page: the white keys are the 16 steps of this page of steps for the sound of
  * KNOB 1 — an empty one is set (NORM, the sound heard), a set one cleared; the first four black keys
  * pick the page (steps 1-16, 17-32, 33-48, 49-64), as in the SEQ layer. The cursor follows */

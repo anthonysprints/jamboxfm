@@ -43,6 +43,13 @@ every stable root file and all other paths/modes must remain identical. The
 full-site production publisher is still prohibited for development work. A Pages push
 does not establish live HTTP availability or physical device validation.
 
+The owner also approved the staged drum workflow. Its first entry/recording
+increment has a separate `preview/drums/` trial. Use only
+`tools/package_jam_drums_preview.py` and `tools/publish_jam_drums_preview.py`,
+following `docs/DRUM_GRID_TRIAL.md`. Preserve the normal installer, emulator,
+`preview/saving/` and every other outside path/mode. Owner device feedback is
+still required before adopting that increment in the normal installer.
+
 The owner chose manual saving for the current product. Keep automatic saving
 disabled and outside the active plan unless the owner explicitly reopens it.
 The saved checkpoint changes only through an intentional Save now; unsaved

@@ -7,6 +7,10 @@ behavior changes are included. Manual saving remains intentional; autosave is of
 The owner's goal is to lay out beats, play them live and explore sounds without
 remembering hidden screens. Preserve the working four-part jam and useful depth.
 
+Implementation follow-up: [direct GRID trial](DRUM_GRID_TRIAL.md) covers only the
+first entry/keyboard-ownership increment. The investigation and screenshots below
+describe the preceding baseline; later control/layout proposals remain separate.
+
 ## Earlier ideas recovered from GitHub
 
 - [#5: useful drum navigation](https://github.com/anthonysprints/jamboxfm/issues/5):

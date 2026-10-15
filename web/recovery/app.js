@@ -35,6 +35,7 @@ export function mountRecoveryPage({
     'progress-card', 'progress-title', 'progress-detail', 'stage-check', 'stage-loader', 'stage-write',
     'stage-return', 'backup-report', 'backup-flash', 'backup-state', 'backup-label', 'disposable-jam', 'result-card', 'result-title', 'result-eyebrow', 'result-guidance', 'save-report', 'report-details'];
   const ui = Object.fromEntries(ids.map(id => [id, doc.getElementById(id)]));
+  const drumTrial = doc.documentElement?.dataset?.trial === 'drums';
   let access = null, installer = null, bundle = null, pairs = [], observation = null;
   let operation = null, permissionPending = false, bundlePending = false, attempted = false, success = false;
   let backup = null, backupPending = false, backupGeneration = 0;
@@ -57,7 +58,7 @@ export function mountRecoveryPage({
     ui['connect-device'].disabled = !requestMIDIAccess || busy || started();
     ui['midi-pair'].disabled = busy || started();
     ui['install-device'].disabled = busy || started() || !bundle || !observation?.eligible || pairs.length !== 1 || !selectedPair() || !backup || backupPending || !ui['disposable-jam'].checked;
-    ui['install-device'].textContent = 'Install the saving trial →';
+    ui['install-device'].textContent = drumTrial ? 'Install the drum grid trial →' : 'Install the saving trial →';
     for (const id of ['backup-report', 'backup-flash', 'disposable-jam']) ui[id].disabled = busy || started();
     ui['cancel-prepare'].hidden = !operation || started();
     ui['reload-firmware'].disabled = busy || bundlePending || started();
@@ -114,7 +115,7 @@ export function mountRecoveryPage({
       const loaded = await loadBundle({ baseURL: new URL('../firmware/', doc.baseURI), signal: bundleAbort.signal });
       if (disposed) return;
       bundle = loaded;
-      ui['firmware-label'].textContent = `Saving trial ${loaded.version} · firmware and build evidence verified`;
+      ui['firmware-label'].textContent = `${drumTrial ? 'Drum grid trial' : 'Saving trial'} ${loaded.version} · firmware and build evidence verified`;
       ui['firmware-state'].dataset.ready = 'true';
     } catch (error) {
       if (disposed) return;
@@ -139,7 +140,7 @@ export function mountRecoveryPage({
       ui['device-state'].dataset.ready = String(observation.eligible);
       ui['device-state'].dataset.error = String(!observation.eligible);
       ui['device-label'].textContent = multiple ? 'More than one matching MIDI device · disconnect the others' :
-        observation.eligible ? 'JamBoxFM · ready for the saving trial' :
+        observation.eligible ? (drumTrial ? 'JamBoxFM · ready for the drum grid trial' : 'JamBoxFM · ready for the saving trial') :
         `${safeIdentity(result.identity) || 'Unconfirmed firmware'} · requires a running supported JamBox`;
       status(multiple ? 'Connect only one FM-1 for this trial. Disconnect other matching MIDI devices, then check the connection again.' :
         observation.eligible ? 'JamBox is connected. Check your recovery backup below, then start with a disposable jam.' :
@@ -216,9 +217,11 @@ export function mountRecoveryPage({
     ui['report-details'].textContent = JSON.stringify(report, null, 2);
     ui['result-card'].dataset.outcome = outcome; ui['result-card'].hidden = false;
     if (outcome === 'completed') {
-      ui['result-title'].textContent = 'The saving trial is on your JamBox.';
+      ui['result-title'].textContent = drumTrial ? 'The drum grid trial is on your JamBox.' : 'The saving trial is on your JamBox.';
       ui['result-eyebrow'].textContent = 'JAMBOXFM IDENTIFIED';
-      ui['result-guidance'].textContent = 'The FM-1 returned as JamBoxFM. This confirms its firmware response; saving still needs your device check. Start at low volume, check the controls, then follow the Save → restart checklist below. Automatic saving is off.';
+      ui['result-guidance'].textContent = drumTrial
+        ? 'The FM-1 returned as JamBoxFM. This confirms its firmware response; drum navigation still needs your device check. Select Drums and tap SEQ, then follow the drum grid checklist below. Manual saving remains available and automatic saving is off.'
+        : 'The FM-1 returned as JamBoxFM. This confirms its firmware response; saving still needs your device check. Start at low volume, check the controls, then follow the Save → restart checklist below. Automatic saving is off.';
       ui['progress-title'].textContent = 'JamBoxFM is running.';
       ui['progress-detail'].textContent = 'Transfer and firmware identity confirmed. Try the sound and controls on your instrument.';
       for (const id of ['stage-check', 'stage-loader', 'stage-write', 'stage-return']) {

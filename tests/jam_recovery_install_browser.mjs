@@ -32,7 +32,7 @@ const backupFlash = Buffer.alloc(1048576, 0xa7); // Synthetic local-file fixture
 const backupReport = Buffer.from(JSON.stringify({ tool: 'MvaveFM1Unbricker fm1_unbrick.py 1.1.0',
   device: { vendor: 'WL82', product: 'UBOOT1.00' }, chip_key: '0x980f', flash_id: '0x856014',
   full_backup: 'full-flash-before.bin', backup_sha256: digest(backupFlash) }));
-const evidence = resolve('build/jam-recovery-install-evidence');
+const evidence = resolve(process.env.JAM_RECOVERY_EVIDENCE_DIR || 'build/jam-recovery-install-evidence');
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
 const server = createServer(async (request, response) => {
   try {
@@ -84,6 +84,11 @@ async function runCase(name, config, body, options = {}) {
       await page.route('**/firmware/trial.json', route => route.fulfill({ status: 200, body: JSON.stringify({ ...trial, manifest_sha256: digest(body) }) }));
     }
     await page.goto(installURL);
+    const drumTrial = await page.locator('html').getAttribute('data-trial') === 'drums';
+    if (drumTrial) {
+      assert.match(await page.locator('#page-title').textContent(), /beat/i);
+      assert.match(await page.locator('#install-device').textContent(), /drum grid trial/i);
+    }
     await page.waitForFunction(() => !document.getElementById('firmware-label').textContent.includes('Checking'));
     assert.deepEqual(await page.evaluate(() => fakeMIDI.snapshot().permissions), [], 'MIDI permission requires a click');
     assert(await page.locator('#install-device').isDisabled());
@@ -250,11 +255,12 @@ try {
     await ready(page);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     assert.equal(await page.locator('#status').getAttribute('role'),'status');assert.equal(await page.locator('#status').getAttribute('aria-live'),'polite');
     assert.equal(await page.locator('label[for="backup-report"]').count(),1);assert.equal(await page.locator('label[for="backup-flash"]').count(),1);
-    assert.match(await page.locator('#disposable-jam').locator('..').textContent(),/loses its current temporary music/);
+    const drumTrial = await page.locator('html').getAttribute('data-trial') === 'drums';
+    assert.match(await page.locator('#disposable-jam').locator('..').textContent(), drumTrial ? /discards any unsaved edits/ : /loses its current temporary music/);
     await page.screenshot({path:resolve(evidence,'mobile-ready.png'),fullPage:true});
     await page.setViewportSize({width:320,height:740});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await noOpenLinks(page);
   }, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   assert.deepEqual(errors,[],'no browser JavaScript or console errors');
   assert(network.every(request=>request.method==='GET'&&request.url.startsWith(address+'/')),'all network requests are local GET; no backup upload');
-  console.log(`Recovery installer: ${passed} Chromium cases passed. Wire simulation only; physical installation and saving remain unverified. Screenshots: ${evidence}`);
+  console.log(`Recovery-profile installer: ${passed} Chromium cases passed. Wire simulation only; physical installation and trial behavior remain unverified. Screenshots: ${evidence}`);
 } finally { await browser?.close(); await new Promise(resolve=>server.close(resolve)); }
