@@ -39,6 +39,14 @@ const idle = page => page.waitForFunction(() => globalThis.jamEmu.state &&
   !globalThis.jamEmu.inFlight && !globalThis.jamEmu.pending.length);
 async function tap(page, id) { await button(page, id).click({ delay: 70 }); await idle(page); }
 async function hit(page, id = 2) { await key(page, id).click({ delay: 45 }); await idle(page); }
+async function audition(page, expectedEvents, message) {
+  // The worklet publishes a fresh peak each frame. Wait for the previous pad's
+  // tail to finish so an earlier hit cannot satisfy the audio assertion.
+  await page.waitForFunction(() => globalThis.jamEmu.peak < 0.001);
+  await hit(page);
+  await page.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
+  assert.deepEqual((await state(page)).events, expectedEvents, message);
+}
 async function turn(page, id, direction) {
   await page.locator(`[role="slider"][data-encoder="${id}"]`).focus();
   await page.keyboard.press(direction);
@@ -140,7 +148,7 @@ try {
     await hit(page);
     await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
 
-    await tap(page, 4); // EDIT is the explicit GRID ↔ KIT switch.
+    await tap(page, 4); // EDIT always opens playable KIT SOUND.
     const kitScreen = await changedScreen(page, gridScreen);
     assert.equal((await state(page)).page, gridPage, 'KIT remains inside the dedicated drum workspace');
     await turn(page, 0, 'ArrowUp');
@@ -167,6 +175,10 @@ try {
     assert.deepEqual((await state(page)).events, initial.events, 'EDIT returns to playable KIT');
     await tap(page, 4);
     await hit(page);
+    assert.deepEqual((await state(page)).events, initial.events,
+      'repeated EDIT stays on KIT SOUND and keeps keys playing pads');
+    await tap(page, 9);
+    await hit(page);
     await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
     await hit(page);
     await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
@@ -184,9 +196,9 @@ try {
     assert.deepEqual((await state(page)).events, initial.events, 'immediate HOME return restores playable pads');
     await page.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
 
-    await tap(page, 2); // Real ENV deep page.
+    await tap(page, 0); // Real KIT FX deep page; synth ENV is unavailable on drums.
     await page.waitForFunction(() => !globalThis.jamEmu.state.home);
-    assert.notEqual((await state(page)).page, gridPage, 'ENV is a distinct deep page');
+    assert.notEqual((await state(page)).page, gridPage, 'KIT FX is a distinct useful deep page');
     const deepScreen = await screen(page);
     await tap(page, 9);
     await page.waitForFunction(expected => globalThis.jamEmu.state.page === expected &&
@@ -201,7 +213,7 @@ try {
       globalThis.jamEmu.state.homeView === expected, view);
     assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
     await page.close();
-    console.log(`PASS ${name} Home → GRID, idempotent SEQ, EDIT/KIT and BPM, reversible step edit, immediate HOME key, deep-page entry`);
+    console.log(`PASS ${name} Home → GRID, idempotent SEQ/EDIT, KIT and BPM, reversible step edit, immediate HOME key, KIT FX entry`);
   }
 
   {
@@ -288,6 +300,135 @@ try {
     console.log('PASS GRID cell ownership, curated kits on GRID/KIT, named-row and partial-page LCDs, displayed part order');
   }
 
+  {
+    const page = await startDrums(0);
+    const initial = await state(page);
+    await tap(page, 9);
+    const gridPage = (await state(page)).page;
+
+    for (const [id, name] of [[2, 'ENV'], [3, 'LFO'], [1, 'SEL'], [8, 'ARP']]) {
+      const previous = await screen(page);
+      // Queue the ordinary function tap and first step in the same task. A
+      // contextual hint must neither take keyboard ownership nor open a dead
+      // synth page, even before a separate idle input frame.
+      await page.evaluate(buttonId => {
+        document.querySelector(`button[data-button="${buttonId}"]`).click();
+        document.querySelector('button[data-key="2"]').click();
+      }, id);
+      await idle(page);
+      await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1,
+        initial.events[3]);
+      const current = await state(page);
+      assert.equal(current.page, gridPage, `${name} guidance preserves the drum workspace`);
+      assert(!current.home && !current.layer && !current.recording && !current.armed && !current.playing);
+      await changedScreen(page, previous);
+      if (name === 'ENV') await screenshot(page, 'grid-context-guidance');
+      await hit(page);
+      await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
+    }
+
+    await tap(page, 4);
+    await tap(page, 4);
+    await audition(page, initial.events, 'repeated EDIT leaves KIT SOUND pads audible without editing the pattern');
+    const kitBefore = await state(page);
+    await turn(page, 4, 'ArrowDown'); // KIT SOUND level.
+    await page.waitForFunction(previous => globalThis.jamEmu.state.groove[1] < previous, kitBefore.groove[1]);
+    const toneBefore = (await state(page)).macros[0];
+    await turn(page, 5, 'ArrowDown'); // KIT SOUND tone is the real whole-kit filter.
+    await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] < previous, toneBefore);
+    const panBefore = (await state(page)).groove[3];
+    await turn(page, 6, 'ArrowUp');
+    await page.waitForFunction(previous => globalThis.jamEmu.state.groove[3] > previous, panBefore);
+    assert.deepEqual((await state(page)).events, initial.events, 'whole-kit level, tone and pan preserve all notes');
+    await screenshot(page, 'kit-sound-working-controls');
+
+    // The full KIT SOUND browser includes the 37 factory kits and four real
+    // editable SYN defaults. Its empty USR slots must not masquerade as sounds.
+    // Curated aliases are intentionally retained by the production snapshot.
+    const fullKits = ['ROCK KIT', 'DEEP', 'TIGHT KIT', 'BRIGHT', 'DUST',
+      '808 KIT', '909 KIT', '606', '80S', 'VINTAGE', 'TRAP KIT', 'DRILL',
+      'DUST KIT', 'SOFT KIT', 'PHONK', 'HOUSE', 'D.HOUSE', 'TECHNO', 'MINIMAL',
+      'ELECTRO', 'DISCO', 'GARAGE', 'JUNGLE', 'DUBSTEP', 'DEMBOW', 'AMAPIANO',
+      'AFRO', 'LATIN', 'TRIBAL', 'NEON KIT', 'CHIP', 'ARCADE', 'GLITCH', 'INDUSTR',
+      'HYPER', 'AMBIENT', 'JAZZ', 'SYN1', 'SYN2', 'SYN3', 'SYN4'];
+    await turnBy(page, 3, -46); // Clamp to first populated kit.
+    for (const [index, expected] of fullKits.entries()) {
+      if (index) await turn(page, 3, 'ArrowUp');
+      await page.waitForFunction(sound => globalThis.jamEmu.state.sound === sound, expected);
+      const current = await state(page);
+      assert.equal(current.page, gridPage);
+      assert.equal(current.selected, 3);
+      assert.equal(current.tempo, 88);
+      assert.deepEqual(current.events, initial.events, `full kit ${expected} changes sound without editing notes`);
+      if (expected === 'SYN1')
+        await audition(page, initial.events, 'the first populated SYN kit has audible pad defaults');
+    }
+    await turn(page, 3, 'ArrowUp');
+    assert.equal((await state(page)).sound, 'SYN4', 'full kit browsing clamps at the last populated kit');
+    await screenshot(page, 'kit-sound-populated-syn-bank');
+    await tap(page, 2);
+    await audition(page, initial.events, 'ENV guidance on KIT SOUND keeps the first following pad audible');
+
+    await tap(page, 0);
+    const fxPage = (await state(page)).page;
+    assert.notEqual(fxPage, gridPage, 'FX opens its dedicated whole-kit effects page');
+    const fxBefore = await state(page);
+    await turn(page, 3, 'ArrowDown');
+    await page.waitForFunction(previous => globalThis.jamEmu.state.macros[0] < previous, fxBefore.macros[0]);
+    await turn(page, 4, 'ArrowUp');
+    await page.waitForFunction(previous => globalThis.jamEmu.state.macros[2] > previous, fxBefore.macros[2]);
+    await turn(page, 5, 'ArrowUp');
+    await page.waitForFunction(previous => globalThis.jamEmu.state.macros[3] > previous, fxBefore.macros[3]);
+    await turn(page, 6, 'ArrowUp');
+    await page.waitForFunction(previous => globalThis.jamEmu.state.groove[3] > previous, fxBefore.groove[3]);
+    await audition(page, initial.events, 'KIT FX keeps pads audible while changing filter, echo, room and pan');
+    await screenshot(page, 'kit-fx-working-controls');
+
+    await turn(page, 0, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
+    assert.equal((await state(page)).page, fxPage, 'SELECT changes BPM without navigating away from KIT FX');
+    await turn(page, 0, 'ArrowDown');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
+    await turn(page, 2, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.sound === 'SOFT KIT');
+    assert.equal((await state(page)).page, fxPage, 'PRESETS keeps the curated eight-kit browser on KIT FX');
+
+    const fxPages = [fxPage];
+    for (const name of ['slicer', 'insert', 'insert-mix', 'all-echo', 'all-room']) {
+      await tap(page, 0);
+      const current = await state(page);
+      assert(!fxPages.includes(current.page), `${name} is a distinct applicable effects page`);
+      fxPages.push(current.page);
+      assert(!current.home && !current.layer && !current.recording && !current.armed && !current.playing);
+      await audition(page, initial.events, `${name} keeps the keyboard playing drums`);
+      if (name === 'all-echo' || name === 'all-room') {
+        const previous = await screen(page);
+        await turn(page, 3, 'ArrowDown');
+        await changedScreen(page, previous);
+        await screenshot(page, name);
+      }
+    }
+    await tap(page, 0);
+    assert.equal((await state(page)).page, fxPage,
+      'FX wraps directly to KIT FX without silent synth FX, redundant filter or unused chorus pages');
+    assert.deepEqual((await state(page)).events, initial.events, 'effects browsing and edits preserve every track');
+    await turn(page, 1, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 0 && globalThis.jamEmu.state.homeControls);
+    await turn(page, 1, 'ArrowDown');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 3 && globalThis.jamEmu.state.homeControls);
+    await tap(page, 0);
+    assert.equal((await state(page)).page, fxPage, 'fresh drum FX entry starts with the useful whole-kit controls');
+    await tap(page, 9);
+    assert.equal((await state(page)).page, gridPage, 'SEQ returns from effects to GRID');
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
+    assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
+    await page.close();
+    console.log('PASS contextual drum guidance and first step, idempotent EDIT, working KIT SOUND/FX, 41 populated kits, six-page FX cycle and left knobs');
+  }
+
   const page = await startDrums(1);
   await tap(page, 9);
   const gridPage = (await state(page)).page;
@@ -336,7 +477,7 @@ try {
   await page.close();
   console.log('PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership');
   assert.deepEqual(errors, [], 'no production browser JavaScript or AudioWorklet errors');
-  console.log(`Drum navigation: 4 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: ${evidence}`);
+  console.log(`Drum navigation: 5 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: ${evidence}`);
 } finally {
   await browser?.close();
   await new Promise(done => server.close(done));

@@ -10,9 +10,10 @@ remembering hidden screens. Preserve the working four-part jam and useful depth.
 Implementation follow-up: [GRID trial 02](DRUM_GRID_TRIAL.md) covers direct entry,
 keyboard ownership, readable rows and the main grid controls. The owner reported
 that trials 01 and 02 worked, including positive feedback on Trial 02's look.
-The investigation
-and screenshots below describe the preceding baseline. Individual drum sound
-editing and the remaining page cleanup are separate later work.
+[KIT trial 03](DRUM_KIT_TRIAL.md) is the next isolated candidate: useful whole-kit
+EDIT/FX pages, applicable navigation and usable kit browsing. It still needs an
+owner device check. The investigation and screenshots below describe the
+preceding baseline. Individual drum sound editing remains separate later work.
 
 ## Earlier ideas recovered from GitHub
 
@@ -262,11 +263,11 @@ also a separate engine/storage feature.
 5. **Make performance tools discoverable.** Labelled mute/erase, roll, fill,
    copy/clear/undo and advanced timing; expand only with a tested gesture model.
 
-The owner approved this staged direction. The first entry stage received broad
-positive owner feedback, and the second grid/control stage is a separate trial.
-Stages 3–5 remain later work. Keep all
-implementation on `next/usability-and-saving` and use an isolated trial before
-adopting it on the normal installer.
+The owner approved this staged direction and reported success with stages 1
+and 2. Stage 3 is the current isolated [KIT trial 03](DRUM_KIT_TRIAL.md), pending
+its own device check. Stages 4 and 5 remain later work. Keep all implementation
+on `next/usability-and-saving` and use an isolated trial before adopting it on
+the normal installer.
 
 ## Validation for future implementation
 

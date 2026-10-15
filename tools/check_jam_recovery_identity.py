@@ -2,18 +2,21 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Bind experimental recovery to actual generated assets and source catalog.
 
-Default checks the checked-in header. --write deliberately refreshes it when
-the experimental format's compatibility has been reviewed. This is not a
-migration tool and is never called by device firmware or the public installer.
+Default checks the checked-in runtime identity against current assets/catalog.
+An exact reviewed catalog alias can retain that identity for compatible UI-only
+changes. --write deliberately rebinds it; it is not a save migration tool.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 HEADER = ROOT / "firmware/experimental/recovery/jr_asset_identity.h"
+COMPATIBILITY = ROOT / "firmware/experimental/recovery/jr_catalog_compatibility.json"
 ASSETS = ["build/gen/felucca_samples.h", "build/gen/felucca_drumkits.h",
           "build/gen/felucca_fm6.h", "build/gen/felucca_tables.h"]
 CATALOG = ["firmware/src/core.h", "firmware/src/params.c",
@@ -37,6 +40,10 @@ def render(gen_dir: Path) -> tuple[str, bytes]:
     catalog = CATALOG + [p.relative_to(ROOT).as_posix()
                          for p in (ROOT / "firmware/src").glob("eng_*.c")]
     identity = group_digest(ASSETS, {name: gen_dir / Path(name).name for name in ASSETS}) + group_digest(catalog)
+    return render_identity(identity), identity
+
+
+def render_identity(identity: bytes) -> str:
     rows = [", ".join(f"0x{x:02x}" for x in identity[i:i+16])
             for i in range(0, len(identity), 16)]
     lines = ["/* SPDX-License-Identifier: GPL-3.0-only */",
@@ -48,7 +55,43 @@ def render(gen_dir: Path) -> tuple[str, bytes]:
     for i, row in enumerate(rows):
         lines.append("    " + row + (", " if i+1 < len(rows) else " ") + chr(92))
     lines += ["}", "#endif", ""]
-    return "\n".join(lines), identity
+    return "\n".join(lines)
+
+
+def verify(gen_dir: Path) -> tuple[bytes, bytes]:
+    expected, actual = render(gen_dir)
+    header = HEADER.read_text(encoding="utf-8")
+    if not COMPATIBILITY.exists():
+        if header != expected:
+            raise ValueError("recovery identity differs from current assets/catalog; review compatibility")
+        return actual, actual
+    review = json.loads(COMPATIBILITY.read_text(encoding="utf-8"))
+    if (not isinstance(review, dict) or set(review) != {
+            "schema_version", "runtime_identity", "baseline_source", "compatible_catalogs"} or
+            type(review["schema_version"]) is not int or review["schema_version"] != 1 or
+            not isinstance(review["baseline_source"], str) or
+            not re.fullmatch(r"[0-9a-f]{40}", review["baseline_source"]) or
+            not isinstance(review["runtime_identity"], str) or
+            not re.fullmatch(r"[0-9a-f]{128}", review["runtime_identity"])):
+        raise ValueError("invalid recovery compatibility review")
+    canonical = bytes.fromhex(review["runtime_identity"])
+    records = review["compatible_catalogs"]
+    if not isinstance(records, list) or not records or len(records) > 16:
+        raise ValueError("invalid recovery catalog review list")
+    approved = {canonical[32:]}
+    for record in records:
+        if (not isinstance(record, dict) or set(record) != {"sha256", "review"} or
+                not isinstance(record["sha256"], str) or not re.fullmatch(r"[0-9a-f]{64}", record["sha256"]) or
+                not isinstance(record["review"], str) or not record["review"].strip()):
+            raise ValueError("invalid reviewed recovery catalog")
+        approved.add(bytes.fromhex(record["sha256"]))
+    if header != render_identity(canonical):
+        raise ValueError("runtime recovery identity differs from its compatibility review")
+    if actual[:32] != canonical[:32]:
+        raise ValueError("generated recovery assets changed; a catalog alias cannot approve changed assets")
+    if actual[32:] not in approved:
+        raise ValueError("unreviewed recovery source catalog; review compatibility")
+    return canonical, actual
 
 
 def main() -> None:
@@ -57,14 +100,19 @@ def main() -> None:
     parser.add_argument("--gen-dir", type=Path, default=ROOT / "build/gen")
     args = parser.parse_args()
     try:
-        expected, identity = render(args.gen_dir)
         if args.write:
+            if COMPATIBILITY.exists():
+                raise ValueError("an active compatibility review preserves existing saves; --write would replace their identity")
+            expected, identity = render(args.gen_dir)
             HEADER.write_text(expected, encoding="utf-8")
-        elif HEADER.read_text(encoding="utf-8") != expected:
-            raise ValueError("recovery identity differs from current assets/catalog; review compatibility")
+            actual = identity
+        else:
+            identity, actual = verify(args.gen_dir)
     except (OSError, ValueError) as exc:
         parser.exit(1, f"Recovery identity check failed: {exc}\n")
-    print(f"Recovery asset/catalog identity verified: {identity.hex()}")
+    print(f"Recovery runtime identity verified: {identity.hex()}")
+    print(f"Current source catalog verified: {actual[32:].hex()}" +
+          (" (explicit compatible review; saved identity unchanged)" if actual != identity else ""))
 
 
 if __name__ == "__main__":

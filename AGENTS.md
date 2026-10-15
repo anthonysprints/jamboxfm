@@ -53,6 +53,16 @@ testing and looked good. These are owner reports, not independent or itemized
 hardware validation. Both stages remain on the development branch and isolated
 preview; further cleanup and normal-installer adoption remain separate steps.
 
+The owner approved the next KIT SOUND / KIT FX cleanup on the same isolated
+drum preview; follow `docs/DRUM_KIT_TRIAL.md` for Trial 03. Keep the canonical
+manual-save identity unchanged. Whole-file catalog hashing also covers UI code,
+so this compatible change has an exact reviewed catalog alias in
+`firmware/experimental/recovery/jr_catalog_compatibility.json`. Unknown catalog
+changes and changed audio assets must still fail the identity check. Do not use
+`check_jam_recovery_identity.py --write` to bypass a compatibility failure:
+replacing the runtime identity would reject existing checkpoints. Check the
+identity refusals and actual Trial 02/current cold restore in both directions.
+
 The owner chose manual saving for the current product. Keep automatic saving
 disabled and outside the active plan unless the owner explicitly reopens it.
 The saved checkpoint changes only through an intentional Save now; unsaved

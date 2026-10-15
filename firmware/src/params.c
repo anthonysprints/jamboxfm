@@ -212,6 +212,11 @@ static const param_desc_t GP[G_COUNT] = {
 };
 
 static const param_desc_t DRUM_KIT_DESC = PE("KIT", DRUM_KIT_NAMES, 0);
+#if JAMBOX_PROTO
+static const param_desc_t KIT_SEND_DESC[2] = {
+    PD("ECHO", F_PCT, 0, 127, 0), PD("ROOM", F_PCT, 0, 127, 16)
+};
+#endif
 /* the INSERT's A B C as its TYPE means them (TP's ranges and defaults): the drives DRIVE TONE LEVEL, CRUSH BITS RATE
  * LPF, the swept ones RATE DEPTH FDBK; OFF TP's own */
 #define PU(l, f, df, n, u) {l, f, 0, 127, df, n, u}
@@ -388,7 +393,7 @@ static void param_format(const param_desc_t *d, int32_t v, char *val, const char
 /* ------------------------------------------------------------ pages --- */
 enum { FAM_HOME, FAM_ENV, FAM_LFO, FAM_FX, FAM_SCL, FAM_EDIT, FAM_GLO, FAM_SAVE, FAM_ARP, FAM_SEQ, FAM_TRK,
        FAM_COUNT };
-enum { SC_TRACK, SC_GLOBAL, SC_ENGINE, SC_STEP, SC_TRK, SC_SONG, SC_DRUM };
+enum { SC_TRACK, SC_GLOBAL, SC_ENGINE, SC_STEP, SC_TRK, SC_SONG, SC_DRUM, SC_KITFX };
 enum { GR_NONE, GR_ADSR, GR_LFO, GR_STEPS, GR_ARP, GR_SCALE, GR_FX, GR_ROLL, GR_BROWSE, GR_SLOTS, GR_USER, GR_TRK,
        GR_SLCR, GR_INS };
 
@@ -405,12 +410,24 @@ static const page_t PAGES[] = {
     {"LFO", FAM_LFO, SC_TRACK, GR_LFO, {P_LRATE, P_LWAVE, P_LPHASE, P_LFADE}},
     {"LFO 2", FAM_LFO, SC_TRACK, GR_LFO, {P_LSYNC, P_LTRIG, P_LPOL, 0xFF}},   /* 2.6 (Felucca 1.4): SYNC TRIG POL */
     {"LFO DEST", FAM_LFO, SC_TRACK, GR_NONE, {P_LD_PIT, P_LD_FLT, P_LD_SHP, P_LD_AMP}},
+#if JAMBOX_PROTO
+    {"KIT FX", FAM_FX, SC_KITFX, GR_NONE, {P_TFLT, G_DRDLY, G_DRREV, P_PAN}},
+#endif
     {"FX", FAM_FX, SC_TRACK, GR_FX, {P_DIST, P_CHOR, P_DLY, P_REV}},
     {"FILTER", FAM_FX, SC_TRACK, GR_NONE, {P_TFLT, 0xFF, 0xFF, 0xFF}},   /* the track's filter (drum track too) */
     {"SLICER", FAM_FX, SC_TRACK, GR_SLCR, {P_SLCR, P_SLPAT, P_SLRATE, P_SLDEPTH}},   /* drum track too */
     {"INSERT", FAM_FX, SC_TRACK, GR_INS, {P_ITYPE, P_IA, P_IB, P_IC}},   /* 2.6 (Felucca 1.5): the track's INSERT (fx.c), */
     {"INSERT 2", FAM_FX, SC_TRACK, GR_INS, {P_IMIX, 0xFF, 0xFF, 0xFF}},  /* .. its dry / wet; the drum track too */
-    {"DLY", FAM_FX, SC_GLOBAL, GR_NONE, {G_DTIME, G_DFDBK, G_DCOLOR, G_DMIX}},
+    {
+#if JAMBOX_PROTO
+        "ALL ECHO",
+#else
+        "DLY",
+#endif
+        FAM_FX, SC_GLOBAL, GR_NONE, {G_DTIME, G_DFDBK, G_DCOLOR, G_DMIX}},
+#if JAMBOX_PROTO
+    {"ALL ROOM", FAM_FX, SC_GLOBAL, GR_NONE, {G_RSIZE, G_RDAMP, 0xFF, 0xFF}},
+#endif
     {"REV/CHO", FAM_FX, SC_GLOBAL, GR_NONE, {G_RSIZE, G_RDAMP, G_CRATE, G_CDEPTH}},
     {"SEL", FAM_SCL, SC_TRACK, GR_SCALE, {P_ROOT, P_SCALE, P_QUANT, P_CHORD}},
     {"SEL 2", FAM_SCL, SC_TRACK, GR_SCALE, {P_TRANS, P_STRUM, P_VLEAD, 0xFF}},   /* (2.4: the chords played) */
@@ -444,9 +461,8 @@ static const page_t PAGES[] = {
 };
 #define NPAGES (sizeof(PAGES) / sizeof(PAGES[0]))
 
-/* the drum track has no sound of its own: it uses the global pages (not the preset
- * pages, nor TOOLS > INIT: page_desc), STEP, PATTERN, SLICER and TRACKS; every other page
- * shows "DRUM TRACK" */
+/* Applicable drum parameter pages. Synth-only controls are hidden in JamBox;
+ * the dedicated drum workspace handles pads and step editing separately. */
 static int page_for_drum(const page_t *pg)
 {
     if (pg->scope == SC_STEP)                       /* (2.4) the synth steps' roll: the drums have their grid. Reached */
@@ -456,10 +472,24 @@ static int page_for_drum(const page_t *pg)
     return pg->scope != SC_ENGINE && (pg->scope != SC_TRACK || pg->fam == FAM_SEQ || pg->graph == GR_SLCR ||
                                       pg->graph == GR_INS);
 }
-/* a page the buttons and SELECT reach on the selected track: EDIT > FILTER (TYPE) on ANALOG only */
+/* Pages available to the selected part; synth FILTER TYPE belongs to ANALOG. */
 static int page_shown(const page_t *pg)
 {
+#if JAMBOX_PROTO
+    if (pg->scope == SC_KITFX || (pg->fam == FAM_FX && pg->id[0] == G_RSIZE && pg->id[2] == 0xFF))
+        return is_drum(TSEL);
+    if (is_drum(TSEL))
+        return page_for_drum(pg) && !(pg->fam == FAM_FX &&
+            (pg->id[0] == P_TFLT || pg->id[0] == G_RSIZE));
+#endif
     return pg->id[0] != P_FTYPE || (!is_drum(TSEL) && TSEL->eng_req % NENGINES == 0u);
+}
+
+/* KIT FX combines two track values with two existing global drum sends. Keep
+ * their namespaces explicit for both display and editing side effects. */
+static int page_global(const page_t *pg, uint32_t slot)
+{
+    return pg->scope == SC_GLOBAL || (pg->scope == SC_KITFX && (slot == 1u || slot == 2u));
 }
 
 static const param_desc_t *page_desc(const page_t *pg, uint32_t slot, int16_t **valp)
@@ -473,8 +503,11 @@ static const param_desc_t *page_desc(const page_t *pg, uint32_t slot, int16_t **
         *valp = 0;
         return 0;
     }
-    if (pg->scope == SC_GLOBAL) {
+    if (page_global(pg, slot)) {
         *valp = &song.g[id];
+#if JAMBOX_PROTO
+        if (pg->scope == SC_KITFX) return &KIT_SEND_DESC[slot - 1u];
+#endif
         return &GP[id];
     }
     *valp = &TSEL->p[id];

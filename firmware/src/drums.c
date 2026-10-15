@@ -132,6 +132,43 @@ static int32_t drum_usr_zone(uint32_t k, uint32_t ln)
     return -1;
 }
 
+#if JAMBOX_PROTO
+/* Browse only kits with playable panel lanes. User zones here are the validated
+ * RAM catalogue; browsing never probes or initializes flash. SYN banks have
+ * real defaults even before a user edits them. */
+static int drum_kit_available(uint32_t kit)
+{
+    uint32_t slot, end, lane;
+    if (kit >= DRUM_KITS) return 0;
+    if (kit < DRUM_USR || kit >= DRUM_SYN) return 1;
+    slot = kit == DRUM_PAIR ? 2u : kit - DRUM_USR;
+    end = kit == DRUM_PAIR ? 4u : slot + 1u;
+    for (; slot < end; slot++)
+        for (lane = 0; lane < DRUM_LANES; lane++) {
+            int32_t zi = drum_usr_zone(slot, LANE_NOTE[lane]);
+            if (zi >= 0) {
+                const smp_zone_t *z = &usr_zone[slot][(uint32_t)zi & 15u];
+                if (z->n && z->rate) return 1;
+            }
+        }
+    return 0;
+}
+static void drum_kit_turn(int32_t steps)
+{
+    int32_t kit = (int32_t)drum_kit(), dir = steps > 0 ? 1 : -1, next;
+    steps = clamp(steps, -(int32_t)DRUM_KITS, DRUM_KITS);
+    while (steps) {
+        next = kit;
+        do { next += dir; }
+        while (next >= 0 && next < (int32_t)DRUM_KITS && !drum_kit_available((uint32_t)next));
+        if (next < 0 || next >= (int32_t)DRUM_KITS) break;
+        kit = next;
+        steps -= dir;
+    }
+    TDRUM->p[P_E0] = (int16_t)kit;
+}
+#endif
+
 /* the velocity of a level: as played (LV_NORM: vel), ghost, soft, hard */
 static uint32_t lvl_vel(uint32_t lvl, uint32_t vel)
 {

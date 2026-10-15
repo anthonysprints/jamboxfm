@@ -488,7 +488,10 @@ static void jam_drum_grid_draw(uint32_t len)
 static void drum_screen_draw(void)
 {
     static uint32_t head, title_sig, body_sig, footer;
-    uint32_t i, j, len = (uint32_t)clamp(TDRUM->p[P_SLEN], 1, 64), kit = drum_kit(), sig, bank;
+    uint32_t i, len = (uint32_t)clamp(TDRUM->p[P_SLEN], 1, 64), kit = drum_kit(), sig, bank;
+#if !JAMBOX_PROTO
+    uint32_t j;
+#endif
     if (drum_cursor >= len) drum_cursor = (uint8_t)(len - 1u);
 #if JAMBOX_PROTO
     if (!drum_page) {
@@ -497,6 +500,9 @@ static void drum_screen_draw(void)
     }
 #endif
     bank = drum_cursor / 16u;
+#if JAMBOX_PROTO
+    te_header("kit sound", TE_DRUM, &head);
+#else
     {
         char st[16], nm[9];
         const char *style = DRUM_KIT_STYLES[kit];
@@ -510,6 +516,7 @@ static void drum_screen_draw(void)
         st[12] = 0;
         te_header(st, TE_DRUM, &head);
     }
+#endif
     sig = kit * 131u + drum_page * 7u + drum_lane * 977u + bank * 31u + len;   /* title band */
     if (ui.force || sig != title_sig) {
         char b[8];
@@ -518,10 +525,15 @@ static void drum_screen_draw(void)
         cv_rect(2, 4, 34, 34, TE_DRUM);
         fmt_int(b, (int32_t)kit + 1);
         cv_text(19 - text_w(&FONT_S, b) / 2, 13, &FONT_S, b, C_BLACK);
+#if JAMBOX_PROTO
+        cv_text(44, 0, &FONT_S, DRUM_KIT_NAMES[kit], C_WHITE);
+        cv_text(44, 20, &FONT_S, "WHOLE KIT / PLAY PADS", TE_G3);
+#else
         cv_text(44, 6, &FONT_L, DRUM_KIT_NAMES[kit], C_WHITE);
         cv_text(202, 4, &FONT_S, "grid", drum_page == 0 ? C_WHITE : TE_G3);
         cv_text(202, 22, &FONT_S, "kit", drum_page == 1 ? C_WHITE : TE_G3);
         cv_rect(196, drum_page ? 26 : 8, 3, 9, TE_DRUM);
+#endif
         cv_blit(0, 40);
     }
     sig = drum_page + drum_lane * 7u + drum_cursor * 101u + song.playing * 71u + len * 3u;
@@ -536,6 +548,7 @@ static void drum_screen_draw(void)
     if (ui.force || sig != body_sig) {
         body_sig = sig;
         cv_begin(240, 100, C_BLACK);
+#if !JAMBOX_PROTO
         if (!drum_page) {                              /* GRID: the 16 lanes x 16 steps of this bank */
             for (i = 0; i < DRUM_LANES; i++) {
                 int32_t y = (int32_t)i * 6 + 2;
@@ -559,7 +572,9 @@ static void drum_screen_draw(void)
                     }
                 }
             }
-        } else {                                       /* KIT: 16 pads, lit on each hit */
+        } else
+#endif
+        {                                              /* KIT: 16 pads, lit on each hit */
             for (i = 0; i < DRUM_LANES; i++) {
                 int32_t x = 2 + (int32_t)(i % 4u) * 60, y = (int32_t)(i / 4u) * 25;
                 cv_rect(x, y, 56, 23, pad_lit[i] ? TE_DRUM : TE_G1);
@@ -571,8 +586,18 @@ static void drum_screen_draw(void)
     {
         static char v[4][12];
         const char *val[4] = {v[0], v[1], v[2], v[3]};
-        static const char *const LG[4] = {"sound", "step", "hit", "level"}, *const LK[4] = {"kit", "level", "reverb", "pan"};
+#if !JAMBOX_PROTO
+        static const char *const LG[4] = {"sound", "step", "hit", "level"};
+#endif
+        static const char *const LK[4] = {"kit", "level",
+#if JAMBOX_PROTO
+            "tone",
+#else
+            "reverb",
+#endif
+            "pan"};
         int32_t ratio[4];
+#if !JAMBOX_PROTO
         if (!drum_page) {
             const dstep_t *s = &TDRUM->dstep[drum_cursor];
             str_cpy(v[0], LANE_SHORT[drum_lane], 8);
@@ -585,14 +610,25 @@ static void drum_screen_draw(void)
             ratio[3] = dstep_has(s, drum_lane) ? (int32_t)lvl_rank(dstep_lvl(s, drum_lane)) * 333 : 0;   /* ghost left ..
                                                                      * hard right (2.5: it followed the stored order) */
             te_dials(184, LG, val, ratio, 1u, &footer);
-        } else {
+        } else
+#endif
+        {
             fmt_int(v[0], (int32_t)kit + 1);
             fmt_int(v[1], song.g[G_DRLVL] * 100 / 127);
+#if JAMBOX_PROTO
+            const char *unit;
+            param_format(&TP[P_TFLT], TDRUM->p[P_TFLT], v[2], &unit);
+#else
             fmt_int(v[2], song.g[G_DRREV] * 100 / 127);
+#endif
             fmt_int(v[3], TDRUM->p[P_PAN]);
             ratio[0] = (int32_t)kit * 1000 / (int32_t)(DRUM_KITS - 1u);
             ratio[1] = song.g[G_DRLVL] * 1000 / 127;
+#if JAMBOX_PROTO
+            ratio[2] = (TDRUM->p[P_TFLT] + 64) * 1000 / 127;
+#else
             ratio[2] = song.g[G_DRREV] * 1000 / 127;
+#endif
             ratio[3] = (TDRUM->p[P_PAN] + 64) * 1000 / 127;
             te_dials(184, LK, val, ratio, 2u, &footer);
         }
@@ -661,6 +697,27 @@ static void grid_key(uint32_t k)
     sync_reload = 1;
 }
 
+#if JAMBOX_PROTO
+/* Ordinary drum workspaces share Home's left-hand roles. Held layers and
+ * recorder overlays consume their controls before reaching this helper. */
+static int jam_drum_main_knobs(void)
+{
+    int32_t s;
+    if ((s = panel_enc(EN_SELECT))) {
+        song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + clamp(s, -200, 200),
+                                      GP[G_BPM].min, GP[G_BPM].max);
+        ui.bpm_t = 40;
+    }
+    if ((s = panel_enc(EN_ALGO)) && !ft_on) {
+        int32_t role = clamp((int32_t)jam_home_role(song.sel) + clamp(s, -4, 4), 0, 3);
+        track_select(jam_role_track((uint32_t)role));
+        if (song.sel != TRK_DRUM) { go_home(); return 1; }
+    }
+    jam_home_browse(panel_enc(EN_PRESET));
+    return 0;
+}
+#endif
+
 static void drum_screen_input(uint32_t pressed, uint32_t home)
 {
     uint32_t k, b;
@@ -677,7 +734,7 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
             else transport_req = song.playing ? 2 : 1;
         } else if (b == B_SEQ || b == B_EDIT) {
 #if JAMBOX_PROTO
-            drum_page = b == B_SEQ ? 0 : (uint8_t)!drum_page;
+            drum_page = b == B_SEQ ? 0 : 1;
 #else
             drum_page = (uint8_t)((drum_page + 1u) % 2u);
 #endif
@@ -689,20 +746,7 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
         }
     }
 #if JAMBOX_PROTO
-    if ((s = panel_enc(EN_SELECT))) {
-        song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + clamp(s, -200, 200),
-                                      GP[G_BPM].min, GP[G_BPM].max);
-        ui.bpm_t = 40;
-    }
-    if ((s = panel_enc(EN_ALGO)) && !ft_on) {
-        int32_t role = clamp((int32_t)jam_home_role(song.sel) + clamp(s, -4, 4), 0, 3);
-        track_select(jam_role_track((uint32_t)role));
-        if (song.sel != TRK_DRUM) {
-            go_home();
-            return;
-        }
-    }
-    jam_home_browse(panel_enc(EN_PRESET));
+    if (jam_drum_main_knobs()) return;
     drum_cursor = (uint8_t)clamp(drum_cursor, 0, trk_len(TDRUM) - 1u);
 #else
     if ((s = panel_enc(EN_SELECT)) && (uint32_t)(s > 0) != drum_page) {   /* SELECT: grid <- -> kit (its pages) */
@@ -772,9 +816,17 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
                 sync_reload = 1;
             }
         } else {
+#if JAMBOX_PROTO
+            if (k == 0) drum_kit_turn(s);
+#else
             if (k == 0) TDRUM->p[P_E0] = (int16_t)clamp(TDRUM->p[P_E0] + s, 0, DRUM_KITS - 1);
+#endif
             if (k == 1) song.g[G_DRLVL] = (int16_t)clamp(song.g[G_DRLVL] + s, 0, 127);
+#if JAMBOX_PROTO
+            if (k == 2) TDRUM->p[P_TFLT] = (int16_t)clamp(TDRUM->p[P_TFLT] + s, -64, 63);
+#else
             if (k == 2) song.g[G_DRREV] = (int16_t)clamp(song.g[G_DRREV] + s, 0, 127);
+#endif
             if (k == 3) TDRUM->p[P_PAN] = (int16_t)clamp(TDRUM->p[P_PAN] + s, -64, 63);
         }
     }

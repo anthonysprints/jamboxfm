@@ -127,9 +127,9 @@ static uint32_t page_first(uint32_t fam)
 {
     uint32_t i;
     for (i = 0; i < NPAGES; i++)
-        if (PAGES[i].fam == fam)
+        if (PAGES[i].fam == fam && page_shown(&PAGES[i]))
             return i;
-    return 0;
+    return NPAGES;
 }
 
 /* transient message in the top bar: a + b */
@@ -419,16 +419,19 @@ static void note_name(char *b, uint32_t n)
 
 static void open_family(uint32_t fam)
 {
+    uint32_t first = page_first(fam);
+    if (first == NPAGES)
+        return;
     if (!ui.home && cur_page()->fam == fam) {          /* same button again: next page */
         uint32_t i = ui.page + 1u;
         while (i < NPAGES && PAGES[i].fam == fam && !page_shown(&PAGES[i]))
             i++;                                        /* (not a page of another engine: EDIT > FILTER) */
         if (i >= NPAGES || PAGES[i].fam != fam)
-            i = page_first(fam);
+            i = first;
         ui.page = (uint8_t)i;
     } else {
         ui.page = ui.fam_last[fam] && PAGES[ui.fam_last[fam]].fam == fam && page_shown(&PAGES[ui.fam_last[fam]])
-                      ? ui.fam_last[fam] : (uint8_t)page_first(fam);
+                      ? ui.fam_last[fam] : (uint8_t)first;
     }
     ui.fam_last[fam] = ui.page;
     ui.home = 0;
@@ -473,7 +476,13 @@ static void page_fix(void)
         return;
     while (i > 0u && PAGES[i - 1u].fam == fam && !page_shown(&PAGES[i - 1u]))
         i--;
-    ui.page = (uint8_t)(i > 0u && PAGES[i - 1u].fam == fam ? i - 1u : page_first(fam));
+    i = i > 0u && PAGES[i - 1u].fam == fam ? i - 1u : page_first(fam);
+    if (i == NPAGES) {                                /* no meaningful pages for this track */
+        ui.home = 1;
+        page_entered();
+        return;
+    }
+    ui.page = (uint8_t)i;
     ui.fam_last[fam] = ui.page;
     page_entered();
 }

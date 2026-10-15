@@ -1,5 +1,10 @@
 # Drum grid: development trial 02
 
+Historical guide for the owner-tested Trial 02. The same isolated preview is
+being advanced to [Trial 03: kit sound and effects](DRUM_KIT_TRIAL.md), whose
+EDIT and FX routes replace the ones below. Keep this guide as the record of
+what the owner tested; it does not describe the newest candidate.
+
 This implements the first two stages of [the drum workflow plan](DRUM_WORKFLOW_PLAN.md)
 and [issue #5](https://github.com/anthonysprints/jamboxfm/issues/5), on
 `next/usability-and-saving`. The normal installer and emulator remain separate.

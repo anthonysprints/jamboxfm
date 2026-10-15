@@ -401,6 +401,7 @@ static void edit_param(uint32_t slot, int32_t steps)
     const page_t *pg = cur_page();
     const param_desc_t *d;
     uint32_t id = pg->id[slot];
+    int global = page_global(pg, slot);
     int32_t v;
     if (is_drum(TSEL) && !page_for_drum(pg))
         return;                                           /* "DRUM TRACK": nothing to edit here */
@@ -472,23 +473,23 @@ static void edit_param(uint32_t slot, int32_t steps)
     v = d->names == ESYNC_NAMES || d->names == N_IBITS || d->names == N_IRATE ? names_turn(d, *vp, steps)   /* (a name a detent) */
                                     : clamp(*vp + accel(EN_K1 + slot, steps, d->max - d->min), d->min, d->max);
     *vp = (int16_t)v;
-    if (pg->scope != SC_GLOBAL && id == P_CHORD)
+    if (!global && id == P_CHORD)
         chord_mode_set(TSEL, v);
-    if (pg->scope != SC_GLOBAL && p_lockable(id))
+    if (!global && p_lockable(id))
         ui.lock_par = (uint8_t)id;                        /* the SEQ layer's lock parameter: the last one touched */
-    if (pg->scope != SC_GLOBAL)
+    if (!global)
         ml_knob(TSEL, id);                                /* MIDI LEARN: this parameter (2.6) */
     if (!v)
         return;
 #if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
-    if (pg->scope == SC_GLOBAL && id == G_SAVE) {
+    if (global && id == G_SAVE) {
         *vp = 0;
         ui.arm = 0;
         ui_message("STORAGE DISABLED");
         return;
     }
 #endif
-    if (pg->scope == SC_GLOBAL && (id == G_LOAD || id == G_SAVE || id == G_CLRSEQ || id == G_INITSND || id == G_NEWPRJ) &&
+    if (global && (id == G_LOAD || id == G_SAVE || id == G_CLRSEQ || id == G_INITSND || id == G_NEWPRJ) &&
         ui.arm != id) {                                   /* one detent arms, a second one within ~1.5 s acts */
         *vp = 0;
         ui.arm = (uint8_t)id;
@@ -497,7 +498,7 @@ static void edit_param(uint32_t slot, int32_t steps)
         return;
     }
     ui.arm = 0;
-    if (pg->scope != SC_GLOBAL)
+    if (!global)
         return;
     switch (id) {                                         /* GO buttons: act, then back to 0 */
     case G_LOAD:
@@ -692,17 +693,21 @@ static void layer_tap(uint32_t layer)
 {
     switch (layer) {
     case LY_FX:
+#if JAMBOX_PROTO
+        if (is_drum(TSEL) && (ui.home || cur_page()->fam != FAM_FX))
+            ui.fam_last[FAM_FX] = 0;                   /* always start at the useful kit sends */
+#endif
         open_family(FAM_FX);
         break;
     case LY_ERASE:
     case LY_STEP:
 #if JAMBOX_PROTO
-        if (layer == LY_STEP && is_drum(TSEL)) {
-            if (rec_wait || ft_on || ci_on) {
+        if (is_drum(TSEL)) {
+            if (layer == LY_STEP && (rec_wait || ft_on || ci_on)) {
                 ui_message("FINISH TAKE FIRST");       /* The recorder owns the keyboard until its overlay closes. */
                 break;
             }
-            drum_page = 0;                              /* SEQ enters the drum grid from any ordinary page. */
+            drum_page = layer == LY_STEP ? 0 : 1;       /* SEQ edits hits; EDIT plays/shapes the whole kit. */
             studio_open(SC_DRUM);
             break;
         }
@@ -726,9 +731,15 @@ static void layer_tap(uint32_t layer)
         open_family(layer == LY_STEP ? FAM_SEQ : FAM_EDIT);
         break;
     case LY_ROLL:
+#if JAMBOX_PROTO
+        if (is_drum(TSEL)) { ui_message("HOLD ARP + PAD: ROLL"); break; }
+#endif
         open_family(FAM_ARP);
         break;
     case LY_SCALE:
+#if JAMBOX_PROTO
+        if (is_drum(TSEL)) { ui_message("DRUMS: PLAY PADS"); break; }
+#endif
         open_family(FAM_SCL);
         break;
     case LY_MIX:
@@ -1129,6 +1140,13 @@ static void ui_input(void)
             panel_enc(EN_K1 + k);
     }
 #if FELUCCA_ARRANGER
+#if JAMBOX_PROTO
+    if (is_drum(TSEL)) {
+        if (pressed & (1u << panel.btn[B_ENV])) ui_message("EDIT: WHOLE KIT SOUND");
+        if (pressed & (1u << panel.btn[B_LFO])) ui_message("FX: EFFECTS + SLICER");
+        pressed &= ~((1u << panel.btn[B_ENV]) | (1u << panel.btn[B_LFO]));
+    }
+#endif
     if (on_song_page()) {
         song_screen_input(pressed, home);
         return;
@@ -1196,6 +1214,8 @@ static void ui_input(void)
 #if JAMBOX_PROTO
     if (jam_home_input())
         return;
+    if (!ui.home && is_drum(TSEL) && cur_page()->fam == FAM_FX)
+        if (jam_drum_main_knobs()) return;
 #endif
 
     if ((s = panel_enc(EN_PRESET)) != 0 && (ui.home || cur_page()->graph == GR_BROWSE || cur_fam() == FAM_TRK)) {

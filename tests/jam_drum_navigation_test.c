@@ -163,7 +163,7 @@ static void test_existing_editor(void)
            "SEQ from KIT returns directly to GRID with step-key ownership");
     tap(B_EDIT);
     expect(on_drum_page() && drum_page == 1,
-           "EDIT tap retains the existing GRID/KIT toggle");
+           "EDIT tap opens KIT SOUND without inheriting a synth edit page");
     tap(B_HOME);
     tap(B_SEQ);
     expect(on_drum_page() && drum_page == 0,
