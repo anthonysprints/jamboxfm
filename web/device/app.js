@@ -38,7 +38,7 @@ function guidance(report) {
   if (report.recognized && report.family === 'sloop')
     return 'Your FM-1 reports Sloop. Use Sloop’s own editor to back up projects, presets, samples, and settings before any firmware change. Keep that backup alongside this report.';
   if (report.recognized && report.family === 'jamboxfm')
-    return 'Your FM-1 reports JamBoxFM. Check SAVE on the instrument: current builds offer manual saving; older builds use temporary sessions. Keep your recovery backup. This identification report does not back up your music.';
+    return 'Your FM-1 reports JamBoxFM. Check SAVE on the instrument: current builds offer manual saving; older builds use temporary sessions. Keep your recovery backup. This identification report is not a backup of your music.';
   return 'We couldn’t confirm this firmware family. Save the report and check which firmware is installed before making changes. Use that firmware’s own backup tools for your music; this report is identification only.';
 }
 
