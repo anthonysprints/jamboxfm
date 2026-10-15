@@ -583,9 +583,23 @@ static void proj_apply(const project_t *p, int all)
     }
 }
 
+#if JAMBOX_RECOVERY
+#include "jam_recovery_sidecars.h"
+#endif
+
 #ifndef PROJ_HOST
 #if FELUCCA_ARRANGER
 #include "arranger_scene.c"
+#endif
+#if JAMBOX_RECOVERY
+static void jam_recovery_sidecars_reset(void)
+{
+    memset(jam_recovery_sections, 0, sizeof jam_recovery_sections);
+#if FELUCCA_ARRANGER
+    memset(&song_keep_sidecar, 0, sizeof song_keep_sidecar);
+    song_kept = 0;
+#endif
+}
 #endif
 static uint8_t sec_dirty, song_dirty;           /* live sections / the song: in RAM, not yet in flash */
 #if FELUCCA_PERSIST
@@ -671,7 +685,17 @@ static void project_apply(const project_t *p)
     panic_req = (1u << NTRK) - 1u;
     drum_mute = 0;                                      /* (the live mutes: a performance's, not the project's) */
     fm1_irq_off();                                      /* the audio ISR must not see half a project */
+#if JAMBOX_RECOVERY
+    {
+        const jam_recovery_sidecar_t *sidecar = 0;
+        for (k = 0; k < 4u; k++)
+            if (p == project_slot(k))
+                sidecar = jam_recovery_section_sidecar(k);
+        proj_apply_with_sidecar(p, 1, sidecar);
+    }
+#else
     proj_apply(p, 1);
+#endif
     song.sel = (uint8_t)(p->sel < NTRK ? p->sel : 0u);
     fm1_irq_on();
     for (k = 0; k < NPART; k++)                         /* a format 1 project: the default sounds of tracks 2, 3 */
@@ -800,6 +824,9 @@ static void persist_boot(void)                    /* before settings_init / pane
     /* .noinit survives firmware changes. Every JamBox boot starts a fresh musical session. */
     for (uint32_t slot = 0; slot < 4u; slot++)
         memset(project_slot(slot), 0, sizeof(project_t));
+#if JAMBOX_RECOVERY
+    jam_recovery_sidecars_reset();
+#endif
     memset(&settings, 0, sizeof settings);
     panel = PANEL_DEFAULT;
     sec_dirty = song_dirty = settings_later = 0;
@@ -1110,6 +1137,9 @@ static void section_store(uint32_t s)
     s &= 3u;
     fm1_irq_off();                                      /* (the audio ISR may be applying a section) */
     proj_capture(project_slot(s));
+#if JAMBOX_RECOVERY
+    jam_recovery_sidecar_capture(jam_recovery_section_sidecar(s));
+#endif
     live_sec = (int8_t)s;
     fm1_irq_on();
     sec_dirty |= (uint8_t)(1u << s);

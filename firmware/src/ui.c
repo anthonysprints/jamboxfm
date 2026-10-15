@@ -15,6 +15,13 @@
 static void project_save(uint32_t slot);
 static void arrangement_save(void);
 static void panel_setup(void);
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+static int jam_recovery_save(int initialize);
+static const char *jam_recovery_status(void);
+static int jam_recovery_can_save(void);
+static int jam_recovery_is_claimed(void);
+static const char *jam_recovery_block_reason(void);
+#endif
 static void project_load(uint32_t slot);
 static void project_erase(uint32_t slot);        /* SAVE > PROJECT > ERASE (2.6) */
 static int project_used(uint32_t slot);
@@ -60,6 +67,12 @@ static struct {
 #if JAMBOX_PROTO
     uint8_t jam_home_view;       /* remembered for this powered session; go_home never toggles it */
     uint8_t jam_home_origin;     /* which screen owned this HOME gesture when it began */
+#if JAMBOX_RECOVERY
+    uint8_t recovery_screen;    /* 0 closed, 1 save status, 2 first-use warning */
+    uint8_t recovery_ack;       /* user affirmed their backup is ready; not a verification */
+    uint8_t recovery_save_down, recovery_wait_release, recovery_hold_done;
+    uint32_t recovery_save_t0, recovery_draw_sig;
+#endif
 #endif
     uint8_t page;                /* index into PAGES */
     uint8_t fam_last[FAM_COUNT]; /* last page used per family */
@@ -904,4 +917,142 @@ static void ml_poll(void)
 
 #if JAMBOX_PROTO
 #include "jam_ui.c"
+#endif
+
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+/* Manual recovery stays behind its own gate. In particular, the first SAVE
+ * gesture can only open this screen; it cannot claim or write the allocation. */
+#define JAM_RECOVERY_HOLD_MS 2000u
+static void jam_recovery_ui_drain(void)
+{
+    uint32_t k;
+    for (k = 0; k < NE; k++)
+        panel_enc(k);
+    enc_hold = (1u << NE) - 1u;
+}
+
+static void jam_recovery_ui_close(void)
+{
+    ui.recovery_screen = ui.recovery_ack = ui.recovery_save_down = 0;
+    ui.recovery_hold_done = 0;
+    ui.recovery_wait_release = 1;
+    ui.jam_home_origin = JAM_HOME_ORIGIN_NONE;
+    ui.home_t0 |= 2u;                 /* consume HOME's release, including a held HOME */
+    go_home();
+}
+
+static void jam_recovery_ui_open(void)
+{
+    if (rec_wait || ft_on || ci_on || song.rec) {
+        ui_message("STOP RECORDING FIRST");
+        return;
+    }
+    ui.recovery_screen = 1;
+    ui.recovery_ack = ui.recovery_hold_done = ui.recovery_save_down = 0;
+    ui.recovery_wait_release = 0;
+    jam_recovery_ui_modal = 1;
+    song.seq_mode = 0;
+    kb_grid = 0;
+    ui.entry_open = 0;
+    ui.force = 1;
+}
+
+/* Called before menu, layers, recorder and ordinary page handling. The audio
+ * side suppresses layer shortcuts while jam_recovery_ui_modal is set. Musical
+ * keys still audition normally and prevent saving until they are released. */
+static int jam_recovery_ui_input(uint32_t pressed, int home_event)
+{
+    uint32_t save_bit = 1u << panel.btn[B_SAVE];
+    uint32_t save_down = (fm1_in.buttons & save_bit) != 0u;
+    int32_t ack_steps;
+    if (ui.recovery_wait_release) {
+        jam_recovery_ui_drain();
+        if (!fm1_in.buttons) {
+            ui.recovery_wait_release = 0;
+            if (!ui.recovery_screen)
+                jam_recovery_ui_modal = 0;
+        }
+        return 1;
+    }
+    if (!ui.recovery_screen)
+        return 0;
+    ack_steps = panel_enc(EN_K1);
+    if (ui.recovery_screen == 2u && !save_down && !ui.recovery_save_down && ack_steps) {
+        ui.recovery_ack = (uint8_t)(ack_steps > 0);
+        ui.force = 1;
+    }
+    jam_recovery_ui_drain();
+    if (home_event || (pressed & (1u << panel.btn[B_HOME]))) {
+        jam_recovery_ui_close();
+        return 1;
+    }
+    /* An explicit PLAY press can stop an already running jam. It cannot start
+     * playback or arm a recording while a storage confirmation is displayed. */
+    if ((pressed & (1u << panel.btn[B_PLAY])) && song.playing)
+        transport_req = 2;
+    if (save_down && !ui.recovery_save_down) {
+        ui.recovery_save_t0 = fm1_ms;
+        ui.recovery_hold_done = 0;
+    }
+    if (ui.recovery_screen == 2u && ui.recovery_ack && save_down &&
+            !ui.recovery_hold_done && fm1_ms - ui.recovery_save_t0 >= JAM_RECOVERY_HOLD_MS) {
+        ui.recovery_hold_done = 1;
+        if (jam_recovery_can_save()) {
+            (void)jam_recovery_save(1);
+            ui.recovery_screen = 1;
+            ui.recovery_ack = 0;
+        }
+        ui.force = 1;
+    }
+    if (!save_down && ui.recovery_save_down && !ui.recovery_hold_done &&
+            fm1_ms - ui.recovery_save_t0 < 450u) {
+        if (ui.recovery_screen == 1u) {
+            if (!jam_recovery_is_claimed()) {
+                ui.recovery_screen = 2;
+                ui.recovery_ack = 0;
+            } else if (jam_recovery_can_save()) {
+                (void)jam_recovery_save(0);
+            }
+            ui.force = 1;
+        }
+    }
+    ui.recovery_save_down = (uint8_t)save_down;
+    return 1;
+}
+
+static void jam_recovery_ui_draw(void)
+{
+    const char *status = jam_recovery_status(), *reason = jam_recovery_block_reason(), *p;
+    uint32_t sig = ui.recovery_screen + ui.recovery_ack * 7u, progress = 0;
+    if (ui.recovery_screen == 2u && ui.recovery_ack && ui.recovery_save_down && !ui.recovery_hold_done)
+        progress = (uint32_t)clamp((int32_t)((fm1_ms - ui.recovery_save_t0) * 100u / JAM_RECOVERY_HOLD_MS), 0, 100);
+    sig = sig * 131u + progress;
+    for (p = status; p && *p; p++) sig = sig * 33u + (uint8_t)*p;
+    for (p = reason; p && *p; p++) sig = sig * 33u + (uint8_t)*p;
+    if (!ui.force && sig == ui.recovery_draw_sig)
+        return;
+    ui.recovery_draw_sig = sig;
+    lcd_fill(0, 0, 240, 240, C_BLACK);
+    draw_text_box(4, 4, 232, &FONT_S, "JAM RECOVERY", C_HI, 0);
+    lcd_fill(0, 24, 240, 1, C_LINE);
+    if (ui.recovery_screen == 2u && (!status || !str_eq(status, "Saving"))) {
+        draw_text_box(4, 34, 232, &FONT_S, "SETUP REPLACES:", C_WHITE, 0);
+        draw_text_box(4, 54, 232, &FONT_S, "OLD PROJECTS + USER SOUNDS", C_HI, 0);
+        draw_text_box(4, 76, 232, &FONT_S, "FACTORY SOUNDS STAY", C_GRAY, 0);
+        draw_text_box(4, 104, 232, &FONT_S, "BACK UP BEFORE CONTINUING", C_WHITE, 0);
+        draw_text_box(4, 126, 232, &FONT_S, ui.recovery_ack ? "K1 BACKUP READY: YES" : "K1 BACKUP READY: NO", ui.recovery_ack ? C_HI : C_GRAY, 0);
+        draw_text_box(4, 148, 232, &FONT_S, "YOUR CONFIRMATION ONLY", C_DIM, 0);
+        draw_text_box(4, 174, 232, &FONT_S, ui.recovery_ack ? "HOLD SAVE 2S TO SET UP" : "TURN KNOB 1 TO CONFIRM", C_WHITE, 0);
+        lcd_fill(4, 198, progress * 232u / 100u, 4, C_HI);
+    } else {
+        draw_text_box(4, 38, 232, &FONT_S, status ? status : "Error", C_WHITE, 0);
+        draw_text_box(4, 74, 232, &FONT_S, jam_recovery_is_claimed() ? "SAVE: SAVE NOW" : "SAVE: SET UP RECOVERY", C_HI, 0);
+        draw_text_box(4, 100, 232, &FONT_S, "PLAYBACK MUST BE STOPPED", C_GRAY, 0);
+        draw_text_box(4, 124, 232, &FONT_S, "AUDIO PAUSES BRIEFLY", C_GRAY, 0);
+        draw_text_box(4, 148, 232, &FONT_S, "AUTOSAVE IS NOT ENABLED", C_GRAY, 0);
+    }
+    if (reason && reason[0])
+        draw_text_box(4, 204, 232, &FONT_S, reason, C_HI, 0);
+    draw_text_box(4, 224, 232, &FONT_S, "HOME: CANCEL / RETURN", C_GRAY, 0);
+}
 #endif

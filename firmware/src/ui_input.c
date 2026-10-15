@@ -31,6 +31,10 @@ static const uint8_t FAM_BTN[FAM_COUNT] = {B_HOME, B_ENV, B_LFO, B_FX, B_SCL, B_
 static uint32_t cur_fam(void) { return ui.home ? FAM_HOME : cur_page()->fam; }
 static uint32_t cur_btn(void)                      /* the button of the screen shown */
 {
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    if (ui.recovery_screen)
+        return B_SAVE;
+#endif
     if (!ui.home && cur_page()->scope == SC_SONG)
         return B_SAVE;
     if (!ui.home && cur_page()->scope == SC_DRUM)
@@ -720,6 +724,10 @@ static void layer_tap(uint32_t layer)
         open_family(FAM_GLO);
         break;
     case LY_SONG:                                         /* SAVE tapped: TRACKS -> the song, else the SAVE pages */
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+        jam_recovery_ui_open();
+        break;
+#endif
         if (on_song_page())
             arrangement_save();
         else if (!ui.home && cur_page()->scope == SC_TRK)
@@ -1017,6 +1025,10 @@ static void ui_input(void)
     midi_chan_fix();                                    /* GLO > MIDI: no channel on two tracks (2.6, ui.c) */
     fm6_poll();                                         /* FM6: PTCH turned -> its patch */
     ml_poll();                                          /* MIDI LEARN: a CC came for the picked parameter (2.6) */
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    if (jam_recovery_ui_input(pressed, home != BT_NONE))
+        return;
+#endif
     page_fix();                                         /* (a page the track does not have: its neighbour, 2.6) */
     midi_entry();                                       /* (the STEP page's MIDI notes: read every frame, 2.6) */
     if (home == BT_HOLD) {                              /* HOME held: open the menu, or leave it */
@@ -1047,6 +1059,12 @@ static void ui_input(void)
         return;
     }
     layered = layers_input(notes, &pressed, home);
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    if (ui.recovery_screen) {                          /* SAVE tap opened the modal during layers_input */
+        jam_recovery_ui_drain();
+        return;
+    }
+#endif
     if (home_eat && !((fm1_in.buttons >> panel.btn[B_HOME]) & 1u)) {   /* (the HOME that unlocked: let go) */
         if (home == BT_TAP)
             home = BT_NONE;

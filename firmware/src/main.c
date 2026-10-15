@@ -100,8 +100,6 @@ static void fm1_fault(const fm1_crash_t *c)
     fm1_reboot();
 }
 
-#include "instrument_init.c"
-
 static void fm1_main(void)
 {
     int32_t knob = 512 * 16;
@@ -134,6 +132,9 @@ static void fm1_main(void)
     fm1_adc_init();
     panel_init();
     felucca_init();
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    jam_recovery_boot();
+#endif
     audio_init();
 #if FELUCCA_CDC
     usb_cdc_on = usb_serial;                            /* menu USB SERIAL (persist_boot read it): before USB starts */

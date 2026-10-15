@@ -1,9 +1,10 @@
 # Working-session recovery plan
 
-Research date: October 14, 2026 (owner's timezone). The first
-[host-only codec/NOR prototype](SAVE_RECOVERY_PROTOTYPE.md) is now implemented
-and software-verified. Device integration, flash permissions, automatic saving
-and a new device update remain pending. Existing application persistence stays off.
+Research date: October 14, 2026 (owner's timezone). The
+[host-only codec/NOR prototype](SAVE_RECOVERY_PROTOTYPE.md) and subsequent
+[gated Save/startup integration](SAVE_RECOVERY_INTEGRATION.md) are implemented
+and software-verified on the development branch. Automatic saving and a physical
+device trial remain pending. Existing application persistence stays off in normal builds.
 Source baseline: `99cbf62495d9f021be80ee3d20fcef739dd8c93e`; development starts
 at `addd576e4616987f4178327a91f4fa3b731c6543` on
 `next/usability-and-saving`. Keep `main` and live `gh-pages` unchanged.

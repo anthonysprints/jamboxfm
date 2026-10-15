@@ -199,7 +199,17 @@ static uint32_t dyn_bit[2];              /* OCT- / OCT+: ghost / hard on the dru
 /* a layer locked open (its button held + HOME tapped: ui_input.c), LY_PLAY = none: the keys and knobs
  * stay in it with the button let go, as if it were held */
 static volatile uint8_t ly_lock = LY_PLAY;
-static uint32_t layer_buttons(void) { return fm1_in.buttons | (ly_lock != LY_PLAY ? ly_bit[ly_lock % LY_COUNT] : 0u); }
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+static volatile uint8_t jam_recovery_ui_modal;
+#endif
+static uint32_t layer_buttons(void)
+{
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    if (jam_recovery_ui_modal)
+        return 0;
+#endif
+    return fm1_in.buttons | (ly_lock != LY_PLAY ? ly_bit[ly_lock % LY_COUNT] : 0u);
+}
 /* the layer the keys are in: the held function button (FX, EDIT, ARP, SEQ, SEL, GLO in that order),
  * else the locked one */
 static uint32_t layer_now(void)

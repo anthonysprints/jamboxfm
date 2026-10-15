@@ -17,6 +17,7 @@
 #define FELUCCA_OTA_RAMONLY 0
 #endif
 #include "app_policy.h"
+#include "jam_recovery_api.h"
 #if JAMBOX_PROTO
 #include "jam_identity.h"
 #endif
@@ -158,4 +159,6 @@ static void ota_commit(const uint8_t *parm)
 #include "recovery.c"        /* early, polled USB updater; no synth or settings */
 #endif
 #include "splash.c"          /* SLOOP boot logo (build/gen/sloop_logo.h) */
+#include "instrument_init.c"
+#include "jam_recovery_runtime.c"
 #include "main.c"

@@ -17,6 +17,14 @@
  * the 1 MiB part ignores the high address bits, so a wrapped range lands low. */
 #define FL_IN(off, n, lo, hi) ((uint32_t)(off) >= (lo) && (uint32_t)(off) <= (hi) && \
                                (uint32_t)(n) <= (hi) - (uint32_t)(off))
+/* Experimental JamBox recovery allocation: fourteen exact sectors, matching
+ * jr_store_sector_address(). A = 97000..9DFFF; B = 9E000, 9F000,
+ * DC000..DFFFF, FE000. This does not itself grant write permission. The
+ * application policy enables it only in the explicit recovery target and
+ * only while its recovery transaction is authorized. */
+#define FL_RECOVERY_OK(off, n) (FL_IN(off, n, 0x00097000u, 0x000A0000u) || \
+                               FL_IN(off, n, 0x000DC000u, 0x000E0000u) || \
+                               FL_IN(off, n, 0x000FE000u, 0x000FF000u))
 /* Felucca's own store (projects, user samples; settings; the FM6 bank) */
 #define FL_STORE_OK(off, n) (FL_IN(off, n, FL_DATA_LO, FL_DATA_HI) || FL_IN(off, n, FL_GLOB_LO, FL_GLOB_HI) || \
                              FL_IN(off, n, FL_FM6_LO, FL_FM6_HI) || FL_IN(off, n, FL_USR4_LO, FL_USR4_HI))

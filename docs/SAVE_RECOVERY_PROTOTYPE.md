@@ -1,5 +1,8 @@
 # Recovery prototype: host verification
 
+This page records the first host-only milestone. For the later, gated device
+integration and its current limits, see [Save/startup integration](SAVE_RECOVERY_INTEGRATION.md).
+
 October 14, 2026 (owner's timezone). Implemented on `next/usability-and-saving`,
 based on `d85862e2d3a896e5958d98a9fc01f5eefdf0f2e0`.
 

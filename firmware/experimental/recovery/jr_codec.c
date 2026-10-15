@@ -1,7 +1,9 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "jr_codec.h"
 #include "jr_asset_identity.h"
+#ifndef JR_FREESTANDING
 #include <string.h>
+#endif
 
 _Static_assert(JR_PAYLOAD_BYTES == 27272u, "full session payload bound");
 /* Versioned wire constants, audited against project.c/core.h at 99cbf624.

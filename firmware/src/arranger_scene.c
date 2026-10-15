@@ -38,7 +38,11 @@ static void arrangement_apply(uint32_t scene)
         t->nheld = t->arp_phys = t->arp_note = t->rh_n = t->rskip_n = 0;
         t->rskip_lanes = 0;
     }
+#if JAMBOX_RECOVERY
+    proj_apply_with_sidecar(project_slot(scene), 0, jam_recovery_section_sidecar(scene));
+#else
     proj_apply(project_slot(scene), 0);
+#endif
     sync_reload = 1;
     ui.force = 1;
 }
@@ -46,10 +50,16 @@ static void arrangement_apply(uint32_t scene)
 /* ---- song mode keeps the loop you made: PLAY in song mode puts it aside (each section then plays
  * over the tracks), STOP (or the song's end) brings it back */
 static project_t song_keep __attribute__((section(".pool")));
+#if JAMBOX_RECOVERY
+static jam_recovery_sidecar_t song_keep_sidecar;
+#endif
 static uint8_t song_kept;
 static void song_backup(void)                  /* (audio ISR: seq_start) */
 {
     proj_capture(&song_keep);
+#if JAMBOX_RECOVERY
+    jam_recovery_sidecar_capture(&song_keep_sidecar);
+#endif
     song_kept = 1;
 }
 static void song_restore(void)                 /* (audio ISR: seq_stop) */
@@ -62,7 +72,11 @@ static void song_restore(void)                 /* (audio ISR: seq_stop) */
         trk_all_off(&trk[i]);
         trk[i].nheld = trk[i].arp_phys = trk[i].arp_note = 0;
     }
+#if JAMBOX_RECOVERY
+    proj_apply_with_sidecar(&song_keep, 1, &song_keep_sidecar);
+#else
     proj_apply(&song_keep, 1);
+#endif
     song.sel = (uint8_t)(song_keep.sel < NTRK ? song_keep.sel : 0u);
     sync_reload = 1;
     ui.force = 1;

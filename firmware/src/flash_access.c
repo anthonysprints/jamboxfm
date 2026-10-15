@@ -47,6 +47,49 @@ static int st_prog(uint32_t off, const void *src, uint32_t n)
         return -8;
     return fl_write(off, src, n);
 }
+#if JAMBOX_RECOVERY
+/* Device callbacks for jr_nor_t. Legacy application writers remain disabled;
+ * these cannot access user samples, calibration, FM6 banks or updater data.
+ * Reads are needed at boot, but erases/programs require the adapter's explicit
+ * synchronous transaction authorization after its quiet/source-freeze checks.
+ * Store framing, allocation claim, validation and readback live in jr_store. */
+static int jr_hw_read(void *ctx, uint32_t off, void *dst, uint32_t n)
+{
+    int rc;
+    (void)ctx;
+    if (!flash_ok || !dst || !n || !FL_RECOVERY_OK(off, n))
+        return -8;
+    fm1_wdt_feed();
+    rc = st_read(off, dst, n);
+    fm1_wdt_feed();
+    return rc;
+}
+static int jr_hw_erase(void *ctx, uint32_t off)
+{
+    uint32_t took;
+    int rc;
+    (void)ctx;
+    if (!flash_ok || !jr_transaction_active || (off & 0xfffu) ||
+        !FL_RECOVERY_OK(off, 0x1000u))
+        return -8;
+    fm1_wdt_feed();
+    rc = fl_erase4k_quiet(off, &took);
+    fm1_wdt_feed();
+    return rc;
+}
+static int jr_hw_program(void *ctx, uint32_t off, const void *src, uint32_t n)
+{
+    int rc;
+    (void)ctx;
+    if (!flash_ok || !jr_transaction_active || !src || !n || n > 256u ||
+        (off & 0xffu) + n > 256u || !FL_RECOVERY_OK(off, n))
+        return -8;
+    fm1_wdt_feed();
+    rc = fl_write(off, src, n);
+    fm1_wdt_feed();
+    return rc;
+}
+#endif
 /* Only hardware identity/window initialization: no application object reads
  * or writes. Recovery probes separately without starting the instrument. */
 static void flash_boot(void)

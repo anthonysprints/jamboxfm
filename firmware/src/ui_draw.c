@@ -1011,6 +1011,14 @@ static void ui_draw(void)
 {
     ui.frame++;
     pads_tick();
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    if (ui.recovery_screen) {
+        jam_recovery_ui_draw();
+        ui_timers();
+        ui.force = 0;
+        return;
+    }
+#endif
     if (rec_go) {                                       /* the take started: say so */
         rec_go = 0;
         ui_message("RECORDING");

@@ -37,8 +37,13 @@ class ConfigurationTests(unittest.TestCase):
             self.assertEqual(set(result["flags"]), set(receipt.FLAGS))
             self.assertEqual(result["flags"]["JAMBOX_PROTO"], 1)
             self.assertEqual(result["flags"]["FELUCCA_FLASH"], 0)
+            self.assertEqual(result["flags"]["JAMBOX_RECOVERY"], 0)
             self.assertEqual(result["identity"], "FM-1_700")
             self.assertEqual(result["version"], "JamBoxFM 0.1.0-dev")
+            # Experimental builds still receive an honest local receipt. The
+            # production packager, rather than receipt capture, refuses them.
+            development = receipt.configuration(root, output, "app", ["-DJAMBOX_RECOVERY=1"], preprocessor)
+            self.assertEqual(development["flags"]["JAMBOX_RECOVERY"], 1)
 
     def test_unversioned_export_has_honest_null_revision(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -142,6 +147,13 @@ class PackageRefusalTests(unittest.TestCase):
                 self.save()
                 with self.assertRaisesRegex(ValueError, name):
                     self.verify()
+
+    def test_recovery_development_build_cannot_be_packaged_as_stable(self):
+        self.record["configuration"]["app"]["flags"]["JAMBOX_RECOVERY"] = 1
+        self.save()
+        with self.assertRaisesRegex(ValueError, "Candidate requires JAMBOX_RECOVERY=0"):
+            self.verify()
+        self.memory.assert_not_called()
 
     def test_all_identity_mismatches_are_rejected(self):
         original = copy.deepcopy(self.record)

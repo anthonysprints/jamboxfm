@@ -15,6 +15,7 @@
  * while watched. Frames arrive through sx_frame (usb.c), replies leave
  * through ota_wire_send(). */
 #define ED_HDR0 0x7D
+#include "jam_recovery_api.h"
 #define ED_HDR1 0x46
 #define ED_HDR2 0x4C
 enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, ED_PRESET, ED_PROJECT, ED_NAMES,
@@ -736,6 +737,19 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     uint32_t na = n - 4u;
     int16_t *vp;
     const param_desc_t *d;
+#if JAMBOX_PROTO && JAMBOX_RECOVERY
+    /* Treat editor mutations as pending too; physical-input timestamps cannot
+     * see USB edits. Unknown commands are conservatively marked pending. */
+    switch (cmd) {
+    case ED_INFO: case ED_GET: case ED_DUMP: case ED_DESC: case ED_STEP_GET:
+    case ED_NAMES: case ED_SMP_INFO: case ED_UP_LIST: case ED_UP_GET:
+    case ED_WATCH: case ED_PING: case ED_TRACK_DUMP: case ED_BK_LIST:
+    case ED_BK_GET: case ED_LOCK_GET: case ED_MICRO_GET: case ED_FILL_GET:
+    case ED_FM6_GET: case ED_FM6_LIST:
+        break;
+    default: jam_recovery_mark_dirty(); break;
+    }
+#endif
     ed_begin(cmd);
 #if defined(FELUCCA_PERSIST) && !FELUCCA_PERSIST
     if (ed_storage_disabled(cmd, a, na)) {

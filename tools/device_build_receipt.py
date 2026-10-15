@@ -22,9 +22,11 @@ VERSION = "0.1.0-dev"
 IDENTITIES = {"app": "FM-1_700", "loader": "ota-FM-1_700", "package": "FM-1_700", "rescue": "FM-1_000"}
 COMPILER_ARCHIVE_SHA256 = "a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd"
 FLAGS = ("JAMBOX_PROTO", "FELUCCA_FLASH", "FELUCCA_PERSIST", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN",
-         "FELUCCA_OTA_RAMONLY", "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_CDC", "FELUCCA_UART")
+         "FELUCCA_OTA_RAMONLY", "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_CDC", "FELUCCA_UART",
+         "JAMBOX_RECOVERY")
 REQUIRED_FLAGS = {"JAMBOX_PROTO": 1, "FELUCCA_FLASH": 1, "FELUCCA_PERSIST": 0, "FELUCCA_OTA": 1,
-                  "FELUCCA_OTA_DRYRUN": 0, "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_ICONS": 0, "FELUCCA_SLICE": 0}
+                  "FELUCCA_OTA_DRYRUN": 0, "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_ICONS": 0, "FELUCCA_SLICE": 0,
+                  "JAMBOX_RECOVERY": 0}
 GENERATOR_INPUTS = (
     "build.sh", "tools/build.py", "tools/device_build_receipt.py", "tools/fm1pkg_make.py", "tools/lz4blk.py",
     "tools/gen_font.py", "tools/gen_icons.py", "tools/gen_tables.py", "tools/gen_samples.py", "tools/sampleio.py",

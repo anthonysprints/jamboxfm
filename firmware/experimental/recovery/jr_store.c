@@ -1,7 +1,9 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "jr_store.h"
 #include <stddef.h>
+#ifndef JR_FREESTANDING
 #include <string.h>
+#endif
 
 _Static_assert(JR_STORE_PAYLOAD_MAX + JR_STORE_HEADER_BYTES ==
                JR_STORE_SECTORS * JR_STORE_SECTOR_BYTES,

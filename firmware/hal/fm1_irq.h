@@ -8,6 +8,8 @@
  *                         exception) enabled at prio 7, ETM on, div0 trap
  *                         off (see below).
  *   fm1_irq_attach(n, h, prio)   h = asm wrapper (fm1_isr.S), prio 0..7
+ *   fm1_irq_pause(n)      mask one source, return its opaque prior configuration
+ *   fm1_irq_resume(n, saved) restore that source's exact prior enable/priority
  *   fm1_irq_enable_all()  icfg bit 8 + sti, after every source is set up
  *
  * The application supplies fm1_fault(const fm1_crash_t *) which reports the
@@ -81,6 +83,24 @@ static void fm1_irq_attach(uint32_t n, void (*h)(void), uint32_t prio)   /* IRQs
     FM1_ICFG(n) = (FM1_ICFG(n) & ~(0xFu << sh)) | ((((prio & 7u) << 1) | 1u) << sh);
 }
 static void fm1_irq_mask(uint32_t n) { FM1_ICFG(n) &= ~(1u << ((n & 7u) * 4u)); }
+
+/* Source-local pause: timer/USB/watchdog service remains available. Preserve
+ * the entire nibble, including the disabled state, rather than assuming a
+ * priority or accidentally enabling a source that was already masked. */
+static uint32_t fm1_irq_pause(uint32_t n)
+{
+    uint32_t sh = (n & 7u) * 4u;
+    uint32_t previous = FM1_ICFG(n) & (0xfu << sh);
+    fm1_irq_mask(n);
+    __asm__ volatile("csync" ::: "memory");
+    return previous;
+}
+static void fm1_irq_resume(uint32_t n, uint32_t previous)
+{
+    uint32_t mask = 0xfu << ((n & 7u) * 4u);
+    FM1_ICFG(n) = (FM1_ICFG(n) & ~mask) | (previous & mask);
+    __asm__ volatile("csync" ::: "memory");
+}
 
 static void fm1_irq_enable_all(void)
 {

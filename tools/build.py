@@ -206,7 +206,7 @@ def build_loader():
 def build_app():
     flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src", "-Ibuild/gen"]
     for flag in ("FELUCCA_FLASH", "FELUCCA_PERSIST", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY", "FELUCCA_CDC", "FELUCCA_UART",
-                 "FELUCCA_ICONS", "FELUCCA_SLICE", "JAMBOX_PROTO"):
+                 "FELUCCA_ICONS", "FELUCCA_SLICE", "JAMBOX_PROTO", "JAMBOX_RECOVERY"):
         v = os.environ.get(flag)    # unset: the default in firmware/src/felucca.c
         if v in ("0", "1"):
             flags.append(f"-D{flag}={v}")
