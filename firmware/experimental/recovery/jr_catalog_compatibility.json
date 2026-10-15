@@ -6,6 +6,10 @@
     {
       "sha256": "9d3cbd3b539560553aca4ddd3fa036d0eca06ab1005b59ba07438cb0fd5a1dfe",
       "review": "Trial03 changes drum page descriptors, UI applicability and usable-kit browsing only. Stored parameter IDs/ranges, kit IDs/recipes, engine/preset order, generated audio assets, codec, runtime, project and sidecar layouts remain unchanged. Preserve the owner-tested manual-save identity; see docs/DRUM_KIT_TRIAL.md and cross-version runtime checks."
+    },
+    {
+      "sha256": "40fa0f6dad7a6bb464fad11f2343b668e1a68c56725a8132ba85146399590673",
+      "review": "Sound-page cleanup: only transient UI page table, applicability and display descriptors in params.c change. Actual parameter enums/TP/GP definitions, IDs/ranges/defaults, engine/kit recipes/order, generated audio assets, project/sidecar codec and recovery runtime remain byte-identical. TIME/PITCH target existing P_E4/P_ED_PIT. Hidden modulation values are retained. Preserve canonical manual checkpoint identity; see docs/SOUND_PAGE_CLEANUP.md and native/cross-version evidence."
     }
   ]
 }

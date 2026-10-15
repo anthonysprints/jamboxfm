@@ -761,6 +761,13 @@ static void draw_graph(void)
             if (big_page(pg)) {
                 cv_oy = 0;
                 graph_big();
+#if JAMBOX_PROTO
+                if (pg->fam == FAM_ENV && pg->id[0] == P_E4) {
+                    cv_rect(0, 64, 240, 60, C_BLACK);
+                    cv_text(48, 74, &FONT_S, "PATCH ENVELOPES", C_DIM);
+                    cv_text(48, 96, &FONT_S, "+TIME: SLOWER MOD", C_DIM);
+                }
+#endif
             }
             break;
         }

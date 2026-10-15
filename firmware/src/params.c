@@ -404,6 +404,9 @@ typedef struct {
 } page_t;
 
 static const page_t PAGES[] = {
+#if JAMBOX_PROTO
+    {"FM ENV", FAM_ENV, SC_TRACK, GR_NONE, {P_E4, P_ED_PIT, 0xFF, 0xFF}},
+#endif
     {"ENV", FAM_ENV, SC_TRACK, GR_ADSR, {P_ATK, P_DEC, P_SUS, P_REL}},
     {"ENV DEST", FAM_ENV, SC_TRACK, GR_NONE, {P_ED_FLT, P_ED_PIT, P_ED_SHP, P_ESYNC}},   /* (P_ED_FX: the level trim, no
                                                                        * page); 2.6: ESYNC, ENV's times as note values */
@@ -476,6 +479,8 @@ static int page_for_drum(const page_t *pg)
 static int page_shown(const page_t *pg)
 {
 #if JAMBOX_PROTO
+    if (pg->fam == FAM_ENV && !is_drum(TSEL))
+        return (pg->id[0] == P_E4) == (TSEL->eng_req == ENGI_FM6);
     if (pg->scope == SC_KITFX || (pg->fam == FAM_FX && pg->id[0] == G_RSIZE && pg->id[2] == 0xFF))
         return is_drum(TSEL);
     if (is_drum(TSEL))
@@ -491,6 +496,39 @@ static int page_global(const page_t *pg, uint32_t slot)
 {
     return pg->scope == SC_GLOBAL || (pg->scope == SC_KITFX && (slot == 1u || slot == 2u));
 }
+
+#if JAMBOX_PROTO
+/* UI-only applicability. Retain all stored amounts when changing engines,
+ * algorithms or waves; returning to a supported mode restores their control. */
+static const param_desc_t JAM_MOD_DESC[] = {
+    {"TIME", F_BIPCT, -64, 63, 0, 0, 0},
+    {"PITCH", F_BIPCT, -64, 63, 0, 0, 0},
+    {"PWM", F_BIPCT, -64, 63, 0, 0, 0},
+    {"IDX1", F_BIPCT, -64, 63, 0, 0, 0},
+    {"IDX2", F_BIPCT, -64, 63, 0, 0, 0},
+    {"DEP1", F_BIPCT, -64, 63, 0, 0, 0},
+    {"DEP2", F_BIPCT, -64, 63, 0, 0, 0},
+    {"MOD", F_BIPCT, -64, 63, 0, 0, 0},
+    {"FDBK", F_BIPCT, -64, 63, 0, 0, 0},
+};
+static const param_desc_t *jam_mod_desc(const track_t *t, uint32_t id)
+{
+    const engine_t *e = ENGINES[t->eng_req % NENGINES];
+    uint32_t shape = id == P_ED_SHP || id == P_LD_SHP;
+    if (e == &ENG_DRAWBAR || (e == &ENG_DIGITAL && t->p[P_E0] == 7) ||
+        (e->ownenv && (id == P_ED_FLT || id == P_ED_SHP))) return 0;
+    if (shape) {
+        if (e == &ENG_SAMPLE || e == &ENG_LOFI || e == &ENG_PHYS ||
+            (e == &ENG_ANALOG && t->p[P_E0] != 4) ||
+            (e == &ENG_TRIO && !((0x84c6u >> (t->p[P_E0] & 15)) & 1u))) return 0;
+        if (e == &ENG_ANALOG) return &JAM_MOD_DESC[2];
+    }
+    if (e == &ENG_DIGITAL) return &JAM_MOD_DESC[3 + shape];
+    if (e == &ENG_PHASE) return &JAM_MOD_DESC[5 + shape];
+    if (e == &ENG_FM6) return &JAM_MOD_DESC[7 + shape];
+    return &TP[id];
+}
+#endif
 
 static const param_desc_t *page_desc(const page_t *pg, uint32_t slot, int16_t **valp)
 {
@@ -510,6 +548,19 @@ static const param_desc_t *page_desc(const page_t *pg, uint32_t slot, int16_t **
 #endif
         return &GP[id];
     }
+#if JAMBOX_PROTO
+    if (!is_drum(TSEL)) {
+        if (pg->fam == FAM_ENV && pg->id[0] == P_E4) {
+            *valp = &TSEL->p[id];
+            return &JAM_MOD_DESC[slot];
+        }
+        if (id == P_ED_FLT || id == P_ED_SHP || id == P_LD_FLT || id == P_LD_SHP) {
+            const param_desc_t *d = jam_mod_desc(TSEL, id);
+            *valp = d ? &TSEL->p[id] : 0;
+            return d;
+        }
+    }
+#endif
     *valp = &TSEL->p[id];
     return track_desc(TSEL, id);
 }

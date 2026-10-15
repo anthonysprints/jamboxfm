@@ -468,8 +468,18 @@ static void edit_param(uint32_t slot, int32_t steps)
         return;
     }
     d = page_desc(pg, slot, &vp);
-    if (!d || !vp || d->max == d->min)
+    if (!d || !vp) {
+#if JAMBOX_PROTO
+        if (!global && (id == P_ED_FLT || id == P_ED_SHP || id == P_LD_FLT || id == P_LD_SHP)) {
+            const engine_t *e = ENGINES[TSEL->eng_req % NENGINES];
+            ui_message(e == &ENG_ANALOG ? "SHAPE NEEDS PWM WAVE" :
+                       e == &ENG_DIGITAL ? "ALG 8: NO FM MOD" :
+                       e == &ENG_TRIO ? "PWM: SELECT PULSE WAVE" : "UNUSED FOR THIS SOUND");
+        }
+#endif
         return;
+    }
+    if (d->max == d->min) return;
     v = d->names == ESYNC_NAMES || d->names == N_IBITS || d->names == N_IRATE ? names_turn(d, *vp, steps)   /* (a name a detent) */
                                     : clamp(*vp + accel(EN_K1 + slot, steps, d->max - d->min), d->min, d->max);
     *vp = (int16_t)v;

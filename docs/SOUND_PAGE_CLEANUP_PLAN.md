@@ -98,3 +98,15 @@ working controls with misleading labels, deliberate blank slots and shared
 parameter aliases. No firmware, installer, save format or published trial was
 changed by this research. The probe source and repeatable runner are under
 `docs/research/probes/`; their outputs stay in `build/sound-page-research/`.
+
+## First implementation
+
+The owner authorized continuing with controls/pages that have no effect. The
+[implemented slice](SOUND_PAGE_CLEANUP.md) replaces FM6's misleading ENV pages,
+blanks unavailable modulation destinations, labels the reviewed timbre routes
+and explains conditional availability on a knob turn. All twelve enabled
+engines were audited for these buses before applying generic visibility rules.
+
+This supersedes the earlier planning-only status for this branch. Main and the
+active drum trial remain unchanged. Main EDIT regrouping, broader navigation
+and other conditional controls remain separate follow-ups.
