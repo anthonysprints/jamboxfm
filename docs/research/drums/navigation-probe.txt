@@ -1,0 +1,26 @@
+SEQ: home=0 page=STEP scope=3 meaningful_columns=0 drum_grid=0 layer=0
+SEQ: home=0 page=PATTERN scope=0 meaningful_columns=4 drum_grid=0 layer=0
+SEQ: home=0 page=SONG scope=5 meaningful_columns=0 drum_grid=0 layer=0
+EDIT: home=0 page=EDIT 1 scope=2 meaningful_columns=0 drum_grid=0 layer=0
+EDIT: home=0 page=EDIT 2 scope=2 meaningful_columns=0 drum_grid=0 layer=0
+EDIT: home=0 page=VOICE scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ENV: home=0 page=ENV scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ENV: home=0 page=ENV DEST scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ENV: home=0 page=ENV scope=0 meaningful_columns=0 drum_grid=0 layer=0
+LFO: home=0 page=LFO scope=0 meaningful_columns=0 drum_grid=0 layer=0
+LFO: home=0 page=LFO 2 scope=0 meaningful_columns=0 drum_grid=0 layer=0
+LFO: home=0 page=LFO DEST scope=0 meaningful_columns=0 drum_grid=0 layer=0
+SEL: home=0 page=SEL scope=0 meaningful_columns=0 drum_grid=0 layer=0
+SEL: home=0 page=SEL 2 scope=0 meaningful_columns=0 drum_grid=0 layer=0
+SEL: home=0 page=SEL scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ARP: home=0 page=ARP scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ARP: home=0 page=ARP 2 scope=0 meaningful_columns=0 drum_grid=0 layer=0
+ARP: home=0 page=ARP scope=0 meaningful_columns=0 drum_grid=0 layer=0
+FX: home=0 page=FX scope=0 meaningful_columns=0 drum_grid=0 layer=0
+FX: home=0 page=FILTER scope=0 meaningful_columns=0 drum_grid=0 layer=0
+FX: home=0 page=SLICER scope=0 meaningful_columns=4 drum_grid=0 layer=0
+GLO: home=0 page=GLOBAL scope=1 meaningful_columns=4 drum_grid=0 layer=0
+GLO: home=0 page=MASTER scope=1 meaningful_columns=4 drum_grid=0 layer=0
+GLO: home=0 page=SYSTEM scope=1 meaningful_columns=4 drum_grid=0 layer=0
+hold SEQ + HOME then release SEQ: home=1 page=ENV scope=0 meaningful_columns=0 drum_grid=0 layer=4
+internal existing dedicated GRID: home=0 page=DRUMS scope=6 meaningful_columns=0 drum_grid=1 layer=0
