@@ -5,15 +5,14 @@ checkout for cloud tasks.
 
 ## Adopted firmware and development
 
-On October 15, 2026 the owner approved promoting all tested drum changes through
-Trial 04 to `main` and the normal Chrome installer. The approved firmware is
-611255 bytes, SHA256
-77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90.
-Its clean compiled source is d41e979dd150f5893cc8b5719b58fe5b0f28b7cb.
-Release documentation and evidence commits do not change that binary. See
-`docs/DRUM_RELEASE.md` and its publication evidence for actual delivery status.
-The earlier manual-saving release was b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7.
-Owner acceptance is not independent or universal hardware/recovery validation.
+On October 15, 2026 the owner approved moving the individual-drum editor
+through Trial 05 to `main` and the normal Chrome installer. The adopted firmware
+is 611255 bytes, SHA256
+a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351.
+Its owner-used clean source was 4c04594; a promotion rebuild must match those
+exact bytes. See `docs/DRUM_RELEASE.md` for source, evidence and delivery status.
+Trial 04 used 77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90.
+Owner acceptance is not universal hardware/recovery validation.
 
 Use `main` for the adopted source. Keep new usability experiments on
 `next/usability-and-saving` until validation and owner adoption. Preserve the
@@ -25,7 +24,10 @@ The drum workflow is SEQ for GRID, EDIT for KIT SOUND and FX for useful kit
 controls. Another SEQ tap inside GRID swaps drums 1–8 / 9–16, preserving row
 position and step window. Entry from another screen preserves the selected
 drum. Held gestures, recorder overlays and manual-save modals retain priority.
-See `docs/DRUM_KIT_TRIAL.md` for the control map and historical trials.
+ENV now opens individual synthesized drum editing. Factory kits require an
+explicit copy to a chosen SYN bank, with overwrite/shared-section guidance.
+Sampled kits retain whole-kit EDIT/FX. See `docs/DRUM_SOUND_TRIAL.md` and
+`docs/DRUM_KIT_TRIAL.md` for controls and historical trials.
 
 The owner chose manual saving. Automatic saving remains disabled and outside
 the active plan unless explicitly reopened. Only intentional Save now replaces
@@ -36,6 +38,10 @@ Unknown catalog edits or changed audio assets must fail the identity check.
 Do not use `check_jam_recovery_identity.py --write` to bypass a failure: replacing
 the runtime identity rejects existing checkpoints. Check identity refusals and
 actual old/current cold restore when compatibility changes require review.
+
+The separate `next/sound-page-cleanup` branch is experimental. Keep its new
+FM6/modulation pages out of the normal installer until owner adoption. Its test
+installer must use a dedicated `preview/sound/` destination.
 
 ## Publishing
 

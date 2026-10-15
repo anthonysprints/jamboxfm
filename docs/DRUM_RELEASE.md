@@ -1,40 +1,47 @@
 # Adopted drum workflow in the normal installer
 
-On October 15, 2026, the owner accepted Trial 04 and explicitly requested moving
-all drum changes to public main and the normal Chrome installer. This follows
-the earlier manual-saving adoption. See [owner acceptance](build-evidence/drum-seq-banks/owner-feedback.md).
+On October 15, 2026 the owner requested that all drum work, including Trial 05's
+individual synthesized-drum editor, be promoted to main and the normal Chrome
+installer. See [owner adoption](build-evidence/drum-sound-release/owner-feedback.md).
 
-The approved firmware is exactly 611255 bytes, SHA256
-`77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90`.
-Its clean compiled source is `d41e979dd150f5893cc8b5719b58fe5b0f28b7cb`.
-Promote those exact bytes; do not substitute an untested rebuild. The normal
-filename/manifest differ from the preview, while the firmware bytes remain
-identical. The source archive includes the release documentation and normal
-installer HTML, with compiler inputs bound to the original receipt.
+The adopted firmware is exactly 611255 bytes, SHA256
+`a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351`.
+Its original owner-used clean source is `4c04594`; the drum branch/evidence tip
+was `0e69bbd5fdb56e0739d8ab1155853ce161d20cf8`. Promotion must preserve those
+exact firmware bytes. A fresh target rebuilt at the drum tip is acceptable only
+when its hash is identical and the stock ELF/source/container gates pass.
 
 ## Included behavior
 
-- Direct SEQ entry, eight named rows, explicit step windows and useful
-  Drum / Step / Strength / Repeat knobs.
-- Repeated SEQ swaps drums 1–8 / 9–16 while preserving row position and steps.
-- EDIT opens KIT SOUND; FX opens useful whole-kit effects and retained depth.
-- Empty user sample kits are skipped; factory and valid SYN kits remain.
-- Ordinary left knobs agree with Home; held gestures, recorder priority,
-  manual saving and immediate keyboard ownership remain intact.
+- SEQ opens the named eight-row drum grid; repeat SEQ swaps drums 1–8 / 9–16.
+- Grid knobs control Drum / Step / Strength / Repeat.
+- EDIT shapes the whole kit; FX exposes useful kit effects and retained depth.
+- ENV selects and edits individual synth-drum Tune / Decay / Filter / Level.
+- Factory recipes require an explicit copy into a chosen SYN1–4 bank. The
+  confirmation warns of whole-bank replacement and shared A–D section use.
+- Closed/pedal hats indicate their linked recipe. Sampled kits use EDIT/FX.
+- Empty sample banks are skipped; factory and valid SYN kits remain available.
+- Home-aligned left knobs, held gestures, recording overlays, first-key playing
+  and intentional manual saving remain intact.
 
-Manual saving is unchanged, automatic saving stays off, and existing checkpoint
-identity/format remain compatible. Existing users should Save now before
-updating and keep their saving setup. First-time factory users still follow
-the explicit initial storage setup. No new tracks, song slots, automatic save,
-individual drum recipe editor or additional flash writer is included.
+Automatic saving stays off. Existing checkpoint identity/layout are unchanged;
+Save now keeps the edited SYN banks and jam. Users should Save now before
+updating and keep their existing saving setup. First-time factory users retain
+the explicit initial storage setup. No new tracks or multiple-song slots ship.
 
-## Promotion workflow
+## Promotion and isolation
 
-Main before adoption is `da394a87b3345555e796257012e7adf4bbbc8872`; it is an
-ancestor of the drum branch. Fast-forward main to the reviewed work without
-rewriting history. Future unapproved experiments remain isolated. The public
-browser instrument and both preview trees are preserved by this installer-only
-publication.
+Main before Trial 05 promotion was `67cb6ee2e7dd05b1911b90b8ab92696a347b1e51`.
+It fast-forwards to the drum tip; normal-installer documentation can follow.
+Keep `next/sound-page-cleanup` and its FM6/modulation UI separate. The new test
+installer belongs at `preview/sound/`; no sound-cleanup code belongs in this
+normal release until separately adopted.
+
+The normal scoped publisher preserves the browser instrument, existing drum
+and saving previews, and every unrelated Git path/object/mode. A subsequent
+sound-preview publication must in turn preserve this normal release. Do not use
+the full-site publisher. Current evidence belongs in
+`docs/build-evidence/drum-sound-release/`.
 
 ```sh
 . tools/cloud/activate.sh
@@ -48,23 +55,16 @@ python3 tools/publish_jam_installer.py
 python3 tools/publish_jam_installer.py --publish
 ```
 
-Reusing the verified Trial 04 target is intentional. The normal packager checks
-its actual source/generated inputs, compiler/SDK provenance, ELF memory,
-canonical container and loader. Normal --with-updater and development
---with-recovery use the same approved flags. A future fresh build uses
-`bash tools/cloud/build_device.sh --with-updater`; compare bytes to the tested
-hash before substituting it into this release.
+Use the normal schema-2 install descriptor and normal candidate manifest, not a
+renamed preview manifest. Verify firmware hash before/after publication, remote
+files and protected trees. Owner adoption is distinct from universal hardware
+validation. Software markers remain unchanged. A source/site push alone is not
+proof of live Pages availability; record HTTP access independently.
 
-Verify that normal firmware SHA256 equals the owner-tested hash before and
-after publication. Use the normal schema-2 install descriptor and normal
-candidate manifest, never a renamed preview manifest. The scoped publisher
-updates only its exact installer/source/firmware allowlist and merged root
-checksums, preserving every other Git path/object/mode. Do not use the full-site
-publisher. Verify new remote bytes, unchanged protected trees and main history.
+## Earlier release
 
-Owner acceptance is distinct from independent or universal device/recovery
-validation. Existing software-only policy markers remain unchanged. The staged
-trials record native, audio, sanitizer, browser, target and save-compatibility
-checks. Current promotion checks and publication/HTTP outcomes belong in
-`docs/build-evidence/drum-release/`. A successful push is not proof of live
-Pages HTTP availability; report a cloud proxy failure separately.
+Trial 04 was adopted earlier that day with firmware SHA256
+`77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90`,
+clean source `d41e979dd150f5893cc8b5719b58fe5b0f28b7cb`. Its evidence remains in
+[drum-release](build-evidence/drum-release/). Trial 05 adds the individual drum
+editor while preserving that tested grid/kit workflow and manual-save format.
