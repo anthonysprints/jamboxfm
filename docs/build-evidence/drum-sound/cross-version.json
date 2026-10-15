@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "baseline_revision": "2ef4338d611b61d49efc4d2249183df976eddc83",
+  "current_checkout_revision": "67cb6ee2e7dd05b1911b90b8ab92696a347b1e51",
+  "current_checkout_may_include_uncommitted_changes": true,
+  "compatibility": {
+    "unchanged_files": {
+      "firmware/experimental/recovery/jr_asset_identity.h": "fd49ec9a306f7a1da8ae74ce2503773845405da341ddd55ba06e9415cac2ceac",
+      "firmware/experimental/recovery/jr_codec.c": "bcfb9c42365ba64e22bd9179b987334e094fb4221b04ccee67c5569911874bdd",
+      "firmware/experimental/recovery/jr_codec.h": "b0c17466f535be789fe2da4cd6a22df3a0f949b664ef6b74041b81b28ab5a8f6",
+      "firmware/experimental/recovery/jr_io.h": "904d80b317eeac0be3c4a67d21102376d5aa832a1268751d50fdc49d2e84baf2",
+      "firmware/experimental/recovery/jr_store.c": "1704e326decbf8e95dd6aa93d3beb6a1765bbd4d43d2927ce8666303d5aa9a40",
+      "firmware/experimental/recovery/jr_store.h": "560039b6488a6b8e34a9f20f5103113322e20f0971232efe86adb4e248a6b7bc",
+      "firmware/src/core.h": "f2aec2c2eb8284f916b48f58397fbbf45d7c05df00ff071529a6b06dd461344c",
+      "firmware/src/drum_synth.c": "6ff15d2820c1f4103f42dd56e89a66dddd7260ad7adc846df53f443b0946031a",
+      "firmware/src/eng_analog.c": "929ac03333ee1bfb1c6a23ccd9812b02e44fb9bdbce244545c04de864b69aeff",
+      "firmware/src/eng_digital.c": "01931e1acba15cbdfeb89fa2bdba3b94e09d6cc6f1661da59b1cf9db10d379f8",
+      "firmware/src/eng_drawbar.c": "08b544972e15edf758a1ddd4917297778fbcab8f8073c569bf62903b9345f2ef",
+      "firmware/src/eng_fm6.c": "022ff122d3e9a574f62ccb0678fe7d558a6fa59740f8500671a91be97cafb0a1",
+      "firmware/src/eng_formant.c": "6fa744c6a9cf1acd6f7bd793a5302c0557d950432d07f245f682ec12b2892bb6",
+      "firmware/src/eng_grain.c": "928ab2a1deaa296ae032cf48d339a8bc82dc20ff1e40329ec328d9e0934e3091",
+      "firmware/src/eng_lofi.c": "5dab4001d2119af13d616a2f2a44a7e619b9080d3fbbe1c9b736d488f62e988d",
+      "firmware/src/eng_noise.c": "86d38abb129cccfba7ae40a39c66d5a6a7b29e0f30a3b0cfde649d40de24b101",
+      "firmware/src/eng_phase.c": "17efa7f6d0b24cfad33dc96973b741a1b831cba3fed0ce9aaa1cac9d28395ea9",
+      "firmware/src/eng_phys.c": "ee1977cd4c5978a31a4c7e475d07f06fdfa22d5755f32bd94331523233df28fd",
+      "firmware/src/eng_sample.c": "29a278bd944537cd0a890588e91f3daa25bef156a19cb1d28856d1966aead9b9",
+      "firmware/src/eng_slice.c": "0c4e70ba5d5ba8038f0d84fd9b41da24b5297fc4491da856b15406fa5a9ddeee",
+      "firmware/src/eng_trio.c": "d9921dd19381cf1fad2c800716a662ee5ecabe885ace7b9b44ea8ba97e3fa518",
+      "firmware/src/engines.c": "df204fa4842ef0ff018f3a515aa51b0dd09dfbef81d3dd357b7302468be23673",
+      "firmware/src/jam_palette.c": "bf91d134da034f341c4af637ff1ebfba45990d8ad275e2babdeecf2e4de90577",
+      "firmware/src/jam_recovery_api.h": "e22f0cf4d4528dc1e8e1cd62a7feef2c27a23c4ea1c7f53d63494c602450232a",
+      "firmware/src/jam_recovery_runtime.c": "e8b269f1d8186ff97d9bc86b684858fa6bd432c33029c6ea8f5944c03f384329",
+      "firmware/src/jam_recovery_sidecars.h": "593d35b223873f2103413ea294f117084d132bfc88f402c2b97473c4cab1c7a0",
+      "firmware/src/project.c": "2a2e55ba4b48257b7e2068a47dc321e6343bdaf0c955542c5701ae147cbf76f1",
+      "firmware/src/storage.c": "e06fe82bb9cc303ba24bb694729e368c3cda4897eafd2873045bec1954d0de5a",
+      "tests/hostsim.c": "6f32888474939417aa362164931e2f11ea420dad88d517d216fe7546150699ce",
+      "tests/jam_recovery_runtime_test.c": "d2929913f86c6b497cb82d712fc8ce8693519d6b0035cad0a130eaf6dac6c6c3",
+      "tests/jam_storage_harness.c": "4158b6d4225024061950baeb1f6e9396ad108e7cb55f64fbc73ea082fdc8dcc6"
+    },
+    "identity_hex": "3055519f7c0bfb4d03c9df9a58abb6714ddffcd6ad9a8db74c2e132ce02b77ddd6bbebd8225e50e2e225523b232e268bb0a8e7b5962eedace610bec17fbc9c45",
+    "generated_assets_sha256": "3055519f7c0bfb4d03c9df9a58abb6714ddffcd6ad9a8db74c2e132ce02b77dd"
+  },
+  "directions": [
+    {
+      "direction": "baseline-to-current",
+      "cold_restore_checks": 17,
+      "emit_checks": 6,
+      "nor_bytes": 1048576,
+      "nor_sha256": "cbe6fccd8dfb3f8a4c3e3ec973878cee217793efd8d8de7475704ce762d15ff0",
+      "ok": true
+    },
+    {
+      "direction": "current-to-baseline",
+      "cold_restore_checks": 17,
+      "emit_checks": 6,
+      "nor_bytes": 1048576,
+      "nor_sha256": "cbe6fccd8dfb3f8a4c3e3ec973878cee217793efd8d8de7475704ce762d15ff0",
+      "ok": true
+    }
+  ],
+  "actual_nor_bytes_identical": true,
+  "total_cold_restore_checks": 34,
+  "physical_device_accessed": false,
+  "user_backup_used": false
+}

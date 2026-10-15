@@ -1,0 +1,140 @@
+{
+  "compiled_source": {
+    "dirty": false,
+    "provenance": "git-checkout-with-input-hashes",
+    "revision": "4c04594dd00c29892b1df0ce8b639191d5815644"
+  },
+  "firmware": {
+    "sha256": "a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
+    "size_bytes": 611255
+  },
+  "checks": {
+    "individual_drum_ui_and_dsp": 2609,
+    "address_and_undefined_sanitizers": 2609,
+    "actual_edit_save_boot": 9,
+    "existing_navigation": 92,
+    "existing_grid": 1360,
+    "existing_kit_ui": 330,
+    "existing_kit_audio": 72,
+    "home_navigation": 115,
+    "recovery_runtime": 306,
+    "identity_tests": 12,
+    "cross_version_cold_restore": 34,
+    "production_drum_browser_scenarios": 6,
+    "recovery_package_tests": 19,
+    "preview_publisher_tests": 20,
+    "installer_browser_cases": 2,
+    "general_emulator_browser": "passed"
+  },
+  "log_tails": {
+    "drum-sound-tests": [
+      "ui: kick/snare/hats controls change actual synthesized audio                   ok",
+      "ui: sampled kits never offer or execute a synth copy                           ok",
+      "ui: recipe edit retires its live voice without interrupting a neighboring drum ok",
+      "ui: ENV cannot hide the armed recorder to begin an edit                        ok",
+      "drum-sound: 2609 checks, all checks passed"
+    ],
+    "drum-sound-sanitized": [
+      "ui: kick/snare/hats controls change actual synthesized audio                   ok",
+      "ui: sampled kits never offer or execute a synth copy                           ok",
+      "ui: recipe edit retires its live voice without interrupting a neighboring drum ok",
+      "ui: ENV cannot hide the armed recorder to begin an edit                        ok",
+      "drum-sound: 2609 checks, all checks passed"
+    ],
+    "drum-sound-save": [
+      "storage: manual checkpoint accepts the real edited SYN banks                          ok",
+      "storage: cold boot restores every byte of all four panel-edited SYN kits              ok",
+      "storage: cold boot restores the selected edited kit                                   ok",
+      "storage: cold restoring edited drum sounds does not write flash                       ok",
+      "Drum sound save: 9 checks, 0 failures"
+    ],
+    "drum-sound-navigation": [
+      "ui: melodic SEQ still opens its STEP editor                                    ok",
+      "ui: melodic repeated SEQ still cycles to PATTERN                               ok",
+      "ui: melodic repeated SEQ still reaches SONG                                    ok",
+      "ui: melodic SEQ still restores its remembered SONG destination                 ok",
+      "drum-navigation: 92 checks, all checks passed"
+    ],
+    "drum-sound-grid": [
+      "ui: Step focus clamps at the first step                                        ok",
+      "ui: Step focus clamps at the actual pattern length                             ok",
+      "ui: on/off-page playhead indicator updates while the editing bank stays fixed  ok",
+      "ui: off-page playback never chases the editor to a different bank              ok",
+      "drum-grid: 1360 checks, all checks passed"
+    ],
+    "drum-sound-kit-ui": [
+      "ui: keys in manual saving never change the hidden beat or kit controls         ok",
+      "ui: explicit Save now calls the writer once and preserves the latest selected drum ok",
+      "ui: manual Save now leaves all kit effects, notes and other parts unchanged    ok",
+      "ui: HOME leaves manual saving in the remembered Home view                      ok",
+      "drum-kit-ui: 330 checks, all checks passed"
+    ],
+    "drum-sound-kit-audio": [
+      "ui: SYN1: Gate Pattern changes which drum hits are heard                       ok",
+      "ui: SYN1: Gate Rate changes the rhythm of the audible drums                    ok",
+      "ui: SYN1: Stutter repeats the actual drum phrase and stays bounded             ok",
+      "ui: SYN1: generic synth FX have no drum effect and must not be offered as kit controls ok",
+      "drum kit audio: 72 checks, 0 failures; sampled/factory synth/SYN production DSP"
+    ],
+    "drum-sound-home": [
+      "jam-home-nav: 115 checks, 0 failures"
+    ],
+    "drum-sound-runtime": [
+      "storage: real boot restores selected track, octave and last Home view                 ok",
+      "storage: restoration leaves transport stopped, REC disarmed and no held keys          ok",
+      "storage: new operating-system process recovers using only the NOR image               ok",
+      "storage: actual adapter restores the full session after independent-process cold boot ok",
+      "JamBox real recovery runtime: 306 checks, 0 failures"
+    ],
+    "drum-sound-identity": [
+      "............",
+      "----------------------------------------------------------------------",
+      "Ran 12 tests in 0.014s",
+      "",
+      "OK"
+    ],
+    "drum-sound-cross-version": [
+      "Cross-version manual save: 34 cold-restore checks passed; old/new 1 MiB NOR images identical.",
+      "Evidence: /workspace/jamboxfm/build/jam-recovery-cross-version/summary.json"
+    ],
+    "drum-sound-browser": [
+      "PASS GRID cell ownership, curated kits on GRID/KIT, named-row and partial-page LCDs, displayed part order",
+      "PASS contextual drum guidance and first step, idempotent EDIT, working KIT SOUND/FX, 41 populated kits, six-page FX cycle and left knobs",
+      "PASS silent SEQ row-bank toggle, exact two-tap LCD return, preserved step-18 edits and loop, remembered entry from Home/KIT/FX",
+      "PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership",
+      "Drum navigation: 6 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 \u00d7 240 LCD screenshots: /workspace/jamboxfm/build/jam-drum-nav-evidence"
+    ],
+    "drum-sound-package-tests": [
+      "Local recovery trial: /tmp/tmp1eb67i2j/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpf_vdjno1/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpbs79nhmj/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmph4pn_p2f/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpd3zcxix0/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911"
+    ],
+    "drum-sound-publisher-tests": [
+      "....................",
+      "----------------------------------------------------------------------",
+      "Ran 20 tests in 1.406s",
+      "",
+      "OK"
+    ],
+    "drum-sound-install-browser": [
+      "PASS complete normal to loader to normal transfer and private report",
+      "PASS mobile layout and labelled local-only backup actions",
+      "Recovery-profile installer: 2 Chromium cases passed. Wire simulation only; physical installation and trial behavior remain unverified. Screenshots: /workspace/jamboxfm/build/jam-drums-sound-install-evidence"
+    ],
+    "drum-sound-emu-browser": [
+      "JamBox physical emulator: real LCD, Groove/Sound Home with shared controls and uninterrupted chords/overdub, seven encoders, layers/deep pages/settings returns, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, sounding chord-tone LEDs without SNAP aliases, release/blur panic, pause/resume, desktop/mobile, standalone document with all further network blocked passed"
+    ],
+    "drum-sound-save-ui": [
+      "ui: regression fixture opens during a genuinely pending FM6 patch fade         ok",
+      "ui: recovery modal continues polling until the pending FM6 patch loads         ok",
+      "ui: old voice fade and FM6 engine switch finish while recovery remains open    ok",
+      "ui: settled modal patch matches the selected FM6 sound                         ok",
+      "recovery-ui: all checks passed"
+    ]
+  },
+  "hardware_tested": false,
+  "normal_release_unchanged_expected": "67cb6ee2e7dd05b1911b90b8ab92696a347b1e51",
+  "autosave": false
+}
