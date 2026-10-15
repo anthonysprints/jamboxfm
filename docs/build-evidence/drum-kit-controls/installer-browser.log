@@ -1,0 +1,31 @@
+PASS unsupported browser
+PASS permission denial sends nothing
+PASS factory is rejected
+PASS Sloop is rejected
+PASS rescue is rejected
+PASS future family schema is rejected
+PASS unknown release is rejected
+PASS missing family is rejected
+PASS badBundle blocks installation before MIDI writes
+PASS badBinding blocks installation before MIDI writes
+PASS badFlags blocks installation before MIDI writes
+PASS badFirmware blocks installation before MIDI writes
+PASS badLoaderRecovery blocks installation before MIDI writes
+PASS local backup and disposable jam acknowledgement both required
+PASS production controller rejects missing and forged backup or missing acknowledgement
+PASS multiple MIDI pairs block trial
+PASS new device invalidates checked readiness
+PASS hidden duplicate groups block production controller
+PASS disconnect invalidates checked readiness
+PASS stale explicitly checked pair cannot become another device
+PASS fresh starting-device guard rejects changedIdentity
+PASS fresh starting-device guard rejects changedAppFamily
+PASS cancelling preparation never sends upgrade
+PASS started failure disconnectAtStart locks all retry controls
+PASS started failure disconnectDuringWrite locks all retry controls
+PASS started failure badLoaderFamily locks all retry controls
+PASS started failure badFinalRelease locks all retry controls
+PASS complete normal to loader to normal transfer and private report
+PASS delayed post-flash identity keeps result pending until actual response
+PASS mobile layout and labelled local-only backup actions
+Recovery-profile installer: 30 Chromium cases passed. Wire simulation only; physical installation and trial behavior remain unverified. Screenshots: /workspace/jamboxfm/build/jam-drums-kit-install-evidence

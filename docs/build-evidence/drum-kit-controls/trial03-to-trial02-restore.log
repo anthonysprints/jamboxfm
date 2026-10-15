@@ -1,0 +1,17 @@
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: new operating-system process recovers using only the NOR image               ok

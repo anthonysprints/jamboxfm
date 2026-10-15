@@ -1,0 +1,326 @@
+Recovery runtime identity verified: 3055519f7c0bfb4d03c9df9a58abb6714ddffcd6ad9a8db74c2e132ce02b77ddd6bbebd8225e50e2e225523b232e268bb0a8e7b5962eedace610bec17fbc9c45
+Current source catalog verified: 9d3cbd3b539560553aca4ddd3fa036d0eca06ab1005b59ba07438cb0fd5a1dfe (explicit compatible review; saved identity unchanged)
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: section test uses two genuinely different FM6 edits                          ok
+storage: A to B to A restores A's edited FM6 patch                                    ok
+storage: section B restores B's edited FM6 patch                                      ok
+storage: return to section A survives subsequent factory polling                      ok
+storage: arranger working-loop backup restores actual edited FM6 patch                ok
+storage: section and working-loop restoration preserve curated sound name             ok
+storage: production recovery callbacks deny writes outside an authorized transaction  ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callback policy rejects application, sample, calibration and OTA ranges ok
+storage: recovery callbacks reject crossed pages, oversized programs and misaligned erases ok
+storage: rejected recovery callback requests never reach the raw NOR chip             ok
+storage: pre-existing validated hardware calibration is active before recovery setup  ok
+storage: empty flash has no recovery allocation claim                                 ok
+storage: first save requires explicit recovery initialization                         ok
+storage: ordinary Save now cannot silently retire the legacy allocation               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: explicit first save commits through real bounded recovery flash callbacks    ok
+storage: successful transaction closes write authorization and records the allocation claim ok
+storage: successful checked save reports Saved and resumes the audio interrupt        ok
+storage: full session save preserves firmware, samples, calibration, FM6 and update allocations ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: saved-session restoration preserves the independent physical panel calibration ok
+storage: fully verified boot reports Saved without leaving audio frozen               ok
+storage: recovery boot restores without programming or repairing any NOR byte         ok
+storage: first post-boot FM6 poll preserves recovered operator edits                  ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: sector erase failure reports Error, revokes write permission and unfreezes audio ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: failed sector erase preserves the complete previous recovery generation      ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real program failure reports failure and always revokes transaction authorization ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: failed new save leaves the old whole generation recoverable without writes   ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: later Save now succeeds after an interrupted transaction                     ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: new generation round-trip is also read-only at boot                          ok
+storage: new panel interaction conservatively marks the saved session Pending         ok
+storage: new MIDI activity cannot leave a misleading Saved indication                 ok
+storage: baseline real boot validates and restores the newest of two complete generations ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: late read error publishes one complete generation, never partially applied state ok
+storage: read-error rollback and older-copy recovery never write or repair flash      ok
+storage: transient current project magic corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient current project size corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient section A project magic corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient section A project size corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient section D project magic corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient section D project size corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient SYN bank magic corruption cannot publish altered session data      ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient SYN bank version corruption cannot publish altered session data    ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient SYN bank slot count corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: transient semantically valid SYN pitch corruption cannot publish altered session data ok
+storage: component-integrity rollback never repairs or writes flash                   ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: USB update arriving during save aborts before commit and retains its pending request ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: transfer-interrupted save leaves the preceding whole generation recoverable  ok
+storage: Save now rejects playing before writing or claiming success                  ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects recording before writing or claiming success                ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects record armed before writing or claiming success             ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects free take before writing or claiming success                ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects count-in before writing or claiming success                 ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects transport request before writing or claiming success        ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects physical key before writing or claiming success             ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects pending USB SysEx before writing or claiming success        ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects update request before writing or claiming success           ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects held synth voice before writing or claiming success         ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects MIDI sustain before writing or claiming success             ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects held arpeggiator notes before writing or claiming success   ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects incoming SysEx before writing or claiming success           ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects outgoing SysEx before writing or claiming success           ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: Save now rejects UBOOT request before writing or claiming success            ok
+storage: busy-state refusal preserves the entire NOR image                            ok
+storage: editor dirty test starts from verified saved state                           ok
+storage: real editor dispatcher returns correctly framed command reply                ok
+storage: real editor parameter write marks recovery Pending without a physical input timestamp ok
+storage: live editor edits only change RAM until explicit Save now                    ok
+storage: failed previous boot skips recovery and protects its record read-only        ok
+storage: boot-loop escape preserves the saved session without repair or initialization ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: healthy boot after guard reset restores the untouched complete saved session ok
+storage: unsupported user-sample dependency reports Error while retaining the prior writable allocation ok
+storage: unsupported source rejection does not erase or alter the last saved generation ok
+storage: user can replace an unsupported sample reference with a built-in kit         ok
+storage: choosing a built-in sound allows immediate successful retry without rebooting ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: retried built-in session restores completely without boot-time writes        ok
+storage: pending FM6 slot change prevents saving a new slot with the preceding operator patch ok
+storage: pending FM6 slot refusal never writes or claims to save                      ok
+storage: open recovery screen continues FM6 polling until the requested factory patch is ready ok
+storage: deferred FM6 preset reload also blocks a premature save when its slot number matches ok
+storage: deferred-patch refusal preserves the prior recovery generation               ok
+storage: recovery modal services deferred FM6 reloads so Save becomes available again ok
+storage: queued drum Program Change prevents committing the preceding kit             ok
+storage: pending drum Program Change refusal never writes flash                       ok
+storage: recovery modal services drum Program Changes before allowing Save now        ok
+storage: settled sound changes can be saved without closing recovery or rebooting     ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: restart restores the actual newly selected FM6 patch after deferred loading settled ok
+storage: settled sound-change restoration performs no boot-time writes                ok
+storage: corrupt only recovery record falls back to a complete fresh Dusty jam        ok
+storage: corrupt recovery does not trigger boot repairs or writes                     ok
+storage: future committed recovery schema stays protected even after explicit initialization ok
+storage: future schema protection neither migrates nor erases unknown saved work      ok
+storage: missing recovery starts the ordinary stopped and playable Dusty jam          ok
+storage: missing recovery does not initialize flash automatically                     ok
+storage: fresh-process recovery image has a private temporary path                    ok
+storage: fresh-process fixture contains only the committed NOR image                  ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real curated sound loader prepares complete four-track fixture               ok
+storage: real boot restores current notes, independent lengths, mix, sounds and globals ok
+storage: real boot restores all four complete A-D musical snapshots                   ok
+storage: real boot restores A-D FM6 edits and curated sound identities                ok
+storage: real boot restores actual current FM6 patches rather than factory slots      ok
+storage: real boot restores current curated preset names and positions                ok
+storage: real boot restores all four edited SYN kits                                  ok
+storage: real boot restores arrangement order, loop and selected A-D section          ok
+storage: real boot restores MIDI learn and device routing preferences                 ok
+storage: real boot restores display, lighting, USB and recording preferences          ok
+storage: real boot restores selected track, octave and last Home view                 ok
+storage: restoration leaves transport stopped, REC disarmed and no held keys          ok
+storage: new operating-system process recovers using only the NOR image               ok
+storage: actual adapter restores the full session after independent-process cold boot ok
+JamBox real recovery runtime: 306 checks, 0 failures

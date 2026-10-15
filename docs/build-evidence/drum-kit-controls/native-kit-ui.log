@@ -1,0 +1,341 @@
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+logo: splash 240x188, 4635 B RLE -> build/jam-drum-kit-ui-tests/gen/sloop_logo.h
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: EDIT from Home/GRID/FX/settings directly opens playable KIT SOUND          ok
+ui: opening KIT SOUND preserves the complete jam and mix                       ok
+ui: repeated EDIT stays in KIT SOUND rather than toggling to step editing      ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: SEQ from KIT SOUND returns directly to GRID                                ok
+ui: repeated SEQ stays in GRID after sound editing                             ok
+ui: HOME returns from drum workspaces to its remembered Groove/Sound view      ok
+ui: ordinary drum navigation never starts transport, recording or saving       ok
+ui: KIT SOUND Level changes whole-kit level by one detent                      ok
+ui: KIT SOUND Level preserves every other sound and pattern field              ok
+ui: KIT SOUND Tone changes the working kit filter rather than reverb           ok
+ui: KIT SOUND Tone preserves every other sound and pattern field               ok
+ui: KIT SOUND Pan moves the whole kit stereo position                          ok
+ui: KIT SOUND Pan preserves every other sound and pattern field                ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: every factory sampled/synthesized kit is available                         ok
+ui: empty user-sample kit sources are unavailable                              ok
+ui: empty user-sample kit sources are unavailable                              ok
+ui: empty user-sample kit sources are unavailable                              ok
+ui: empty user-sample kit sources are unavailable                              ok
+ui: empty user-sample kit sources are unavailable                              ok
+ui: SYN user synth banks retain their real default sounds                      ok
+ui: SYN user synth banks retain their real default sounds                      ok
+ui: SYN user synth banks retain their real default sounds                      ok
+ui: SYN user synth banks retain their real default sounds                      ok
+ui: one validated panel-lane sample enables its own USR kit and the USR3+4 combination ok
+ui: a user sample outside all panel drum lanes does not advertise a playable kit ok
+ui: a zero-length user sample does not enable an empty kit                     ok
+ui: a zero-rate user sample does not enable an empty kit                       ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser includes factory kits in order                      ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser skips empty samples and reaches SYN1 through SYN4   ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser skips empty samples and reaches SYN1 through SYN4   ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser skips empty samples and reaches SYN1 through SYN4   ok
+ui: KIT SOUND kit browsing never selects an empty source                       ok
+ui: full KIT SOUND browser skips empty samples and reaches SYN1 through SYN4   ok
+ui: full KIT SOUND browser exposes all populated factory and SYN kit choices   ok
+ui: reverse KIT SOUND browsing skips the complete empty-user-sample gap        ok
+ui: full kit browsing preserves the beat, mix, sends and other parts           ok
+ui: FX from outside its family directly opens playable KIT FX                  ok
+ui: KIT FX parameter descriptor and edit scope point to the same real control  ok
+ui: each KIT FX knob changes its intended live sound field                     ok
+ui: a KIT FX turn changes only its intended field across the whole jam         ok
+ui: KIT FX Filter/Pan retain the correct track parameter lock and MIDI-learn target ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: KIT FX controls do not start transport, recording or saving                ok
+ui: FX from outside its family directly opens playable KIT FX                  ok
+ui: KIT FX parameter descriptor and edit scope point to the same real control  ok
+ui: each KIT FX knob changes its intended live sound field                     ok
+ui: a KIT FX turn changes only its intended field across the whole jam         ok
+ui: kit Echo/Room sends never select an unrelated melodic parameter for lock/MIDI learn ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: KIT FX controls do not start transport, recording or saving                ok
+ui: FX from outside its family directly opens playable KIT FX                  ok
+ui: KIT FX parameter descriptor and edit scope point to the same real control  ok
+ui: each KIT FX knob changes its intended live sound field                     ok
+ui: a KIT FX turn changes only its intended field across the whole jam         ok
+ui: kit Echo/Room sends never select an unrelated melodic parameter for lock/MIDI learn ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: KIT FX controls do not start transport, recording or saving                ok
+ui: FX from outside its family directly opens playable KIT FX                  ok
+ui: KIT FX parameter descriptor and edit scope point to the same real control  ok
+ui: each KIT FX knob changes its intended live sound field                     ok
+ui: a KIT FX turn changes only its intended field across the whole jam         ok
+ui: KIT FX Filter/Pan retain the correct track parameter lock and MIDI-learn target ok
+ui: first key after SOUND/FX entry immediately plays a drum pad                ok
+ui: playing a SOUND/FX pad does not rewrite notes or sound settings            ok
+ui: KIT FX controls do not start transport, recording or saving                ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX tap order contains useful kit controls and explicitly shared echo/room pages ok
+ui: every drum FX page has working controls and ALL ROOM omits inactive chorus columns ok
+ui: SELECT counts one BPM per detent without navigating drum FX pages          ok
+ui: PRESETS browses curated whole kits on every drum FX page                   ok
+ui: FX kit browsing preserves every other pattern and sound field              ok
+ui: FX wraps from shared room back to KIT FX                                   ok
+ui: fresh FX entry always starts at KIT FX despite remembered depth            ok
+ui: ALGORITHM from drum FX advances to displayed Bass and returns to remembered Home ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: unavailable synth-page taps keep the current workspace and give useful drum guidance ok
+ui: contextual guidance never changes a sound, beat or shared musical setting  ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: a family with no drum pages returns safely to remembered Home              ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: a family with no drum pages returns safely to remembered Home              ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: a family with no drum pages returns safely to remembered Home              ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: a family with no drum pages returns safely to remembered Home              ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: melodic tracks still expose their applicable synth pages                   ok
+ui: switching a synth page to Drums never strands the user on a hidden page    ok
+ui: held FX owns its knob without also editing the underlying kit page         ok
+ui: held ARP retains its roll rate and playable pad gesture without opening a dead page ok
+ui: held SEL retains the shared melodic song-key gesture on Drums              ok
+ui: held EDIT erases the chosen drum across steps without also navigating its page ok
+ui: held EDIT plus OCT-minus still undoes the precise drum erasure             ok
+ui: SAVE from SOUND/FX opens the manual checkpoint screen without writing      ok
+ui: keys in manual saving never change the hidden beat or kit controls         ok
+ui: explicit Save now calls the writer once and preserves the latest selected drum ok
+ui: manual Save now leaves all kit effects, notes and other parts unchanged    ok
+ui: HOME leaves manual saving in the remembered Home view                      ok
+ui: held FX owns its knob without also editing the underlying kit page         ok
+ui: held ARP retains its roll rate and playable pad gesture without opening a dead page ok
+ui: held SEL retains the shared melodic song-key gesture on Drums              ok
+ui: held EDIT erases the chosen drum across steps without also navigating its page ok
+ui: held EDIT plus OCT-minus still undoes the precise drum erasure             ok
+ui: SAVE from SOUND/FX opens the manual checkpoint screen without writing      ok
+ui: keys in manual saving never change the hidden beat or kit controls         ok
+ui: explicit Save now calls the writer once and preserves the latest selected drum ok
+ui: manual Save now leaves all kit effects, notes and other parts unchanged    ok
+ui: HOME leaves manual saving in the remembered Home view                      ok
+drum-kit-ui: 336 checks, all checks passed

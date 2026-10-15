@@ -1,0 +1,77 @@
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+logo: splash 240x188, 4635 B RLE -> build/jam-drum-kit-audio-tests/gen/sloop_logo.h
+ui: ACOUSTIC: dry kit is audible, centered and bounded                         ok
+ui: ACOUSTIC: independent renders from identical state are byte-identical      ok
+ui: ACOUSTIC: kit Level audibly reduces the actual drum signal                 ok
+ui: ACOUSTIC: kit Level zero silences the phrase                               ok
+ui: ACOUSTIC: Pan moves the actual dry drums to the chosen stereo side         ok
+ui: ACOUSTIC: kit low-pass changes audible drum output                         ok
+ui: ACOUSTIC: kit high-pass changes audible drum output                        ok
+ui: ACOUSTIC: Echo feeds the drum delay bus and creates an audible tail        ok
+ui: ACOUSTIC: Room feeds the drum reverb bus and creates an audible tail       ok
+ui: ACOUSTIC: insert Amount zero leaves the audio unchanged                    ok
+ui: ACOUSTIC: SOFT insert changes audible drums and stays bounded              ok
+ui: ACOUSTIC: HARD insert changes audible drums and stays bounded              ok
+ui: ACOUSTIC: FOLD insert changes audible drums and stays bounded              ok
+ui: ACOUSTIC: FUZZ insert changes audible drums and stays bounded              ok
+ui: ACOUSTIC: CRUSH insert changes audible drums and stays bounded             ok
+ui: ACOUSTIC: PHASR insert changes audible drums and stays bounded             ok
+ui: ACOUSTIC: FLANG insert changes audible drums and stays bounded             ok
+ui: ACOUSTIC: CHOR insert changes audible drums and stays bounded              ok
+ui: ACOUSTIC: Gate rhythmically changes the actual drum phrase                 ok
+ui: ACOUSTIC: Gate Depth zero leaves the audio unchanged                       ok
+ui: ACOUSTIC: Gate Pattern changes which drum hits are heard                   ok
+ui: ACOUSTIC: Gate Rate changes the rhythm of the audible drums                ok
+ui: ACOUSTIC: Stutter repeats the actual drum phrase and stays bounded         ok
+ui: ACOUSTIC: generic synth FX have no drum effect and must not be offered as kit controls ok
+ui: 808: dry kit is audible, centered and bounded                              ok
+ui: 808: independent renders from identical state are byte-identical           ok
+ui: 808: kit Level audibly reduces the actual drum signal                      ok
+ui: 808: kit Level zero silences the phrase                                    ok
+ui: 808: Pan moves the actual dry drums to the chosen stereo side              ok
+ui: 808: kit low-pass changes audible drum output                              ok
+ui: 808: kit high-pass changes audible drum output                             ok
+ui: 808: Echo feeds the drum delay bus and creates an audible tail             ok
+ui: 808: Room feeds the drum reverb bus and creates an audible tail            ok
+ui: 808: insert Amount zero leaves the audio unchanged                         ok
+ui: 808: SOFT insert changes audible drums and stays bounded                   ok
+ui: 808: HARD insert changes audible drums and stays bounded                   ok
+ui: 808: FOLD insert changes audible drums and stays bounded                   ok
+ui: 808: FUZZ insert changes audible drums and stays bounded                   ok
+ui: 808: CRUSH insert changes audible drums and stays bounded                  ok
+ui: 808: PHASR insert changes audible drums and stays bounded                  ok
+ui: 808: FLANG insert changes audible drums and stays bounded                  ok
+ui: 808: CHOR insert changes audible drums and stays bounded                   ok
+ui: 808: Gate rhythmically changes the actual drum phrase                      ok
+ui: 808: Gate Depth zero leaves the audio unchanged                            ok
+ui: 808: Gate Pattern changes which drum hits are heard                        ok
+ui: 808: Gate Rate changes the rhythm of the audible drums                     ok
+ui: 808: Stutter repeats the actual drum phrase and stays bounded              ok
+ui: 808: generic synth FX have no drum effect and must not be offered as kit controls ok
+ui: SYN1: dry kit is audible, centered and bounded                             ok
+ui: SYN1: independent renders from identical state are byte-identical          ok
+ui: SYN1: kit Level audibly reduces the actual drum signal                     ok
+ui: SYN1: kit Level zero silences the phrase                                   ok
+ui: SYN1: Pan moves the actual dry drums to the chosen stereo side             ok
+ui: SYN1: kit low-pass changes audible drum output                             ok
+ui: SYN1: kit high-pass changes audible drum output                            ok
+ui: SYN1: Echo feeds the drum delay bus and creates an audible tail            ok
+ui: SYN1: Room feeds the drum reverb bus and creates an audible tail           ok
+ui: SYN1: insert Amount zero leaves the audio unchanged                        ok
+ui: SYN1: SOFT insert changes audible drums and stays bounded                  ok
+ui: SYN1: HARD insert changes audible drums and stays bounded                  ok
+ui: SYN1: FOLD insert changes audible drums and stays bounded                  ok
+ui: SYN1: FUZZ insert changes audible drums and stays bounded                  ok
+ui: SYN1: CRUSH insert changes audible drums and stays bounded                 ok
+ui: SYN1: PHASR insert changes audible drums and stays bounded                 ok
+ui: SYN1: FLANG insert changes audible drums and stays bounded                 ok
+ui: SYN1: CHOR insert changes audible drums and stays bounded                  ok
+ui: SYN1: Gate rhythmically changes the actual drum phrase                     ok
+ui: SYN1: Gate Depth zero leaves the audio unchanged                           ok
+ui: SYN1: Gate Pattern changes which drum hits are heard                       ok
+ui: SYN1: Gate Rate changes the rhythm of the audible drums                    ok
+ui: SYN1: Stutter repeats the actual drum phrase and stays bounded             ok
+ui: SYN1: generic synth FX have no drum effect and must not be offered as kit controls ok
+drum kit audio: 72 checks, 0 failures; sampled/factory synth/SYN production DSP

@@ -1,0 +1,6 @@
+PASS groove Home → GRID, idempotent SEQ/EDIT, KIT and BPM, reversible step edit, immediate HOME key, KIT FX entry
+PASS sound Home → GRID, idempotent SEQ/EDIT, KIT and BPM, reversible step edit, immediate HOME key, KIT FX entry
+PASS GRID cell ownership, curated kits on GRID/KIT, named-row and partial-page LCDs, displayed part order
+PASS contextual drum guidance and first step, idempotent EDIT, working KIT SOUND/FX, 41 populated kits, six-page FX cycle and left knobs
+PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership
+Drum navigation: 5 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: /workspace/jamboxfm/build/jam-drum-nav-evidence

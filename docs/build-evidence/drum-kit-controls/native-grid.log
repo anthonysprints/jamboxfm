@@ -1,0 +1,496 @@
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+logo: splash 240x188, 4635 B RLE -> build/jam-drum-grid-tests/gen/sloop_logo.h
+ui: Strength/Repeat on an empty cell create no hits or metadata                ok
+ui: empty-cell knobs neither replace undo nor start transport/recording/saving ok
+ui: Strength changes only the focused drum hit and preserves its neighbors     ok
+ui: Strength clamps at hard without rewriting timing or other lanes            ok
+ui: three Strength detents move hard to ghost in musical order                 ok
+ui: each Strength detent advances ghost/soft/normal/hard                       ok
+ui: each Strength detent advances ghost/soft/normal/hard                       ok
+ui: each Strength detent advances ghost/soft/normal/hard                       ok
+ui: Repeat adds up to four hits within only the focused drum cell              ok
+ui: Repeat clamps at four and preserves Strength and other drums               ok
+ui: Repeat at its end stop preserves the preceding meaningful undo             ok
+ui: redo restores Repeat after its end-stop no-op                              ok
+ui: Repeat counts every encoder detent without changing Strength               ok
+ui: EDIT plus OCT-minus undoes the last meaningful grid knob turn              ok
+ui: EDIT plus OCT-plus redoes the exact scoped grid edits                      ok
+ui: empty-cell knob turns preserve the last meaningful grid undo               ok
+ui: ordinary drum workspace offers the eight curated Home kits                 ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: negative PRESETS detent wraps backward through curated kits                ok
+ui: SELECT adds exactly one BPM without switching GRID/KIT                     ok
+ui: fast SELECT detents retain one BPM per detent in either drum workspace     ok
+ui: SELECT tempo also counts negative detents without acceleration             ok
+ui: SELECT clamps tempo at its supported maximum                               ok
+ui: SELECT clamps tempo at its supported minimum                               ok
+ui: tempo turns leave all recorded notes and timing metadata intact            ok
+ui: kit/tempo browsing does not start recording, transport or flash saving     ok
+ui: ordinary drum workspace offers the eight curated Home kits                 ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: PRESETS visits curated kits in the same wrapping order as Home             ok
+ui: changing kits preserves every pattern, lock, nudge and fill                ok
+ui: changing kits preserves all track mix/timing settings and shared globals   ok
+ui: negative PRESETS detent wraps backward through curated kits                ok
+ui: SELECT adds exactly one BPM without switching GRID/KIT                     ok
+ui: fast SELECT detents retain one BPM per detent in either drum workspace     ok
+ui: SELECT tempo also counts negative detents without acceleration             ok
+ui: SELECT clamps tempo at its supported maximum                               ok
+ui: SELECT clamps tempo at its supported minimum                               ok
+ui: tempo turns leave all recorded notes and timing metadata intact            ok
+ui: kit/tempo browsing does not start recording, transport or flash saving     ok
+ui: ALGORITHM at first displayed part remains on Drums                         ok
+ui: ALGORITHM advances Drums to Bass and immediately releases GRID ownership   ok
+ui: next ALGORITHM detent selects Chords in display order                      ok
+ui: next ALGORITHM detent selects Lead in display order                        ok
+ui: ALGORITHM clamps at the last displayed part                                ok
+ui: batched negative ALGORITHM detents return Lead to Drums                    ok
+ui: part selection preserves every recorded pattern and drum cell              ok
+ui: ALGORITHM at first displayed part remains on Drums                         ok
+ui: ALGORITHM advances Drums to Bass and immediately releases GRID ownership   ok
+ui: next ALGORITHM detent selects Chords in display order                      ok
+ui: next ALGORITHM detent selects Lead in display order                        ok
+ui: ALGORITHM clamps at the last displayed part                                ok
+ui: batched negative ALGORITHM detents return Lead to Drums                    ok
+ui: part selection preserves every recorded pattern and drum cell              ok
+ui: Drum knob auditions exactly its new lane and shares held-SEQ selection     ok
+ui: moving Step during playback focuses a cell without auditioning its whole beat ok
+ui: Drum selection remains a single-lane audition while playback runs          ok
+ui: Step crosses banks during playback without firing unrelated drum hits      ok
+ui: auditioning/selecting drums and steps does not rewrite the beat            ok
+ui: playing a pad on Home selects the same named lane when GRID is reopened    ok
+ui: held SEQ uses the shared drum lane and the current GRID step bank          ok
+ui: pattern shortening clamps focus before the next knob is applied            ok
+ui: a knob after shortening edits the visible final cell and preserves hidden hits ok
+ui: Repeat also targets the newly clamped visible cell after shortening        ok
+ui: song-arrangement playback blocks grid knobs and step writes consistently   ok
+ui: blocked arrangement editing explains why the beat cannot be changed        ok
+ui: manual Save now preserves the selected drum across the runtime input reset ok
+ui: returning to GRID after saving restores the same drum and step-key ownership ok
+ui: saving and returning to drums does not alter any recorded notes            ok
+ui: held-step drum change becomes the selected GRID lane on release            ok
+ui: releasing a step after changing drums never deletes the newly selected drum ok
+ui: held-SEQ page selection returns to that same bank in the ordinary grid     ok
+ui: releasing a held step after changing banks never erases a different step   ok
+ui: held SEQ plus Knob 3 keeps its existing Repeat role without also changing Strength ok
+ui: PRESETS with a step held edits its parameter lock instead of changing kits ok
+ui: ALGORITHM with a step held chooses the lock parameter instead of changing parts ok
+ui: edited held step survives release into the same GRID bank                  ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: Step focus clamps at the first step                                        ok
+ui: Step focus clamps at the actual pattern length                             ok
+ui: unavailable black-key bank cannot select beyond pattern length             ok
+ui: unavailable black-key bank neither plays nor rewrites hidden steps         ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: Step focus clamps at the first step                                        ok
+ui: Step focus clamps at the actual pattern length                             ok
+ui: unavailable black-key bank cannot select beyond pattern length             ok
+ui: unavailable black-key bank neither plays nor rewrites hidden steps         ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: white keys beyond a partial final bank cannot add hidden hits              ok
+ui: Step focus clamps at the first step                                        ok
+ui: Step focus clamps at the actual pattern length                             ok
+ui: unavailable black-key bank cannot select beyond pattern length             ok
+ui: unavailable black-key bank neither plays nor rewrites hidden steps         ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: Step focus clamps at the first step                                        ok
+ui: Step focus clamps at the actual pattern length                             ok
+ui: unavailable black-key bank cannot select beyond pattern length             ok
+ui: unavailable black-key bank neither plays nor rewrites hidden steps         ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: each valid step bank keeps the selected drum and an in-range cursor        ok
+ui: first white step key writes the selected lane in every valid bank          ok
+ui: Step focus clamps at the first step                                        ok
+ui: Step focus clamps at the actual pattern length                             ok
+ui: on/off-page playhead indicator updates while the editing bank stays fixed  ok
+ui: off-page playback never chases the editor to a different bank              ok
+drum-grid: 491 checks, all checks passed

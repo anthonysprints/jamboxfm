@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-15",
+  "source_revision": "793474c809334398951527c324494a46e5ec21c7",
+  "source_dirty": false,
+  "stage": 3,
+  "normal_installer_promoted": false,
+  "firmware": {
+    "file": "jamboxfm-recovery-0.1.0-dev.fwsc",
+    "sha256": "ad26a098520dc55dbd0937f257b97e7eeba3751bc462025f907f31c07f824b83",
+    "size_bytes": 611255
+  },
+  "storage": {
+    "manual_saving": true,
+    "automatic_saving": false,
+    "format_changed": false,
+    "runtime_identity_changed": false,
+    "catalog_compatibility": "Exact source-only alias; original generated assets/runtime identity required",
+    "trial02_bidirectional_cold_checks": 34,
+    "trial02_and_trial03_synthetic_nor_identical": true
+  },
+  "budget": {
+    "app_image_bytes": 577264,
+    "flash_spare_bytes": 4300,
+    "ram_used_bytes": 91432,
+    "ram_spare_bytes": 6872,
+    "pool_used_bytes": 329932,
+    "pool_spare_bytes": 14132,
+    "canvas_enlarged": false
+  },
+  "completed_tests": {
+    "native_kit_ui": 336,
+    "native_kit_ui_asan_ubsan": 336,
+    "native_kit_audio": 72,
+    "native_kit_audio_asan_ubsan": 72,
+    "native_grid": 491,
+    "native_navigation": 92,
+    "native_home_navigation": 115,
+    "native_recovery_ui": 45,
+    "native_recovery_runtime": 306,
+    "native_recovery_fresh_process": 17,
+    "native_upstream_ui": "passed including 20000-frame fuzz",
+    "recovery_identity_refusal_tests": 12,
+    "trial02_bidirectional_cold_restore": 34,
+    "chromium_drum_scenarios": 5,
+    "chromium_existing_emulator": "passed",
+    "chromium_isolated_installer_cases": 30,
+    "package_tests": 19,
+    "drums_publisher_tests": 20
+  },
+  "owner_reported_physical_stage3_passed": false,
+  "independent_physical_stage3_verified": false,
+  "owner_tested_stage2_retained": {
+    "website_commit": "d246c1d8f70b85ac65be0d35cf3782d8fdfb563c",
+    "firmware_sha256": "c7115d6f5a8c43fa0778f52562ee2f41d2a12b75fa91695b0749cc29c74b0462",
+    "local_full_package_validated": true,
+    "files": 29
+  },
+  "publication": {
+    "commit": "acb8782a6b30c31ec6cfeb0226e3fd5478cd3df8",
+    "prefix": "preview/drums/",
+    "package_files": 29,
+    "outside_objects_and_modes_preserved": true,
+    "protected_entries": 89,
+    "main_remains": "da394a87b3345555e796257012e7adf4bbbc8872",
+    "raw_http_paths_match": 5,
+    "live_pages_http": {
+      "reachable_from_cloud": false,
+      "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+    }
+  }
+}

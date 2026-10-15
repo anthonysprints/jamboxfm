@@ -1,0 +1,10 @@
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 11.351s
+
+OK
+Local recovery trial: /tmp/tmpqsub7h3q/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911
+Local recovery trial: /tmp/tmp_61h06v9/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911
+Local recovery trial: /tmp/tmpouy690m0/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911
+Local recovery trial: /tmp/tmp2xzb6lqo/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911
+Local recovery trial: /tmp/tmplzl8_pfm/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911

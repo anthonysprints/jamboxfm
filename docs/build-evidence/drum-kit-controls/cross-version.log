@@ -1,0 +1,2 @@
+Cross-version manual save: 34 cold-restore checks passed; old/new 1 MiB NOR images identical.
+Evidence: /workspace/jamboxfm/build/jam-recovery-cross-version/summary.json
