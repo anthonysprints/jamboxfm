@@ -377,6 +377,95 @@ static void test_held_controls_keep_priority(void)
            "edited held step survives release into the same GRID bank");
 }
 
+static void test_seq_drum_bank_toggle(void)
+{
+    static const unsigned lengths[] = {1, 17, 32, 64};
+    unsigned n, bank, lane;
+    for (n = 0; n < NELEM(lengths); n++) {
+        const unsigned len = lengths[n];
+        grid_setup(len);
+        dstep_set(&TDRUM->dstep[0], 0, LV_NORM, 0);
+        turn(EN_K3, 1);                       /* keep a real edit in undo */
+        TDRUM->micro[0] = -5;
+        step_fill_set(TDRUM, 0, FC_FILL);
+        lock_set(TDRUM, 0, P_PAN, -13);
+        for (bank = 0; bank < (len + 15) / 16; bank++) {
+            unsigned cursor = bank * 16;
+            if (cursor + 5 < len) cursor += 5;
+            turn(EN_K2, (int32_t)cursor - drum_cursor);
+            for (lane = 0; lane < DRUM_LANES; lane++) {
+                beat_t before;
+                unsigned pass, t;
+                unsigned char undo_before[sizeof undo];
+                int16_t params[NTRK][P_COUNT], globals[G_COUNT];
+                turn(EN_K1, (int32_t)lane - drum_lane);
+                beat_read(&before);
+                memcpy(undo_before, &undo, sizeof undo);
+                for (t = 0; t < NTRK; t++) memcpy(params[t], trk[t].p, sizeof params[t]);
+                memcpy(globals, song.g, sizeof globals);
+                aud_lanes = 0;
+                for (pass = 0; pass < 2; pass++) {
+                    int same = 1;
+                    tap(B_SEQ);
+                    expect(on_drum_page() && !drum_page && kb_grid &&
+                               ui.layer == LY_PLAY && drum_lane == (pass ? lane : (lane ^ 8u)) &&
+                               pen_lane == drum_lane && drum_cursor == cursor,
+                           "SEQ swaps drum banks in both directions while keeping row and step focus");
+                    expect_beat(&before,
+                                "SEQ drum-bank navigation preserves all notes, locks, nudge and fill");
+                    for (t = 0; t < NTRK; t++)
+                        if (memcmp(params[t], trk[t].p, sizeof params[t])) same = 0;
+                    expect(same && !memcmp(globals, song.g, sizeof globals) &&
+                               !memcmp(undo_before, &undo, sizeof undo) && !aud_lanes &&
+                               !song.playing && !song.rec && !rec_wait && !recovery_calls,
+                           "SEQ drum-bank navigation preserves mix and undo without audition, transport or saving");
+                }
+            }
+        }
+    }
+
+    /* A held gesture owns SEQ until release; its release cannot become an
+     * ordinary tap that unexpectedly swaps the drum currently being edited. */
+    grid_setup(32);
+    turn(EN_K1, 14);
+    turn(EN_K2, 17);
+    press(B_SEQ);
+    frames(30);
+    release(B_SEQ);
+    expect(on_drum_page() && !drum_page && kb_grid && drum_lane == 14 && drum_cursor == 17,
+           "long SEQ hold on GRID releases without swapping the selected drum bank");
+    dstep_clr(&TDRUM->dstep[17], 14);
+    press(B_SEQ);
+    key(key_of_white(1));
+    release(B_SEQ);
+    expect(drum_lane == 14 && drum_cursor == 17 && dstep_has(&TDRUM->dstep[17], 14),
+           "held SEQ step editing retains its selected drum instead of becoming a bank toggle");
+    tap(B_SEQ);
+    key(key_of_white(2));
+    expect(drum_lane == 6 && dstep_has(&TDRUM->dstep[18], 6),
+           "first step key after a bank toggle edits the corresponding drum in the newly visible bank");
+
+    grid_setup(32);
+    turn(EN_K1, 6);
+    turn(EN_K2, 19);
+    tap(B_PLAY);
+    tap(B_REC);                              /* deliberately record on playable Home */
+    tap(B_SEQ);                              /* explicit return to GRID during overdub */
+    {
+        beat_t before;
+        unsigned rec = song.rec;
+        beat_read(&before);
+        tap(B_SEQ);
+        expect(rec && song.rec == rec && song.playing && !rec_wait &&
+                   on_drum_page() && !drum_page && kb_grid &&
+                   drum_lane == 14 && drum_cursor == 19,
+               "SEQ drum-bank switching during overdub keeps transport, recording and step focus");
+        expect_beat(&before, "switching drum banks during overdub adds no recorded pad or step");
+    }
+    tap(B_REC);
+    tap(B_PLAY);
+}
+
 static uint32_t screen_body_hash(void)
 {
     unsigned i;
@@ -484,6 +573,7 @@ int main(int argc, char **argv)
     test_guards_and_shrunk_length();
     test_save_selection_and_held_release();
     test_held_controls_keep_priority();
+    test_seq_drum_bank_toggle();
     test_lengths_and_native_frames();
     printf("drum-grid: %u checks, %s\n", checks, fails ? "FAIL" : "all checks passed");
     return fails != 0;

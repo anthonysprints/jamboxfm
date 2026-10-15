@@ -1,9 +1,10 @@
-# Kit sound and effects: development trial 03
+# Kit sound and effects: development trials 03 / 04
 
 This is stage 3 of [the drum workflow plan](DRUM_WORKFLOW_PLAN.md), developed on
 `next/usability-and-saving` for the isolated `preview/drums/` installer. Trials
-01 and 02 received positive owner feedback; this candidate needs its own FM-1
-check. The normal installer, browser instrument and saving preview stay separate.
+01–03 received positive owner feedback; Trial 04 adds the requested drum-bank
+shortcut and needs its own FM-1 check. The normal installer, browser instrument
+and saving preview stay separate.
 
 The aim is straightforward: SEQ edits the beat, EDIT shapes the kit, and FX
 opens effects that actually work on drums. This stage adds no individual-drum
@@ -13,7 +14,7 @@ recipe editor, storage format, automatic saving or SYN-kit overwrite operation.
 
 | Entry | Result | Four right knobs |
 | --- | --- | --- |
-| SEQ | GRID: named drum rows and step editing. Repeated taps keep GRID open. | Drum / Step / Strength / Repeat |
+| SEQ | GRID: named drum rows and step editing. Another tap switches drums 1–8 / 9–16. | Drum / Step / Strength / Repeat |
 | EDIT | KIT SOUND: a named pad map; keys play the kit. Repeated taps keep KIT SOUND open. | Kit / Level / Tone / Pan |
 | FX, from another family | KIT FX: effects for the whole drum part. | Filter / Echo / Room / Pan |
 
@@ -48,10 +49,24 @@ The shared room page does not show ignored chorus controls on Drums. Synth parts
 retain their own FX pages. Whole-kit controls and shared effects remain distinct
 from a future individual-drum sound editor.
 
+## Trial 04: quick drum-bank switching
+
+From another screen, SEQ opens GRID with the current drum still selected. Inside
+GRID, another ordinary SEQ tap swaps between drums 1–8 and 9–16, keeping the same
+row position: drum 6 becomes drum 14, then back to drum 6 on the next tap. The
+step cursor and 16-step window stay put. Switching banks changes no hits, mixer
+settings, undo or recording state, and does not audition a sound. Knob 1 still
+selects individual drums. Held SEQ and recorder overlays retain their controls.
+
 ## Helpful taps, preserved holds
 
 Tapping ENV, LFO, SEL or ARP on Drums keeps the current workspace and gives brief
-guidance instead of opening inactive synth controls:
+guidance instead of opening inactive synth controls. These messages do not
+activate a new mode or change the sound. SEL's scale/chord page is for the melodic
+parts; it has no ordinary drum setting. The synth ENV page is not yet connected
+to individual drum editing. EDIT opens whole-kit controls, affecting all drums
+together rather than only one kick or snare:
+
 
 | Tap | Guidance |
 | --- | --- |
@@ -79,7 +94,8 @@ Publication and browser checks are recorded separately from physical testing.
    the manual-saving format is unchanged and autosave is still off.
 4. Select Drums and tap EDIT. Play pads, browse kits and try Level, Tone and Pan.
    EDIT should keep KIT SOUND open; SEQ should return directly to GRID. Confirm
-   changing kits preserves the beat.
+   changing kits preserves the beat. While in GRID, tap SEQ to swap drum banks,
+   then tap it again to return. Check a later step page stays on the same steps.
 5. Tap FX and listen to Filter, Echo, Room and Pan. Cycle through SLICER and the
    INSERT pages. ALL ECHO and ALL ROOM are shared across the jam; try them with
    another part also sending to that effect so their scope is clear.

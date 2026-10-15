@@ -62,6 +62,10 @@ changes and changed audio assets must still fail the identity check. Do not use
 `check_jam_recovery_identity.py --write` to bypass a compatibility failure:
 replacing the runtime identity would reject existing checkpoints. Check the
 identity refusals and actual Trial 02/current cold restore in both directions.
+The owner reported that Trial 03 looked good and requested the Trial 04 shortcut:
+another SEQ tap inside GRID swaps drums 1–8 / 9–16, preserving the row position
+and step window. Entering GRID from another screen preserves the selected drum.
+Held gestures and recorder guards retain priority. Keep this preview isolated.
 
 The owner chose manual saving for the current product. Keep automatic saving
 disabled and outside the active plan unless the owner explicitly reopens it.

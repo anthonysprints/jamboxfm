@@ -47,6 +47,21 @@ async function audition(page, expectedEvents, message) {
   await page.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
   assert.deepEqual((await state(page)).events, expectedEvents, message);
 }
+async function silentBankTap(page) {
+  await page.waitForFunction(() => globalThis.jamEmu.peak < 0.001);
+  // Observe throughout the gesture, not just after release: an accidental short
+  // audition could finish before the ordinary click helper returns.
+  const peaks = page.evaluate(async () => {
+    let maximum = 0;
+    for (let frame = 0; frame < 18; frame++) {
+      await new Promise(requestAnimationFrame);
+      maximum = Math.max(maximum, globalThis.jamEmu.peak);
+    }
+    return maximum;
+  });
+  await tap(page, 9);
+  assert((await peaks) < 0.001, 'a stopped SEQ bank tap never auditions a drum');
+}
 async function turn(page, id, direction) {
   await page.locator(`[role="slider"][data-encoder="${id}"]`).focus();
   await page.keyboard.press(direction);
@@ -133,8 +148,8 @@ try {
     assert(!(await state(page)).playing && !(await state(page)).recording && !(await state(page)).armed);
 
     await tap(page, 9);
-    assert.equal((await state(page)).page, gridPage, 'repeated SEQ stays in the drum workspace');
-    assert.deepEqual((await state(page)).events, initial.events, 'repeated SEQ does not alter the beat');
+    assert.equal((await state(page)).page, gridPage, 'repeated SEQ changes row banks inside the drum workspace');
+    assert.deepEqual((await state(page)).events, initial.events, 'changing the drum row bank does not alter the beat');
 
     // Physical key 2 is white step 2; its startup cell is entirely empty.
     // Event counts report occupied drum steps, so this distinguishes step entry
@@ -213,7 +228,7 @@ try {
       globalThis.jamEmu.state.homeView === expected, view);
     assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
     await page.close();
-    console.log(`PASS ${name} Home → GRID, idempotent SEQ/EDIT, KIT and BPM, reversible step edit, immediate HOME key, KIT FX entry`);
+    console.log(`PASS ${name} Home → GRID, SEQ row banks and idempotent EDIT, KIT and BPM, reversible step edit, immediate HOME key, KIT FX entry`);
   }
 
   {
@@ -429,6 +444,78 @@ try {
     console.log('PASS contextual drum guidance and first step, idempotent EDIT, working KIT SOUND/FX, 41 populated kits, six-page FX cycle and left knobs');
   }
 
+  {
+    const page = await startDrums(0);
+    const initial = await state(page);
+    await tap(page, 9);
+    const gridPage = (await state(page)).page;
+    await screenshot(page, 'seq-bank-1-8');
+    const firstBank = await screen(page);
+    await silentBankTap(page);
+    await changedScreen(page, firstBank);
+    await screenshot(page, 'seq-bank-9-16');
+    const secondBank = await screen(page);
+    let current = await state(page);
+    assert.equal(current.page, gridPage);
+    assert.equal(current.groove[2], initial.groove[2], 'row banks preserve loop length');
+    assert.equal(current.tempo, initial.tempo);
+    assert(!current.home && !current.layer && !current.playing && !current.recording && !current.armed);
+    assert.deepEqual(current.events, initial.events, 'the first row-bank change preserves all recorded parts');
+
+    await silentBankTap(page);
+    await changedScreen(page, secondBank);
+    assert.deepEqual(await screen(page), firstBank,
+      'two stopped SEQ taps restore the exact original LCD, selected row and step');
+    assert.deepEqual((await state(page)).events, initial.events, 'returning to the first row bank changes no notes');
+
+    // Choose steps 17–32 and step 18, empty on every startup lane. Adding the
+    // same vertical step on the other row bank must keep occupied-step count
+    // at +1. A lost step bank would incorrectly add another occupied step.
+    await hit(page, 3);
+    await turn(page, 4, 'ArrowUp');
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
+    await silentBankTap(page);
+    assert.equal((await state(page)).events[3], initial.events[3] + 1);
+    await hit(page);
+    assert.equal((await state(page)).events[3], initial.events[3] + 1,
+      'the other row bank edits the same step 18, without moving to the first step bank');
+    await silentBankTap(page);
+    await hit(page);
+    assert.equal((await state(page)).events[3], initial.events[3] + 1,
+      'removing the first-row-bank hit preserves the other drum on that same step');
+    await silentBankTap(page);
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
+    assert.deepEqual((await state(page)).events, initial.events, 'both independent row-bank edits are reversible');
+
+    // Let the normal hot-knob highlight expire before comparing exact LCDs.
+    const beforeSettling = (await state(page)).frames;
+    await page.waitForFunction(frame => globalThis.jamEmu.state.frames >= frame + 45, beforeSettling);
+    const selectedSecondBank = await screen(page);
+    for (const [buttonId, name] of [[6, 'Home'], [4, 'KIT SOUND'], [0, 'KIT FX']]) {
+      await tap(page, buttonId);
+      await silentBankTap(page);
+      assert.deepEqual(await screen(page), selectedSecondBank,
+        `SEQ entry from ${name} preserves the selected row bank and edit step`);
+      assert.deepEqual((await state(page)).events, initial.events);
+    }
+    await tap(page, 10);
+    await page.waitForFunction(() => globalThis.jamEmu.state.playing);
+    await tap(page, 9);
+    current = await state(page);
+    assert(current.playing && !current.recording && !current.armed,
+      'changing the visible drum rows leaves playback running');
+    assert.equal(current.page, gridPage);
+    assert.equal(current.groove[2], initial.groove[2]);
+    assert.deepEqual(current.events, initial.events, 'row-bank navigation during playback preserves the loop');
+    await tap(page, 10);
+    await page.waitForFunction(() => !globalThis.jamEmu.state.playing);
+    assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
+    await page.close();
+    console.log('PASS silent SEQ row-bank toggle, exact two-tap LCD return, preserved step-18 edits and loop, remembered entry from Home/KIT/FX');
+  }
+
   const page = await startDrums(1);
   await tap(page, 9);
   const gridPage = (await state(page)).page;
@@ -477,7 +564,7 @@ try {
   await page.close();
   console.log('PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership');
   assert.deepEqual(errors, [], 'no production browser JavaScript or AudioWorklet errors');
-  console.log(`Drum navigation: 5 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: ${evidence}`);
+  console.log(`Drum navigation: 6 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: ${evidence}`);
 } finally {
   await browser?.close();
   await new Promise(done => server.close(done));

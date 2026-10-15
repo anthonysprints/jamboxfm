@@ -707,6 +707,8 @@ static void layer_tap(uint32_t layer)
                 ui_message("FINISH TAKE FIRST");       /* The recorder owns the keyboard until its overlay closes. */
                 break;
             }
+            if (layer == LY_STEP && on_drum_page() && !drum_page)
+                drum_lane ^= 8u;                       /* Same row in the other eight-drum bank; steps stay put. */
             drum_page = layer == LY_STEP ? 0 : 1;       /* SEQ edits hits; EDIT plays/shapes the whole kit. */
             studio_open(SC_DRUM);
             break;

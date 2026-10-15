@@ -116,12 +116,13 @@ static void test_other_pages(void)
     unsigned i;
     for (i = 0; i < NELEM(families); i++) {
         setup(JAM_HOME_SOUND);
+        pen_lane = 14;
         open_family(families[i]);
         frame();
         ui.fam_last[FAM_SEQ] = (uint8_t)page_named("SONG");
         tap(B_SEQ);
-        expect(on_drum_page() && !drum_page && !song.seq_mode,
-               "SEQ from an ordinary drum parameter page opens GRID, not SONG");
+        expect(on_drum_page() && !drum_page && !song.seq_mode && drum_lane == 14,
+               "SEQ from another drum page opens GRID without changing its selected drum");
     }
     setup(JAM_HOME_GROOVE);
     open_family(FAM_SEQ);
@@ -153,21 +154,21 @@ static void test_existing_editor(void)
     expect(!memcmp(before, TDRUM->dstep, sizeof before) && !song.rec && !rec_wait,
            "selected-lane step toggle changes no other drum or recorder state");
     tap(B_SEQ);
-    expect(on_drum_page() && drum_page == 0 && kb_grid,
-           "repeated SEQ stays in GRID with step-key ownership");
+    expect(on_drum_page() && drum_page == 0 && kb_grid && drum_lane == 10,
+           "repeated SEQ swaps to the other eight drums and retains step-key ownership");
     tap(B_EDIT);
     expect(on_drum_page() && drum_page == 1 && !kb_grid,
            "EDIT opens KIT and immediately restores playable pads");
     tap(B_SEQ);
-    expect(on_drum_page() && drum_page == 0 && kb_grid,
-           "SEQ from KIT returns directly to GRID with step-key ownership");
+    expect(on_drum_page() && drum_page == 0 && kb_grid && drum_lane == 10,
+           "SEQ from KIT returns to GRID without swapping its selected drum");
     tap(B_EDIT);
     expect(on_drum_page() && drum_page == 1,
            "EDIT tap opens KIT SOUND without inheriting a synth edit page");
     tap(B_HOME);
     tap(B_SEQ);
-    expect(on_drum_page() && drum_page == 0,
-           "fresh SEQ entry returns to GRID after leaving KIT");
+    expect(on_drum_page() && drum_page == 0 && drum_lane == 10,
+           "fresh SEQ entry returns to GRID and preserves the selected drum");
 }
 
 static void test_held_and_locked(void)

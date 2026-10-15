@@ -47,7 +47,7 @@
     "package_tests": 19,
     "drums_publisher_tests": 20
   },
-  "owner_reported_physical_stage3_passed": false,
+  "owner_reported_physical_stage3_passed": true,
   "independent_physical_stage3_verified": false,
   "owner_tested_stage2_retained": {
     "website_commit": "d246c1d8f70b85ac65be0d35cf3782d8fdfb563c",
@@ -67,5 +67,10 @@
       "reachable_from_cloud": false,
       "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
     }
+  },
+  "owner_feedback_stage3": {
+    "date": "2026-10-15",
+    "quote": "Nice everything looks good",
+    "scope": "Positive owner feedback; SEL/ENV hints were unclear and a repeated-SEQ drum-bank shortcut was requested. No itemized checklist or installed hash."
   }
 }
