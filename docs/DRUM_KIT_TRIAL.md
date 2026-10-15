@@ -1,4 +1,8 @@
-# Kit sound and effects: development trials 03 / 04
+# Kit sound and effects: trials 03 / 04 and adopted controls
+
+Adoption: the owner approved all drum changes through Trial 04 for `main` and
+the normal installer. See [release notes](DRUM_RELEASE.md). The trial instructions
+below describe the preceding validation flow.
 
 This is stage 3 of [the drum workflow plan](DRUM_WORKFLOW_PLAN.md), developed on
 `next/usability-and-saving` for the isolated `preview/drums/` installer. Trials

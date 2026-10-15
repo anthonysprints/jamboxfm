@@ -103,7 +103,7 @@ def prepare(files, remote, identity, scratch=None):
         if protected(gitops.tree_entries(directory, tree)) != before:
             raise DeploymentError('Protected paths changed')
         changed = gitops.git_text(directory, 'rev-parse', parent + '^{tree}') != tree
-        commit = gitops.git(directory, '-c', 'commit.gpgsign=false', 'commit-tree', tree, '-p', parent, data=b'Publish owner-tested manual saving in the normal Chrome installer\n').stdout.decode().strip() if changed else parent
+        commit = gitops.git(directory, '-c', 'commit.gpgsign=false', 'commit-tree', tree, '-p', parent, data=b'Publish owner-tested JamBox firmware in the normal Chrome installer\n').stdout.decode().strip() if changed else parent
         gitops.git(directory, 'update-ref', BRANCH, commit)
         yield Prepared(directory, parent, commit, tree, before, files, changed)
 

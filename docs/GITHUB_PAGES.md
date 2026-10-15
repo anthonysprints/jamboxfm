@@ -43,13 +43,16 @@ The expected project address is `https://anthonysprints.github.io/jamboxfm/emu/`
 Treat it as a destination until an actual HTTP check succeeds. No custom domain,
 DNS change or third-party hosting account is required.
 
-## Publish the normal manual-saving installer
+## Publish the normal FM-1 installer
 
 The owner approved manual saving for the normal installer after confirming a
 full power-off/restoration on their FM-1. For installer-only updates, follow
 [the manual-saving release workflow](MANUAL_SAVING_RELEASE.md): use
 `tools/package_jam_installer.py` and `tools/publish_jam_installer.py`.
-These preserve the browser instrument, preview and unrelated site files while
+The owner subsequently approved the complete Trial 04 drum workflow for the
+same normal installer; follow [the drum release notes](DRUM_RELEASE.md) for its
+exact approved firmware hash. These tools preserve the browser instrument,
+both previews and unrelated site files while
 updating the installer, firmware/source downloads and checksums. The older
 full-site workflow below replaces the site and is not used for this release.
 

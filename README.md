@@ -16,6 +16,20 @@ experiments do not replace your intentional checkpoint. First use needs the
 instrument's explicit storage setup. See [saving and release notes](docs/MANUAL_SAVING_RELEASE.md).
 The browser instrument still uses a temporary browser session.
 
+## Drums on the FM-1
+
+The normal installer includes the owner-tested drum workflow:
+
+- **SEQ:** eight named drum rows and direct step editing. Tap SEQ again to switch
+  drums 1–8 / 9–16 while keeping your step page.
+- **EDIT:** playable KIT SOUND pads with Kit, Level, Tone and Pan. The full kit
+  knob offers populated factory/SYN kits; PRESETS keeps the eight curated kits.
+- **FX:** working Filter, Echo, Room and Pan, with deeper insert/slicer controls.
+
+Held shortcuts and manual saving remain available. Existing saving setups carry
+over; save before updating. See [drum release notes](docs/DRUM_RELEASE.md).
+The public browser instrument remains a separate build.
+
 ## Develop in the cloud
 
 ```sh

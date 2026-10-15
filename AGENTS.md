@@ -3,86 +3,66 @@
 The active public repository is `anthonysprints/jamboxfm`. Use the existing
 checkout for cloud tasks.
 
-## Stable version and development branch
+## Adopted firmware and development
 
-The owner requested isolation for the saving and usability cleanup because the
-current instrument is working well. The owner confirmed that Save now survives
-full power-off and restores the jam and edited sounds, then explicitly approved
-making it the normal Chrome installer version. The ordinary `--with-updater`
-build now enables `JAMBOX_RECOVERY=1` with legacy `FELUCCA_PERSIST=0`.
-Use `tools/package_jam_installer.py` and `tools/publish_jam_installer.py` for
-normal installer updates; they preserve the browser instrument, development
-preview and unrelated public files. The owner-approved firmware for this
-promotion has SHA256 b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7.
-Owner-reported manual cold-boot success does not prove every recovery scenario.
-Do further usability work on `next/usability-and-saving`. The pre-saving source
-baseline is `99cbf62495d9f021be80ee3d20fcef739dd8c93e`. The live website is generated on
-`gh-pages`; its baseline for this work is
-`c4896b796312e8b26a9c01206d25bdc2d8b93589`.
+On October 15, 2026 the owner approved promoting all tested drum changes through
+Trial 04 to `main` and the normal Chrome installer. The approved firmware is
+611255 bytes, SHA256
+77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90.
+Its clean compiled source is d41e979dd150f5893cc8b5719b58fe5b0f28b7cb.
+Release documentation and evidence commits do not change that binary. See
+`docs/DRUM_RELEASE.md` and its publication evidence for actual delivery status.
+The earlier manual-saving release was b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7.
+Owner acceptance is not independent or universal hardware/recovery validation.
 
-Follow [roadmap #10](https://github.com/anthonysprints/jamboxfm/issues/10) and make
-small, independently reviewable changes tied to its issues. Preserve
-the four-part starting jam and access to deeper sound editing. Check the relevant
-native/browser behavior and firmware resource budgets, and arrange a deliberate
-physical FM-1 trial before treating device behavior as verified. Saving also needs
-interrupted-write, corrupt-record and cold-boot recovery checks.
+Use `main` for the adopted source. Keep new usability experiments on
+`next/usability-and-saving` until validation and owner adoption. Preserve the
+four-part starting jam and deeper sound controls. Follow roadmap #10 and make
+small reviewable changes. Native/browser checks and target resource budgets
+must remain valid; device behavior needs a deliberate owner trial.
 
-A source branch does not isolate publication: `tools/publish_jam_web.py --publish`
-always targets the live `gh-pages`, even when run on a development branch. Do not
-publish development builds over the live site or installer. Use local checks;
-design a separate preview destination before sharing a development preview.
-Merge into `main` and publish only after validation and the owner is ready to adopt
-the changes. Follow `docs/GITHUB_PAGES.md` for an authorized production release;
-its older references to developing on `main` do not override this branch policy.
+The drum workflow is SEQ for GRID, EDIT for KIT SOUND and FX for useful kit
+controls. Another SEQ tap inside GRID swaps drums 1–8 / 9–16, preserving row
+position and step window. Entry from another screen preserves the selected
+drum. Held gestures, recorder overlays and manual-save modals retain priority.
+See `docs/DRUM_KIT_TRIAL.md` for the control map and historical trials.
 
-The owner subsequently authorized a separate manual-saving trial preview at
-`preview/saving/`. Use `tools/package_jam_recovery_preview.py` and
-`tools/publish_jam_recovery_preview.py` for it, following
-`docs/FM1_SAVING_TRIAL.md`. Only that subtree may change on `gh-pages`;
-every stable root file and all other paths/modes must remain identical. The
-full-site production publisher is still prohibited for development work. A Pages push
-does not establish live HTTP availability or physical device validation.
+The owner chose manual saving. Automatic saving remains disabled and outside
+the active plan unless explicitly reopened. Only intentional Save now replaces
+the checkpoint; restart restores the last valid manual save. Keep the canonical
+saved identity unchanged for compatible UI edits. The exact reviewed catalog
+alias is `firmware/experimental/recovery/jr_catalog_compatibility.json`.
+Unknown catalog edits or changed audio assets must fail the identity check.
+Do not use `check_jam_recovery_identity.py --write` to bypass a failure: replacing
+the runtime identity rejects existing checkpoints. Check identity refusals and
+actual old/current cold restore when compatibility changes require review.
 
-The owner also approved the staged drum workflow. Its first entry/recording
-increment has a separate `preview/drums/` trial. Use only
-`tools/package_jam_drums_preview.py` and `tools/publish_jam_drums_preview.py`,
-following `docs/DRUM_GRID_TRIAL.md`. Preserve the normal installer, emulator,
-`preview/saving/` and every other outside path/mode. The owner reported that the
-first drum trial worked, then confirmed that Trial 02 worked through their
-testing and looked good. These are owner reports, not independent or itemized
-hardware validation. Both stages remain on the development branch and isolated
-preview; further cleanup and normal-installer adoption remain separate steps.
+## Publishing
 
-The owner approved the next KIT SOUND / KIT FX cleanup on the same isolated
-drum preview; follow `docs/DRUM_KIT_TRIAL.md` for Trial 03. Keep the canonical
-manual-save identity unchanged. Whole-file catalog hashing also covers UI code,
-so this compatible change has an exact reviewed catalog alias in
-`firmware/experimental/recovery/jr_catalog_compatibility.json`. Unknown catalog
-changes and changed audio assets must still fail the identity check. Do not use
-`check_jam_recovery_identity.py --write` to bypass a compatibility failure:
-replacing the runtime identity would reject existing checkpoints. Check the
-identity refusals and actual Trial 02/current cold restore in both directions.
-The owner reported that Trial 03 looked good and requested the Trial 04 shortcut:
-another SEQ tap inside GRID swaps drums 1–8 / 9–16, preserving the row position
-and step window. Entering GRID from another screen preserves the selected drum.
-Held gestures and recorder guards retain priority. Keep this preview isolated.
+The generated site lives on `gh-pages`. A source branch alone does not isolate
+publication. For normal-installer releases use `tools/package_jam_installer.py`
+and `tools/publish_jam_installer.py`, following `docs/DRUM_RELEASE.md` and
+`docs/GITHUB_PAGES.md`. Preserve the browser instrument, both previews and every
+unrelated Git path/object/mode. The ordinary `--with-updater` profile enables
+JAMBOX_RECOVERY=1, FELUCCA_PERSIST=0, FLASH and OTA. Reuse the exact approved
+binary when promoting a tested candidate; verify its hash and receipt.
 
-The owner chose manual saving for the current product. Keep automatic saving
-disabled and outside the active plan unless the owner explicitly reopens it.
-The saved checkpoint changes only through an intentional Save now; unsaved
-experiments must not overwrite it. Restart restores the last valid manual save.
+Development saving and drum previews remain separately scoped to
+`preview/saving/` and `preview/drums/`. Use their dedicated package/publish tools
+only for the corresponding preview. Never use `tools/publish_jam_web.py` to
+publish development over the normal site. Merge/promote to main and publish
+normal updates only when the owner has authorized adoption. The owner has
+explicitly authorized this drum adoption. A Git push does not prove live Pages
+availability; verify remote artifacts and report live HTTP access separately.
 
 ## Commit attribution
 
-Before creating source or website commits, set the repository-local identity
-to the owner's GitHub account:
+Before creating source or website commits, set repository-local identity:
 
 ```sh
 git config --local user.name anthonysprints
 git config --local user.email 6182444+anthonysprints@users.noreply.github.com
 ```
 
-The authenticated GitHub connection and Git's author identity are separate.
-The old environment default email attributed commits to another account.
-Use the account-linked noreply address above for future commits. The website
-publisher reads this local identity. Preserve history during routine updates.
+GitHub authentication and commit author identity are separate. Preserve history
+and keep the account-linked noreply address above for future commits.
