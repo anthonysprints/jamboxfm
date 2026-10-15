@@ -1,0 +1,27 @@
+[
+  {
+    "path": "install/index.html",
+    "status": 200,
+    "sha256": "d83636aee34f1e3241e949dacf7293333eb14c843d448db82b0e8460297c52f9"
+  },
+  {
+    "path": "install/app.js",
+    "status": 200,
+    "sha256": "44b3466927e69e613e6cd269a742c1c73c560670a1dba7a4fa6730621f0b286f"
+  },
+  {
+    "path": "firmware/manifest.json",
+    "status": 200,
+    "sha256": "c4072f271204fc1baaf103ed48b2ad4c2a6fc3ce91f9e224b3eaa27513c28347"
+  },
+  {
+    "path": "firmware/build-receipt.json",
+    "status": 200,
+    "sha256": "5501fad01ee613b05498687e97208f151240f178bbfa55f158224eff4027ac46"
+  },
+  {
+    "path": "firmware/jamboxfm-0.1.0-dev.fwsc",
+    "status": 200,
+    "sha256": "77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90"
+  }
+]

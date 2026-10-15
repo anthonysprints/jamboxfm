@@ -31,7 +31,7 @@
     "chromium_installer_smoke_cases": 2
   },
   "physical_trial04_verified": false,
-  "normal_installer_promoted": false,
+  "normal_installer_promoted": true,
   "previous_trial03_retained": {
     "website_commit": "acb8782a6b30c31ec6cfeb0226e3fd5478cd3df8",
     "firmware_sha256": "ad26a098520dc55dbd0937f257b97e7eeba3751bc462025f907f31c07f824b83",
@@ -50,5 +50,14 @@
       "reachable_from_cloud": false,
       "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
     }
+  },
+  "owner_accepted_and_requested_promotion": true,
+  "adoption": {
+    "date": "2026-10-15",
+    "source_main": "1e4512cede4c8d34ee2367c049925a5d788445e1",
+    "normal_installer_site": "8b19873b37021f3e6848f6b9dc9127d1769e7d01",
+    "firmware_unchanged": true,
+    "owner_feedback": "owner-feedback.md",
+    "release_notes": "../../DRUM_RELEASE.md"
   }
 }

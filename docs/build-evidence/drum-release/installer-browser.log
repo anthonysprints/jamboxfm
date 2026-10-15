@@ -1,0 +1,24 @@
+PASS unsupported browser
+PASS permission denial and explicit retry
+PASS no ports and hotplug
+PASS multiple pairs allow inspection but block installation
+PASS new second device invalidates readiness
+PASS hidden duplicate port groups also block installation
+PASS late MIDI connection events do not invalidate a checked device
+PASS unapproved starting firmware
+PASS JamBox identity with badAppFamily refuses update
+PASS JamBox identity with missingAppProbe refuses update
+PASS fresh JamBox family check rejects changed capabilities before update
+PASS damaged trial descriptor blocks install
+PASS disconnect clears readiness
+PASS fresh identity check rejects a changed device
+PASS cancel during preparation sends no upgrade
+PASS started failure locks retry and warns before leaving
+PASS failed report uses the freshly checked eligible source
+PASS foreign loader is rejected before its upgrade command
+PASS write interruption never reports success
+PASS final release must be confirmed
+PASS complete transfer, identity, local private report, and desktop layout
+PASS mobile layout and accessible actions
+PASS installed JamBox updates through both stages and reports its actual transition
+JamBox installer: 23 Chromium cases passed. These verify browser behavior and host transfers, not physical flashing. Screenshots: /workspace/jamboxfm/build/jam-install-evidence
