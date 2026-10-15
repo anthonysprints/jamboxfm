@@ -206,6 +206,10 @@ static void step_up(uint32_t w)
 static void pen_lane_move(int32_t s)
 {
     uint8_t l = (uint8_t)clamp(pen_lane + s, 0, DRUM_LANES - 1);
+#if JAMBOX_PROTO
+    if (l != pen_lane && is_drum(TSEL))
+        step_pend_off = 0;                       /* Changing the drum never deletes a different held step on release. */
+#endif
     if (l != pen_lane)
         audition_lane(l);
     pen_lane = l;
@@ -378,8 +382,13 @@ static void layer_key(uint32_t layer, uint32_t k, uint32_t down)
     case LY_STEP:
         if (w < 0) {                                    /* the first four black keys: pages 1..4 */
             static const int8_t PG[12] = {-1, 0, -1, 1, -1, 2, -1, -1, 3, -1, -1, -1};
-            if (k < 12u && PG[k] >= 0 && (uint32_t)PG[k] * 16u < trk_len(TSEL))
+            if (k < 12u && PG[k] >= 0 && (uint32_t)PG[k] * 16u < trk_len(TSEL)) {
+#if JAMBOX_PROTO
+                if (is_drum(TSEL) && ui.step_page != (uint8_t)PG[k])
+                    step_pend_off = 0;
+#endif
                 ui.step_page = (uint8_t)PG[k];
+            }
             return;
         }
         ui.step_held |= (uint16_t)(1u << w);

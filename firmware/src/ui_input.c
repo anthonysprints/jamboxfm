@@ -697,23 +697,21 @@ static void layer_tap(uint32_t layer)
     case LY_ERASE:
     case LY_STEP:
 #if JAMBOX_PROTO
-        if (layer == LY_STEP && is_drum(TSEL) && (rec_wait || ft_on || ci_on)) {
-            ui_message("FINISH TAKE FIRST");           /* The recorder owns the keyboard until its overlay closes. */
-            break;
-        }
-#endif
-        if (on_drum_page()) {                             /* DRUMS: GRID <-> KIT */
-            drum_page = (uint8_t)((drum_page + 1u) % 2u);
-            ui.force = 1;
-            break;
-        }
-#if JAMBOX_PROTO
         if (layer == LY_STEP && is_drum(TSEL)) {
+            if (rec_wait || ft_on || ci_on) {
+                ui_message("FINISH TAKE FIRST");       /* The recorder owns the keyboard until its overlay closes. */
+                break;
+            }
             drum_page = 0;                              /* SEQ enters the drum grid from any ordinary page. */
             studio_open(SC_DRUM);
             break;
         }
 #endif
+        if (on_drum_page()) {                             /* EDIT: GRID <-> KIT (upstream also uses SEQ). */
+            drum_page = (uint8_t)((drum_page + 1u) % 2u);
+            ui.force = 1;
+            break;
+        }
         if (!ui.home && cur_page()->scope == SC_TRK && is_drum(TSEL)) {
             studio_open(SC_DRUM);
             break;
@@ -799,6 +797,10 @@ static int layers_input(uint32_t note_edges, uint32_t *pressed, uint32_t home)
         if (d && !down[l]) {
             t0[l] = now;
             used[l] = (uint8_t)((eat & ly_bit[l]) != 0u);  /* (the press that unlocked: not a tap) */
+#if JAMBOX_PROTO
+            if (l == LY_STEP && on_drum_page() && !drum_page)
+                ui.step_page = (uint8_t)(drum_cursor / 16u);
+#endif
         }
         if (d && note_edges)
             used[l] = 1;                                  /* a key while held: not a tap */
@@ -1247,7 +1249,18 @@ static void ui_input(void)
 #if JAMBOX_PROTO
 static void ui_input(void)
 {
+    uint32_t step_over_grid = ui.layer == LY_STEP && on_drum_page() && !drum_page;
+    uint32_t len = trk_len(TDRUM);
+    if (drum_cursor >= len)
+        drum_cursor = (uint8_t)(len - 1u);
     ui_input_process();
+    len = trk_len(TDRUM);
+    if (step_over_grid && ui.layer != LY_STEP && on_drum_page() && !drum_page) {
+        uint32_t next = ui.step_page * 16u + drum_cursor % 16u;
+        drum_cursor = (uint8_t)(next < len ? next : len - 1u);
+    }
+    if (drum_cursor >= len)
+        drum_cursor = (uint8_t)(len - 1u);
     /* Navigation and modal handlers can return early. Publish the resulting
      * keyboard job now, before the next audio block sees another key edge. */
     kb_grid = (uint8_t)grid_keys_on();

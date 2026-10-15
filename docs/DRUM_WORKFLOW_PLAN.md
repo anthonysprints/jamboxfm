@@ -7,9 +7,11 @@ behavior changes are included. Manual saving remains intentional; autosave is of
 The owner's goal is to lay out beats, play them live and explore sounds without
 remembering hidden screens. Preserve the working four-part jam and useful depth.
 
-Implementation follow-up: [direct GRID trial](DRUM_GRID_TRIAL.md) covers only the
-first entry/keyboard-ownership increment. The investigation and screenshots below
-describe the preceding baseline; later control/layout proposals remain separate.
+Implementation follow-up: [GRID trial 02](DRUM_GRID_TRIAL.md) covers direct entry,
+keyboard ownership, readable rows and the main grid controls. The owner reported
+that trial 01 worked; trial 02 needs its own physical check. The investigation
+and screenshots below describe the preceding baseline. Individual drum sound
+editing and the remaining page cleanup are separate later work.
 
 ## Earlier ideas recovered from GitHub
 
@@ -259,8 +261,9 @@ also a separate engine/storage feature.
 5. **Make performance tools discoverable.** Labelled mute/erase, roll, fill,
    copy/clear/undo and advanced timing; expand only with a tested gesture model.
 
-The first stage is ready to specify and implement as an isolated change.
-Stages 2–5 are recommendations; agree the flow before broad remapping. Keep all
+The owner approved this staged direction. The first entry stage received broad
+positive owner feedback, and the second grid/control stage is a separate trial.
+Stages 3–5 remain later work. Keep all
 implementation on `next/usability-and-saving` and use an isolated trial before
 adopting it on the normal installer.
 

@@ -941,6 +941,16 @@ static void jam_recovery_ui_close(void)
     go_home();
 }
 
+static int jam_recovery_ui_save(int initialize)
+{
+    /* The writer clears live inputs. Keep the editor's transient drum choice
+     * across that reset without adding it to the stored checkpoint format. */
+    uint8_t selected_drum = pen_lane;
+    int result = jam_recovery_save(initialize);
+    pen_lane = selected_drum;
+    return result;
+}
+
 static void jam_recovery_ui_open(void)
 {
     if (rec_wait || ft_on || ci_on || song.rec) {
@@ -998,7 +1008,7 @@ static int jam_recovery_ui_input(uint32_t pressed, int home_event)
             !ui.recovery_hold_done && fm1_ms - ui.recovery_save_t0 >= JAM_RECOVERY_HOLD_MS) {
         ui.recovery_hold_done = 1;
         if (jam_recovery_can_save()) {
-            (void)jam_recovery_save(1);
+            (void)jam_recovery_ui_save(1);
             ui.recovery_screen = 1;
             ui.recovery_ack = 0;
         }
@@ -1011,7 +1021,7 @@ static int jam_recovery_ui_input(uint32_t pressed, int home_event)
                 ui.recovery_screen = 2;
                 ui.recovery_ack = 0;
             } else if (jam_recovery_can_save()) {
-                (void)jam_recovery_save(0);
+                (void)jam_recovery_ui_save(0);
             }
             ui.force = 1;
         }

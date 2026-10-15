@@ -8,10 +8,12 @@
 #include "ui_pages_test.c"
 
 static unsigned checks, recovery_calls;
+static unsigned recovery_clears_lane;      /* model the runtime input reset */
 static int jam_recovery_save(int initialize)
 {
     (void)initialize;
     recovery_calls++;
+    if (recovery_clears_lane) pen_lane = 0;
     return 0;
 }
 static const char *jam_recovery_status(void) { return "Saved"; }
@@ -63,6 +65,7 @@ static void setup(unsigned view)
     drum_page = 1;                         /* entry must not inherit old KIT */
     drum_lane = drum_cursor = 0;
     recovery_calls = 0;
+    recovery_clears_lane = 0;
     frames(20);
 }
 
@@ -150,11 +153,14 @@ static void test_existing_editor(void)
     expect(!memcmp(before, TDRUM->dstep, sizeof before) && !song.rec && !rec_wait,
            "selected-lane step toggle changes no other drum or recorder state");
     tap(B_SEQ);
-    expect(on_drum_page() && drum_page == 1,
-           "repeated SEQ retains existing GRID to KIT toggle in this first increment");
+    expect(on_drum_page() && drum_page == 0 && kb_grid,
+           "repeated SEQ stays in GRID with step-key ownership");
+    tap(B_EDIT);
+    expect(on_drum_page() && drum_page == 1 && !kb_grid,
+           "EDIT opens KIT and immediately restores playable pads");
     tap(B_SEQ);
-    expect(on_drum_page() && drum_page == 0,
-           "another SEQ tap returns KIT to GRID");
+    expect(on_drum_page() && drum_page == 0 && kb_grid,
+           "SEQ from KIT returns directly to GRID with step-key ownership");
     tap(B_EDIT);
     expect(on_drum_page() && drum_page == 1,
            "EDIT tap retains the existing GRID/KIT toggle");
@@ -318,7 +324,7 @@ static void open_recording_workspace(unsigned kit)
     setup(JAM_HOME_SOUND);
     if (kit) {
         tap(B_SEQ);
-        tap(B_SEQ);
+        tap(B_EDIT);
     }
 }
 
@@ -419,6 +425,7 @@ static void test_melodic_routes(void)
     }
 }
 
+#ifndef JAM_DRUM_NAVIGATION_HARNESS_ONLY
 int main(void)
 {
     test_home_entry();
@@ -432,3 +439,4 @@ int main(void)
     printf("drum-navigation: %u checks, %s\n", checks, fails ? "FAIL" : "all checks passed");
     return fails != 0;
 }
+#endif

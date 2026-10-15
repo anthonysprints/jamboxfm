@@ -6,7 +6,7 @@
 // they do not verify physical FM-1 installation, controls or flashing.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -44,6 +44,10 @@ async function turn(page, id, direction) {
   await page.keyboard.press(direction);
   await idle(page);
 }
+async function turnBy(page, id, steps) {
+  const direction = steps < 0 ? 'ArrowDown' : 'ArrowUp';
+  for (let i = 0; i < Math.abs(steps); i++) await turn(page, id, direction);
+}
 async function screen(page) {
   return page.evaluate(() => {
     const canvas = document.getElementById('screen');
@@ -71,8 +75,12 @@ async function changedScreen(page, previous) {
   return current;
 }
 async function screenshot(page, name) {
+  const before = (await state(page)).frames;
+  await page.waitForFunction(frame => globalThis.jamEmu.state.frames >= frame + 2, before);
   await page.screenshot({ path: resolve(evidence, `${name}.png`), fullPage: true });
-  await page.locator('#screen').screenshot({ path: resolve(evidence, `${name}-lcd.png`) });
+  // Save the actual 240 × 240 framebuffer rather than its CSS-scaled canvas.
+  const native = await page.locator('#screen').evaluate(canvas => canvas.toDataURL('image/png'));
+  await writeFile(resolve(evidence, `${name}-lcd.png`), Buffer.from(native.split(',')[1], 'base64'));
 }
 async function startDrums(view) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 1060 } });
@@ -116,6 +124,10 @@ try {
     assert.deepEqual((await state(page)).events, initial.events, 'opening GRID preserves every track');
     assert(!(await state(page)).playing && !(await state(page)).recording && !(await state(page)).armed);
 
+    await tap(page, 9);
+    assert.equal((await state(page)).page, gridPage, 'repeated SEQ stays in the drum workspace');
+    assert.deepEqual((await state(page)).events, initial.events, 'repeated SEQ does not alter the beat');
+
     // Physical key 2 is white step 2; its startup cell is entirely empty.
     // Event counts report occupied drum steps, so this distinguishes step entry
     // from a pad audition without adding a debug command or changing the worklet.
@@ -128,15 +140,32 @@ try {
     await hit(page);
     await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
 
-    await tap(page, 9); // Existing GRID → KIT semantics remain for this increment.
+    await tap(page, 4); // EDIT is the explicit GRID ↔ KIT switch.
     const kitScreen = await changedScreen(page, gridScreen);
     assert.equal((await state(page)).page, gridPage, 'KIT remains inside the dedicated drum workspace');
+    await turn(page, 0, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
     await hit(page);
-    assert.deepEqual((await state(page)).events, initial.events, 'KIT keys audition drums without editing steps');
+    assert.deepEqual((await state(page)).events, initial.events,
+      'SELECT changes KIT BPM by one and keeps keys auditioning drums, not editing steps');
     await page.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
+    await turn(page, 0, 'ArrowDown');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
     await screenshot(page, `${name}-kit`);
-    await tap(page, 9);
+    await tap(page, 9); // SEQ returns KIT to GRID, never toggles GRID into KIT.
     await changedScreen(page, kitScreen);
+    await turn(page, 0, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 89);
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
+    await turn(page, 0, 'ArrowDown');
+    await page.waitForFunction(() => globalThis.jamEmu.state.tempo === 88);
+    await tap(page, 4);
+    await hit(page);
+    assert.deepEqual((await state(page)).events, initial.events, 'EDIT returns to playable KIT');
+    await tap(page, 4);
     await hit(page);
     await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
     await hit(page);
@@ -172,7 +201,91 @@ try {
       globalThis.jamEmu.state.homeView === expected, view);
     assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
     await page.close();
-    console.log(`PASS ${name} Home → GRID, reversible step edit, KIT/pad behavior, immediate HOME key, deep-page entry`);
+    console.log(`PASS ${name} Home → GRID, idempotent SEQ, EDIT/KIT and BPM, reversible step edit, immediate HOME key, deep-page entry`);
+  }
+
+  {
+    const page = await startDrums(0);
+    const initial = await state(page);
+    await tap(page, 9);
+    const gridPage = (await state(page)).page;
+
+    // Knobs 3/4 edit an existing hit. The startup second step is empty on
+    // every lane, so aggregate step counts can detect accidental hit creation.
+    await turn(page, 4, 'ArrowUp'); // Step 2, with no audition or hit creation.
+    await turn(page, 5, 'ArrowUp');
+    await turn(page, 6, 'ArrowUp');
+    assert.deepEqual((await state(page)).events, initial.events,
+      'Step, Strength and Repeat knobs leave the empty cell empty');
+    assert(!(await state(page)).playing && !(await state(page)).recording && !(await state(page)).armed,
+      'choosing/editing a cell neither starts transport nor arms recording');
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count + 1, initial.events[3]);
+    await turn(page, 5, 'ArrowUp'); // Strength.
+    await turn(page, 6, 'ArrowUp'); // Repeat.
+    assert.equal((await state(page)).events[3], initial.events[3] + 1,
+      'Strength and Repeat preserve the occupied step count');
+    await screenshot(page, 'first-eight-named-lanes-strength-repeat');
+    await hit(page);
+    await page.waitForFunction(count => globalThis.jamEmu.state.events[3] === count, initial.events[3]);
+
+    const kits = ['DUST KIT', 'SOFT KIT', 'ROCK KIT', 'TIGHT KIT',
+      '808 KIT', '909 KIT', 'TRAP KIT', 'NEON KIT'];
+    for (const workspace of ['grid', 'kit']) {
+      if (workspace === 'kit') await tap(page, 4);
+      assert.equal((await state(page)).sound, kits[0]);
+      for (const expected of [...kits.slice(1), kits[0]]) {
+        await turn(page, 2, 'ArrowUp');
+        await page.waitForFunction(sound => globalThis.jamEmu.state.sound === sound, expected);
+        const current = await state(page);
+        assert.equal(current.page, gridPage);
+        assert.equal(current.selected, 3);
+        assert.equal(current.tempo, 88);
+        assert.deepEqual(current.events, initial.events, `${workspace} kit changes preserve every part's notes`);
+      }
+    }
+    await tap(page, 9);
+    const firstRows = await screen(page);
+    await turnBy(page, 3, 15); // Last named drum; scroll the eight-row window.
+    await changedScreen(page, firstRows);
+    assert.deepEqual((await state(page)).events, initial.events, 'choosing later drums only selects/auditions');
+    await screenshot(page, 'later-eight-named-lanes');
+
+    await tap(page, 6);
+    await page.waitForFunction(() => globalThis.jamEmu.state.homeControls && globalThis.jamEmu.state.homeView === 0);
+    assert.equal((await state(page)).groove[2], 32);
+    await turnBy(page, 5, -12);
+    await page.waitForFunction(() => globalThis.jamEmu.state.groove[2] === 20);
+    assert.deepEqual((await state(page)).events, initial.events, 'shortening playback keeps hidden notes');
+    await tap(page, 9);
+    const firstPage = await screen(page);
+    await hit(page, 3); // Second black page key selects literal steps 17–20 / 20.
+    await changedScreen(page, firstPage);
+    await screenshot(page, 'partial-second-page-17-to-20');
+    await hit(page, 7); // Fifth white key would be step 21, beyond length 20.
+    assert.deepEqual((await state(page)).events, initial.events, 'disabled second-page step cannot create a hit');
+
+    // The ordinary ALGORITHM knob follows the displayed Drums/Bass/Chords/Lead
+    // order, preserving tempo, notes and the remembered Groove Home view.
+    await turn(page, 1, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 0 && globalThis.jamEmu.state.homeControls);
+    await turn(page, 1, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 1);
+    await turn(page, 1, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 2);
+    await turnBy(page, 1, -3);
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 3 && globalThis.jamEmu.state.homeControls);
+    await tap(page, 9);
+    await tap(page, 4);
+    await turn(page, 1, 'ArrowUp');
+    await page.waitForFunction(() => globalThis.jamEmu.state.selected === 0 && globalThis.jamEmu.state.homeControls);
+    const final = await state(page);
+    assert.equal(final.homeView, 0);
+    assert.equal(final.tempo, 88);
+    assert.deepEqual(final.events, initial.events, 'GRID/KIT part switches preserve all recorded parts');
+    assert.equal(await page.evaluate(() => globalThis.jamEmu.failed), false);
+    await page.close();
+    console.log('PASS GRID cell ownership, curated kits on GRID/KIT, named-row and partial-page LCDs, displayed part order');
   }
 
   const page = await startDrums(1);
@@ -223,7 +336,7 @@ try {
   await page.close();
   console.log('PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership');
   assert.deepEqual(errors, [], 'no production browser JavaScript or AudioWorklet errors');
-  console.log(`Drum navigation: 3 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Screenshots: ${evidence}`);
+  console.log(`Drum navigation: 4 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 × 240 LCD screenshots: ${evidence}`);
 } finally {
   await browser?.close();
   await new Promise(done => server.close(done));

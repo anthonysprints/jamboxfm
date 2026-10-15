@@ -1,8 +1,12 @@
-# Direct drum grid: first development trial
+# Drum grid: development trial 02
 
-This implements the first small stage of [the drum workflow plan](DRUM_WORKFLOW_PLAN.md)
+This implements the first two stages of [the drum workflow plan](DRUM_WORKFLOW_PLAN.md)
 and [issue #5](https://github.com/anthonysprints/jamboxfm/issues/5), on
 `next/usability-and-saving`. The normal installer and emulator remain separate.
+
+The owner reported that the first entry/recording trial worked. That report is
+recorded in [its evidence](build-evidence/drum-grid-entry/owner-feedback.md).
+Trial 02 adds the readable layout and controls below; its physical check is new.
 
 ## What changes
 
@@ -12,6 +16,12 @@ and [issue #5](https://github.com/anthonysprints/jamboxfm/issues/5), on
   edits a step; the first key after HOME plays a drum. Already-held keys keep
   their original release ownership.
 - HOME restores the prior GROOVE/SOUND view. Synth SEQ navigation is unchanged.
+- GRID shows eight named drums at a time, the selected drum and kit, its printed
+  pad pitch, and a literal step range/length. It keeps the page you are editing;
+  an arrow shows when the playhead is elsewhere.
+- GRID, live pads and held SEQ use the same selected drum. Held SEQ starts on the
+  editing page and returns its chosen page to GRID. Save now preserves the
+  transient drum choice without adding a new saved-format field.
 - Starting REC from GRID returns to playable Home before arming/recording.
   During arm/count-in/free take, SEQ says FINISH TAKE FIRST and leaves the
   recorder in control. During an ordinary playing overdub, explicit SEQ entry
@@ -19,24 +29,30 @@ and [issue #5](https://github.com/anthonysprints/jamboxfm/issues/5), on
 - SAVE retains its modal priority and manual checkpoint. Storage format,
   sounds and flash writers are unchanged. Autosave stays off.
 
-## Existing GRID controls retained
+## GRID controls
 
 | Control | Action |
 | --- | --- |
 | Knob 1 | Select/audition a drum. |
-| Knob 2 | Select/audition a step. |
-| Knob 3 | Selected hit on/off. |
-| Knob 4 | Selected hit strength. |
+| Knob 2 | Select a step; preview its hits only while stopped. |
+| Knob 3 | Selected hit strength: ghost / soft / normal / hard. |
+| Knob 4 | Selected hit repeats: 1–4. |
 | Sixteen white keys | Toggle the selected drum's steps, without REC. |
 | First four black keys | Select a 16-step page, within the pattern length. |
-| SEQ or EDIT again | Switch the existing GRID/KIT views. |
-| SELECT | Switch GRID/KIT; tempo remains on SELECT at Home/in held layers. |
-| PRESETS | Existing full kit browser, including inherited USR entries. |
-| ALGORITHM | Existing numeric part order; another part returns Home. |
+| SEQ | Open or keep GRID. |
+| EDIT | Switch GRID/KIT. |
+| SELECT | Tempo, one BPM per detent; also on KIT. |
+| PRESETS | The same eight curated kits as Home; also on KIT. |
+| ALGORITHM | Home's Drums/Bass/Chords/Lead order; another part returns Home. |
 
-KIT retains named pads and kit/level/reverb/pan. The planned consistent encoders,
-readable named rows, Strength/Repeat knobs and individual drum sound editing are
-later stages. This increment does not populate empty USR kits.
+Strength/Repeat only edit an existing hit. Empty cells explain how to add a hit
+and preserve the beat and previous undo. Clamped knob turns also preserve undo.
+Kit browsing preserves recorded notes, timing, mixer settings and undo.
+
+KIT retains named pads and kit/level/reverb/pan; its knob 1 still offers the full
+inherited kit list, including empty USR entries. Cleaning up those sources and
+individual drum sound editing remain later work. Held layers retain their own
+control ownership; ordinary knob assignments do not leak into them.
 
 ## Device trial
 
@@ -51,9 +67,12 @@ Record actual publication/HTTP outcomes in build evidence before calling it live
    JamBox-to-JamBox updates only. Keep power/USB steady through the update.
 3. Confirm the saved jam and edited sounds returned. Do not reinitialize saving:
    the storage format is unchanged.
-4. Select Drums → SEQ. Choose a drum with knob 1, toggle white-key steps and
-   listen with PLAY. Check later step pages, GRID/KIT and HOME memory.
-5. Start REC from GRID: Home should return with playable drum pads. Record two
+4. Select Drums → SEQ. Choose drums in both halves of the list, toggle white-key
+   steps, change Strength/Repeat and listen with PLAY. Check SELECT tempo,
+   PRESETS kit and ALGORITHM part order. Check later/partial step pages.
+5. SEQ should keep GRID; EDIT switches GRID/KIT. Check held SEQ returns the same
+   drum and its chosen page. Check HOME memory.
+6. Start REC from GRID: Home should return with playable drum pads. Record two
    hits at different times. Check held SEQ, held EDIT erase/undo, synth SEQ,
    sounding lights and manual saving.
 
@@ -63,8 +82,8 @@ cannot verify physical button/audio or power-loss behavior.
 
 ## Maintainer workflow
 
-After activating `tools/cloud/activate.sh`, run the focused native fixture
-`tests/run_jam_drum_navigation_tests.sh`, Home/recovery UI regressions, rebuilt
+After activating `tools/cloud/activate.sh`, run the focused native fixtures
+`tests/run_jam_drum_navigation_tests.sh` and `tests/run_jam_drum_grid_tests.sh`, Home/recovery UI regressions, rebuilt
 emulator and `tests/jam_drum_navigation_browser.mjs`. Commit source changes
 before building so the receipt accurately identifies clean corresponding source.
 

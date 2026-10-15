@@ -47,8 +47,10 @@ The owner also approved the staged drum workflow. Its first entry/recording
 increment has a separate `preview/drums/` trial. Use only
 `tools/package_jam_drums_preview.py` and `tools/publish_jam_drums_preview.py`,
 following `docs/DRUM_GRID_TRIAL.md`. Preserve the normal installer, emulator,
-`preview/saving/` and every other outside path/mode. Owner device feedback is
-still required before adopting that increment in the normal installer.
+`preview/saving/` and every other outside path/mode. The owner reported that the
+first drum trial worked; this is broad owner feedback, not an itemized hardware
+validation. The next grid/control stage remains an isolated trial and needs its
+own device feedback before adoption in the normal installer.
 
 The owner chose manual saving for the current product. Keep automatic saving
 disabled and outside the active plan unless the owner explicitly reopens it.

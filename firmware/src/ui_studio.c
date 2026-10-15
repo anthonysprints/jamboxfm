@@ -6,7 +6,13 @@
  * LAYERS (a function button held: what the 16 white keys and the knobs do now), HOLD (a hold to
  * confirm: clear, save), REC (armed / free take). Every band is drawn into the canvas only when its
  * signature changed. */
-static uint8_t drum_page, drum_lane, drum_cursor;   /* drum_page: 0 GRID, 1 KIT */
+static uint8_t drum_page, drum_cursor;            /* drum_page: 0 GRID, 1 KIT */
+#if JAMBOX_PROTO
+/* Live playing, the ordinary grid and held-step gestures select one drum. */
+#define drum_lane pen_lane
+#else
+static uint8_t drum_lane;
+#endif
 static void trk_short_name(uint32_t c, char *b);
 static int on_drum_page(void) { return !ui.home && cur_page()->scope == SC_DRUM; }
 
@@ -358,11 +364,138 @@ static void pads_tick(void)                             /* once a frame: the hit
         }
 }
 
+#if JAMBOX_PROTO
+/* Eight named rows at a time. The cursor owns the step window; transport never
+ * scrolls an edit away. Two 64px strips fit the existing 124px canvas. */
+static void jam_drum_grid_draw(uint32_t len)
+{
+    static uint32_t head, body, footer;
+    static const char *const row_name[DRUM_LANES] = {
+        "kick", "kick 2", "snare", "clap", "hat", "open h", "pedal", "rim",
+        "snr 2", "low tom", "hi tom", "crash", "ride", "shaker", "conga", "cowbell"};
+    static const char *const labels[4] = {"drum", "step", "strength", "repeat"};
+    char b[24], v[4][12];
+    const char *values[4] = {v[0], v[1], v[2], v[3]};
+    int32_t ratio[4];
+    uint32_t bank = drum_cursor / 16u, first = drum_lane / 8u * 8u;
+    uint32_t end = bank * 16u + 16u < len ? bank * 16u + 16u : len;
+    uint32_t i, j, block, sig = song.g[G_BPM] * 131u + (ui.bpm_t != 0) * 17u;
+    sig = sig * 31u + drum_lane + bank * 17u + len * 71u;
+    sig = sig * 31u + song.playing + song.rec * 7u + (song.playing ? TDRUM->seq_idx * 131u : 0u);
+    sig = studio_hash(sig * 31u + drum_kit(), jam_sound_name(TRK_DRUM));
+    if (ui.force || head != sig) {
+        int32_t x;
+        head = sig;
+        cv_begin(240, 56, C_BLACK);
+        fmt_int(b, song.g[G_BPM]);
+        x = cv_text(4, 0, &FONT_S, b, ui.bpm_t ? C_WHITE : TE_G4);
+        cv_text(x + 3, 0, &FONT_S, "bpm", TE_G3);
+        if (song.playing) {
+            str_cpy(b, "play ", sizeof b);
+            fmt_int(b + 5, TDRUM->seq_idx + 1u);
+            if (TDRUM->seq_idx / 16u != bank)
+                str_cpy(b + str_len(b), TDRUM->seq_idx / 16u < bank ? " <" : " >", 3);
+            cv_text(76, 0, &FONT_S, b, song.rec ? TE_RED : C_WHITE);
+        } else {
+            cv_text(76, 0, &FONT_S, "stopped", TE_G3);
+        }
+        cv_text(156, 0, &FONT_S, "grid", TE_DRUM);
+        str_cpy(b, first ? "9-16" : "1-8", sizeof b);
+        cv_text(236 - text_w(&FONT_S, b), 0, &FONT_S, b, TE_G3);
+        cv_text(4, 18, &FONT_S, LANE_NAME[drum_lane], C_WHITE);
+        jam_home_text(84, 18, 96, &FONT_S, jam_sound_name(TRK_DRUM), TE_G3);
+        /* Printed pitches identify the pads on HOME, not the temporary step
+         * assignment here. The visible grid remains literal in every scale. */
+        for (i = 0; i < 27u && punch_key(i) != (int32_t)drum_lane; i++) ;
+        str_cpy(b, "PAD ", sizeof b);
+        note_name(b + 4, 53u + i);
+        cv_text(236 - text_w(&FONT_S, b), 18, &FONT_S, b, TE_G4);
+        fmt_int(b, bank * 16u + 1u);
+        str_cpy(b + str_len(b), "-", 2);
+        fmt_int(b + str_len(b), (int32_t)end);
+        str_cpy(b + str_len(b), "/", 2);
+        fmt_int(b + str_len(b), len);
+        cv_text(4, 38, &FONT_S, b, TE_G4);
+        for (j = 0; j < 4u; j++) {
+            if (bank * 16u + j * 4u >= len) continue;
+            fmt_int(b, bank * 16u + j * 4u + 1u);
+            cv_text(72 + (int32_t)j * 40, 38, &FONT_S, b, TE_DRUM);
+        }
+        if (song.playing && TDRUM->seq_idx / 16u != bank)
+            cv_text(230, 38, &FONT_S, TDRUM->seq_idx / 16u < bank ? "<" : ">", C_WHITE);
+        cv_blit(0, 0);
+    }
+    sig = drum_lane + drum_cursor * 101u + len * 3u + song.playing * 71u;
+    if (song.playing) sig = sig * 31u + TDRUM->seq_idx;
+    for (i = first; i < first + 8u; i++) sig = sig * 3u + (pad_lit[i] != 0);
+    for (j = bank * 16u; j < end; j++) {
+        const dstep_t *st = &TDRUM->dstep[j];
+        sig = sig * 31u + dstep_mask(st);
+        for (i = 0; i < 4u; i++) sig = sig * 31u + st->lvl[i] + st->rat[i] * 257u;
+    }
+    if (ui.force || body != sig) {
+        body = sig;
+        for (block = 0; block < 2u; block++) {
+            cv_begin(240, 64, C_BLACK);
+            for (i = 0; i < 4u; i++) {
+                uint32_t lane = first + block * 4u + i;
+                int32_t y = (int32_t)i * 16;
+                if (lane == drum_lane) cv_rect(0, y, 240, 16, TE_G1);
+                cv_rect(0, y + 2, 2, 12, pad_lit[lane] ? C_WHITE : lane == drum_lane ? TE_DRUM : C_BLACK);
+                cv_text(4, y, &FONT_S, row_name[lane], lane == drum_lane ? C_WHITE : TE_G4);
+                for (j = 0; j < 16u; j++) {
+                    uint32_t p = bank * 16u + j, r;
+                    const dstep_t *st = &TDRUM->dstep[p];
+                    int32_t x = 73 + (int32_t)j * 10;
+                    uint16_t c;
+                    if (!(j % 4u)) cv_rect(x - 3, y, 1, 16, TE_G2);
+                    if (p >= len) continue;
+                    c = dstep_has(st, lane) ? lvl_col(dstep_lvl(st, lane)) : lane == drum_lane ? TE_G2 : TE_G1;
+                    cv_rect(x, y + 3, 7, 10, c);
+                    if (song.playing && p == TDRUM->seq_idx)
+                        cv_rect(x, y, 7, 2, TE_DRUM);
+                    if (dstep_has(st, lane))
+                        for (r = 0; r < dstep_rat(st, lane); r++)
+                            cv_rect(x + 1 + (int32_t)r * 2, y + 7, 1, 3, C_BLACK);
+                    if (p == drum_cursor && lane == drum_lane) {
+                        cv_rect(x - 1, y + 1, 9, 1, C_WHITE);
+                        cv_rect(x - 1, y + 14, 9, 1, C_WHITE);
+                        cv_rect(x - 1, y + 1, 1, 14, C_WHITE);
+                        cv_rect(x + 7, y + 1, 1, 14, C_WHITE);
+                    }
+                }
+            }
+            cv_blit(0, 56 + block * 64u);
+        }
+    }
+    {
+        const dstep_t *st = &TDRUM->dstep[drum_cursor];
+        uint32_t has = dstep_has(st, drum_lane);
+        str_cpy(v[0], LANE_SHORT[drum_lane], sizeof v[0]);
+        fmt_int(v[1], drum_cursor + 1u);
+        str_cpy(v[2], has ? LV_NAME[dstep_lvl(st, drum_lane)] : "empty", sizeof v[2]);
+        if (has) fmt_int(v[3], dstep_rat(st, drum_lane) + 1u);
+        else str_cpy(v[3], "empty", sizeof v[3]);
+        ratio[0] = (int32_t)drum_lane * 1000 / (DRUM_LANES - 1);
+        ratio[1] = (int32_t)drum_cursor * 1000 / (int32_t)(len > 1u ? len - 1u : 1u);
+        ratio[2] = has ? (int32_t)lvl_rank(dstep_lvl(st, drum_lane)) * 333 : 0;
+        ratio[3] = has ? (int32_t)dstep_rat(st, drum_lane) * 333 : 0;
+        te_dials(184, labels, values, ratio, 3u, &footer);
+    }
+}
+#endif
+
 static void drum_screen_draw(void)
 {
     static uint32_t head, title_sig, body_sig, footer;
     uint32_t i, j, len = (uint32_t)clamp(TDRUM->p[P_SLEN], 1, 64), kit = drum_kit(), sig, bank;
     if (drum_cursor >= len) drum_cursor = (uint8_t)(len - 1u);
+#if JAMBOX_PROTO
+    if (!drum_page) {
+        jam_drum_grid_draw(len);
+        return;
+    }
+#endif
     bank = drum_cursor / 16u;
     {
         char st[16], nm[9];
@@ -543,7 +676,11 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
             else if (!song.playing && arrangement_enabled && !arr_valid(&arrangement, arrangement_ready())) ui_message("EMPTY SECTION: REC");
             else transport_req = song.playing ? 2 : 1;
         } else if (b == B_SEQ || b == B_EDIT) {
+#if JAMBOX_PROTO
+            drum_page = b == B_SEQ ? 0 : (uint8_t)!drum_page;
+#else
             drum_page = (uint8_t)((drum_page + 1u) % 2u);
+#endif
             ui.msg_t = 0;
             ui.force = 1;
         } else if (b == B_SAVE) {
@@ -551,6 +688,23 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
             return;
         }
     }
+#if JAMBOX_PROTO
+    if ((s = panel_enc(EN_SELECT))) {
+        song.g[G_BPM] = (int16_t)clamp(song.g[G_BPM] + clamp(s, -200, 200),
+                                      GP[G_BPM].min, GP[G_BPM].max);
+        ui.bpm_t = 40;
+    }
+    if ((s = panel_enc(EN_ALGO)) && !ft_on) {
+        int32_t role = clamp((int32_t)jam_home_role(song.sel) + clamp(s, -4, 4), 0, 3);
+        track_select(jam_role_track((uint32_t)role));
+        if (song.sel != TRK_DRUM) {
+            go_home();
+            return;
+        }
+    }
+    jam_home_browse(panel_enc(EN_PRESET));
+    drum_cursor = (uint8_t)clamp(drum_cursor, 0, trk_len(TDRUM) - 1u);
+#else
     if ((s = panel_enc(EN_SELECT)) && (uint32_t)(s > 0) != drum_page) {   /* SELECT: grid <- -> kit (its pages) */
         drum_page = (uint8_t)(s > 0);
         ui.msg_t = 0;
@@ -564,23 +718,46 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
         }
     }
     if ((s = panel_enc(EN_PRESET))) TDRUM->p[P_E0] = (int16_t)clamp(TDRUM->p[P_E0] + s, 0, DRUM_KITS - 1);
+#endif
     for (k = 0; k < 4u; k++) if ((s = panel_enc(EN_K1 + k))) {
         ui.hot_col = (uint8_t)k;
         ui.hot_t = 40;
         if (!drum_page) {
             dstep_t *st = &TDRUM->dstep[drum_cursor];
             if (k == 0) {                              /* the sound: heard */
+#if JAMBOX_PROTO
+                uint8_t l = (uint8_t)clamp(drum_lane + clamp(s, -DRUM_LANES, DRUM_LANES), 0, DRUM_LANES - 1);
+#else
                 uint8_t l = (uint8_t)clamp(drum_lane + s, 0, DRUM_LANES - 1);
+#endif
                 if (l != drum_lane) audition_lane(l);
                 drum_lane = l;
             }
             if (k == 1) {                              /* the step: what it holds, heard */
+#if JAMBOX_PROTO
+                uint8_t c = (uint8_t)clamp(drum_cursor + clamp(s, -NSTEP, NSTEP), 0, TDRUM->p[P_SLEN] - 1);
+                if (c != drum_cursor && !song.playing) audition_step(&TDRUM->dstep[c]);
+#else
                 uint8_t c = (uint8_t)clamp(drum_cursor + s, 0, TDRUM->p[P_SLEN] - 1);
                 if (c != drum_cursor) audition_step(&TDRUM->dstep[c]);
+#endif
                 drum_cursor = c;
             }
             if (k >= 2) {
                 if (song.playing && arrangement_enabled) { ui_message("STOP THE SONG FIRST"); continue; }
+#if JAMBOX_PROTO
+                if (!dstep_has(st, drum_lane)) { ui_message("ADD HIT WITH STEP KEY"); continue; }
+                {
+                    uint32_t old = k == 2 ? lvl_rank(dstep_lvl(st, drum_lane)) : dstep_rat(st, drum_lane);
+                    uint32_t next = (uint32_t)clamp((int32_t)old + clamp(s, -3, 3), 0, 3);
+                    if (next == old) continue;
+                    undo_mark(TDRUM, ui.step_sess ? ui.step_sess : (ui.step_sess = (undo_sess += 4u) | 3u));
+                    fm1_irq_off();
+                    dstep_set(st, drum_lane, k == 2 ? LV_UP[next] : dstep_lvl(st, drum_lane),
+                              k == 3 ? next : dstep_rat(st, drum_lane));
+                    fm1_irq_on();
+                }
+#else
                 undo_mark(TDRUM, ui.step_sess ? ui.step_sess : (ui.step_sess = (undo_sess += 4u) | 3u));
                 fm1_irq_off();
                 if (k == 2) {
@@ -591,6 +768,7 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
                     dstep_set(st, drum_lane, LV_UP[r], dstep_rat(st, drum_lane));
                 }
                 fm1_irq_on();
+#endif
                 sync_reload = 1;
             }
         } else {
