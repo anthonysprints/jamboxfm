@@ -1,0 +1,135 @@
+{
+  "compiled_source": {
+    "dirty": false,
+    "provenance": "git-checkout-with-input-hashes",
+    "revision": "728a0868836b57651ba4f76b39a5f013c47ee363"
+  },
+  "firmware": {
+    "sha256": "b3f31704d063f63d79b8019b5e166e2677bf39df9e9a9b4bddb86a7a887ff99a",
+    "size_bytes": 611255
+  },
+  "hardware_validated": false,
+  "installer_published": false,
+  "automatic_saving": false,
+  "original_audio_comparisons": 23,
+  "original_audio_exact_recorded_report_match": true,
+  "conditional_audio_comparisons": 56,
+  "log_tails": {
+    "native_410": [
+      "ui: Drums SEQ still returns to the selected drum's step grid                   ok",
+      "ui: repeated Drums SEQ still swaps the two eight-row banks                     ok",
+      "ui: Drums EDIT still opens whole-kit sound editing                             ok",
+      "ui: melodic sound-page cleanup introduces no automatic drum saving             ok",
+      "sound-pages: 410 checks, 0 failures"
+    ],
+    "sanitized_410": [
+      "ui: Drums SEQ still returns to the selected drum's step grid                   ok",
+      "ui: repeated Drums SEQ still swaps the two eight-row banks                     ok",
+      "ui: Drums EDIT still opens whole-kit sound editing                             ok",
+      "ui: melodic sound-page cleanup introduces no automatic drum saving             ok",
+      "sound-pages: 410 checks, 0 failures"
+    ],
+    "conditional_audio_56": [
+      "trio_static_pw\t6\t12\t70\tbed40c42eced6b25\tbed40c42eced6b25\t382799302\t382799302\t0\t0\tPASS",
+      "trio_static_pw\t6\t13\t70\tb1b65ed4c9bdaf05\tb1b65ed4c9bdaf05\t350948478\t350948478\t0\t0\tPASS",
+      "trio_static_pw\t6\t14\t70\tfdf90acb1d9fcc69\tfdf90acb1d9fcc69\t310356842\t310356842\t0\t0\tPASS",
+      "Extended DSP checks: 56 pairs, 0 failed; 112 non-silent production renders.",
+      "trio_static_pw\t6\t15\t70\t31404b270d6e8c7f\t9c4f76c754ce2771\t297645036\t305670266\t1\t1\tPASS"
+    ],
+    "browser_focused": [
+      "PASS production FM6 TIME/PITCH LCD, empty knobs, real audio audition, unchanged events, repeated ENV, HOME and Analog ADSR return",
+      "Sound page Chromium evidence: /workspace/jamboxfm/build/jam-sound-pages-browser-evidence. Physical FM-1 behavior remains unverified."
+    ],
+    "browser_general": [
+      "JamBox physical emulator: real LCD, Groove/Sound Home with shared controls and uninterrupted chords/overdub, seven encoders, layers/deep pages/settings returns, PLAY/REC/key capture, audible DSP, SNAP and chromatic chord roots on Chords/Lead, sounding chord-tone LEDs without SNAP aliases, release/blur panic, pause/resume, desktop/mobile, standalone document with all further network blocked passed"
+    ],
+    "browser_drums_6": [
+      "PASS GRID cell ownership, curated kits on GRID/KIT, named-row and partial-page LCDs, displayed part order",
+      "PASS contextual drum guidance and first step, idempotent EDIT, working KIT SOUND/FX, 41 populated kits, six-page FX cycle and left knobs",
+      "PASS silent SEQ row-bank toggle, exact two-tap LCD return, preserved step-18 edits and loop, remembered entry from Home/KIT/FX",
+      "PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership",
+      "Drum navigation: 6 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Native 240 \u00d7 240 LCD screenshots: /workspace/jamboxfm/build/jam-drum-nav-evidence"
+    ],
+    "upstream_ui_20000_fuzz": [
+      "ui: PROJECT, KNOB 2 left: nothing                                              ok",
+      "ui: PROJECT, KNOB 2 one detent: AGAIN: ERASE, nothing erased                   ok",
+      "ui: PROJECT, KNOB 2 again: the slot erased                                     ok",
+      "ui:   the arm runs out (~1.5 s): a detent after it arms again                  ok",
+      "ui: pages, layers (punch, steps, erase, roll, key, mix), layer lock, song layer, REC hold, drums, REC, 20000-frame fuzz PASS"
+    ],
+    "recovery_runtime_306": [
+      "storage: real boot restores selected track, octave and last Home view                 ok",
+      "storage: restoration leaves transport stopped, REC disarmed and no held keys          ok",
+      "storage: new operating-system process recovers using only the NOR image               ok",
+      "storage: actual adapter restores the full session after independent-process cold boot ok",
+      "JamBox real recovery runtime: 306 checks, 0 failures"
+    ],
+    "recovery_ui": [
+      "ui: regression fixture opens during a genuinely pending FM6 patch fade         ok",
+      "ui: recovery modal continues polling until the pending FM6 patch loads         ok",
+      "ui: old voice fade and FM6 engine switch finish while recovery remains open    ok",
+      "ui: settled modal patch matches the selected FM6 sound                         ok",
+      "recovery-ui: all checks passed"
+    ],
+    "cross_version_34": [
+      "Cross-version manual save: 34 cold-restore checks passed; old/new 1 MiB NOR images identical.",
+      "Evidence: /workspace/jamboxfm/build/jam-recovery-cross-version/summary.json"
+    ],
+    "identity_12": [
+      "............",
+      "----------------------------------------------------------------------",
+      "Ran 12 tests in 0.012s",
+      "",
+      "OK"
+    ],
+    "home_115": [
+      "jam-home-nav: 115 checks, 0 failures"
+    ],
+    "drum_navigation_92": [
+      "ui: melodic SEQ still opens its STEP editor                                    ok",
+      "ui: melodic repeated SEQ still cycles to PATTERN                               ok",
+      "ui: melodic repeated SEQ still reaches SONG                                    ok",
+      "ui: melodic SEQ still restores its remembered SONG destination                 ok",
+      "drum-navigation: 92 checks, all checks passed"
+    ],
+    "drum_sound_2609": [
+      "ui: kick/snare/hats controls change actual synthesized audio                   ok",
+      "ui: sampled kits never offer or execute a synth copy                           ok",
+      "ui: recipe edit retires its live voice without interrupting a neighboring drum ok",
+      "ui: ENV cannot hide the armed recorder to begin an edit                        ok",
+      "drum-sound: 2609 checks, all checks passed"
+    ],
+    "drum_kit_ui_330": [
+      "ui: keys in manual saving never change the hidden beat or kit controls         ok",
+      "ui: explicit Save now calls the writer once and preserves the latest selected drum ok",
+      "ui: manual Save now leaves all kit effects, notes and other parts unchanged    ok",
+      "ui: HOME leaves manual saving in the remembered Home view                      ok",
+      "drum-kit-ui: 330 checks, all checks passed"
+    ],
+    "drum_edit_save_boot_9": [
+      "storage: manual checkpoint accepts the real edited SYN banks                          ok",
+      "storage: cold boot restores every byte of all four panel-edited SYN kits              ok",
+      "storage: cold boot restores the selected edited kit                                   ok",
+      "storage: cold restoring edited drum sounds does not write flash                       ok",
+      "Drum sound save: 9 checks, 0 failures"
+    ],
+    "device_build": [
+      "  ok    image 580436 B; RAM .data+.bss 91448 B of 98304; pool 329932 B of 344064",
+      "  ok    register access: hal/ only (src/, loader/ clean)",
+      "app      /workspace/jamboxfm/build/felucca.bin  580436 B",
+      "loader   /workspace/jamboxfm/build/loader/ota.bin  8099 B",
+      "package  /workspace/jamboxfm/build/felucca.fwsc  611255 B, identity FM-1_700"
+    ],
+    "local_bundle": [
+      "Target: x86_64-unknown-linux-gnu",
+      "Thread model: posix",
+      "InstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin",
+      "archive SHA256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd",
+      "Local recovery trial: /workspace/jamboxfm/build/jambox-recovery; 611,255 firmware bytes; SHA256 b3f31704d063f63d79b8019b5e166e2677bf39df9e9a9b4bddb86a7a887ff99a"
+    ],
+    "canonical_identity": [
+      "Recovery runtime identity verified: 3055519f7c0bfb4d03c9df9a58abb6714ddffcd6ad9a8db74c2e132ce02b77ddd6bbebd8225e50e2e225523b232e268bb0a8e7b5962eedace610bec17fbc9c45",
+      "Current source catalog verified: 40fa0f6dad7a6bb464fad11f2343b668e1a68c56725a8132ba85146399590673 (explicit compatible review; saved identity unchanged)"
+    ]
+  }
+}

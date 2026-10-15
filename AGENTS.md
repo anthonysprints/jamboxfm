@@ -37,6 +37,17 @@ Do not use `check_jam_recovery_identity.py --write` to bypass a failure: replaci
 the runtime identity rejects existing checkpoints. Check identity refusals and
 actual old/current cold restore when compatibility changes require review.
 
+## Separate sound-page cleanup branch
+
+The owner explicitly authorized `next/sound-page-cleanup` while testing the
+Trial 05 individual-drum candidate. The first engine-specific ENV/modulation
+cleanup is implemented there; see `docs/SOUND_PAGE_CLEANUP.md` and its build
+evidence. Keep it isolated from `main` and `next/usability-and-saving` until
+owner adoption. The live drum preview remains Trial 05 at website commit
+`c72039f108e502b2709830c13601eb4f49537447`. Do not reuse its installer for this
+branch implicitly. A local target/bundle build or a source push is not a new
+published installer or physical device acceptance.
+
 ## Publishing
 
 The generated site lives on `gh-pages`. A source branch alone does not isolate

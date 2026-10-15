@@ -1,0 +1,9 @@
+{
+  "protected_refs_unchanged": {
+    "refs/heads/gh-pages": "c72039f108e502b2709830c13601eb4f49537447",
+    "refs/heads/main": "67cb6ee2e7dd05b1911b90b8ab92696a347b1e51",
+    "refs/heads/next/usability-and-saving": "0e69bbd5fdb56e0739d8ab1155853ce161d20cf8"
+  },
+  "normal_and_drum_installer_site_unchanged": true,
+  "publication_performed": false
+}
