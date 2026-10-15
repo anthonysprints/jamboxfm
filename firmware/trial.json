@@ -1,8 +1,8 @@
 {
-  "firmware_sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7",
+  "firmware_sha256": "77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90",
   "hardware_validated": false,
   "kind": "experimental-install",
-  "manifest_sha256": "6166660763484fe293e544eeff824d91397d24dd284a726f891c98a14f8e9107",
+  "manifest_sha256": "c4072f271204fc1baaf103ed48b2ad4c2a6fc3ce91f9e224b3eaa27513c28347",
   "schema_version": 2,
   "transitions": [
     "factory-v15-to-jambox",
