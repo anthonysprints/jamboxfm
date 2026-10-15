@@ -211,7 +211,7 @@ try {
     assert.deepEqual((await state(page)).events, initial.events, 'immediate HOME return restores playable pads');
     await page.waitForFunction(() => globalThis.jamEmu.peak > 0.005);
 
-    await tap(page, 0); // Real KIT FX deep page; synth ENV is unavailable on drums.
+    await tap(page, 0); // Real KIT FX deep page; ENV is a separate individual sound workspace.
     await page.waitForFunction(() => !globalThis.jamEmu.state.home);
     assert.notEqual((await state(page)).page, gridPage, 'KIT FX is a distinct useful deep page');
     const deepScreen = await screen(page);
@@ -321,7 +321,7 @@ try {
     await tap(page, 9);
     const gridPage = (await state(page)).page;
 
-    for (const [id, name] of [[2, 'ENV'], [3, 'LFO'], [1, 'SEL'], [8, 'ARP']]) {
+    for (const [id, name] of [[3, 'LFO'], [1, 'SEL'], [8, 'ARP']]) {
       const previous = await screen(page);
       // Queue the ordinary function tap and first step in the same task. A
       // contextual hint must neither take keyboard ownership nor open a dead
@@ -382,7 +382,23 @@ try {
     assert.equal((await state(page)).sound, 'SYN4', 'full kit browsing clamps at the last populated kit');
     await screenshot(page, 'kit-sound-populated-syn-bank');
     await tap(page, 2);
-    await audition(page, initial.events, 'ENV guidance on KIT SOUND keeps the first following pad audible');
+    await audition(page, initial.events, 'ENV sound editing keeps the first following pad audible');
+    const synthBefore = await state(page);
+    const soundBefore = await screen(page);
+    await turn(page, 3, 'ArrowUp');
+    await changedScreen(page, soundBefore);
+    assert.deepEqual((await state(page)).events, synthBefore.events, 'individual tuning does not edit notes');
+    await screenshot(page, 'individual-drum-sound');
+    await tap(page, 4);
+    await turnBy(page, 3, -4); // SYN4 -> last factory synth, skipping empty USR slots.
+    await tap(page, 2);
+    await tap(page, 2); // Explicit copy confirmation.
+    await screenshot(page, 'individual-drum-copy-confirmation');
+    await turn(page, 3, 'ArrowUp'); // Choose SYN2.
+    await tap(page, 2);
+    await page.waitForFunction(() => globalThis.jamEmu.state.sound === 'SYN2');
+    assert.deepEqual((await state(page)).events, synthBefore.events, 'copying a kit preserves recorded notes');
+    await audition(page, initial.events, 'copied SYN2 kit plays in DRUM SOUND');
 
     await tap(page, 0);
     const fxPage = (await state(page)).page;

@@ -1144,7 +1144,7 @@ static void ui_input(void)
 #if FELUCCA_ARRANGER
 #if JAMBOX_PROTO
     if (is_drum(TSEL)) {
-        if (pressed & (1u << panel.btn[B_ENV])) ui_message("EDIT: WHOLE KIT SOUND");
+        if (pressed & (1u << panel.btn[B_ENV])) drum_sound_open();
         if (pressed & (1u << panel.btn[B_LFO])) ui_message("FX: EFFECTS + SLICER");
         pressed &= ~((1u << panel.btn[B_ENV]) | (1u << panel.btn[B_LFO]));
     }

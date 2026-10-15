@@ -264,8 +264,8 @@ static void test_fx_depth_and_left_knobs(void)
 
 static void test_unavailable_taps_and_track_handoff(void)
 {
-    static const unsigned buttons[] = {B_ENV, B_LFO, B_SCL, B_ARP};
-    static const char *const messages[] = {"EDIT: WHOLE KIT SOUND", "FX: EFFECTS + SLICER",
+    static const unsigned buttons[] = {B_LFO, B_SCL, B_ARP};
+    static const char *const messages[] = {"FX: EFFECTS + SLICER",
         "DRUMS: PLAY PADS", "HOLD ARP + PAD: ROLL"};
     static const unsigned families[] = {FAM_ENV, FAM_LFO, FAM_SCL, FAM_ARP, FAM_EDIT, FAM_FX};
     unsigned workspace, i;

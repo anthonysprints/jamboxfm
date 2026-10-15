@@ -87,7 +87,7 @@ async function runCase(name, config, body, options = {}) {
     const drumTrial = await page.locator('html').getAttribute('data-trial') === 'drums';
     if (drumTrial) {
       assert.match(await page.locator('#page-title').textContent(), /beat/i);
-      assert.match(await page.locator('#install-device').textContent(), /drum grid trial/i);
+      assert.match(await page.locator('#install-device').textContent(), /drum sound trial/i);
     }
     await page.waitForFunction(() => !document.getElementById('firmware-label').textContent.includes('Checking'));
     assert.deepEqual(await page.evaluate(() => fakeMIDI.snapshot().permissions), [], 'MIDI permission requires a click');

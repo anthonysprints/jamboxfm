@@ -62,12 +62,12 @@ step cursor and 16-step window stay put. Switching banks changes no hits, mixer
 settings, undo or recording state, and does not audition a sound. Knob 1 still
 selects individual drums. Held SEQ and recorder overlays retain their controls.
 
-## Helpful taps, preserved holds
+## Helpful taps, preserved holds (Trials 03–04)
 
 Tapping ENV, LFO, SEL or ARP on Drums keeps the current workspace and gives brief
 guidance instead of opening inactive synth controls. These messages do not
 activate a new mode or change the sound. SEL's scale/chord page is for the melodic
-parts; it has no ordinary drum setting. The synth ENV page is not yet connected
+parts; it has no ordinary drum setting. In Trials 03–04 the synth ENV page is not yet connected
 to individual drum editing. EDIT opens whole-kit controls, affecting all drums
 together rather than only one kick or snare:
 
@@ -175,3 +175,10 @@ Use that exact revision when reviewing or preparing a return to Trial 02;
 the moving preview URL is not a version pin. See its
 [guide](DRUM_GRID_TRIAL.md) and
 [owner feedback](build-evidence/drum-grid-controls/owner-feedback.md).
+
+## Trial 05 development
+
+ENV now opens individual synthesized drum editing, with explicit factory-to-SYN
+copying and the existing manual checkpoint. See [DRUM_SOUND_TRIAL.md](DRUM_SOUND_TRIAL.md)
+for controls, limits, safety behavior and the pending owner check. This replaces
+the historical ENV guidance above only in the isolated Trial 05 preview.

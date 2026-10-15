@@ -6,20 +6,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#eee9df">
   <meta name="description" content="Build beats, shape your drum kit and explore useful effects on your JamBoxFM instrument from Chrome.">
-  <title>JamBoxFM · Drum grid trial</title>
+  <title>JamBoxFM · Drum sound trial</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="workbench">
     <header class="masthead">
       <a class="wordmark" href="https://anthonysprints.github.io/jamboxfm/emu/" aria-label="JamBoxFM browser instrument">jam<span>box</span><sup>FM</sup></a>
-      <p class="edition"><span aria-hidden="true"></span> DRUM GRID TRIAL <b>04</b></p>
+      <p class="edition"><span aria-hidden="true"></span> DRUM SOUND TRIAL <b>05</b></p>
     </header>
 
     <section class="intro" aria-labelledby="page-title">
       <p class="eyebrow">DEVELOPMENT PREVIEW / DRUM SOUND &amp; EFFECTS</p>
       <h1 id="page-title">Build your beat.<br>Shape your kit.</h1>
-      <p class="lede">SEQ for beats. EDIT for kit sound. FX for effects. Useful controls, clear destinations, and the drum grid you already tried. Your normal installer stays available.</p>
+      <p class="lede">SEQ for beats. EDIT for the whole kit. ENV for individual synthesized drums. FX for effects. Your normal installer stays available.</p>
     </section>
 
     <div class="install-layout">
@@ -51,7 +51,7 @@
           <p id="backup-state" class="backup-match"><span class="signal" aria-hidden="true"></span><span id="backup-label">Choose both files from your existing recovery folder</span></p>
         </div>
         <label class="backup-check" for="disposable-jam"><input id="disposable-jam" type="checkbox"><span>I used Save now for the jam I want to keep. Installing restarts the FM-1 and discards any unsaved edits. My recovery folder is kept separately; it does not save my current jam.</span></label>
-        <button id="install-device" class="primary" type="button" disabled>Install the drum grid trial <span aria-hidden="true">→</span></button>
+        <button id="install-device" class="primary" type="button" disabled>Install the drum sound trial <span aria-hidden="true">→</span></button>
         <button id="cancel-prepare" class="text-button" type="button" hidden>Cancel preparation</button>
         <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Connect your FM-1 to get started.</p>
       </section>
@@ -59,7 +59,7 @@
       <aside class="notes-card" aria-labelledby="notes-title">
         <span class="trial-badge">DEVELOPMENT · FIRST DEVICE CHECK</span>
         <h2 id="notes-title">A beat you like.<br>A kit that fits.</h2>
-        <p>The kit sound and effects trial received positive owner feedback. This update adds your quick drum-bank shortcut: tap SEQ again in the grid to switch drums 1–8 and 9–16.</p>
+        <p>New: ENV opens individual drum sound editing. Choose a synthesized kit, press ENV twice to choose a SYN copy slot, then confirm with ENV. Play a drum key and turn Tune, Decay, Filter and Level. Save now keeps your edits. The copy replaces the whole chosen SYN bank, shared by sections A–D. Sampled kits still use EDIT and FX.</p>
         <ul class="notes">
           <li><strong>Save before updating.</strong> Use Save now and wait for Saved before starting. Automatic saving stays off.</li>
           <li><strong>Existing saving stays.</strong> This uses the same manual-saving storage format. Do not reinitialize storage for this trial.</li>
@@ -107,7 +107,7 @@
       <details><summary>Kit sound and shared effects</summary><p>KIT SOUND changes the whole kit. Its Kit knob offers the broader usable kit list; PRESETS keeps the eight curated choices. Tone and the KIT FX Filter are the same filter, with low-pass and high-pass directions. Echo and Room set how much of the drum part enters each effect. ALL ECHO and ALL ROOM change the shared effects themselves, so other parts using them can change too. Individual drum sound editing comes later.</p></details>
     </section>
 
-    <footer class="page-footer"><span>JAMBOXFM <b>·</b> DEVELOPMENT DRUM GRID TRIAL</span><a href="../firmware/jamboxfm-source.zip" download>Firmware source</a><a href="https://github.com/anthonysprints/jamboxfm/tree/next/usability-and-saving">Development source</a></footer>
+    <footer class="page-footer"><span>JAMBOXFM <b>·</b> DEVELOPMENT DRUM SOUND TRIAL</span><a href="../firmware/jamboxfm-source.zip" download>Firmware source</a><a href="https://github.com/anthonysprints/jamboxfm/tree/next/usability-and-saving">Development source</a></footer>
   </main>
   <script type="module" src="app.js"></script>
 </body>

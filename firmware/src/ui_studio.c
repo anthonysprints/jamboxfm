@@ -6,7 +6,7 @@
  * LAYERS (a function button held: what the 16 white keys and the knobs do now), HOLD (a hold to
  * confirm: clear, save), REC (armed / free take). Every band is drawn into the canvas only when its
  * signature changed. */
-static uint8_t drum_page, drum_cursor;            /* drum_page: 0 GRID, 1 KIT */
+static uint8_t drum_page, drum_cursor;            /* drum_page: 0 GRID, 1 KIT, JamBox 2 SOUND / 3 COPY */
 #if JAMBOX_PROTO
 /* Live playing, the ordinary grid and held-step gestures select one drum. */
 #define drum_lane pen_lane
@@ -485,6 +485,10 @@ static void jam_drum_grid_draw(uint32_t len)
 }
 #endif
 
+#if JAMBOX_PROTO
+#include "ui_drum_sound.c"
+#endif
+
 static void drum_screen_draw(void)
 {
     static uint32_t head, title_sig, body_sig, footer;
@@ -494,6 +498,7 @@ static void drum_screen_draw(void)
 #endif
     if (drum_cursor >= len) drum_cursor = (uint8_t)(len - 1u);
 #if JAMBOX_PROTO
+    if (drum_page >= 2) { drum_sound_draw(); return; }
     if (!drum_page) {
         jam_drum_grid_draw(len);
         return;
@@ -713,7 +718,8 @@ static int jam_drum_main_knobs(void)
         track_select(jam_role_track((uint32_t)role));
         if (song.sel != TRK_DRUM) { go_home(); return 1; }
     }
-    jam_home_browse(panel_enc(EN_PRESET));
+    if (on_drum_page() && drum_page == 3) panel_enc(EN_PRESET);
+    else jam_home_browse(panel_enc(EN_PRESET));
     return 0;
 }
 #endif
@@ -766,6 +772,9 @@ static void drum_screen_input(uint32_t pressed, uint32_t home)
     for (k = 0; k < 4u; k++) if ((s = panel_enc(EN_K1 + k))) {
         ui.hot_col = (uint8_t)k;
         ui.hot_t = 40;
+#if JAMBOX_PROTO
+        if (drum_page >= 2) { drum_sound_turn(k, s); continue; }
+#endif
         if (!drum_page) {
             dstep_t *st = &TDRUM->dstep[drum_cursor];
             if (k == 0) {                              /* the sound: heard */

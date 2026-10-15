@@ -327,3 +327,12 @@ build/drum-navigation-probe
 counts establish UI availability, not a rendered DSP effect for every parameter.
 No new device build, flash operation, external issue edit or publication was
 performed for this investigation.
+
+## Stage 4 implementation: Trial 05
+
+The isolated development candidate now exposes the existing synthesized recipes
+on ENV with Tune, Decay, Filter and Level. Factory kits require an explicit copy
+to a chosen SYN bank; sampled kits retain EDIT/FX. See
+[DRUM_SOUND_TRIAL.md](DRUM_SOUND_TRIAL.md). Deeper body, noise, pitch-drop, drive
+and per-sample editing remain future work. Adoption on the normal installer waits
+for owner testing.
