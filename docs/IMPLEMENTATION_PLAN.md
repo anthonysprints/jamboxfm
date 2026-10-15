@@ -250,6 +250,10 @@ A performance shortcut for mute can be added after the first mapping is tried. S
 
 ## 7. Save format that fits the existing flash layout
 
+The current [working-session recovery plan](SAVE_RECOVERY_PLAN.md) audits the
+actual state/dependency coverage, proposes a bounded A/B layout and defines
+staged validation. It is a planning document; permanent saving remains disabled.
+
 The independent-note increment makes the old 3,840-byte JAM1 proposal
 insufficient. Its suggested 24-byte metadata tail fitted the 3,816-byte FUN6
 project but had no room for three 64×4-byte note-duration tables. Do not treat
