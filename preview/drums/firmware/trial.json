@@ -1,8 +1,8 @@
 {
-  "firmware_sha256": "ad26a098520dc55dbd0937f257b97e7eeba3751bc462025f907f31c07f824b83",
+  "firmware_sha256": "77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90",
   "hardware_validated": false,
   "kind": "development-recovery-install",
-  "manifest_sha256": "2856daa1dedac45cd0cb9880f6ba699affba1b03c0aef74470dbd6e2e5fc8bf6",
+  "manifest_sha256": "a99f3ec2de699931e7d1ebe406a2b16a37faf18913ccd45d1739d159eacecde1",
   "release_enabled": false,
   "schema_version": 1,
   "transitions": [

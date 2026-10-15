@@ -1,15 +1,15 @@
 {
   "artifacts": {
     "felucca.bin": {
-      "sha256": "97bf3040552d056f8f74b99c3a419b289906e94ab65b582230d8b86feb307f01",
-      "size_bytes": 577264
+      "sha256": "99f140fa37d8bfa5a2424181c0f0b968066628c7af032e7d5d8a1f60b71d8737",
+      "size_bytes": 577312
     },
     "felucca.elf": {
-      "sha256": "ce91df0f452d5fe8ca074262655d35e3fbba5e084a7c2d72ad6867d3eb828265",
+      "sha256": "142cbd1d3a4adbb14d10c74a5a97ddb7fbf71750edb10bba532c8752d27e2baa",
       "size_bytes": 619064
     },
     "felucca.fwsc": {
-      "sha256": "ad26a098520dc55dbd0937f257b97e7eeba3751bc462025f907f31c07f824b83",
+      "sha256": "77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90",
       "size_bytes": 611255
     },
     "loader/loader.bin": {
@@ -528,7 +528,7 @@
     "firmware/src/uac_fir.h": "b4393a8efc4ce5427334692b9857d31446a36416dc6ca7941aea5bd4add4ca56",
     "firmware/src/ui.c": "fc2c0f10a5ecc95ca1e2cfa73be0a6d49f37a942e129763d36b9a5a3e268d616",
     "firmware/src/ui_draw.c": "304d833f2aed88c3a547a568aea2915a0177f34b1ecbe8a560dfa33d7212a448",
-    "firmware/src/ui_input.c": "52647a81b5220a97a95bea8687b782c14c50c5ce51da5b32bb7b543e8d23ba07",
+    "firmware/src/ui_input.c": "c571e9febae21e6d9f24dc242d69f0b8d751e71fc085d86062bf04cfc8f1a261",
     "firmware/src/ui_layers.c": "ccc61b632ac7fa56e308ba5fe17ee429220036587848e0a649b92fe63f490a29",
     "firmware/src/ui_menu.c": "926dc2024bc0e5737ce81508e7eb011588a5de18d39d8986a204d8dec048b65c",
     "firmware/src/ui_song.c": "53fafd8ca8bda2c0ee8ecf37be2e51e60e2a3b991070feeb90b8dd025f529d3e",
@@ -584,7 +584,7 @@
   "source": {
     "dirty": false,
     "provenance": "git-checkout-with-input-hashes",
-    "revision": "793474c809334398951527c324494a46e5ec21c7"
+    "revision": "d41e979dd150f5893cc8b5719b58fe5b0f28b7cb"
   },
   "toolchain": {
     "acquisition_trust": "Owner-provided archive; local HTTPS acquisition was not observed. SHA-256 pins the supplied bytes, not a vendor signature",
