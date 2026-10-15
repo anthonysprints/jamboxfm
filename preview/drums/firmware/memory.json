@@ -1,8 +1,8 @@
 {
   "app": {
     "flash_slot_bytes": 581564,
-    "flash_spare_bytes": 3432,
-    "image_bytes": 578132,
+    "flash_spare_bytes": 4300,
+    "image_bytes": 577264,
     "regions": {
       "NOINIT": {
         "capacity_bytes": 15696,
@@ -40,15 +40,15 @@
         "capacity_bytes": 581564,
         "minimum_spare_bytes": 0,
         "origin": 33554720,
-        "span_bytes": 578132,
-        "spare_bytes": 3432,
-        "used_bytes": 578132
+        "span_bytes": 577264,
+        "spare_bytes": 4300,
+        "used_bytes": 577264
       }
     },
     "sections": [
       {
         "address": 33554720,
-        "bytes": 572264,
+        "bytes": 571396,
         "name": ".text",
         "region": "XIP"
       },
@@ -130,8 +130,8 @@
   },
   "schema_version": 1,
   "sha256": {
-    "app_bin": "3de7d4e4ee332bdad2e0498e54f8baa1af8c564fc4a999f143b8d9ceca0ca254",
-    "app_elf": "d5ed0a9d6d9ea78e42df028da292ae1b3151986fefa42d25b1503de326a6eed7",
+    "app_bin": "97bf3040552d056f8f74b99c3a419b289906e94ab65b582230d8b86feb307f01",
+    "app_elf": "ce91df0f452d5fe8ca074262655d35e3fbba5e084a7c2d72ad6867d3eb828265",
     "loader_bin": "061e2f1db1ccfe75c3d5ad9f5b7348a66f384d08897f88d8db9beace2d3b92eb",
     "loader_elf": "640272884cd9856337fdb6703290b2ec8587c2197a047042d23274ec5921d447",
     "ota_bin": "ab1e368dd10ffe8dd1ccfdc03bc235df8992ee5961b20e056ae55079b7659d7e"

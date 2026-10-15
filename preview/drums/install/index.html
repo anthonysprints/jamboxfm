@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#eee9df">
-  <meta name="description" content="Try readable drum rows and simpler beat editing on your JamBoxFM instrument from Chrome.">
+  <meta name="description" content="Build beats, shape your drum kit and explore useful effects on your JamBoxFM instrument from Chrome.">
   <title>JamBoxFM · Drum grid trial</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -13,18 +13,18 @@
   <main class="workbench">
     <header class="masthead">
       <a class="wordmark" href="https://anthonysprints.github.io/jamboxfm/emu/" aria-label="JamBoxFM browser instrument">jam<span>box</span><sup>FM</sup></a>
-      <p class="edition"><span aria-hidden="true"></span> DRUM GRID TRIAL <b>02</b></p>
+      <p class="edition"><span aria-hidden="true"></span> DRUM GRID TRIAL <b>03</b></p>
     </header>
 
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">DEVELOPMENT PREVIEW / DRUM NAVIGATION</p>
-      <h1 id="page-title">See your drums.<br>Build your beat.</h1>
-      <p class="lede">Eight named drum rows, clearer step editing, and useful knobs. Select Drums and tap SEQ. Your normal installer stays available.</p>
+      <p class="eyebrow">DEVELOPMENT PREVIEW / DRUM SOUND &amp; EFFECTS</p>
+      <h1 id="page-title">Build your beat.<br>Shape your kit.</h1>
+      <p class="lede">SEQ for beats. EDIT for kit sound. FX for effects. Useful controls, clear destinations, and the drum grid you already tried. Your normal installer stays available.</p>
     </section>
 
     <div class="install-layout">
       <section class="install-card" aria-labelledby="install-title">
-        <div class="card-heading"><span class="step-mark" aria-hidden="true">01</span><div><p class="eyebrow">CONNECT &amp; INSTALL</p><h2 id="install-title">Try the clearer drum grid.</h2></div></div>
+        <div class="card-heading"><span class="step-mark" aria-hidden="true">01</span><div><p class="eyebrow">CONNECT &amp; INSTALL</p><h2 id="install-title">Try clearer drum sound controls.</h2></div></div>
         <p class="card-copy">Start with JamBoxFM already running on your FM-1. Connect only one instrument with a USB data cable. Close other MIDI apps and browser instrument tabs, then connect below.</p>
         <button id="connect-device" class="secondary" type="button">Connect FM-1 <span aria-hidden="true">→</span></button>
         <p class="permission-note">Use Chrome or Edge on a computer. Allow MIDI and system exclusive access when your browser asks.</p>
@@ -58,8 +58,8 @@
 
       <aside class="notes-card" aria-labelledby="notes-title">
         <span class="trial-badge">DEVELOPMENT · FIRST DEVICE CHECK</span>
-        <h2 id="notes-title">Choose a drum.<br>Place its hits.</h2>
-        <p>The first navigation trial received positive owner feedback. This next stage adds named rows and Drum, Step, Strength and Repeat knobs. Its new controls still need your physical FM-1 check.</p>
+        <h2 id="notes-title">A beat you like.<br>A kit that fits.</h2>
+        <p>The first two drum trials received positive owner feedback. This next stage adds KIT SOUND and KIT FX, skips empty kits, and keeps inactive synth screens out of your way. These new controls need their own physical FM-1 check.</p>
         <ul class="notes">
           <li><strong>Save before updating.</strong> Use Save now and wait for Saved before starting. Automatic saving stays off.</li>
           <li><strong>Existing saving stays.</strong> This uses the same manual-saving storage format. Do not reinitialize storage for this trial.</li>
@@ -92,17 +92,19 @@
 
     <section class="trial-checklist" aria-labelledby="trial-title">
       <p class="eyebrow">AFTER THE INSTRUMENT RETURNS</p>
-      <h2 id="trial-title">A quick drum workflow check.</h2>
+      <h2 id="trial-title">Try the sound of your beat.</h2>
       <ol class="trial-steps">
         <li><strong>Check your saved jam.</strong> Start at low volume. Confirm your existing loop, tempo and edited sounds returned. Do not reinitialize saving.</li>
-        <li><strong>Go directly to drums.</strong> Select Drums, then tap SEQ once. The drum GRID should open immediately.</li>
-        <li><strong>Build a beat.</strong> Knob 1 chooses a drum; the named rows follow it. White keys switch its steps on and off. Knob 2 chooses a step, knob 3 changes its strength, and knob 4 adds repeated hits. Empty cells stay empty until you add a hit.</li>
-        <li><strong>Check the main knobs.</strong> SELECT changes BPM, PRESETS chooses a kit, and ALGORITHM switches parts in the same order as Home.</li>
-        <li><strong>Check GRID and KIT.</strong> SEQ opens or keeps GRID. EDIT switches GRID/KIT. Try a later step page and held SEQ, then check that the same drum and page return.</li>
-        <li><strong>Return HOME and record.</strong> HOME returns to your previous GROOVE or SOUND view. REC from GRID also returns Home, so the keys play drum sounds while you record. Check Bass, Chords and Lead SEQ screens too.</li>
+        <li><strong>Shape the whole kit.</strong> Select Drums and tap EDIT for KIT SOUND. Play the pads. The four right knobs choose Kit, Level, Tone and Pan. Try different kits; your beat should stay the same.</li>
+        <li><strong>Add effects.</strong> Tap FX for KIT FX: Filter, Echo, Room and Pan affect the whole drum part. Repeated FX taps reach SLICER, INSERT and INSERT 2, then ALL ECHO and ALL ROOM. Those last two change shared effects across the jam.</li>
+        <li><strong>Keep the beat editor close.</strong> SEQ opens GRID, with Drum, Step, Strength and Repeat on the right knobs. White keys edit steps. SEQ keeps GRID open; EDIT always returns to KIT SOUND.</li>
+        <li><strong>Check familiar controls.</strong> In GRID, KIT SOUND and drum FX pages, SELECT changes BPM, PRESETS chooses a curated kit, and ALGORITHM switches parts in Home's order. Held shortcuts keep their usual controls.</li>
+        <li><strong>Try the helpful taps.</strong> ENV points you to EDIT, LFO points you to FX, SEL explains drum pads, and ARP reminds you to hold ARP with a pad for rolls. These taps should keep your current workspace.</li>
+        <li><strong>Jam as usual.</strong> Check held SEQ, held EDIT erase/undo, live FX and rolls. HOME remembers GROOVE or SOUND; REC from GRID returns Home to playable pads. Check recording, sounding lights, and the other parts' sound and FX pages too.</li>
       </ol>
       <p class="permission-note">Report any unexpected screen, button, sound or light behavior. The install response confirms firmware identity, not the physical workflow. Use Save now only when you want to replace your saved checkpoint.</p>
-      <details><summary>Drum grid controls</summary><p>Drum / Step / Strength / Repeat are the four right knobs. Strength goes from ghost to hard; Repeat gives 1–4 hits within a step. The first four black keys select step pages. The grid stays on your editing page while playback continues. SELECT controls tempo in GRID and KIT; held shortcuts keep their own labelled controls. Individual drum sound editing comes in a later stage.</p></details>
+      <details><summary>Drum grid controls</summary><p>Drum / Step / Strength / Repeat are the four right knobs. Strength goes from ghost to hard; Repeat gives 1–4 hits within a step. Empty cells stay empty until you add a hit. The first four black keys select step pages. The grid stays on your editing page while playback continues.</p></details>
+      <details><summary>Kit sound and shared effects</summary><p>KIT SOUND changes the whole kit. Its Kit knob offers the broader usable kit list; PRESETS keeps the eight curated choices. Tone and the KIT FX Filter are the same filter, with low-pass and high-pass directions. Echo and Room set how much of the drum part enters each effect. ALL ECHO and ALL ROOM change the shared effects themselves, so other parts using them can change too. Individual drum sound editing comes later.</p></details>
     </section>
 
     <footer class="page-footer"><span>JAMBOXFM <b>·</b> DEVELOPMENT DRUM GRID TRIAL</span><a href="../firmware/jamboxfm-source.zip" download>Firmware source</a><a href="https://github.com/anthonysprints/jamboxfm/tree/next/usability-and-saving">Development source</a></footer>
