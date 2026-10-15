@@ -27,6 +27,14 @@ Merge into `main` and publish only after validation and the owner is ready to ad
 the changes. Follow `docs/GITHUB_PAGES.md` for an authorized production release;
 its older references to developing on `main` do not override this branch policy.
 
+The owner subsequently authorized a separate manual-saving trial preview at
+`preview/saving/`. Use `tools/package_jam_recovery_preview.py` and
+`tools/publish_jam_recovery_preview.py` for it, following
+`docs/FM1_SAVING_TRIAL.md`. Only that subtree may change on `gh-pages`;
+every stable root file and all other paths/modes must remain identical. The
+production publisher is still prohibited for development work. A Pages push
+does not establish live HTTP availability or physical device validation.
+
 ## Commit attribution
 
 Before creating source or website commits, set the repository-local identity

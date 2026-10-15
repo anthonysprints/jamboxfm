@@ -65,6 +65,17 @@ test('manifest strictly validates candidate gates, provenance, artifacts, target
   for (const mutate of cases) { const bad = copy(manifest); mutate(bad); assert.throws(() => policy.validateManifest(bad), { code: 'manifest' }, String(mutate)); }
 });
 
+test('normal manifests accept old and recovery-off receipts, and refuse recovery builds', () => {
+  const normal = copy(manifest);
+  assert.equal(policy.validateManifest(normal).build.flags.JAMBOX_RECOVERY, undefined);
+  normal.build.flags.JAMBOX_RECOVERY = 0;
+  assert.equal(policy.validateManifest(normal).build.flags.JAMBOX_RECOVERY, 0);
+  for (const value of [1, true, false, '0', null]) {
+    normal.build.flags.JAMBOX_RECOVERY = value;
+    assert.throws(() => policy.validateManifest(normal), { code: 'manifest' });
+  }
+});
+
 test('preparation pins exact bytes and keeps prepared image immutable', async () => {
   const bytes = fixture.slice(), checked = await policy.prepareCandidate(manifest, bytes), first = checked.image();
   bytes.fill(0); checked.image().fill(0);

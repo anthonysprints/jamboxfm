@@ -140,8 +140,8 @@ Sources, binary hashes, memory results and local log hashes are recorded in
 
 ## Next work before a release
 
-Use a separate development preview/installation destination before offering a
-device trial. The trial needs a verified backup, measured save/boot time and
+The [separate development installer](FM1_SAVING_TRIAL.md) now provides the trial
+workflow without replacing the stable website. The trial needs a verified backup, measured save/boot time and
 stack/audio/USB behavior, section/FM6-lock playback, cold power cycles, recovery
 after interrupted writes, and the existing rescue route. The production installer
 must remain separate until those checks and adoption are deliberate.

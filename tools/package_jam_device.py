@@ -49,20 +49,25 @@ def check_configuration(configuration):
     for name, value in receipt.REQUIRED_FLAGS.items():
         require(configuration["app"]["flags"][name] == value, f"Candidate requires {name}={value}; rebuild with --with-updater")
     for name, value in {"JAMBOX_PROTO": 1, "FELUCCA_OTA": 1, "FELUCCA_OTA_DRYRUN": 0,
-                        "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_PERSIST": 0}.items():
+                        "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_PERSIST": 0, "JAMBOX_RECOVERY": 0}.items():
         require(configuration["loader"]["flags"][name] == value, f"Wrong loader flag {name}")
     require(configuration["app"].get("version") == "JamBoxFM " + receipt.VERSION, "Wrong compiled JamBox version")
     require(configuration["package_identity"] == receipt.IDENTITIES["package"], "Wrong package identity")
 
 
 def verify_build(root, build, toolchain, sdk):
+    """Verify a normal candidate; recovery-enabled builds are always refused."""
+    return _verify_build(root, build, toolchain, sdk, check_configuration)
+
+
+def _verify_build(root, build, toolchain, sdk, configuration_validator):
     """Verify source, tool, artifact, ELF and canonical container consistency."""
     receipt.jam_identity(root)
     record_path = build / "device-build-receipt.json"
     require(record_path.is_file() and not record_path.is_symlink(), "Missing build receipt; rebuild the updater target")
     record = json.loads(record_path.read_bytes())
     require(record.get("schema_version") == 1 and record.get("kind") == "jambox-device-build", "Unsupported build receipt")
-    check_configuration(record["configuration"])
+    configuration_validator(record["configuration"])
     inputs = record["inputs_sha256"]
     dependencies = receipt.dependency_inputs(root, build)
     expected_inputs = (dependencies - set(receipt.GENERATED)) | receipt.generator_inputs(root)
