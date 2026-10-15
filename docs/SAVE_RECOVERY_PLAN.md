@@ -1,8 +1,9 @@
 # Working-session recovery plan
 
-Research date: October 14, 2026 (owner's timezone). **Planning only.**
-No recovery codec, new flash permission, automatic save, or device update has
-been implemented by this document. Existing application persistence stays off.
+Research date: October 14, 2026 (owner's timezone). The first
+[host-only codec/NOR prototype](SAVE_RECOVERY_PROTOTYPE.md) is now implemented
+and software-verified. Device integration, flash permissions, automatic saving
+and a new device update remain pending. Existing application persistence stays off.
 Source baseline: `99cbf62495d9f021be80ee3d20fcef739dd8c93e`; development starts
 at `addd576e4616987f4178327a91f4fa3b731c6543` on
 `next/usability-and-saving`. Keep `main` and live `gh-pages` unchanged.
@@ -132,9 +133,10 @@ space. Preserve the updater's existing exact ownership/cleanup contract.
 
 ### Size comparison
 
-These are conservative **planning allowances**, not an implemented wire codec.
-Serialization must later prove its exact worst-case bound using explicit
-fields and byte order, rather than host padding or typical compression ratios.
+These original **planning allowances** are now matched by the prototype's
+explicit fixed-size wire codec. Its exact bounds and host verification are in
+[the prototype record](SAVE_RECOVERY_PROTOTYPE.md). Device capture and memory
+integration still need proof; do not rely on host padding or compression ratios.
 The FM6 allowance uses its current 156-byte array stride; the last byte is
 reserved/sanitized, not a substitute for a dependency table.
 
@@ -190,10 +192,10 @@ ship a partial-session save or consume sample space to make a budget pass.
 
 ## Record validation, ownership and commit rules
 
-Use a distinct JamBox recovery family, proposed wire identity `JBR1`, with an
+The host prototype uses the distinct JamBox recovery family `JBR1`, with an
 explicit schema version, record kind, length/count limits, generation number,
-component lengths/IDs, payload CRC and header CRC. Assign final byte offsets
-and golden fixtures in the codec implementation; JRM1 remains the private
+component layout/IDs, payload CRC and header CRC. Exact offsets and fixtures
+are recorded in the prototype; JRM1 remains the private
 runtime/export snapshot rather than being reinterpreted as a legacy flash object.
 
 Keep `FELUCCA_PERSIST=0`. Introduce a separate recovery feature/policy gate and

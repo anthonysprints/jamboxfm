@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "kind": "host-only-recovery-prototype",
+  "date_owner_timezone": "2026-10-14",
+  "branch": "next/usability-and-saving",
+  "base_source_commit": "d85862e2d3a896e5958d98a9fc01f5eefdf0f2e0",
+  "production_persistence_enabled": false,
+  "physical_hardware_tested": false,
+  "production_published": false,
+  "payload_bytes": 27272,
+  "generation_bytes": 28672,
+  "generations": 2,
+  "payload_margin_bytes": 1144,
+  "checks": {
+    "codec": 1727,
+    "real_instrument": 17649,
+    "nor": 440,
+    "byte_prefix_interruptions": 112402,
+    "independent_process_sessions": 2,
+    "restore_checks_per_session": 60,
+    "codec_asan_ubsan": 1727,
+    "store_asan_ubsan_nor": 440,
+    "store_asan_ubsan_interruptions": 112402,
+    "existing_persistence_update_isolation": "passed"
+  },
+  "compilers": {
+    "normal": "Debian Clang 19.1.7",
+    "sanitizers": "cc (Debian 14.2.0-19) 14.2.0"
+  },
+  "commands": [
+    ". tools/cloud/activate.sh; sh tests/run_jam_recovery_tests.sh",
+    ". tools/cloud/activate.sh; CC=\"$CC\" sh tests/jam_storage_run.sh",
+    "cc -std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer tests/jr_codec_test.c firmware/experimental/recovery/jr_codec.c firmware/experimental/recovery/jr_store.c -o build/jam-recovery-tests/codec-sanitized",
+    "build/jam-recovery-tests/codec-sanitized",
+    "cc -std=c11 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer tests/jr_store_test.c firmware/experimental/recovery/jr_codec.c firmware/experimental/recovery/jr_store.c -o build/jam-recovery-tests/store-sanitized",
+    "build/jam-recovery-tests/store-sanitized build/jam-recovery-tests/session-a.payload build/jam-recovery-tests/session-b.payload"
+  ],
+  "limitations": [
+    "NOR prefix/failure model only; no physical power-failure claim",
+    "FM6 sidecar application and preferences/boot restoration use test-only adapters",
+    "Production mutation freezing, real boot rollback, section/lock playback, quiet autosave and resource timing remain pending"
+  ],
+  "source_sha256": {
+    "firmware/experimental/recovery/jr_asset_identity.h": "fd49ec9a306f7a1da8ae74ce2503773845405da341ddd55ba06e9415cac2ceac",
+    "firmware/experimental/recovery/jr_codec.c": "b3a8324dd3355ecc6fa39d219f68b9e55761b8d49e797b1b6cc91c443d860ab6",
+    "firmware/experimental/recovery/jr_codec.h": "b0c17466f535be789fe2da4cd6a22df3a0f949b664ef6b74041b81b28ab5a8f6",
+    "firmware/experimental/recovery/jr_io.h": "904d80b317eeac0be3c4a67d21102376d5aa832a1268751d50fdc49d2e84baf2",
+    "firmware/experimental/recovery/jr_store.c": "9e9a32f71efcee7e0d02cc4c8726f969286b3a22889701c4a69da3eec57a058b",
+    "firmware/experimental/recovery/jr_store.h": "560039b6488a6b8e34a9f20f5103113322e20f0971232efe86adb4e248a6b7bc",
+    "tests/jr_codec_test.c": "a38c92e75088ea31ccde112373be4be3910b679f35dcdb2d22cf24e4aab355d6",
+    "tests/jr_instrument_fixture.h": "eba6f2dd8abd597496d6153b2a100dda75c0ae29b9384ffd486cc887676fe81f",
+    "tests/jr_instrument_test.c": "35f6ace8efbbfbab3d08e4ce49f3c818d1447e50422df9fa7affc8fe3f123c1f",
+    "tests/jr_store_test.c": "feb27ae8871eae904391873e87c7e7edbc2e11e05a6678781404272ab0dc6eda",
+    "tests/run_jam_recovery_tests.sh": "baa53bd6498f7f4e7ca2d86d73f07c223a7bf76e8724261aef65fe4c3bbbefec",
+    "tools/check_jam_recovery_identity.py": "a3f442f94789e02688a0460c2953ac763653756973614abb6dab458ec3c3d3cc"
+  },
+  "local_artifact_sha256": {
+    "build/jam-recovery-run.log": "66b806d2fca78b22d0ffeeb52050396605ec744e922ae15f599c60ebf92fc153",
+    "build/jam-recovery-codec-sanitized.log": "d1f7ba270e6938345e2a21ad9dd7c7bf9d195d9c03b89b9265da6438ccd68904",
+    "build/jam-recovery-store-sanitized.log": "9b60ba05eca368fb72a26c570d5c983be041c05f8bb75aef00fe336d298d38a2",
+    "build/jam-recovery-isolation.log": "d2e54816bcf3873ad06920a13806017b9c9b8c24e89d0157d9be50946459d371",
+    "build/jam-recovery-tests/session-a.payload": "e8b35061a6dc3c8a1eae27277e53e9fb959eef3be1902dc5011ac6d534c4a73b",
+    "build/jam-recovery-tests/session-b.payload": "427ffd1113bf23676f34a18e507252077bf6fe7ad819ef41bec32a6182bb0e85",
+    "build/jam-recovery-tests/recovered-a.payload": "e8b35061a6dc3c8a1eae27277e53e9fb959eef3be1902dc5011ac6d534c4a73b",
+    "build/jam-recovery-tests/recovered-b.payload": "427ffd1113bf23676f34a18e507252077bf6fe7ad819ef41bec32a6182bb0e85"
+  }
+}
