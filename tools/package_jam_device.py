@@ -56,7 +56,7 @@ def check_configuration(configuration):
 
 
 def verify_build(root, build, toolchain, sdk):
-    """Verify a normal candidate; recovery-enabled builds are always refused."""
+    """Verify the normal manual-saving candidate and its exact build profile."""
     return _verify_build(root, build, toolchain, sdk, check_configuration)
 
 
@@ -168,6 +168,7 @@ def package(root=ROOT, build=BUILD, output=OUTPUT, toolchain=None, sdk=None):
         "these exact bytes to the experimental factory-V15 install or normal JamBox update workflow.\n"
         "That experiment does not establish hardware reliability or interrupted-update recovery.\n"
         "manifest.json identifies the firmware, source, build evidence and pinned return package.\n"
+        "Manual Save now and startup restoration are enabled. Automatic saving is off.\n"
         "The return Sloop package is identified by hash only and is not included.\n"
         "Source/toolchain hashes are reproducibility records, not digital signatures.\n"
         "Rebuild: bash tools/cloud/build_device.sh --with-updater\n"

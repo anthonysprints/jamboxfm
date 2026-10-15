@@ -4,10 +4,12 @@ Implemented on `next/usability-and-saving`, following the
 [host-only prototype](SAVE_RECOVERY_PROTOTYPE.md), for
 [recovery #1](https://github.com/anthonysprints/jamboxfm/issues/1) and
 [save controls #3](https://github.com/anthonysprints/jamboxfm/issues/3).
-This is a software-verified device integration, **not a published update or a
-physical FM-1 verification**. The owner has authorized promoting this source to
-`main`. Normal build settings and the live installer remain unchanged; saving
-still uses the explicit recovery-enabled target and separate trial page.
+The owner confirmed on October 15, 2026 that Save now, full power-off and startup
+restore the jam and edited sounds, and approved the same firmware for the normal
+Chrome installer. `--with-updater` now enables the manual-saving profile; the
+normal packager requires it. Automatic saving remains disabled. This is basic
+owner-reported device validation, not proof of all power-failure/recovery behavior.
+See [normal installer promotion](MANUAL_SAVING_RELEASE.md).
 
 ## What this stage does
 
@@ -70,20 +72,20 @@ unsaved experiments must not replace an intentional save. Autosave is deferred.
   preserving the record. The existing manual USB-rescue boot path remains.
 
 The [allocation and commit-last format](SAVE_RECOVERY_PROTOTYPE.md#wire-layout-and-allocation)
-are unchanged. No physical allocation has been initialized during this work.
+are unchanged. The owner subsequently initialized saving and confirmed a manual save/restart.
 
 ## Build and publication isolation
 
-`JAMBOX_RECOVERY` defaults to zero. Only the explicit development command enables it:
+`JAMBOX_RECOVERY` defaults to zero. The normal updater target enables it; the trial command remains available:
 
 ```sh
 bash tools/cloud/build_device.sh --with-recovery
 ```
 
 The build requires JamBox, FLASH and OTA, with legacy PERSIST disabled. Its
-receipt records the gate. Normal packaging rejects a recovery-enabled receipt;
-the ordinary `--with-updater` configuration still builds with recovery off.
-No candidate binary or installer was published, and no device was accessed.
+receipt records the gate. The normal `--with-updater` configuration now enables this same approved
+manual-saving profile, and normal packaging requires it. The separate preview
+remains available. Publication and owner feedback are recorded in the release notes.
 
 The target compiler, linker, RAM-resident flash-driver check, register-access
 policy and independent resource report all pass:
@@ -97,7 +99,7 @@ policy and independent resource report all pass:
 
 RAM and pool clear their existing 4 KiB/8 KiB minimum reserves. These are linked
 static budgets, not measured peak stack usage or physical audio deadlines.
-The normal recovery-off build remains at the prior image/RAM/pool budgets:
+The earlier recovery-off baseline occupied these image/RAM/pool budgets:
 558,804 / 87,944 / 325,348 bytes. Historical byte identity is not claimed because
 the firmware embeds the compilation date.
 
@@ -124,7 +126,7 @@ directory when running them alongside target builds.
 | Runtime GCC ASan + UBSan | Same checks; zero diagnostics |
 | Real panel/LCD recovery interaction | 45 checks; also passed GCC UBSan |
 | Existing Home behavior, recovery off | 115 checks |
-| Normal package policy | 13 tests; real recovery receipt also refused |
+| Normal package policy | 13 tests; the current normal profile requires manual saving |
 | Prototype codec/instrument/NOR suite | Passed again, including 112,402 interruption prefixes |
 | Existing storage/update/loader isolation runner | Passed; 246 storage checks and remaining transport/rescue/loader checks |
 | Both recovery-on and normal target builds | Passed; no unresolved/unsupported runtime symbols |

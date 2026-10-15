@@ -38,10 +38,9 @@ class RecoveryPackageTests(baseline.PackageRefusalTests):
                 with self.assertRaisesRegex(ValueError, name):
                     self.verify()
 
-    def test_recovery_development_build_cannot_be_packaged_as_stable(self):
-        with self.assertRaisesRegex(ValueError, "Candidate requires JAMBOX_RECOVERY=0"):
-            normal.verify_build(self.root, self.build, self.root / "compiler", self.sdk)
-        self.memory.assert_not_called()
+    def test_approved_manual_saving_build_also_matches_normal_profile(self):
+        record, _, _ = normal.verify_build(self.root, self.build, self.root / "compiler", self.sdk)
+        self.assertEqual(record["configuration"]["app"]["flags"]["JAMBOX_RECOVERY"], 1)
 
     def test_recovery_flag_boolean_does_not_bypass_integer_check(self):
         self.record["configuration"]["app"]["flags"]["JAMBOX_RECOVERY"] = True

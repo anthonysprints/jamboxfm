@@ -215,7 +215,7 @@ export function mountInstallPage({
     if (outcome === 'completed') {
       ui['result-title'].textContent = result?.transition === 'jambox-normal-to-jambox' ? 'Your JamBox is updated.' : 'Your little band is on board.';
       ui['result-eyebrow'].textContent = 'JAMBOXFM IDENTIFIED';
-      ui['result-guidance'].textContent = 'The FM-1 returned as JamBoxFM. Start with low volume, try a key, then PLAY. Check the screen, keys, knobs, and sound, and save this report. Your sessions are temporary in this build.';
+      ui['result-guidance'].textContent = 'The FM-1 returned as JamBoxFM. Start with low volume, try a key, then PLAY. Check the screen, keys, knobs, and sound, and save this report. Use Save now before turning off. Automatic saving is off.';
       ui['progress-title'].textContent = 'JamBoxFM is running.';
       ui['progress-detail'].textContent = 'Transfer and firmware identity confirmed. Try the sound and controls on your instrument.';
       for (const id of ['stage-check', 'stage-loader', 'stage-write', 'stage-return']) {

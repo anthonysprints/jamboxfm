@@ -3,8 +3,7 @@
 """Package the isolated manual-saving FM-1 trial, its source and build evidence.
 
 Nothing connects to an instrument or publishes a site. Only the explicit
---with-recovery target is accepted. The normal device packager still refuses
-that target. This bundle is limited to updating an already-running JamBox.
+--with-recovery target is accepted. The normal device packager now accepts the same approved manual-saving target. This bundle is limited to updating an already-running JamBox.
 """
 from __future__ import annotations
 
@@ -46,7 +45,7 @@ def check_configuration(configuration):
     require(type(recovery_flag) is int and recovery_flag == 1,
             "Recovery candidate requires JAMBOX_RECOVERY=1; rebuild with --with-recovery")
     reference = copy.deepcopy(configuration)
-    reference["app"]["flags"]["JAMBOX_RECOVERY"] = 0
+    reference["app"]["flags"]["JAMBOX_RECOVERY"] = receipt.REQUIRED_FLAGS["JAMBOX_RECOVERY"]
     normal.check_configuration(reference)
 
 

@@ -17,7 +17,7 @@ export FELUCCA_ICONS=0
 export FELUCCA_SLICE=0
 case ${1:-} in
     --with-updater)
-        export FELUCCA_FLASH=1 FELUCCA_OTA=1
+        export FELUCCA_FLASH=1 FELUCCA_OTA=1 JAMBOX_RECOVERY=1
         shift
         ;;
     --with-recovery)

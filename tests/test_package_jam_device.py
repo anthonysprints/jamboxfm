@@ -41,7 +41,7 @@ class ConfigurationTests(unittest.TestCase):
             self.assertEqual(result["identity"], "FM-1_700")
             self.assertEqual(result["version"], "JamBoxFM 0.1.0-dev")
             # Experimental builds still receive an honest local receipt. The
-            # production packager, rather than receipt capture, refuses them.
+            # package policy separately checks the selected profile.
             development = receipt.configuration(root, output, "app", ["-DJAMBOX_RECOVERY=1"], preprocessor)
             self.assertEqual(development["flags"]["JAMBOX_RECOVERY"], 1)
 
@@ -148,10 +148,10 @@ class PackageRefusalTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, name):
                     self.verify()
 
-    def test_recovery_development_build_cannot_be_packaged_as_stable(self):
-        self.record["configuration"]["app"]["flags"]["JAMBOX_RECOVERY"] = 1
+    def test_normal_package_requires_manual_saving(self):
+        self.record["configuration"]["app"]["flags"]["JAMBOX_RECOVERY"] = 0
         self.save()
-        with self.assertRaisesRegex(ValueError, "Candidate requires JAMBOX_RECOVERY=0"):
+        with self.assertRaisesRegex(ValueError, "requires JAMBOX_RECOVERY=1"):
             self.verify()
         self.memory.assert_not_called()
 

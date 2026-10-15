@@ -6,6 +6,16 @@ Development continues in the public [anthonysprints/jamboxfm repository](https:/
 
 The [browser instrument](docs/WEB_EMULATOR.md) has the FM-1's 27 keys, 14 buttons, seven encoders, master control and live 240×240 screen. The firmware's C UI, sound and sequencing run together through WebAssembly. You can play one-key chords, record, browse sounds and use the real deeper editing pages. The earlier four-part browser workbench is also retained.
 
+## Manual saving on the FM-1
+
+The normal [Chrome installer](https://anthonysprints.github.io/jamboxfm/install/)
+now offers the manual-saving build. Use **Save now** to keep your current jam,
+edited sounds and A–D sections for startup. The owner confirmed that the jam and
+edited sounds return after full power-off. **Automatic saving is off**: unsaved
+experiments do not replace your intentional checkpoint. First use needs the
+instrument's explicit storage setup. See [saving and release notes](docs/MANUAL_SAVING_RELEASE.md).
+The browser instrument still uses a temporary browser session.
+
 ## Develop in the cloud
 
 ```sh
@@ -20,9 +30,9 @@ For repeatable public updates, use the [GitHub Pages publishing instructions](do
 
 `sh tests/run_jam_tests.sh` still builds the four-part workbench in `build/jam-preview/` and runs the palette, Home and native/WASM audio contracts. See [cloud setup](docs/CLOUD_SETUP.md) for all commands and device prerequisites.
 
-The first slice uses a RAM session and Sloop's existing chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo and versioned persistence remain future milestones. The FM-1 build supports updating and application rescue while rejecting app-data writes; [update-isolation evidence](docs/build-evidence/update-isolation/README.md) records those software checks.
+The original first slice used a RAM session and Sloop's chord/scale/recording behavior. The planned Assist master switch, Gentle timing, new note-ownership policy, complete undo remain future milestones; device manual saving is now implemented. The FM-1 build supports updating, application rescue and narrowly gated manual-saving writes; [update-isolation evidence](docs/build-evidence/update-isolation/README.md) records those software checks.
 
-The site has a read-only device check at `/device/` and a separately packaged experimental first-install page at `/install/`. The latter supports original factory V15 to one exact JamBox candidate. The owner's private factory backup has been verified; actual JamBox installation, hardware timing and interrupted-update recovery remain untested. See the [Chrome trial workflow](docs/FM1_CHROME_TRIAL.md), [candidate checks](docs/FM1_CANDIDATE.md) and [backup evidence](docs/build-evidence/factory-v15/owner-backup-validation.md). This is a first device experiment, not a stable firmware release.
+The site has a read-only device check at `/device/` and a separately packaged experimental first-install page at `/install/`. The latter supports original factory V15 to one exact JamBox candidate. The owner's private factory backup has been verified; JamBox installation and manual save/restart have owner-reported success; hardware timing and interrupted-update recovery remain separate. See the [Chrome trial workflow](docs/FM1_CHROME_TRIAL.md), [candidate checks](docs/FM1_CANDIDATE.md) and [backup evidence](docs/build-evidence/factory-v15/owner-backup-validation.md). This is a first device experiment, not a stable firmware release.
 
 ## Design and provenance
 

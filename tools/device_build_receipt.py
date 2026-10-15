@@ -26,7 +26,7 @@ FLAGS = ("JAMBOX_PROTO", "FELUCCA_FLASH", "FELUCCA_PERSIST", "FELUCCA_OTA", "FEL
          "JAMBOX_RECOVERY")
 REQUIRED_FLAGS = {"JAMBOX_PROTO": 1, "FELUCCA_FLASH": 1, "FELUCCA_PERSIST": 0, "FELUCCA_OTA": 1,
                   "FELUCCA_OTA_DRYRUN": 0, "FELUCCA_OTA_RAMONLY": 0, "FELUCCA_ICONS": 0, "FELUCCA_SLICE": 0,
-                  "JAMBOX_RECOVERY": 0}
+                  "JAMBOX_RECOVERY": 1}
 GENERATOR_INPUTS = (
     "build.sh", "tools/build.py", "tools/device_build_receipt.py", "tools/fm1pkg_make.py", "tools/lz4blk.py",
     "tools/gen_font.py", "tools/gen_icons.py", "tools/gen_tables.py", "tools/gen_samples.py", "tools/sampleio.py",

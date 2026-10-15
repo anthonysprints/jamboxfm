@@ -6,11 +6,15 @@ checkout for cloud tasks.
 ## Stable version and development branch
 
 The owner requested isolation for the saving and usability cleanup because the
-current instrument is working well. The owner has now authorized promoting the
-manual-saving source to `main`. This is source promotion only: the ordinary
-build still has `JAMBOX_RECOVERY=0`, and the published installer is unchanged.
-The explicit `--with-recovery` build and separate trial still provide saving;
-physical save/restart confirmation and normal-installer adoption are separate.
+current instrument is working well. The owner confirmed that Save now survives
+full power-off and restores the jam and edited sounds, then explicitly approved
+making it the normal Chrome installer version. The ordinary `--with-updater`
+build now enables `JAMBOX_RECOVERY=1` with legacy `FELUCCA_PERSIST=0`.
+Use `tools/package_jam_installer.py` and `tools/publish_jam_installer.py` for
+normal installer updates; they preserve the browser instrument, development
+preview and unrelated public files. The owner-approved firmware for this
+promotion has SHA256 b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7.
+Owner-reported manual cold-boot success does not prove every recovery scenario.
 Do further usability work on `next/usability-and-saving`. The pre-saving source
 baseline is `99cbf62495d9f021be80ee3d20fcef739dd8c93e`. The live website is generated on
 `gh-pages`; its baseline for this work is
@@ -36,7 +40,7 @@ The owner subsequently authorized a separate manual-saving trial preview at
 `tools/publish_jam_recovery_preview.py` for it, following
 `docs/FM1_SAVING_TRIAL.md`. Only that subtree may change on `gh-pages`;
 every stable root file and all other paths/modes must remain identical. The
-production publisher is still prohibited for development work. A Pages push
+full-site production publisher is still prohibited for development work. A Pages push
 does not establish live HTTP availability or physical device validation.
 
 The owner chose manual saving for the current product. Keep automatic saving

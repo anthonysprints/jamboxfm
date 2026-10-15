@@ -7,8 +7,8 @@ This development installer belongs to `next/usability-and-saving`:
 It updates an already-running JamBoxFM application to the gated manual-saving
 build. It does not accept factory firmware, Sloop, rescue-only or loader-only
 starting states. Automatic saving is off. The saving source is approved for
-`main`, while the normal `/install/`, browser instrument and ordinary recovery-off
-build remain separate from this trial.
+`main`, and the owner approved the same build for the normal `/install/` page.
+This separate preview remains available; the browser instrument is unchanged.
 
 The [integration notes](SAVE_RECOVERY_INTEGRATION.md) describe the implementation,
 fault tests and target resource limits. Passing host tests and receiving the
@@ -92,7 +92,7 @@ python3 tools/publish_jam_recovery_preview.py --publish
 ```
 
 Package after all source/UI/doc edits settle: the bundle includes their exact
-corresponding source. The normal packager still rejects recovery-enabled builds.
+corresponding source. The normal packager now requires the approved manual-saving profile.
 The separate publisher has a fixed `preview/saving/` prefix on `gh-pages`, makes
 a non-forced push, rejects remote races and preserves every outside Git object,
 path and mode. It changes no stable root file, firmware URL or source branch.

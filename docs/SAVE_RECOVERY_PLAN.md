@@ -4,13 +4,14 @@ Research date: October 14, 2026 (owner's timezone). The
 [host-only codec/NOR prototype](SAVE_RECOVERY_PROTOTYPE.md) and subsequent
 [gated Save/startup integration](SAVE_RECOVERY_INTEGRATION.md) are implemented
 and software-verified on the development branch. The owner chose manual saving;
-automatic saving is deferred, not a requirement for this release. Physical
-device validation remains separate. Existing application persistence stays off in normal builds.
+automatic saving is deferred, not a requirement for this release. The owner
+confirmed manual save/full-power-off restoration and approved normal installer
+adoption. Legacy application persistence stays off; the dedicated recovery
+profile is now enabled in ordinary updater builds.
 Source baseline: `99cbf62495d9f021be80ee3d20fcef739dd8c93e`; development starts
 at `addd576e4616987f4178327a91f4fa3b731c6543` on
 `next/usability-and-saving`. The owner has authorized merging the saving source
-into `main`; ordinary builds still keep recovery disabled and the published
-installer is unchanged. Further cleanup stays on the development branch. The
+into `main` and approved the same manual-saving firmware for the normal installer. Further cleanup stays on the development branch. The
 separate trial preview is the only authorized development publication subtree.
 
 Tracks [recovery #1](https://github.com/anthonysprints/jamboxfm/issues/1) and
