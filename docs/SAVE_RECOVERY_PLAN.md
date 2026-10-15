@@ -3,8 +3,9 @@
 Research date: October 14, 2026 (owner's timezone). The
 [host-only codec/NOR prototype](SAVE_RECOVERY_PROTOTYPE.md) and subsequent
 [gated Save/startup integration](SAVE_RECOVERY_INTEGRATION.md) are implemented
-and software-verified on the development branch. Automatic saving and a physical
-device trial remain pending. Existing application persistence stays off in normal builds.
+and software-verified on the development branch. The owner chose manual saving;
+automatic saving is deferred, not a requirement for this release. Physical
+device validation remains separate. Existing application persistence stays off in normal builds.
 Source baseline: `99cbf62495d9f021be80ee3d20fcef739dd8c93e`; development starts
 at `addd576e4616987f4178327a91f4fa3b731c6543` on
 `next/usability-and-saving`. Keep `main` and live `gh-pages` unchanged.
@@ -13,6 +14,11 @@ Tracks [recovery #1](https://github.com/anthonysprints/jamboxfm/issues/1) and
 [save controls #3](https://github.com/anthonysprints/jamboxfm/issues/3), under
 [roadmap #10](https://github.com/anthonysprints/jamboxfm/issues/10).
 Named archives (#2) and additional tracks (#4) remain later work.
+
+The owner's saving preference is an intentional checkpoint: it changes only
+when Save now is chosen. Experimenting without saving and restarting should
+restore that manual checkpoint. Do not add automatic writes over it. Earlier
+autosave research below is retained for reference, outside the active scope.
 
 ## Recommended first result
 
@@ -27,7 +33,8 @@ prototype when other session content remains temporary. The current loop is
 separate from the four stored sections, so the maximum is five snapshots.
 
 Then deliver manual **Save now -> cold restart -> same session**, with playback
-stopped and recording off. Add idle autosave after that path is reliable.
+stopped and recording off. Manual saving is the chosen current behavior;
+idle autosave is deferred unless the owner reopens it.
 Recovery always means the last fully committed checkpoint; there is no verified
 shutdown callback that can capture edits after power is removed.
 
@@ -315,7 +322,7 @@ retained bootguard is not proof of cold-boot persistence.
 | Status | Meaning |
 | --- | --- |
 | Unsaved / Setup needed | No verified initialized recovery for this session. |
-| Pending | Durable state differs from the last verified checkpoint, or waiting for a safe quiet window. |
+| Pending | Unsaved changes or conservative input tracking; another explicit Save now is required. No automatic write is queued. |
 | Saving | A coherent checkpoint is being written/verified. |
 | Saved | Current durable revision exactly matches the last fully verified record. |
 | Error | The attempt failed; work remains in RAM and the last valid recovery is preserved. |
@@ -325,7 +332,12 @@ disarmed transport and a safe audio/transfer state. For indefinitely running
 texture/freeze, offer a deliberate short fade/pause for manual saving; automatic
 save must never silently cut audible sound. If not accepted, stay Pending.
 
-For the first autosave implementation, use a conservative proposed **10 seconds
+### Deferred autosave research
+
+This research is not an implementation task or release gate. Any future
+automatic recovery design must preserve the owner's intentional manual checkpoint.
+
+For a possible future autosave implementation, use a conservative proposed **10 seconds
 of stable, quiet state**, at least **60 seconds between successful automatic
 saves**, and **30-second backoff after failures**. These values follow inspected
 Felucca/Ghoulbox practice and remain tunable after simulated wear/latency checks.
@@ -356,14 +368,15 @@ timing assumption.
    initialization, Save now/status and startup integration. Recheck actual
    memory/image budgets and failed-boot/USB rescue. No general `Saved` until the
    entire declared session/dependencies are protected.
-4. **Quiet autosave.** Add revision tracking, debounce/backoff, all audio/transfer
-   exclusions, visible pending state and wear simulations. Test indefinitely
-   sounding sources and incoming MIDI during capture/save.
-5. **Deliberate FM-1 trial and adoption.** Preserve a verified route back to the
+4. **Deliberate FM-1 trial and adoption.** Preserve a verified route back to the
    stable build, identify the development candidate, back up before storage
    initialization, measure audio/USB/erase behavior and verify cold restarts.
    Merge/publish only after review and owner feedback. This document requests
    no install, formatting, power interruption or device experiment now.
+
+Quiet autosave is deferred outside these acceptance gates. Do not implement it
+unless the owner requests it again, and do not overwrite intentional manual
+saves with automatic recovery records.
 
 Required fault/round-trip checks include:
 

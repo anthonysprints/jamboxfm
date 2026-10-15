@@ -38,6 +38,8 @@ a retry without rebooting.
 **Idle autosave is not enabled.** Powering off recovers the last successful
 manual checkpoint; edits since that checkpoint are not saved automatically.
 Repeated explicit saves may create a new generation even without musical edits.
+The owner selected this manual-checkpoint behavior for the current product:
+unsaved experiments must not replace an intentional save. Autosave is deferred.
 
 ## How the integration stays bounded
 
@@ -146,7 +148,7 @@ stack/audio/USB behavior, section/FM6-lock playback, cold power cycles, recovery
 after interrupted writes, and the existing rescue route. The production installer
 must remain separate until those checks and adoption are deliberate.
 
-After manual recovery is reliable on the device, add quiet idle autosave with
-complete mutation tracking, effect/texture-aware silence checks, wear limits and
-retry/backoff. Named song archives, extra tracks and broader screen cleanup
-remain separate issues; this stage changes none of them.
+Keep manual saving as the current behavior. Autosave is deferred unless the
+owner explicitly reopens it; any future automatic recovery must protect the
+intentional manual checkpoint. Named song archives, extra tracks and broader
+screen cleanup remain separate issues; this stage changes none of them.

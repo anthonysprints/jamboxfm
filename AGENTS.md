@@ -35,6 +35,11 @@ every stable root file and all other paths/modes must remain identical. The
 production publisher is still prohibited for development work. A Pages push
 does not establish live HTTP availability or physical device validation.
 
+The owner chose manual saving for the current product. Keep automatic saving
+disabled and outside the active plan unless the owner explicitly reopens it.
+The saved checkpoint changes only through an intentional Save now; unsaved
+experiments must not overwrite it. Restart restores the last valid manual save.
+
 ## Commit attribution
 
 Before creating source or website commits, set the repository-local identity

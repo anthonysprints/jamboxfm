@@ -69,8 +69,10 @@ Report what the SAVE screen says, approximate save/boot time, whether audio and
 controls return, and which musical items match. If saving reports Error or Read
 only, keep the instrument and its report available; the software does not label
 that checkpoint Saved or silently retry it. Navigation can conservatively mark
-Pending even without a musical edit. Named song archives and idle autosave are
-later work.
+Pending even without a musical edit. Pending does not queue an automatic save.
+The owner chose manual checkpoints: only Save now replaces the saved jam, and
+restarting without saving returns to that checkpoint. Autosave is deferred;
+named song archives remain separate later work.
 
 ## Maintainer workflow
 
