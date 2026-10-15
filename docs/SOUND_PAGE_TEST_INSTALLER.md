@@ -46,3 +46,8 @@ change requires a new build and validation; do not substitute unrelated bytes.
 Publication evidence belongs in `docs/build-evidence/sound-page-installer/`.
 Remote Git bytes, raw HTTP and live Pages availability are checked separately.
 Physical FM-1 acceptance of the sound-page experiment remains pending.
+
+The initial sound preview is published at website commit
+`6ecfccd149287c22b8a6e64fc45d944dd82136c3`. Remote Git files and five raw HTTP
+artifacts match the validated package; this cloud proxy blocks direct Pages
+HTTP (403). See publication evidence for the protected normal installer.

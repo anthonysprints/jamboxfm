@@ -1,0 +1,27 @@
+[
+  {
+    "path": "preview/sound/install/index.html",
+    "status": 200,
+    "sha256": "a11b23d219e2e87c2878b00835b7f819aa0e3853c598116c9f74c72404d1ef92"
+  },
+  {
+    "path": "preview/sound/install/app.js",
+    "status": 200,
+    "sha256": "5be39c24c53ad7715fd9f3561d839a70636223c16e401bb90d5f293075fbe1a5"
+  },
+  {
+    "path": "preview/sound/firmware/manifest.json",
+    "status": 200,
+    "sha256": "c128995ce50ce693dbe6b016a66fdb087d43e1e61e88171303bdf221312cff23"
+  },
+  {
+    "path": "preview/sound/firmware/build-receipt.json",
+    "status": 200,
+    "sha256": "cbb43e7057ef6eb237cd9d7bf44d75f4fe7b3bdf1c51cc2d7a1dbc1a25ef9003"
+  },
+  {
+    "path": "preview/sound/firmware/jamboxfm-recovery-0.1.0-dev.fwsc",
+    "status": 200,
+    "sha256": "b3f31704d063f63d79b8019b5e166e2677bf39df9e9a9b4bddb86a7a887ff99a"
+  }
+]

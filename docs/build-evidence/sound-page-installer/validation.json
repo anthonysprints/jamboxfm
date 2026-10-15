@@ -1,0 +1,48 @@
+{
+  "compiled_source": {
+    "dirty": false,
+    "provenance": "git-checkout-with-input-hashes",
+    "revision": "728a0868836b57651ba4f76b39a5f013c47ee363"
+  },
+  "firmware": {
+    "file": "jamboxfm-recovery-0.1.0-dev.fwsc",
+    "sha256": "b3f31704d063f63d79b8019b5e166e2677bf39df9e9a9b4bddb86a7a887ff99a",
+    "size_bytes": 611255
+  },
+  "package_files": 29,
+  "publisher_safety_tests": 25,
+  "browser_installer_cases": 30,
+  "normal_firmware_sha256": "a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
+  "physical_installation_tested": false,
+  "automatic_saving": false,
+  "exact_previous_validated_candidate_reused": true,
+  "log_tails": {
+    "package": [
+      "Target: x86_64-unknown-linux-gnu",
+      "Thread model: posix",
+      "InstalledDir: /workspace/toolchains/jieli/jieli-linux-toolchains-20260730.1/pi32v2/bin",
+      "archive SHA256 a1545cddbc451a06bac43eb5cd96d831470c42a97c5c0b1f98879a20fc7647bd",
+      "Local recovery trial: /workspace/jamboxfm/build/jambox-recovery; 611,255 firmware bytes; SHA256 b3f31704d063f63d79b8019b5e166e2677bf39df9e9a9b4bddb86a7a887ff99a",
+      "{'directory': '/workspace/jamboxfm/build/jambox-sound-preview', 'files': 29, 'sha256sums_sha256': 'f8de162d639e87429ffa6e587e16cbeb41b88dbbed91b21ce246eb5f98fb5b77'}"
+    ],
+    "publisher_tests": [
+      ".........................",
+      "----------------------------------------------------------------------",
+      "Ran 25 tests in 1.856s",
+      "",
+      "OK"
+    ],
+    "browser": [
+      "PASS started failure badLoaderFamily locks all retry controls",
+      "PASS started failure badFinalRelease locks all retry controls",
+      "PASS complete normal to loader to normal transfer and private report",
+      "PASS delayed post-flash identity keeps result pending until actual response",
+      "PASS mobile layout and labelled local-only backup actions",
+      "Recovery-profile installer: 30 Chromium cases passed. Wire simulation only; physical installation and trial behavior remain unverified. Screenshots: /workspace/jamboxfm/build/jam-sound-install-evidence"
+    ],
+    "identity": [
+      "Recovery runtime identity verified: 3055519f7c0bfb4d03c9df9a58abb6714ddffcd6ad9a8db74c2e132ce02b77ddd6bbebd8225e50e2e225523b232e268bb0a8e7b5962eedace610bec17fbc9c45",
+      "Current source catalog verified: 40fa0f6dad7a6bb464fad11f2343b668e1a68c56725a8132ba85146399590673 (explicit compatible review; saved identity unchanged)"
+    ]
+  }
+}

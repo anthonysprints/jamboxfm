@@ -46,7 +46,11 @@ installer for its FM6/envelope/modulation cleanup. Keep this experiment out of
 main and the normal installer until owner adoption. Publish only under
 `preview/sound/` using its dedicated package/publish tools. The normal installer
 now includes all drum work through Trial 05; the drum preview is historical.
-See `docs/SOUND_PAGE_CLEANUP.md` and the preview publication evidence. A source
+See `docs/SOUND_PAGE_CLEANUP.md`, `docs/SOUND_PAGE_TEST_INSTALLER.md` and
+`docs/build-evidence/sound-page-installer/`. The sound preview is published at
+`preview/sound/install/`; it contains the same validated b3f31704 cleanup
+firmware plus all adopted drum work. Keep it separate from the normal a88970d9
+drum release until owner adoption. A source
 push or firmware response is not physical device acceptance.
 
 
