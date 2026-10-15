@@ -28,8 +28,11 @@ Keep normal installer, emulator, saving preview and main unchanged. The same
 fixed `preview/drums/` publisher updates only that subtree. Record actual installer
 checks, publication, independent remote bytes/object preservation and HTTP
 outcomes separately. No host/browser test establishes physical control, audio
-deadline or power-loss behavior. A deliberate owner trial of this candidate
-remains pending. No private backup/report or manufacturer binary is included.
+deadline or power-loss behavior. The owner subsequently reported that Trial 02
+worked through their testing and looked good; see [owner feedback](owner-feedback.md).
+That positive hands-on report is distinct from independent hardware validation
+or a normal-installer promotion. No private backup/report or manufacturer binary
+is included.
 
 See [current trial guide](../../DRUM_GRID_TRIAL.md). Source revision in status.json
 identifies the clean target/source bundle; later evidence-only commits do not

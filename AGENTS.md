@@ -48,9 +48,10 @@ increment has a separate `preview/drums/` trial. Use only
 `tools/package_jam_drums_preview.py` and `tools/publish_jam_drums_preview.py`,
 following `docs/DRUM_GRID_TRIAL.md`. Preserve the normal installer, emulator,
 `preview/saving/` and every other outside path/mode. The owner reported that the
-first drum trial worked; this is broad owner feedback, not an itemized hardware
-validation. The next grid/control stage remains an isolated trial and needs its
-own device feedback before adoption in the normal installer.
+first drum trial worked, then confirmed that Trial 02 worked through their
+testing and looked good. These are owner reports, not independent or itemized
+hardware validation. Both stages remain on the development branch and isolated
+preview; further cleanup and normal-installer adoption remain separate steps.
 
 The owner chose manual saving for the current product. Keep automatic saving
 disabled and outside the active plan unless the owner explicitly reopens it.

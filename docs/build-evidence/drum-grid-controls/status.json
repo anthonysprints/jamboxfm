@@ -3,7 +3,6 @@
   "source_revision": "2ef4338d611b61d49efc4d2249183df976eddc83",
   "stage": 2,
   "owner_feedback_first_trial": "Owner reports first trial worked; no itemized checklist or hash attestation.",
-  "physical_stage2_verified": false,
   "normal_installer_promoted": false,
   "firmware": {
     "file": "jamboxfm-recovery-0.1.0-dev.fwsc",
@@ -38,5 +37,12 @@
     "chromium_existing_emulator": "passed",
     "chromium_isolated_installer_cases": 30,
     "drums_package_publisher_tests": 20
-  }
+  },
+  "owner_reported_physical_stage2_passed": true,
+  "owner_feedback_stage2": {
+    "date": "2026-10-15",
+    "quote": "Perfect!! works through my testing and looks good!!",
+    "scope": "Broad owner hands-on test and layout feedback; no itemized checklist, device report or installed-firmware hash supplied."
+  },
+  "independent_physical_stage2_verified": false
 }

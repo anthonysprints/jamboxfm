@@ -9,7 +9,8 @@ remembering hidden screens. Preserve the working four-part jam and useful depth.
 
 Implementation follow-up: [GRID trial 02](DRUM_GRID_TRIAL.md) covers direct entry,
 keyboard ownership, readable rows and the main grid controls. The owner reported
-that trial 01 worked; trial 02 needs its own physical check. The investigation
+that trials 01 and 02 worked, including positive feedback on Trial 02's look.
+The investigation
 and screenshots below describe the preceding baseline. Individual drum sound
 editing and the remaining page cleanup are separate later work.
 

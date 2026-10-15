@@ -6,7 +6,10 @@ and [issue #5](https://github.com/anthonysprints/jamboxfm/issues/5), on
 
 The owner reported that the first entry/recording trial worked. That report is
 recorded in [its evidence](build-evidence/drum-grid-entry/owner-feedback.md).
-Trial 02 adds the readable layout and controls below; its physical check is new.
+The owner subsequently confirmed that Trial 02 worked through their testing and
+looked good; see [Trial 02 feedback](build-evidence/drum-grid-controls/owner-feedback.md).
+This records owner testing of the offered build, not independent hardware
+validation. The normal installer has not been promoted.
 
 ## What changes
 
