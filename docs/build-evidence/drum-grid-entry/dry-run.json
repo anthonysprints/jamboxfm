@@ -1,0 +1,13 @@
+{
+  "action": "dry-run",
+  "branch": "refs/heads/gh-pages",
+  "bytes": 5834198,
+  "commit": "cb4e30ac656bf8bde6b6788d12a312b6aa66846d",
+  "destination": "https://github.com/anthonysprints/jamboxfm.git",
+  "files": 29,
+  "package_sha256": "5e7eb0398706090da9ecf80cd3fc3c0b93b557930cc009eb0fc2d54f4632e756",
+  "parent": "f8808ca569b951226f1feb9f137defdce10eeb6f",
+  "prefix": "preview/drums/",
+  "protected_paths": 89,
+  "tree": "d5483ada3dabeebb043b1994a6816b5573e728ab"
+}

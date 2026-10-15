@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-15",
+  "source_revision": "e38bd96d7a4b38fbd4e7f1b049cf3ac61130ddc1",
+  "scope": "Direct ordinary Drums SEQ entry plus synchronized keyboard ownership and recorder guards; isolated preview only.",
+  "firmware": {
+    "size_bytes": 611255,
+    "sha256": "fd9d669913b7aa4287e6469d17d71b19fd50e60c54bf5b72df0da7dab3614636",
+    "manual_saving": true,
+    "automatic_saving": false,
+    "save_format_changed": false
+  },
+  "budgets": {
+    "app_image_bytes": 574784,
+    "flash_spare_bytes": 6780,
+    "ram_used_bytes": 91432,
+    "ram_spare_bytes": 6872,
+    "pool_used_bytes": 329932,
+    "pool_spare_bytes": 14132,
+    "noinit_used_bytes": 13952,
+    "noinit_spare_bytes": 1744,
+    "app_growth_bytes": 212
+  },
+  "completed_checks": {
+    "native_drums_navigation": 91,
+    "native_drums_asan_ubsan": 91,
+    "native_home_navigation": 115,
+    "native_recovery_ui": 45,
+    "native_recovery_runtime": 306,
+    "recovery_runtime_fresh_process": 17,
+    "chromium_drum_navigation_scenarios": 3,
+    "chromium_existing_emulator_regressions": "passed",
+    "normal_policy_and_transport_tests": 35,
+    "recovery_packaging_tests": 19,
+    "saving_preview_containment_tests": 16,
+    "drums_packaging_and_publisher_tests": 20,
+    "chromium_saving_default_controller_cases": 2,
+    "chromium_isolated_installer_cases": 30
+  },
+  "physical_drums_trial_verified": false,
+  "normal_installer_promoted": false
+}

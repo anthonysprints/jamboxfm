@@ -1,0 +1,4 @@
+PASS groove Home → GRID, reversible step edit, KIT/pad behavior, immediate HOME key, deep-page entry
+PASS sound Home → GRID, reversible step edit, KIT/pad behavior, immediate HOME key, deep-page entry
+PASS GRID PLAY/stop, REC arm and first live pad, recorded events, playing overdub and ordinary SEQ ownership
+Drum navigation: 3 Chromium scenarios passed using the production panel, AudioWorklet, rendered LCD and audio. Physical FM-1 behavior remains unverified. Screenshots: /workspace/jamboxfm/build/jam-drum-nav-evidence
