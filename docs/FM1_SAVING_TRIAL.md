@@ -6,8 +6,9 @@ This development installer belongs to `next/usability-and-saving`:
 
 It updates an already-running JamBoxFM application to the gated manual-saving
 build. It does not accept factory firmware, Sloop, rescue-only or loader-only
-starting states. Automatic saving is off. The normal `/install/`, browser
-instrument and stable source remain separate.
+starting states. Automatic saving is off. The saving source is approved for
+`main`, while the normal `/install/`, browser instrument and ordinary recovery-off
+build remain separate from this trial.
 
 The [integration notes](SAVE_RECOVERY_INTEGRATION.md) describe the implementation,
 fault tests and target resource limits. Passing host tests and receiving the

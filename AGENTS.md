@@ -6,9 +6,13 @@ checkout for cloud tasks.
 ## Stable version and development branch
 
 The owner requested isolation for the saving and usability cleanup because the
-current instrument is working well. Keep `main` as the stable source and do this
-work on `next/usability-and-saving`, starting from
-`99cbf62495d9f021be80ee3d20fcef739dd8c93e`. The live website is generated on
+current instrument is working well. The owner has now authorized promoting the
+manual-saving source to `main`. This is source promotion only: the ordinary
+build still has `JAMBOX_RECOVERY=0`, and the published installer is unchanged.
+The explicit `--with-recovery` build and separate trial still provide saving;
+physical save/restart confirmation and normal-installer adoption are separate.
+Do further usability work on `next/usability-and-saving`. The pre-saving source
+baseline is `99cbf62495d9f021be80ee3d20fcef739dd8c93e`. The live website is generated on
 `gh-pages`; its baseline for this work is
 `c4896b796312e8b26a9c01206d25bdc2d8b93589`.
 

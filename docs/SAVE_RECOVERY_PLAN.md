@@ -8,7 +8,10 @@ automatic saving is deferred, not a requirement for this release. Physical
 device validation remains separate. Existing application persistence stays off in normal builds.
 Source baseline: `99cbf62495d9f021be80ee3d20fcef739dd8c93e`; development starts
 at `addd576e4616987f4178327a91f4fa3b731c6543` on
-`next/usability-and-saving`. Keep `main` and live `gh-pages` unchanged.
+`next/usability-and-saving`. The owner has authorized merging the saving source
+into `main`; ordinary builds still keep recovery disabled and the published
+installer is unchanged. Further cleanup stays on the development branch. The
+separate trial preview is the only authorized development publication subtree.
 
 Tracks [recovery #1](https://github.com/anthonysprints/jamboxfm/issues/1) and
 [save controls #3](https://github.com/anthonysprints/jamboxfm/issues/3), under

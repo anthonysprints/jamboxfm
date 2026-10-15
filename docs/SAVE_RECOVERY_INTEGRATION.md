@@ -5,7 +5,9 @@ Implemented on `next/usability-and-saving`, following the
 [recovery #1](https://github.com/anthonysprints/jamboxfm/issues/1) and
 [save controls #3](https://github.com/anthonysprints/jamboxfm/issues/3).
 This is a software-verified device integration, **not a published update or a
-physical FM-1 verification**. `main` and the live installer remain unchanged.
+physical FM-1 verification**. The owner has authorized promoting this source to
+`main`. Normal build settings and the live installer remain unchanged; saving
+still uses the explicit recovery-enabled target and separate trial page.
 
 ## What this stage does
 
