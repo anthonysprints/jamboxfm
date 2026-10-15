@@ -1,0 +1,37 @@
+[
+  {
+    "path": "install/index.html",
+    "status": 200,
+    "sha256": "ceea86b10e8af1a94b064c0f56d61a17a09733dd0889db945f8881cd986dbba4"
+  },
+  {
+    "path": "install/app.js",
+    "status": 200,
+    "sha256": "44b3466927e69e613e6cd269a742c1c73c560670a1dba7a4fa6730621f0b286f"
+  },
+  {
+    "path": "device/app.js",
+    "status": 200,
+    "sha256": "9b6467a5d161bc4ad3051b325b8596177e27d7b4178099b6f02c4a811b8b0595"
+  },
+  {
+    "path": "jam-device-policy.js",
+    "status": 200,
+    "sha256": "a3bbbe086cb93be8ac2bed71f56128163b99e7fe38424e9e4d84702bb68109ec"
+  },
+  {
+    "path": "firmware/manifest.json",
+    "status": 200,
+    "sha256": "6166660763484fe293e544eeff824d91397d24dd284a726f891c98a14f8e9107"
+  },
+  {
+    "path": "firmware/trial.json",
+    "status": 200,
+    "sha256": "011a4777a5db7f8a5cedf16e3b0aab94ec1fded31dc19b5813bda2d9c99e4302"
+  },
+  {
+    "path": "firmware/jamboxfm-0.1.0-dev.fwsc",
+    "status": 200,
+    "sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7"
+  }
+]

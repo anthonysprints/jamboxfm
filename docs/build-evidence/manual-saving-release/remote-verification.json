@@ -1,0 +1,24 @@
+{
+  "commit": "f8808ca569b951226f1feb9f137defdce10eeb6f",
+  "parent": "a6e8a2320cc30641a620f293b903d10aeb25fe96",
+  "changed_files": [
+    "SHA256SUMS",
+    "device/app.js",
+    "firmware/README.txt",
+    "firmware/SHA256SUMS",
+    "firmware/build-receipt.json",
+    "firmware/jamboxfm-0.1.0-dev.fwsc",
+    "firmware/jamboxfm-source.zip",
+    "firmware/manifest.json",
+    "firmware/memory.json",
+    "firmware/trial.json",
+    "install/app.js",
+    "install/index.html",
+    "jam-device-policy.js",
+    "jambox-source.zip"
+  ],
+  "all_29_package_paths_verified": true,
+  "all_root_checksums_verified": true,
+  "emulator_and_preview_tree_objects_unchanged": true,
+  "firmware_sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7"
+}

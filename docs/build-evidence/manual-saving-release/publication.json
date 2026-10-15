@@ -1,0 +1,9 @@
+{
+  "action": "published",
+  "parent": "a6e8a2320cc30641a620f293b903d10aeb25fe96",
+  "commit": "f8808ca569b951226f1feb9f137defdce10eeb6f",
+  "tree": "6a5368ecde3c6aff1fe19a2490bb3bdbf7a85220",
+  "updated_files": 29,
+  "protected_paths": 57,
+  "root_checksums_sha256": "b10531a8f6ef104aebe9b348d1567d015d44c755f07c879cb86f9e12987b9d0c"
+}

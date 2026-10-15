@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-15",
+  "source_revision": "f3f06a45531180672eeb2d09d700a9b2d98148ef",
+  "owner_report": "Save now followed by full FM-1 power-off restores jam and edited sounds. Owner approved normal installer publication.",
+  "autosave": false,
+  "firmware_sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7",
+  "firmware_size_bytes": 611255,
+  "firmware_identical_to_owner_tested_preview": true,
+  "tests": {
+    "normal_packager": 13,
+    "preview_packager": 19,
+    "preview_publisher_isolation": 16,
+    "normal_scoped_publisher": 7,
+    "node_policy_and_transport": 35,
+    "native_recovery_runtime": 306,
+    "native_fresh_process": 17,
+    "native_recovery_ui": 45,
+    "chromium_normal_installer": 23,
+    "chromium_read_only_device_checker": 18,
+    "final_production_bundle_loader": "passed"
+  },
+  "limits": [
+    "Owner report is not independent hardware verification.",
+    "Browser checks simulate transfer and do not flash a physical FM-1.",
+    "No new physical recovery or interrupted-power claim."
+  ]
+}
