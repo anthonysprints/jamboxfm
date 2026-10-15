@@ -1,9 +1,10 @@
-# Trial 05: individual synthesized drum sounds
+# Individual synthesized drum sounds (adopted from Trial 05)
 
-This development trial stays on `next/usability-and-saving` and the isolated
-[drum installer](https://anthonysprints.github.io/jamboxfm/preview/drums/install/).
-The adopted Trial 04 normal installer stays unchanged. Physical FM-1 validation
-is pending owner testing; native and browser results are software evidence.
+The owner requested promotion of all drum work to main and the normal installer
+after using Trial 05. See [DRUM_RELEASE.md](DRUM_RELEASE.md) for current release
+and publication evidence. The isolated drum preview remains a historical trial.
+Owner feedback covers general playing and improved clarity; it does not establish
+every hardware/recovery test case. The control details below describe the adopted editor.
 
 ## Controls
 

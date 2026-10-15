@@ -1,0 +1,65 @@
+{
+  "firmware": {
+    "sha256": "a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
+    "size_bytes": 611255
+  },
+  "compiled_source": {
+    "dirty": false,
+    "provenance": "git-checkout-with-input-hashes",
+    "revision": "0e69bbd5fdb56e0739d8ab1155853ce161d20cf8"
+  },
+  "exact_owner_used_binary_match": true,
+  "normal_installer_browser_cases": 23,
+  "device_package_tests": 13,
+  "recovery_package_tests": 19,
+  "normal_publisher_tests": 7,
+  "hardware_validated": false,
+  "log_tails": {
+    "device-tests": [
+      ".............",
+      "----------------------------------------------------------------------",
+      "Ran 13 tests in 4.355s",
+      "",
+      "OK"
+    ],
+    "recovery-tests": [
+      "OK",
+      "Local recovery trial: /tmp/tmpimed60s7/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpc8b9yshl/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpddyrxfcu/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmp3nmnj13z/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911",
+      "Local recovery trial: /tmp/tmpnnkexc04/recovery-bundle; 603,271 firmware bytes; SHA256 37eede1f1df78a5c1f1f77dc880ab1356242def66a53c4ac6e27bbf96aa74911"
+    ],
+    "publisher-tests": [
+      ".......",
+      "----------------------------------------------------------------------",
+      "Ran 7 tests in 1.220s",
+      "",
+      "OK"
+    ],
+    "browser": [
+      "PASS write interruption never reports success",
+      "PASS final release must be confirmed",
+      "PASS complete transfer, identity, local private report, and desktop layout",
+      "PASS mobile layout and accessible actions",
+      "PASS installed JamBox updates through both stages and reports its actual transition",
+      "JamBox installer: 23 Chromium cases passed. These verify browser behavior and host transfers, not physical flashing. Screenshots: /workspace/jamboxfm/build/jam-install-evidence"
+    ],
+    "package": [
+      "Local software candidate: /workspace/jamboxfm/build/jambox-device; 611,255 firmware bytes; SHA256 a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
+      "{",
+      "  \"files\": 29,",
+      "  \"firmware_sha256\": \"a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351\",",
+      "  \"checksums_sha256\": \"a305fa2d20a2c8c0251d4ad16c5c52a97fd748abff8c37d8552858a696c54af2\"",
+      "}"
+    ],
+    "verify": [
+      "  \"pages\": {",
+      "    \"url\": \"https://anthonysprints.github.io/jamboxfm/install/\",",
+      "    \"reachable_from_cloud\": false,",
+      "    \"error\": \"<urlopen error Tunnel connection failed: 403 Forbidden>\"",
+      "  }",
+      "}"
+    ]
+  }
+}

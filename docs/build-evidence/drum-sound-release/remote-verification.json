@@ -1,0 +1,30 @@
+{
+  "commit": "21acce1a7b4e8a3cae520cc733010e469a6a70e9",
+  "parent": "c72039f108e502b2709830c13601eb4f49537447",
+  "tree": "f2e756e529e1be58ae23dc49196cd6dfb7423ac6",
+  "changed_files": [
+    "SHA256SUMS",
+    "firmware/SHA256SUMS",
+    "firmware/build-receipt.json",
+    "firmware/jamboxfm-0.1.0-dev.fwsc",
+    "firmware/jamboxfm-source.zip",
+    "firmware/manifest.json",
+    "firmware/memory.json",
+    "firmware/trial.json",
+    "install/index.html",
+    "jambox-source.zip"
+  ],
+  "all_package_files_match": true,
+  "all_outside_objects_and_modes_preserved": true,
+  "emulator_saving_preview_and_drums_preview_unchanged": true,
+  "protected_entries": 90,
+  "root_checksum_entries": 49,
+  "root_checksums_validated": true,
+  "retained_checksums_preserved": true,
+  "main": "ba2f7fcc5c8124026846feedb4c301d28c0b5a3d",
+  "prior_main_and_approved_drums_history_preserved": true,
+  "firmware_sha256": "a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351",
+  "firmware_size_bytes": 611255,
+  "compiled_source": "0e69bbd5fdb56e0739d8ab1155853ce161d20cf8",
+  "compiled_source_dirty": false
+}

@@ -5,15 +5,14 @@ checkout for cloud tasks.
 
 ## Adopted firmware and development
 
-On October 15, 2026 the owner approved promoting all tested drum changes through
-Trial 04 to `main` and the normal Chrome installer. The approved firmware is
-611255 bytes, SHA256
-77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90.
-Its clean compiled source is d41e979dd150f5893cc8b5719b58fe5b0f28b7cb.
-Release documentation and evidence commits do not change that binary. See
-`docs/DRUM_RELEASE.md` and its publication evidence for actual delivery status.
-The earlier manual-saving release was b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7.
-Owner acceptance is not independent or universal hardware/recovery validation.
+On October 15, 2026 the owner approved moving the individual-drum editor
+through Trial 05 to `main` and the normal Chrome installer. The adopted firmware
+is 611255 bytes, SHA256
+a88970d9e601aed4042e28302d9ada19357b4ac549859a479f8eee5fba04b351.
+Its owner-used clean source was 4c04594; a promotion rebuild must match those
+exact bytes. See `docs/DRUM_RELEASE.md` for source, evidence and delivery status.
+Trial 04 used 77812285810b5c0494d94783d63d49c747e5e918c3815a689c66f4fe67e3cb90.
+Owner acceptance is not universal hardware/recovery validation.
 
 Use `main` for the adopted source. Keep new usability experiments on
 `next/usability-and-saving` until validation and owner adoption. Preserve the
@@ -25,7 +24,10 @@ The drum workflow is SEQ for GRID, EDIT for KIT SOUND and FX for useful kit
 controls. Another SEQ tap inside GRID swaps drums 1–8 / 9–16, preserving row
 position and step window. Entry from another screen preserves the selected
 drum. Held gestures, recorder overlays and manual-save modals retain priority.
-See `docs/DRUM_KIT_TRIAL.md` for the control map and historical trials.
+ENV now opens individual synthesized drum editing. Factory kits require an
+explicit copy to a chosen SYN bank, with overwrite/shared-section guidance.
+Sampled kits retain whole-kit EDIT/FX. See `docs/DRUM_SOUND_TRIAL.md` and
+`docs/DRUM_KIT_TRIAL.md` for controls and historical trials.
 
 The owner chose manual saving. Automatic saving remains disabled and outside
 the active plan unless explicitly reopened. Only intentional Save now replaces
@@ -39,28 +41,28 @@ actual old/current cold restore when compatibility changes require review.
 
 ## Separate sound-page cleanup branch
 
-The owner explicitly authorized `next/sound-page-cleanup` while testing the
-Trial 05 individual-drum candidate. The first engine-specific ENV/modulation
-cleanup is implemented there; see `docs/SOUND_PAGE_CLEANUP.md` and its build
-evidence. Keep it isolated from `main` and `next/usability-and-saving` until
-owner adoption. The live drum preview remains Trial 05 at website commit
-`c72039f108e502b2709830c13601eb4f49537447`. Do not reuse its installer for this
-branch implicitly. A local target/bundle build or a source push is not a new
-published installer or physical device acceptance.
+The owner explicitly authorized `next/sound-page-cleanup` and a separate test
+installer for its FM6/envelope/modulation cleanup. Keep this experiment out of
+main and the normal installer until owner adoption. Publish only under
+`preview/sound/` using its dedicated package/publish tools. The normal installer
+now includes all drum work through Trial 05; the drum preview is historical.
+See `docs/SOUND_PAGE_CLEANUP.md` and the preview publication evidence. A source
+push or firmware response is not physical device acceptance.
+
 
 ## Publishing
 
 The generated site lives on `gh-pages`. A source branch alone does not isolate
 publication. For normal-installer releases use `tools/package_jam_installer.py`
 and `tools/publish_jam_installer.py`, following `docs/DRUM_RELEASE.md` and
-`docs/GITHUB_PAGES.md`. Preserve the browser instrument, both previews and every
+`docs/GITHUB_PAGES.md`. Preserve the browser instrument, all previews and every
 unrelated Git path/object/mode. The ordinary `--with-updater` profile enables
 JAMBOX_RECOVERY=1, FELUCCA_PERSIST=0, FLASH and OTA. Reuse the exact approved
 binary when promoting a tested candidate; verify its hash and receipt.
 
-Development saving and drum previews remain separately scoped to
-`preview/saving/` and `preview/drums/`. Use their dedicated package/publish tools
-only for the corresponding preview. Never use `tools/publish_jam_web.py` to
+Development saving, drum and sound previews remain separately scoped to
+`preview/saving/`, `preview/drums/` and `preview/sound/`. Use their dedicated
+package/publish tools only for the corresponding preview. Never use `tools/publish_jam_web.py` to
 publish development over the normal site. Merge/promote to main and publish
 normal updates only when the owner has authorized adoption. The owner has
 explicitly authorized this drum adoption. A Git push does not prove live Pages
