@@ -1,0 +1,97 @@
+font S: ter-u16b.bdf 16px h 16, digit adv 8, 5376 B
+font L: ter-u16b.bdf 16px h 32, digit adv 16, the S bitmaps at 2x (0 B)
+icons: 86 of 86 (192x72 L), 3096 B
+logo: splash 240x188, 4635 B RLE -> build/jam-drum-navigation-tests/gen/sloop_logo.h
+ui: Drums SEQ opens GRID despite remembered PATTERN/SONG                       ok
+ui: opening GRID neither changes the beat nor starts recording/saving          ok
+ui: first white key immediately after SEQ edits its step without REC           ok
+ui: pressing the same step again restores the original beat                    ok
+ui: HOME from GRID returns to the remembered Home view                         ok
+ui: first key immediately after HOME plays a drum without editing steps        ok
+ui: Drums SEQ opens GRID despite remembered PATTERN/SONG                       ok
+ui: opening GRID neither changes the beat nor starts recording/saving          ok
+ui: first white key immediately after SEQ edits its step without REC           ok
+ui: pressing the same step again restores the original beat                    ok
+ui: HOME from GRID returns to the remembered Home view                         ok
+ui: first key immediately after HOME plays a drum without editing steps        ok
+ui: Drums SEQ opens GRID despite remembered PATTERN/SONG                       ok
+ui: opening GRID neither changes the beat nor starts recording/saving          ok
+ui: first white key immediately after SEQ edits its step without REC           ok
+ui: pressing the same step again restores the original beat                    ok
+ui: HOME from GRID returns to the remembered Home view                         ok
+ui: first key immediately after HOME plays a drum without editing steps        ok
+ui: Drums SEQ opens GRID despite remembered PATTERN/SONG                       ok
+ui: opening GRID neither changes the beat nor starts recording/saving          ok
+ui: first white key immediately after SEQ edits its step without REC           ok
+ui: pressing the same step again restores the original beat                    ok
+ui: HOME from GRID returns to the remembered Home view                         ok
+ui: first key immediately after HOME plays a drum without editing steps        ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ from another drum page opens GRID without changing its selected drum   ok
+ui: SEQ also escapes the inherited SONG page into drum GRID                    ok
+ui: GRID sound knob chooses the drum lane edited by the step keys              ok
+ui: a GRID step edit changes only the selected lane and cell                   ok
+ui: selected-lane step toggle changes no other drum or recorder state          ok
+ui: repeated SEQ swaps to the other eight drums and retains step-key ownership ok
+ui: EDIT opens KIT and immediately restores playable pads                      ok
+ui: SEQ from KIT returns to GRID without swapping its selected drum            ok
+ui: EDIT tap opens KIT SOUND without inheriting a synth edit page              ok
+ui: fresh SEQ entry returns to GRID and preserves the selected drum            ok
+ui: held SEQ edits steps and releases without opening GRID                     ok
+ui: long untouched SEQ hold releases without becoming a page tap               ok
+ui: SEQ plus HOME still locks the advanced steps layer                         ok
+ui: locked SEQ still edits a drum step without holding the button              ok
+ui: SEQ tap that unlocks a layer does not also open GRID                       ok
+ui: a subsequent separate SEQ tap opens GRID normally                          ok
+ui: SEQ used to unlock another performance layer is consumed once              ok
+ui: PLAY from GRID starts the loop without recording or leaving the editor     ok
+ui: PLAY again stops the loop and preserves GRID                               ok
+ui: SAVE from GRID opens manual saving and releases step-key ownership         ok
+ui: playing a key on the save screen neither edits GRID nor saves implicitly   ok
+ui: only the explicit Save now tap calls the recovery writer                   ok
+ui: HOME exits manual saving into the remembered Home view                     ok
+ui: REC from stopped GRID arms recording on the remembered playable Home       ok
+ui: first pad after GRID record-arm plays a drum and starts live recording     ok
+ui: REC cancels live overdub while the loop keeps playing                      ok
+ui: GRID record-arm supports the existing count-in on playable Home            ok
+ui: pads during count-in audition drums without editing the hidden grid        ok
+ui: REC still cancels count-in without starting the loop                       ok
+ui: empty-jam REC from GRID accepts the first drum into a free take            ok
+ui: REC from playing GRID starts overdub on the remembered Home                ok
+ui: explicit SEQ during overdub opens GRID while recording continues           ok
+ui: intentional GRID view during overdub uses white keys for direct steps      ok
+ui: SAVE while recording refuses manual-save entry without losing GRID         ok
+ui: REC ending overdub keeps GRID and leaves transport running                 ok
+ui: REC then SEQ preserves the armed workspace and its playable keys           ok
+ui: blocked recorder-first GRID entry explains how to continue                 ok
+ui: first pad after blocked SEQ still starts the armed drum performance        ok
+ui: SEQ during count-in keeps its existing workspace and recorder ownership    ok
+ui: pad after blocked count-in SEQ auditions without toggling a step           ok
+ui: a separate SEQ tap works again once count-in has been cancelled            ok
+ui: SEQ during a free take preserves its workspace and unfinished recording    ok
+ui: pad after blocked free-take SEQ records a drum without editing GRID        ok
+ui: REC then SEQ preserves the armed workspace and its playable keys           ok
+ui: blocked recorder-first GRID entry explains how to continue                 ok
+ui: first pad after blocked SEQ still starts the armed drum performance        ok
+ui: SEQ during count-in keeps its existing workspace and recorder ownership    ok
+ui: pad after blocked count-in SEQ auditions without toggling a step           ok
+ui: a separate SEQ tap works again once count-in has been cancelled            ok
+ui: SEQ during a free take preserves its workspace and unfinished recording    ok
+ui: pad after blocked free-take SEQ records a drum without editing GRID        ok
+ui: melodic SEQ still opens its STEP editor                                    ok
+ui: melodic repeated SEQ still cycles to PATTERN                               ok
+ui: melodic repeated SEQ still reaches SONG                                    ok
+ui: melodic SEQ still restores its remembered SONG destination                 ok
+ui: melodic SEQ still opens its STEP editor                                    ok
+ui: melodic repeated SEQ still cycles to PATTERN                               ok
+ui: melodic repeated SEQ still reaches SONG                                    ok
+ui: melodic SEQ still restores its remembered SONG destination                 ok
+ui: melodic SEQ still opens its STEP editor                                    ok
+ui: melodic repeated SEQ still cycles to PATTERN                               ok
+ui: melodic repeated SEQ still reaches SONG                                    ok
+ui: melodic SEQ still restores its remembered SONG destination                 ok
+drum-navigation: 92 checks, all checks passed

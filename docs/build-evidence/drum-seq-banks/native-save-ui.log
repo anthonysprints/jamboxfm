@@ -1,0 +1,46 @@
+ui: SAVE tap opens dedicated modal with SAVE LED                               ok
+ui: opening recovery never writes flash                                        ok
+ui: long SAVE on status never initializes                                      ok
+ui: separate tap opens unacknowledged setup warning                            ok
+ui: Saving visibly replaces the first-use setup warning during a write         ok
+ui: setup warning returns when no write is active                              ok
+ui: setup hold without backup acknowledgement never writes                     ok
+ui: cannot acknowledge backup while SAVE is held                               ok
+ui: separate knob turn explicitly acknowledges backup readiness                ok
+ui: short setup hold cancels without writing                                   ok
+ui: setup remains uncommitted at 1,999 milliseconds of the fresh hold          ok
+ui: fresh deliberate 2-second hold initializes and saves exactly once          ok
+ui: release after confirmed setup never starts another save                    ok
+ui: claimed Save now never reinitializes allocation                            ok
+ui: Saving visibly replaces Saved on the claimed status screen                 ok
+ui: blocked Save now never calls writer                                        ok
+ui: SAVE inside modal cannot become section layer                              ok
+ui: SEQ inside modal cannot become step-writing layer                          ok
+ui: modal ignores recorder and ordinary step writing                           ok
+ui: holding REC inside modal cannot arm, clear or start free recording         ok
+ui: keys audition musical notes while shortcut buttons are suppressed          ok
+ui: HOME escapes while keeping shortcuts suppressed until release              ok
+ui: HOME release restores normal controls without toggling Home view           ok
+ui: held SAVE performance layer remains available outside modal                ok
+ui: SAVE performance gesture does not open recovery afterward                  ok
+ui: record-arm refuses modal entry                                             ok
+ui: armed recording refuses modal entry                                        ok
+ui: active free take refuses modal entry                                       ok
+ui: count-in refuses modal entry                                               ok
+ui: HOME cancellation discards backup acknowledgement before reopening setup   ok
+ui: acknowledgement and long hold cannot bypass read-only adapter              ok
+ui: unblocking after released setup hold cannot initialize automatically       ok
+ui: unblocked setup still requires a new deliberate SAVE hold                  ok
+ui: writer failure remains visible as Error without claiming a successful save ok
+ui: status changes redraw the modal without a forced redraw                    ok
+ui: cancel keeps shortcut suppression while a second button remains held       ok
+ui: normal shortcuts resume once all cancel-time buttons release               ok
+ui: opening from drum grid clears step-writing keyboard mode                   ok
+ui: PLAY in recovery cannot start stopped transport                            ok
+ui: explicit PLAY can request a stop before saving                             ok
+ui: FM6 preset can be selected while the previous sound is ringing             ok
+ui: regression fixture opens during a genuinely pending FM6 patch fade         ok
+ui: recovery modal continues polling until the pending FM6 patch loads         ok
+ui: old voice fade and FM6 engine switch finish while recovery remains open    ok
+ui: settled modal patch matches the selected FM6 sound                         ok
+recovery-ui: all checks passed

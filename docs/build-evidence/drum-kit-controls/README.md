@@ -59,3 +59,7 @@ objects/modes. Normal installer, emulator, saving preview and main are unchanged
 Five pinned raw-GitHub HTTP artifacts match the candidate bytes. Live Pages HTTP
 is blocked from this cloud environment with CONNECT403, so live reachability
 is not independently claimed. The page identifies the offered build as Trial 03.
+
+The owner subsequently reported that Trial 03 looked good and requested the
+SEQ bank shortcut; see [owner feedback](owner-feedback.md). Trial 04 implements
+that small follow-up in the same isolated preview.

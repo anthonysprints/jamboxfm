@@ -1,0 +1,3 @@
+PASS complete normal to loader to normal transfer and private report
+PASS mobile layout and labelled local-only backup actions
+Recovery-profile installer: 2 Chromium cases passed. Wire simulation only; physical installation and trial behavior remain unverified. Screenshots: /workspace/jamboxfm/build/jam-drums-bank-install-evidence
