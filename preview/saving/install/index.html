@@ -1,0 +1,110 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eee9df">
+  <meta name="description" content="Try manual saving and startup restoration on your JamBoxFM instrument from Chrome.">
+  <title>JamBoxFM · Development saving trial</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="workbench">
+    <header class="masthead">
+      <a class="wordmark" href="https://anthonysprints.github.io/jamboxfm/emu/" aria-label="JamBoxFM browser instrument">jam<span>box</span><sup>FM</sup></a>
+      <p class="edition"><span aria-hidden="true"></span> SAVING TRIAL <b>02</b></p>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">DEVELOPMENT PREVIEW / MANUAL SAVING</p>
+      <h1 id="page-title">Pick up your jam<br>where you left it.</h1>
+      <p class="lede">A separate trial for Save now and startup restoration. Your normal installer stays available.</p>
+    </section>
+
+    <div class="install-layout">
+      <section class="install-card" aria-labelledby="install-title">
+        <div class="card-heading"><span class="step-mark" aria-hidden="true">01</span><div><p class="eyebrow">CONNECT &amp; INSTALL</p><h2 id="install-title">Try saving on your FM-1.</h2></div></div>
+        <p class="card-copy">Start with JamBoxFM already running on your FM-1. Connect only one instrument with a USB data cable. Close other MIDI apps and browser instrument tabs, then connect below.</p>
+        <button id="connect-device" class="secondary" type="button">Connect FM-1 <span aria-hidden="true">→</span></button>
+        <p class="permission-note">Use Chrome or Edge on a computer. Allow MIDI and system exclusive access when your browser asks.</p>
+
+        <div id="pair-field" class="pair-field" hidden>
+          <label for="midi-pair">Choose your FM-1</label>
+          <select id="midi-pair" aria-describedby="pair-hint"><option value="">Choose a device</option></select>
+          <p id="pair-hint" class="permission-note">You can check a selected device here. To install, disconnect the other matching MIDI devices so only one FM-1 remains.</p>
+        </div>
+
+        <div class="readiness">
+          <p id="device-state"><span class="signal" aria-hidden="true"></span><span id="device-label">Waiting for your FM-1</span></p>
+          <p id="firmware-state"><span class="signal" aria-hidden="true"></span><span id="firmware-label">Checking the firmware download…</span></p>
+          <button id="reload-firmware" class="text-button" type="button" hidden>Check the download again</button>
+        </div>
+
+        <p class="install-consent">Choose the two files from your existing FM-1 recovery folder. They stay on this computer; they do not include your current jam.</p>
+        <details class="backup-details"><summary>What does the backup check confirm?</summary><p class="permission-note">It checks that the flash file matches the checksum in backup.json. It cannot verify the backup’s age or which physical instrument supplied it. Keep your earlier verified recovery folder and original factory firmware separately.</p></details>
+        <div class="backup-files">
+          <label for="backup-report">Recovery folder → backup.json</label>
+          <input id="backup-report" type="file" accept=".json,application/json">
+          <label for="backup-flash">Same folder → full-flash-before.bin (1 MiB)</label>
+          <input id="backup-flash" type="file" accept=".bin,application/octet-stream">
+          <p id="backup-state" class="backup-match"><span class="signal" aria-hidden="true"></span><span id="backup-label">Choose both files from your existing recovery folder</span></p>
+        </div>
+        <label class="backup-check" for="disposable-jam"><input id="disposable-jam" type="checkbox"><span>I’m using a disposable jam. Installing restarts the FM-1 and loses its current temporary music. My recovery folder is kept separately; it does not save this jam.</span></label>
+        <button id="install-device" class="primary" type="button" disabled>Install the saving trial <span aria-hidden="true">→</span></button>
+        <button id="cancel-prepare" class="text-button" type="button" hidden>Cancel preparation</button>
+        <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Connect your FM-1 to get started.</p>
+      </section>
+
+      <aside class="notes-card" aria-labelledby="notes-title">
+        <span class="trial-badge">DEVELOPMENT · FIRST DEVICE CHECK</span>
+        <h2 id="notes-title">Save a little jam.<br> Then bring it back.</h2>
+        <p>Host recovery tests and FM-1 memory checks pass. Saving and restoration in this build still need a deliberate check on the actual instrument.</p>
+        <ul class="notes">
+          <li><strong>Manual saving first.</strong> Use Save now before turning off. Automatic saving is off.</li>
+          <li><strong>Storage needs setup once.</strong> Initializing saving replaces legacy user projects and user sounds. Factory sounds stay. The instrument asks before doing this.</li>
+          <li><strong>Steady power and USB.</strong> Leave this tab open until JamBox returns. An interrupted installation can require hardware recovery.</li>
+        </ul>
+        <a class="text-link" href="https://anthonysprints.github.io/jamboxfm/install/">Normal JamBox installer <span aria-hidden="true">→</span></a>
+      </aside>
+    </div>
+
+    <section id="progress-card" class="progress-card" aria-labelledby="progress-title" hidden>
+      <p class="eyebrow">MAKING ROOM FOR YOUR BAND</p>
+      <h2 id="progress-title" tabindex="-1">Preparing the install.</h2>
+      <ol class="progress-steps" aria-label="Installation stages">
+        <li id="stage-check" data-state="waiting"><span aria-hidden="true">1</span><div><strong>Check</strong><small>Firmware and device</small></div></li>
+        <li id="stage-loader" data-state="waiting"><span aria-hidden="true">2</span><div><strong>Prepare</strong><small>Send update loader</small></div></li>
+        <li id="stage-write" data-state="waiting"><span aria-hidden="true">3</span><div><strong>Install</strong><small>Write the instrument</small></div></li>
+        <li id="stage-return" data-state="waiting"><span aria-hidden="true">4</span><div><strong>Return</strong><small>Confirm JamBoxFM</small></div></li>
+      </ol>
+      <p id="progress-detail">Checking the selected instrument again before sending an update.</p>
+    </section>
+
+    <section id="result-card" class="result-card" aria-labelledby="result-title" hidden>
+      <p class="eyebrow" id="result-eyebrow">INSTALLATION REPORT</p>
+      <h2 id="result-title" tabindex="-1">Install report.</h2>
+      <p id="result-guidance"></p>
+      <button id="save-report" class="secondary" type="button">Download install report <span aria-hidden="true">↓</span></button>
+      <p class="report-note">The report stays on your computer. It includes installation stages and firmware identity, with no port names, device serial numbers, or backup contents.</p>
+      <details><summary>Report details</summary><pre id="report-details"></pre></details>
+    </section>
+
+    <section class="trial-checklist" aria-labelledby="trial-title">
+      <p class="eyebrow">AFTER THE INSTRUMENT RETURNS</p>
+      <h2 id="trial-title">The first Save → restart check.</h2>
+      <ol class="trial-steps">
+        <li><strong>Check the basics.</strong> Start at low volume. Check keys, knobs, BPM, lights, and PLAY.</li>
+        <li><strong>Set up saving.</strong> Stop playback and release the keys. Tap SAVE to open JAM RECOVERY, then tap SAVE again for the setup notice. Confirm BACKUP READY with knob 1, then follow the hold-SAVE prompt. This first save claims the storage area.</li>
+        <li><strong>Make something recognizable.</strong> Change the tempo, record a short loop, edit a sound, and store an A–D section.</li>
+        <li><strong>Save now.</strong> Stop playback, release the keys, tap SAVE, then tap SAVE again. Wait until the screen says Saved.</li>
+        <li><strong>Restart normally.</strong> Turn the FM-1 off and on. Check your loop, tempo, sounds, and A–D sections. Playback should stay stopped.</li>
+      </ol>
+      <p class="permission-note">Keep the first test small. Report what returned and anything that changed unexpectedly. A successful install response does not verify saving.</p>
+    </section>
+
+    <footer class="page-footer"><span>JAMBOXFM <b>·</b> DEVELOPMENT SAVING TRIAL</span><a href="../firmware/jamboxfm-source.zip" download>Firmware source</a><a href="https://github.com/anthonysprints/jamboxfm/tree/next/usability-and-saving">Development source</a></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

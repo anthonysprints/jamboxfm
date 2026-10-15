@@ -1,0 +1,11 @@
+{
+  "firmware_sha256": "b57fcb452c05933b5aa895840067d18db10f70ee3f70c8d35e15bf760e10f4c7",
+  "hardware_validated": false,
+  "kind": "development-recovery-install",
+  "manifest_sha256": "73f934e5ef579b2594a164675f26957b3213251028fccbe2aa5b86ab331f104a",
+  "release_enabled": false,
+  "schema_version": 1,
+  "transitions": [
+    "jambox-normal-to-jambox"
+  ]
+}
