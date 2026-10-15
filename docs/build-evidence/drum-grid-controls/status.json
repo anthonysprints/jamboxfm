@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-15",
+  "source_revision": "2ef4338d611b61d49efc4d2249183df976eddc83",
+  "stage": 2,
+  "owner_feedback_first_trial": "Owner reports first trial worked; no itemized checklist or hash attestation.",
+  "physical_stage2_verified": false,
+  "normal_installer_promoted": false,
+  "firmware": {
+    "file": "jamboxfm-recovery-0.1.0-dev.fwsc",
+    "sha256": "c7115d6f5a8c43fa0778f52562ee2f41d2a12b75fa91695b0749cc29c74b0462",
+    "size_bytes": 611255
+  },
+  "storage": {
+    "manual_saving": true,
+    "automatic_saving": false,
+    "format_changed": false,
+    "transient_selected_drum_preserved_across_ui_save": true
+  },
+  "budget": {
+    "app_image_bytes": 578132,
+    "flash_spare_bytes": 3432,
+    "ram_used_bytes": 91432,
+    "ram_spare_bytes": 6872,
+    "pool_used_bytes": 329932,
+    "pool_spare_bytes": 14132,
+    "canvas_enlarged": false
+  },
+  "completed_tests": {
+    "native_grid": 491,
+    "native_grid_asan_ubsan": 491,
+    "native_navigation": 92,
+    "native_home_navigation": 115,
+    "native_recovery_ui": 45,
+    "native_recovery_runtime": 306,
+    "native_recovery_fresh_process": 17,
+    "native_upstream_ui": "passed including 20000-frame fuzz",
+    "chromium_drum_navigation_scenarios": 4,
+    "chromium_existing_emulator": "passed",
+    "chromium_isolated_installer_cases": 30,
+    "drums_package_publisher_tests": 20
+  }
+}

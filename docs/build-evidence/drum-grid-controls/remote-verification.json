@@ -1,0 +1,20 @@
+{
+  "commit": "d246c1d8f70b85ac65be0d35cf3782d8fdfb563c",
+  "parent": "bd7db0f31169fcea2d52a14b3f83ed81aee79848",
+  "changed_files": [
+    "preview/drums/SHA256SUMS",
+    "preview/drums/firmware/SHA256SUMS",
+    "preview/drums/firmware/build-receipt.json",
+    "preview/drums/firmware/jamboxfm-recovery-0.1.0-dev.fwsc",
+    "preview/drums/firmware/jamboxfm-source.zip",
+    "preview/drums/firmware/manifest.json",
+    "preview/drums/firmware/memory.json",
+    "preview/drums/firmware/trial.json",
+    "preview/drums/install/index.html"
+  ],
+  "all_package_files_match": true,
+  "all_outside_objects_and_modes_preserved": true,
+  "normal_installer_emulator_saving_preview_unchanged": true,
+  "protected_entries": 89,
+  "main_remains": "da394a87b3345555e796257012e7adf4bbbc8872"
+}
