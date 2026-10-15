@@ -42,6 +42,7 @@
         </div>
 
         <p class="install-consent">This experimental install replaces your FM-1’s firmware. An interruption can require hardware recovery. Keep your factory firmware and recovery backup saved on your computer.</p>
+        <p class="permission-note">Updating restarts the instrument. Save your jam first if your current build supports Save now; otherwise its temporary music will be lost.</p>
         <button id="install-device" class="primary" type="button" disabled>Install experimental JamBoxFM <span aria-hidden="true">→</span></button>
         <button id="cancel-prepare" class="text-button" type="button" hidden>Cancel preparation</button>
         <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Connect your FM-1 to get started.</p>
@@ -50,12 +51,13 @@
       <aside class="notes-card" aria-labelledby="notes-title">
         <span class="trial-badge">EXPERIMENTAL · DEVICE TESTING</span>
         <h2 id="notes-title">Keep jamming.<br> Still a prototype.</h2>
-        <p>The first installation is working on its owner’s FM-1. We’re refining the controls, and each new build still needs a check on the instrument.</p>
+        <p>Manual saving and restoration after a full power-off have been confirmed on the owner’s FM-1. Save a checkpoint when you want to keep your jam.</p>
         <ul class="notes">
           <li><strong>Install or update.</strong> Start from factory V15 or a running JamBoxFM build. The page checks which firmware is connected.</li>
-          <li><strong>Your sessions are temporary.</strong> Turning off the FM-1 clears what you make in this build.</li>
+          <li><strong>Save when you choose.</strong> Save now keeps your jam and edited sounds for the next startup. Automatic saving is off; unsaved experiments do not replace your checkpoint.</li>
           <li><strong>Keep USB and power steady.</strong> Leave this tab open until the instrument returns. An interrupted installation can require hardware recovery.</li>
         </ul>
+        <details><summary>First-time saving setup</summary><p>Stop playback and release the keys. Tap SAVE, then tap SAVE again to read the setup notice. Keep your recovery backup: initialization replaces old projects and USER sounds. With SAVE released, turn knob 1 to BACKUP READY, then hold SAVE for two seconds. Wait for Saved. Later saves use a SAVE tap from that screen.</p></details>
         <a class="text-link" href="../emu/">Try the browser instrument <span aria-hidden="true">→</span></a>
       </aside>
     </div>

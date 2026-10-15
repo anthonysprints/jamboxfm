@@ -59,7 +59,13 @@ export function validateManifest(manifest) {
   keys(manifest.build, ['receipt_file', 'receipt_sha256', 'flags', 'memory_report_file', 'memory_report_sha256'], 'build');
   insist(manifest.build.receipt_file === 'build-receipt.json' && manifest.build.memory_report_file === 'memory.json' &&
     hash(manifest.build.receipt_sha256) && hash(manifest.build.memory_report_sha256), 'Invalid build evidence descriptor', 'manifest');
-  keys(manifest.build.flags, [...Object.keys(REQUIRED_FLAGS), 'FELUCCA_CDC', 'FELUCCA_UART'], 'build.flags');
+  // Older published receipts predate this explicit gate. New normal packages
+  // require the owner-approved manual-saving profile; autosave remains off.
+  const recoveryFlag = plain(manifest.build.flags) && Object.hasOwn(manifest.build.flags, 'JAMBOX_RECOVERY');
+  keys(manifest.build.flags, [...Object.keys(REQUIRED_FLAGS), 'FELUCCA_CDC', 'FELUCCA_UART',
+    ...(recoveryFlag ? ['JAMBOX_RECOVERY'] : [])], 'build.flags');
+  insist(!recoveryFlag || manifest.build.flags.JAMBOX_RECOVERY === 1,
+    'Normal candidates require JAMBOX_RECOVERY=1', 'manifest');
   insist(Object.values(manifest.build.flags).every(value => value === 0 || value === 1), 'Invalid build flags', 'manifest');
   for (const [flag, value] of Object.entries(REQUIRED_FLAGS)) insist(manifest.build.flags[flag] === value, `Required build flag ${flag} mismatch`, 'manifest');
   keys(manifest.transitions, ['mode', 'approved', 'simulated'], 'transitions');
