@@ -1,0 +1,6 @@
+{
+  "source_main_published": "1e4512cede4c8d34ee2367c049925a5d788445e1",
+  "source_push_exit_code": 0,
+  "dry_run_porcelain_stdout": "To https://github.com/anthonysprints/jamboxfm.git\n \tHEAD:refs/heads/main\tda394a8..1e4512c\nDone\n",
+  "verification": "remote-verification.json"
+}
